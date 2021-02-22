@@ -13,8 +13,6 @@ class Session {
 
     private let preferences: Preferences
 
-    private let locationService: LocationService
-
     private let observable: ReplaySubject<UserDTO> = ReplaySubject.create(bufferSize: 1)
 
     var user: UserDTO?
@@ -27,10 +25,9 @@ class Session {
         user?.uid ?? nil
     }
 
-    init(userService: UserService, preferences: Preferences, locationService: LocationService) {
+    init(userService: UserService, preferences: Preferences) {
         self.userService = userService
         self.preferences = preferences
-        self.locationService = locationService
         subscribeBroadcast()
     }
 
@@ -63,9 +60,6 @@ class Session {
                         return Single.just(UserDTO())
                     }
                 })
-                .flatMap({ _ -> Single<Location> in
-                    self.updateUserLocation()
-                })
                 .map({ _ in
                     Void()
                 })
@@ -82,33 +76,6 @@ class Session {
     func update(_ userDTO: UserDTO) {
         user = userDTO
         publish()
-    }
-
-    private func updateUserLocation() -> Single<Location> {
-        let uid: String? = auth.uid
-        var coord: Coordinate?
-        var addr: String?
-
-        return locationService.getCurrentLocation()
-                .do(onSuccess: { coordinate in
-                    coord = coordinate
-                })
-                .flatMap({ [self] _ -> Single<String> in
-                    locationService.getAddressByCoordinate(coordinate: coord)
-                })
-                .do(onSuccess: { address in
-                    addr = address
-                })
-                .flatMap({ [self] _ -> Single<Location> in
-                    userService.updateUserLocation(
-                            uid: uid, userId: id,
-                            latitude: coord?.latitude,
-                            longitude: coord?.longitude,
-                            area: addr)
-                })
-                .do(onSuccess: { location in
-                    self.user?.location = location
-                })
     }
 
     public func signOut() {

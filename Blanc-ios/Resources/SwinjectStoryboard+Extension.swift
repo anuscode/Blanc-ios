@@ -100,8 +100,7 @@ extension SwinjectStoryboard {
         defaultContainer.register(Session.self) { resolver in
             let userService = resolver ~> UserService.self
             let preferences = resolver ~> Preferences.self
-            let locationService = resolver ~> LocationService.self
-            return Session(userService: userService, preferences: preferences, locationService: locationService)
+            return Session(userService: userService, preferences: preferences)
         }.inObjectScope(.container)
         defaultContainer.autoregister(Channel.self, initializer: Channel.init).inObjectScope(.container)
 
@@ -123,7 +122,8 @@ extension SwinjectStoryboard {
             let session = resolver ~> Session.self
             let userService = resolver ~> UserService.self
             let requestService = resolver ~> RequestService.self
-            let homeModel = HomeModel(session: session, userService: userService, requestService: requestService)
+            let locationService = resolver ~> LocationService.self
+            let homeModel = HomeModel(session: session, userService: userService, requestService: requestService, locationService: locationService)
             return homeModel
         }.inObjectScope(.mainScope)
         defaultContainer.register(HomeViewModel.self) { resolver in

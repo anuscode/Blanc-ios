@@ -25,10 +25,14 @@ class HomeModel {
 
     private var requestService: RequestService
 
-    init(session: Session, userService: UserService, requestService: RequestService) {
+    private var locationService: LocationService
+
+    init(session: Session, userService: UserService, requestService: RequestService,
+         locationService: LocationService) {
         self.session = session
         self.userService = userService
         self.requestService = requestService
+        self.locationService = locationService
         populate()
     }
 
@@ -41,7 +45,9 @@ class HomeModel {
     }
 
     private func populate() {
-        Single.just(Void())
+        updateUserLocation()
+                .observeOn(SerialDispatchQueueScheduler(qos: .default))
+                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .flatMap { [self] it -> Single<[UserDTO]> in
                     listRecommendedUsers()
                 }
@@ -90,6 +96,33 @@ class HomeModel {
         userService.listRealTimeAccessUsers(uid: auth.uid, userId: session.id)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(MainScheduler.instance)
+    }
+
+    private func updateUserLocation() -> Single<Location> {
+        let uid: String? = auth.uid
+        let userId: String? = session.id
+        var coord: Coordinate?
+        var addr: String?
+        return locationService.getCurrentLocation()
+                .do(onSuccess: { coordinate in
+                    coord = coordinate
+                })
+                .flatMap({ _ -> Single<String> in
+                    self.locationService.getAddressByCoordinate(coordinate: coord)
+                })
+                .do(onSuccess: { address in
+                    addr = address
+                })
+                .flatMap({ _ -> Single<Location> in
+                    self.userService.updateUserLocation(
+                            uid: uid, userId: userId,
+                            latitude: coord?.latitude,
+                            longitude: coord?.longitude,
+                            area: addr)
+                })
+                .do(onSuccess: { location in
+                    self.session.user?.location = location
+                })
     }
 
     func request(_ user: UserDTO?,
@@ -198,7 +231,6 @@ class HomeModel {
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
                 .subscribe(onSuccess: { _ in
                     self.session.user?.lastLoginAt = Int(NSDate().timeIntervalSince1970)
-                    print(Int(NSDate().timeIntervalSince1970))
                 }, onError: { err in
                     log.error(err)
                 })
