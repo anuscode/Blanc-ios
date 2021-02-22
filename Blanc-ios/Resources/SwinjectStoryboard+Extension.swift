@@ -181,8 +181,11 @@ extension SwinjectStoryboard {
             let homeModel = resolver ~> HomeModel.self
             let userSingleModel = resolver ~> UserSingleModel.self
             let sendingModel = resolver ~> SendingModel.self
+            let requestsModel = resolver ~> RequestsModel.self
+            let conversationModel = resolver ~> ConversationModel.self
             let userSingleViewModel = UserSingleViewModel(
-                    session: session, homeModel: homeModel, userSingleModel: userSingleModel, sendingModel: sendingModel)
+                    session: session, homeModel: homeModel, userSingleModel: userSingleModel,
+                    sendingModel: sendingModel, requestsModel: requestsModel, conversationModel: conversationModel)
             return userSingleViewModel
         }.inObjectScope(.userSingleScope)
 

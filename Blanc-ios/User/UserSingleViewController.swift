@@ -270,7 +270,7 @@ class UserSingleViewController: UIViewController {
         }
 
         if (userSingleViewModel?.isWhoSentMe() ?? false) {
-            requestButton.setTitle("내게 친구신청을 보낸 유저입니다.", for: .normal)
+            requestButton.setTitle("수락", for: .normal)
             requestButton.isUserInteractionEnabled = true
             requestButton.backgroundColor = .bumble3
         }
@@ -280,6 +280,14 @@ class UserSingleViewController: UIViewController {
         if (data == nil || data?.user == nil) {
             return
         }
+
+        if (userSingleViewModel?.isWhoSentMe() ?? false) {
+            userSingleViewModel?.request(data!.user, onError: {
+                self.toast(message: "친구신청 도중 에러가 발생 하였습니다.")
+            })
+            return
+        }
+
         RequestConfirmViewBuilder.create(target: self, user: data!.user)
                 .subscribe(onNext: { [unowned self] result in
                     guard (result) else {

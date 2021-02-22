@@ -18,11 +18,18 @@ class UserSingleViewModel {
 
     private var sendingModel: SendingModel
 
-    init(session: Session, homeModel: HomeModel, userSingleModel: UserSingleModel, sendingModel: SendingModel) {
+    private var requestsModel: RequestsModel
+
+    private var conversationModel: ConversationModel
+
+    init(session: Session, homeModel: HomeModel, userSingleModel: UserSingleModel,
+         sendingModel: SendingModel, requestsModel: RequestsModel, conversationModel: ConversationModel) {
         self.session = session
         self.homeModel = homeModel
         self.userSingleModel = userSingleModel
         self.sendingModel = sendingModel
+        self.requestsModel = requestsModel
+        self.conversationModel = conversationModel
         subscribeUserModel()
     }
 
@@ -56,8 +63,8 @@ class UserSingleViewModel {
             // 생성 해야 하지만 아주 간헐적으로 상대방이 아주 근소한
             // 차이로 요청을 먼저 보내면 자동으로 응답 처리가 된다.
             if (request.response == Response.ACCEPTED) {
-                // conversationListModel.populate()
-                // requestsModel.populate()
+                conversationModel.populate()
+                requestsModel.populate()
             }
             // 2. 홈 화면 유저 리스트 삭제.
             homeModel.remove(user)
