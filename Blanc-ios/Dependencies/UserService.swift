@@ -176,8 +176,9 @@ class UserService {
     func updateUserLocation(uid: String?, userId: String?,
                             latitude: Double?, longitude: Double?, area: String?) -> Single<Location> {
         provider.rx.request(.updateUserLocation(
-                        uid: uid, userId: userId, latitude: latitude, longitude: longitude, area: area)
-                )
+                        uid: uid, userId: userId,
+                        latitude: latitude, longitude: longitude,
+                        area: area))
                 .debug()
                 .filterSuccessfulStatusAndRedirectCodes()
                 .map(Location.self, using: decoder)
@@ -203,7 +204,7 @@ class UserService {
                                     userDTO: user))
                             .debug()
                             .filterSuccessfulStatusAndRedirectCodes()
-                            .map ({ _ in user })
+                            .map({ _ in user })
                             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 }
                 .asSingle()
