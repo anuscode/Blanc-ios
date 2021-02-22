@@ -5,6 +5,9 @@ import RxSwift
 import UIKit
 import Lottie
 
+import FBSDKCoreKit
+import FBSDKLoginKit
+
 import KakaoSDKAuth
 import RxKakaoSDKAuth
 import KakaoSDKUser
@@ -113,6 +116,7 @@ class LoginViewController: UIViewController {
         let image = UIImage(named: "ic_facebook")
         let resized = image?.resize(targetSize: CGSize(width: 25, height: 25))
         button.setImage(resized, for: .normal)
+        button.addTarget(self, action: #selector(didTapFacebookButton), for: .touchUpInside)
         ripple.activate(to: button)
         return button
     }()
@@ -128,7 +132,7 @@ class LoginViewController: UIViewController {
         let image = UIImage(named: "ic_kakao")
         let resized = image?.resize(targetSize: CGSize(width: 25, height: 25))
         button.setImage(resized, for: .normal)
-        button.addTarget(self, action: #selector(didTabKakaoButton), for: .touchUpInside)
+        button.addTarget(self, action: #selector(didTapKakaoButton), for: .touchUpInside)
         ripple.activate(to: button)
         return button
     }()
@@ -372,9 +376,14 @@ class LoginViewController: UIViewController {
         GIDSignIn.sharedInstance().signIn()
     }
 
-    @objc private func didTabKakaoButton() {
+    @objc private func didTapKakaoButton() {
         fireworkController.addFireworks(count: 3, around: kakaoLoginButton)
         signInWithKakaoCredential()
+    }
+
+    @objc private func didTapFacebookButton() {
+        fireworkController.addFireworks(count: 3, around: kakaoLoginButton)
+        signInWithFacebookCredential()
     }
 
     func signInWithCredential(_ credential: AuthCredential) {
@@ -410,6 +419,29 @@ class LoginViewController: UIViewController {
                     toast(message: "소셜 로그인 정보를 받아오지 못했습니다.")
                 })
                 .disposed(by: disposeBag)
+    }
+
+    func signInWithFacebookCredential() {
+        let loginManager = LoginManager()
+        loginManager.logIn(permissions: ["email"], from: self) { [unowned self] (result, error) in
+
+            // 4
+            // Check for error
+            guard error == nil else {
+                // Error occurred
+                print(error!.localizedDescription)
+                return
+            }
+
+            // 5
+            // Check for cancel
+            guard let result = result, !result.isCancelled else {
+                print("User cancelled login")
+                return
+            }
+            let credential = FacebookAuthProvider.credential(withAccessToken: AccessToken.current!.tokenString)
+            signInWithCredential(credential)
+        }
     }
 
     func signInWithKakaoCredential() {
@@ -491,6 +523,7 @@ class LoginViewController: UIViewController {
     @objc private func didTapFindAccountLabel() {
         fireworkController.addFireworks(count: 2, around: findAccountLabel)
     }
+
 }
 
 extension LoginViewController: GIDSignInDelegate {

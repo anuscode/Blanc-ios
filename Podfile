@@ -60,6 +60,11 @@ target 'Blanc-ios' do
   pod 'RxKakaoSDKAuth' # 카카오 로그인
   pod 'RxKakaoSDKUser' # 카카오 유저
 
+  # facebook
+  pod 'FBSDKCoreKit'
+  pod 'FBSDKLoginKit'
+  pod 'FBSDKShareKit'
+
   target 'Blanc-iosTests' do
     inherit! :search_paths
     # Pods for testing

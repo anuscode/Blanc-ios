@@ -1,5 +1,6 @@
 import UIKit
 import CoreData
+import FBSDKCoreKit
 import Firebase
 import FirebaseMessaging
 import GoogleSignIn
@@ -8,6 +9,7 @@ import SwiftyBeaver
 import SwinjectStoryboard
 import KakaoSDKCommon
 import KakaoSDKAuth
+
 
 let log = SwiftyBeaver.self
 
@@ -34,6 +36,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         GIDSignIn.sharedInstance().clientID = FirebaseApp.app()?.options.clientID
         // logger configuration
         log.addDestination(console)
+
+        // facebook configuration
+        ApplicationDelegate.shared.application(application, didFinishLaunchingWithOptions: launchOptions)
 
         if #available(iOS 10.0, *) {
             // For iOS 10 display notification (sent via APNS)
@@ -79,9 +84,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      open url: URL,
                      options: [UIApplication.OpenURLOptionsKey: Any]) -> Bool {
+
         if (AuthApi.isKakaoTalkLoginUrl(url)) {
             return AuthController.handleOpenUrl(url: url)
         }
+
+        if url.absoluteString.contains("fb") {
+            return ApplicationDelegate.shared.application(
+                    application, open: url,
+                    sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String,
+                    annotation: options[UIApplication.OpenURLOptionsKey.annotation]
+            )
+        }
+
         return GIDSignIn.sharedInstance().handle(url)
     }
 
