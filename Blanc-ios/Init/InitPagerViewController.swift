@@ -46,13 +46,6 @@ class InitPagerViewController: UIPageViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        do {
-            try auth.signOut()
-        } catch {
-            toast(message: "로그아웃에 실패 하였습니다. 다시 시도해 주세요.")
-        }
-
         setViewControllers([firstViewController], direction: .forward, animated: true) { _ in
             self.subscribeRoute()
         }
