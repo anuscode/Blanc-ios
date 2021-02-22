@@ -47,6 +47,8 @@ class UserCardTableViewCell: UITableViewCell {
 
     private let ripple = Ripple()
 
+    private let fireworkController = ClassicFireworkController()
+
     private var user: UserDTO?
 
     var delegate: UserCardCellDelegate?
@@ -506,6 +508,7 @@ class UserCardTableViewCell: UITableViewCell {
     }
 
     @objc func didTapStarRatingButton(sender: UITapGestureRecognizer) {
+        fireworkController.addFireworks(count: 2, around: button1)
         if (label1.isHidden) {
             switchCardBodyMode(to: .label)
         } else {
@@ -520,9 +523,11 @@ class UserCardTableViewCell: UITableViewCell {
     }
 
     @objc func didTapRequestButton() {
-        if (user == nil) {
+        guard (user != nil) else {
             return
         }
+
+        fireworkController.addFireworks(count: 2, around: button2)
         delegate?.confirm(user)
                 .subscribe(onNext: { [unowned self] result in
                     guard result else {
@@ -541,6 +546,7 @@ class UserCardTableViewCell: UITableViewCell {
     }
 
     @objc func didTapPokeButton(sender: UITapGestureRecognizer) {
+        fireworkController.addFireworks(count: 2, around: button3)
         delegate?.poke(user, onBegin: {
             pokeLottie.begin(with: contentView) {
                 pokeLottie.snp.makeConstraints { make in
