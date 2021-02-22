@@ -78,10 +78,11 @@ class RequestsModel {
         requestService.updateLikeRequest(uid: session.uid, requestId: request?.id, response: Response.ACCEPTED)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [self] in
-                    if let index = requests.firstIndex(of: request!) {
-                        requests.remove(at: index)
-                        publish()
+                .flatMap({ _ -> Single<UserDTO> in self.session.refresh() })
+                .subscribe(onSuccess: { _ in
+                    if let index = self.requests.firstIndex(of: request!) {
+                        self.requests.remove(at: index)
+                        self.publish()
                     }
                     onSuccess() // refresh conversations.
                 }, onError: { err in
