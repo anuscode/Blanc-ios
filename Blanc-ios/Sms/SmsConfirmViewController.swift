@@ -29,7 +29,7 @@ class SmsConfirmViewController: UIViewController {
     lazy private var smsLabel: UILabel = {
         let label = UILabel()
         label.text = "SMS 휴대폰 전화 인증"
-        label.font = UIFont.systemFont(ofSize: 25)
+        label.font = .systemFont(ofSize: 28)
         label.numberOfLines = 1;
         label.textColor = .black
         return label
@@ -59,11 +59,11 @@ class SmsConfirmViewController: UIViewController {
         textField.backgroundColor = .secondarySystemBackground
         textField.containerRadius = Constants.radius
         textField.sizeToFit()
-        textField.setColor(primary: .faceBook, secondary: .secondaryLabel)
+        textField.setColor(primary: .black, secondary: .secondaryLabel)
 
         textField.leadingAssistiveLabel.text = "6자리의 숫자 코드."
-        textField.setLeadingAssistiveLabelColor(.deepGray, for: .normal)
-        textField.setLeadingAssistiveLabelColor(.deepGray, for: .editing)
+        textField.setLeadingAssistiveLabelColor(.black, for: .normal)
+        textField.setLeadingAssistiveLabelColor(.black, for: .editing)
 
         textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
         return textField
@@ -195,6 +195,7 @@ class SmsConfirmViewController: UIViewController {
             return
         }
         spinnerView.visible(true)
+        activateConfirmButton(false)
         verificationService?.verifySmsCode(
                         currentUser: auth.currentUser!,
                         uid: auth.uid,
@@ -211,6 +212,7 @@ class SmsConfirmViewController: UIViewController {
                 })
                 .do(onError: { err in
                     log.error(err)
+                    self.activateConfirmButton(true)
                 })
                 .flatMap { [self] it -> Single<UserDTO> in
                     userService!.createUser(
@@ -221,17 +223,18 @@ class SmsConfirmViewController: UIViewController {
                             smsToken: it.smsToken
                     )
                 }
-                .flatMap { [self] it -> Single<Void> in
-                    session!.generate()
+                .flatMap { it -> Single<Void> in
+                    self.session!.generate()
                 }
-                .subscribe(onSuccess: { [self] _ in
-                    spinnerView.visible(false)
-                    interval?.dispose()
-                    presentPendingViewController()
-                }, onError: { [self] err in
+                .subscribe(onSuccess: { _ in
+                    self.spinnerView.visible(false)
+                    self.interval?.dispose()
+                    self.presentPendingViewController()
+                }, onError: { err in
                     log.error(err)
-                    spinnerView.visible(false)
-                    toast(message: "문자 요청에 실패 하였습니다.")
+                    self.spinnerView.visible(false)
+                    self.activateConfirmButton(true)
+                    self.toast(message: "문자 요청에 실패 하였습니다.")
                 })
                 .disposed(by: disposeBag)
     }

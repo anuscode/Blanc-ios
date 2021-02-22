@@ -25,7 +25,7 @@ class SmsViewController: UIViewController {
     lazy private var smsLabel: UILabel = {
         let label = UILabel()
         label.text = "SMS 휴대폰 전화 인증"
-        label.font = .systemFont(ofSize: 25)
+        label.font = .systemFont(ofSize: 28)
         label.numberOfLines = 1;
         label.textColor = .black
         return label
@@ -55,11 +55,11 @@ class SmsViewController: UIViewController {
         textField.keyboardType = .numberPad
         textField.backgroundColor = .secondarySystemBackground
         textField.containerRadius = Constants.radius2
-        textField.setColor(primary: .faceBook, secondary: .secondaryLabel)
+        textField.setColor(primary: .black, secondary: .secondaryLabel)
 
         textField.leadingAssistiveLabel.text = "옳바른 형식: +82 10 5555 5555 (하이픈 공백 없이)"
-        textField.setLeadingAssistiveLabelColor(.deepGray, for: .normal)
-        textField.setLeadingAssistiveLabelColor(.deepGray, for: .editing)
+        textField.setLeadingAssistiveLabelColor(.black, for: .normal)
+        textField.setLeadingAssistiveLabelColor(.black, for: .editing)
 
         textField.addTarget(self, action: #selector(didChangeTextField), for: .editingChanged)
         return textField
