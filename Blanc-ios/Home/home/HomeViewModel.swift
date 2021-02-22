@@ -88,6 +88,10 @@ class HomeViewModel {
         homeModel.getStarRatingIRated(user?.id)
     }
 
+    func updateUserLastLoginAt() {
+        homeModel.updateUserLastLoginAt()
+    }
+
     func channel(user: UserDTO?) {
         if (user == nil) {
             return

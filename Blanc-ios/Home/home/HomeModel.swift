@@ -183,4 +183,25 @@ class HomeModel {
         }
         publish()
     }
+
+    func updateUserLastLoginAt() {
+
+        let current = Int(NSDate().timeIntervalSince1970)
+        let lastLoginAt = session.user?.lastLoginAt ?? 0
+        let delta = current - lastLoginAt
+        if (delta < 150) {
+            return
+        }
+
+        userService.updateUserLastLoginAt(uid: auth.uid, userId: session.id)
+                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+                .observeOn(SerialDispatchQueueScheduler(qos: .default))
+                .subscribe(onSuccess: { _ in
+                    self.session.user?.lastLoginAt = Int(NSDate().timeIntervalSince1970)
+                    print(Int(NSDate().timeIntervalSince1970))
+                }, onError: { err in
+                    log.error(err)
+                })
+                .disposed(by: disposeBag)
+    }
 }

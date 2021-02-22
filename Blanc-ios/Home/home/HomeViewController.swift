@@ -92,6 +92,7 @@ class HomeViewController: UIViewController {
         navigationController?.navigationBar.isTranslucent = true
         navigationItem.rightBarButtonItem = rightBarButtonItem
         navigationItem.leftBarButtonItem = leftBarButtonItem
+        homeViewModel?.updateUserLastLoginAt()
     }
 
     override func viewDidLoad() {

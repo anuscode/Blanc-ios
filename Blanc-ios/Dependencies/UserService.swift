@@ -41,9 +41,7 @@ class UserService {
                 .debug()
                 .filterSuccessfulStatusAndRedirectCodes()
                 .map(UserDTO.self, using: decoder)
-                .map({ user in
-                    user.exists ?? false
-                })
+                .map({ user in user.exists ?? false })
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
     }
 
@@ -139,9 +137,7 @@ class UserService {
                 .debug()
                 .filterSuccessfulStatusAndRedirectCodes()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .map({ _ in
-                    Void()
-                })
+                .map({ _ in Void() })
     }
 
     func pushLookUp(uid: String?, userId: String?) -> Single<Void> {
@@ -149,9 +145,7 @@ class UserService {
                 .debug()
                 .filterSuccessfulStatusAndRedirectCodes()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .map({ _ in
-                    Void()
-                })
+                .map({ _ in Void() })
     }
 
     func uploadUserImage(uid: String?, userId: String?, index: Int?, file: UIImage) -> Single<ImageDTO> {
@@ -209,20 +203,18 @@ class UserService {
                                     userDTO: user))
                             .debug()
                             .filterSuccessfulStatusAndRedirectCodes()
-                            .map { _ in
-                                user
-                            }
+                            .map ({ _ in user })
                             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 }
                 .asSingle()
     }
 
-    func updateUserLastLoginAt(uid: String?, userId: String?) -> Single<UserDTO> {
+    func updateUserLastLoginAt(uid: String?, userId: String?) -> Single<Void> {
         provider.rx.request(.updateUserLastLoginAt(uid: uid, userId: userId))
                 .debug()
                 .filterSuccessfulStatusAndRedirectCodes()
-                .map(UserDTO.self, using: decoder)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+                .map({ _ in Void() })
     }
 
     func updateUserContacts(currentUser: User, uid: String?, userId: String?, phones: [String]) -> Single<Void> {
@@ -237,9 +229,7 @@ class UserService {
                                             phones: phones))
                             .debug()
                             .filterSuccessfulStatusAndRedirectCodes()
-                            .map { _ in
-                                Void()
-                            }
+                            .map({ _ in Void() })
                             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 }
                 .asSingle()
