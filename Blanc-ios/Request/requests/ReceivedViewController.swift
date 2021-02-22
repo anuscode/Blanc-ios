@@ -73,9 +73,7 @@ class ReceivedViewController: UIViewController {
                     self.data.requests = data.requests
                     self.data.users = data.users
 
-
                     self.update(animatingDifferences: animatingDifferences)
-
                 }, onError: { err in
                     log.error(err)
                 })

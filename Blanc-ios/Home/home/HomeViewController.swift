@@ -4,6 +4,7 @@ import RxSwift
 import SwinjectStoryboard
 import FSPagerView
 import Shimmer
+import Lottie
 
 
 class HomeViewController: UIViewController {
@@ -33,6 +34,8 @@ class HomeViewController: UIViewController {
     }
 
     private let sections: [String] = ["블랑 추천", "근거리 추천", "실시간 추천"]
+
+    private var animations: [AnimationView] = []
 
     var homeViewModel: HomeViewModel?
 
@@ -93,6 +96,7 @@ class HomeViewController: UIViewController {
         navigationItem.rightBarButtonItem = rightBarButtonItem
         navigationItem.leftBarButtonItem = leftBarButtonItem
         homeViewModel?.updateUserLastLoginAt()
+        animations.forEach({ view in view.play() })
     }
 
     override func viewDidLoad() {
@@ -205,6 +209,56 @@ extension HomeViewController: UITableViewDelegate {
         case Recommendation, Close, RealTime
     }
 
+    private func generateFooterView(mainText: String, secondaryText: String) -> UIView {
+        let view = UIView()
+        view.backgroundColor = .white
+
+        let animationView = AnimationView()
+        animations.append(animationView)
+        animationView.animation = Animation.named("bad_emoji")
+        animationView.contentMode = .scaleAspectFit
+        animationView.loopMode = .loop
+        animationView.play()
+
+        view.addSubview(animationView)
+        animationView.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(50)
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.height.equalTo(100).priority(800)
+        }
+
+        let mainLabel = UILabel()
+        mainLabel.text = mainText
+        mainLabel.textColor = .darkText
+        mainLabel.textAlignment = .center
+        mainLabel.font = .systemFont(ofSize: 20)
+
+        view.addSubview(mainLabel)
+        mainLabel.snp.makeConstraints { make in
+            make.top.equalTo(animationView.snp.bottom).offset(30)
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+        }
+
+        let secondaryLabel = UILabel()
+        secondaryLabel.text = secondaryText
+        secondaryLabel.textColor = .systemGray
+        secondaryLabel.textAlignment = .center
+        secondaryLabel.font = .systemFont(ofSize: 15)
+        secondaryLabel.numberOfLines = 3
+
+        view.addSubview(secondaryLabel)
+        secondaryLabel.snp.makeConstraints { make in
+            make.top.equalTo(mainLabel.snp.bottom).offset(10)
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.bottom.equalToSuperview().inset(50)
+        }
+
+        return view
+    }
+
     private func generateHeaderView(text: String) -> UIView {
         let view = UIView()
         view.backgroundColor = .white
@@ -237,6 +291,28 @@ extension HomeViewController: UITableViewDelegate {
 
     public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         generateHeaderView(text: sections[section])
+    }
+
+    /** Footer is used for a empty message view. **/
+    public func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        if (section == 0) {
+            return data.recommendedUsers.count == 0 ? generateFooterView(
+                    mainText: "해당 되는 유저를 찾을 수 없습니다.",
+                    secondaryText: "최선을 다해 유저를 모집 중입니다.\n양해 부탁 드립니다.") : UIView()
+        }
+        if (section == 1) {
+            return data.closeUsers.count == 0 ? generateFooterView(
+                    mainText: "해당 되는 유저를 찾을 수 없습니다.",
+                    secondaryText: "최선을 다해 유저를 모집 중입니다.\n양해 부탁 드립니다.") : UIView()
+        }
+
+        if (section == 2) {
+            return data.realTimeUsers.count == 0 ? generateFooterView(
+                    mainText: "해당 되는 유저를 찾을 수 없습니다.",
+                    secondaryText: "최선을 다해 유저를 모집 중입니다.\n양해 부탁 드립니다.") : UIView()
+        }
+
+        return nil
     }
 
     public func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
