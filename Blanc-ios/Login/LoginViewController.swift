@@ -1,3 +1,6 @@
+import AuthenticationServices  // Apple login.
+import CryptoKit
+
 import Firebase
 import GoogleSignIn
 import RxFirebase
@@ -29,6 +32,14 @@ class LoginViewController: UIViewController {
     var userService: UserService?
 
     var session: Session?
+
+    fileprivate var currentNonce: String?
+
+    private var buttons: [UIView] {
+        get {
+            [appleLoginButton, facebookLoginButton, kakaoLoginButton]
+        }
+    }
 
     lazy private var titleLabel: UILabel = {
         let label = UILabel()
@@ -87,54 +98,103 @@ class LoginViewController: UIViewController {
         return view
     }()
 
-    lazy private var googleLoginButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("Google 계정으로 로그인", for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 16)
-        button.layer.masksToBounds = true
-        button.layer.cornerRadius = 8
-        button.layer.borderWidth = 0.5
-        button.layer.borderColor = UIColor.darkGray.cgColor
-        button.backgroundColor = .white
-        button.setTitleColor(.darkText, for: .normal)
-        let image = UIImage(named: "ic_google")
-        let resized = image?.resize(targetSize: CGSize(width: 25, height: 25))
-        button.setImage(resized, for: .normal)
-        button.addTarget(self, action: #selector(didTapGoogleButton), for: .touchUpInside)
-        ripple.activate(to: button)
-        return button
+    lazy private var appleLoginButton: UIView = {
+        let view = UIView()
+        view.layer.masksToBounds = true
+        view.layer.cornerRadius = 8
+        view.layer.borderWidth = 0.5
+        view.layer.borderColor = UIColor.black.cgColor
+        view.backgroundColor = .white
+
+        let label = UILabel()
+        label.text = "Apple 계정으로 로그인"
+        label.font = .systemFont(ofSize: 16)
+        label.textColor = .black
+        label.textAlignment = .center
+
+        view.addSubview(label)
+        label.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "applelogo")
+        view.addSubview(imageView)
+        imageView.snp.makeConstraints { make in
+            make.leading.equalToSuperview().inset(20)
+            make.centerY.equalToSuperview()
+            make.width.equalTo(25)
+            make.height.equalTo(30)
+        }
+
+        view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapAppleButton))
+        ripple.activate(to: view)
+        return view
     }()
 
-    lazy private var facebookLoginButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("Facebook 계정으로 로그인", for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 16)
-        button.layer.masksToBounds = true
-        button.layer.cornerRadius = 8
-        button.backgroundColor = .faceBook
-        button.setTitleColor(.white, for: .normal)
-        let image = UIImage(named: "ic_facebook")
-        let resized = image?.resize(targetSize: CGSize(width: 25, height: 25))
-        button.setImage(resized, for: .normal)
-        button.addTarget(self, action: #selector(didTapFacebookButton), for: .touchUpInside)
-        ripple.activate(to: button)
-        return button
+
+    lazy private var facebookLoginButton: UIView = {
+        let view = UIView()
+        view.layer.masksToBounds = true
+        view.layer.cornerRadius = 8
+        view.backgroundColor = .faceBook
+
+        let label = UILabel()
+        label.text = "Facebook 계정으로 로그인"
+        label.font = .systemFont(ofSize: 16)
+        label.textColor = .white
+        label.textAlignment = .center
+
+        view.addSubview(label)
+        label.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "ic_facebook")
+        view.addSubview(imageView)
+        imageView.snp.makeConstraints { make in
+            make.leading.equalToSuperview().inset(20)
+            make.centerY.equalToSuperview()
+            make.width.equalTo(25)
+            make.height.equalTo(25)
+        }
+
+        view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapFacebookButton))
+        ripple.activate(to: view)
+        return view
     }()
 
-    lazy private var kakaoLoginButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("KakaoTalk 계정으로 로그인", for: .normal)
-        button.titleLabel?.font = .systemFont(ofSize: 16)
-        button.layer.masksToBounds = true
-        button.layer.cornerRadius = 8
-        button.backgroundColor = .kakaoTalk
-        button.setTitleColor(.kakaoBrown, for: .normal)
-        let image = UIImage(named: "ic_kakao")
-        let resized = image?.resize(targetSize: CGSize(width: 25, height: 25))
-        button.setImage(resized, for: .normal)
-        button.addTarget(self, action: #selector(didTapKakaoButton), for: .touchUpInside)
-        ripple.activate(to: button)
-        return button
+    lazy private var kakaoLoginButton: UIView = {
+        let view = UIView()
+        view.layer.masksToBounds = true
+        view.layer.cornerRadius = 8
+        view.backgroundColor = .kakaoTalk
+
+        let label = UILabel()
+        label.text = "KakaoTalk 계정으로 로그인"
+        label.font = .systemFont(ofSize: 16)
+        label.textColor = .kakaoBrown
+        label.textAlignment = .center
+
+        view.addSubview(label)
+        label.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "ic_kakao")
+        view.addSubview(imageView)
+        imageView.snp.makeConstraints { make in
+            make.leading.equalToSuperview().inset(20)
+            make.centerY.equalToSuperview()
+            make.width.equalTo(25)
+            make.height.equalTo(25)
+        }
+
+        view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapKakaoButton))
+        ripple.activate(to: view)
+        return view
     }()
 
     lazy private var snsWarningLabel: UILabel = {
@@ -270,14 +330,14 @@ class LoginViewController: UIViewController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        let length1 = googleLoginButton.top - secondaryTitleLabel.bottom
+        let length1 = appleLoginButton.top - secondaryTitleLabel.bottom
         let length2 = view.width
         let height = min(length1, length2)
         lottieView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.width.equalTo(height)
             make.height.equalTo(height)
-            make.bottom.equalTo(googleLoginButton.snp.top)
+            make.bottom.equalTo(appleLoginButton.snp.top)
         }
     }
 
@@ -292,9 +352,9 @@ class LoginViewController: UIViewController {
         view.addSubview(lottieView)
         view.addSubview(host)
         view.addSubview(progressView)
-        view.addSubview(googleLoginButton)
         view.addSubview(facebookLoginButton)
         view.addSubview(kakaoLoginButton)
+        view.addSubview(appleLoginButton)
         view.addSubview(snsWarningLabel)
         view.addSubview(findAccountLabel)
         view.addSubview(findAccountUnderline)
@@ -318,7 +378,7 @@ class LoginViewController: UIViewController {
             make.top.equalTo(titleLabel.snp.bottom).inset(-5)
         }
 
-        googleLoginButton.snp.makeConstraints { make in
+        appleLoginButton.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.width.equalToSuperview().multipliedBy(0.8)
             make.height.equalTo(Constants.largeButtonHeight)
@@ -365,15 +425,16 @@ class LoginViewController: UIViewController {
             make.center.equalToSuperview()
             make.height.equalTo(30)
         }
-
-        googleLoginButton.setImageLeftTextCenter()
-        facebookLoginButton.setImageLeftTextCenter()
-        kakaoLoginButton.setImageLeftTextCenter()
     }
 
-    @objc private func didTapGoogleButton() {
-        fireworkController.addFireworks(count: 3, around: googleLoginButton)
-        GIDSignIn.sharedInstance().signIn()
+    @objc private func didTapAppleButton() {
+        fireworkController.addFireworks(count: 3, around: appleLoginButton)
+        startSignInWithAppleCredential()
+    }
+
+    @objc private func didTapFacebookButton() {
+        fireworkController.addFireworks(count: 3, around: facebookLoginButton)
+        signInWithFacebookCredential()
     }
 
     @objc private func didTapKakaoButton() {
@@ -381,13 +442,14 @@ class LoginViewController: UIViewController {
         signInWithKakaoCredential()
     }
 
-    @objc private func didTapFacebookButton() {
-        fireworkController.addFireworks(count: 3, around: kakaoLoginButton)
-        signInWithFacebookCredential()
+    @objc private func didTapFindAccountLabel() {
+        fireworkController.addFireworks(count: 2, around: findAccountLabel)
+        toast(message: "구현 중 입니다. 다음 패치 때 이용 하세요.")
     }
 
-    func signInWithCredential(_ credential: AuthCredential) {
+    private func signInWithCredential(_ credential: AuthCredential) {
 
+        enableLoginButtons(false)
         progressView.visible(true)
         progressLabel.text = "토큰 발급중.."
 
@@ -414,37 +476,35 @@ class LoginViewController: UIViewController {
                         log.info("Sign in with credential done. beginning registration progress..")
                         replace(storyboard: "Sms", withIdentifier: "SmsViewController")
                     }
-                }, onError: { [unowned self] err in
+                }, onError: { err in
                     log.error(err)
-                    toast(message: "소셜 로그인 정보를 받아오지 못했습니다.")
+                    self.progressView.visible(false)
+                    self.enableLoginButtons(true)
+                    self.toast(message: "해당 계정이 이미 존재 하거나 다른 이유로 로그인 할 수 없습니다.")
                 })
                 .disposed(by: disposeBag)
     }
 
-    func signInWithFacebookCredential() {
+    private func signInWithFacebookCredential() {
         let loginManager = LoginManager()
         loginManager.logIn(permissions: ["email"], from: self) { [unowned self] (result, error) in
 
-            // 4
-            // Check for error
             guard error == nil else {
-                // Error occurred
-                print(error!.localizedDescription)
+                log.error(error!.localizedDescription)
                 return
             }
 
-            // 5
-            // Check for cancel
             guard let result = result, !result.isCancelled else {
-                print("User cancelled login")
+                log.info("User cancelled login")
                 return
             }
+
             let credential = FacebookAuthProvider.credential(withAccessToken: AccessToken.current!.tokenString)
             signInWithCredential(credential)
         }
     }
 
-    func signInWithKakaoCredential() {
+    private func signInWithKakaoCredential() {
         guard KakaoSDKAuth.AuthApi.isKakaoTalkLoginAvailable() else {
             toast(message: "카카오톡이 미설치 이거나 미인증 상태 입니다.")
             return
@@ -459,6 +519,7 @@ class LoginViewController: UIViewController {
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(MainScheduler.instance)
                 .do(onNext: { [unowned self] authResult in
+                    enableLoginButtons(false)
                     progressView.visible(true)
                     progressLabel.text = "카카오 토큰 검증 중.."
                 })
@@ -496,7 +557,8 @@ class LoginViewController: UIViewController {
                         self.replace(storyboard: "Sms", withIdentifier: "SmsViewController")
                     }
                 }, onError: { error in
-                    print(error)
+                    log.error(error)
+                    self.enableLoginButtons(true)
                     self.progressView.visible(false)
                 })
                 .disposed(by: disposeBag)
@@ -512,18 +574,18 @@ class LoginViewController: UIViewController {
                         replace(storyboard: "Registration",
                                 withIdentifier: "RegistrationNavigationViewController")
                     }
-                }, onError: { [unowned self] err in
+                }, onError: { err in
                     log.error(err)
-                    progressView.visible(false)
-                    session?.signOut()
+                    self.progressView.visible(false)
+                    self.enableLoginButtons(true)
+                    self.session?.signOut()
                 })
                 .disposed(by: disposeBag)
     }
 
-    @objc private func didTapFindAccountLabel() {
-        fireworkController.addFireworks(count: 2, around: findAccountLabel)
+    private func enableLoginButtons(_ isEnable: Bool) {
+        buttons.forEach({ $0.isUserInteractionEnabled = isEnable })
     }
-
 }
 
 extension LoginViewController: GIDSignInDelegate {
@@ -544,5 +606,99 @@ extension LoginViewController: GIDSignInDelegate {
 
     func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {
         toast(message: "로그인 세션이 종료 되었습니다.")
+    }
+}
+
+extension LoginViewController: ASAuthorizationControllerDelegate,
+        ASAuthorizationControllerPresentationContextProviding {
+
+    func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+        view.window!
+    }
+
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential {
+            guard let nonce = currentNonce else {
+                fatalError("Invalid state: A login callback was received, but no login request was sent.")
+            }
+            guard let appleIDToken = appleIDCredential.identityToken else {
+                log.error("Unable to fetch identity token")
+                return
+            }
+            guard let idTokenString = String(data: appleIDToken, encoding: .utf8) else {
+                log.error("Unable to serialize token string from data: \(appleIDToken.debugDescription)")
+                return
+            }
+            // Initialize a Firebase credential.
+            let credential = OAuthProvider.credential(withProviderID: "apple.com",
+                    idToken: idTokenString,
+                    rawNonce: nonce)
+            // Sign in with Firebase.
+            self.signInWithCredential(credential)
+        }
+    }
+
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        // Handle error.
+        log.error("Sign in with Apple errored: \(error)")
+    }
+
+    @available(iOS 13, *)
+    func startSignInWithAppleCredential() {
+        let nonce = randomNonceString()
+        currentNonce = nonce
+        let appleIDProvider = ASAuthorizationAppleIDProvider()
+        let request = appleIDProvider.createRequest()
+        request.requestedScopes = [.fullName, .email]
+        request.nonce = sha256(nonce)
+
+        let authorizationController = ASAuthorizationController(authorizationRequests: [request])
+        authorizationController.delegate = self
+        authorizationController.presentationContextProvider = self
+        authorizationController.performRequests()
+    }
+
+    // Adapted from https://auth0.com/docs/api-auth/tutorials/nonce#generate-a-cryptographically-random-nonce
+    private func randomNonceString(length: Int = 32) -> String {
+        precondition(length > 0)
+        let charset: Array<Character> =
+                Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
+        var result = ""
+        var remainingLength = length
+
+        while remainingLength > 0 {
+            let randoms: [UInt8] = (0..<16).map { _ in
+                var random: UInt8 = 0
+                let errorCode = SecRandomCopyBytes(kSecRandomDefault, 1, &random)
+                if errorCode != errSecSuccess {
+                    fatalError("Unable to generate nonce. SecRandomCopyBytes failed with OSStatus \(errorCode)")
+                }
+                return random
+            }
+
+            randoms.forEach { random in
+                if remainingLength == 0 {
+                    return
+                }
+
+                if random < charset.count {
+                    result.append(charset[Int(random)])
+                    remainingLength -= 1
+                }
+            }
+        }
+
+        return result
+    }
+
+    @available(iOS 13, *)
+    private func sha256(_ input: String) -> String {
+        let inputData = Data(input.utf8)
+        let hashedData = SHA256.hash(data: inputData)
+        let hashString = hashedData.compactMap {
+            return String(format: "%02x", $0)
+        }.joined()
+
+        return hashString
     }
 }
