@@ -1,6 +1,12 @@
 import Foundation
 
 
+public struct Cal {
+    var year: Int
+    var month: Int
+    var day: Int
+}
+
 public extension Int {
     internal func asCalendar() -> Cal {
         let timestamp = TimeInterval(self)

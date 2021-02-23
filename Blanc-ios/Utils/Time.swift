@@ -1,11 +1,5 @@
 import Foundation
 
-public struct Cal {
-    var year: Int
-    var month: Int
-    var day: Int
-}
-
 class Time {
 
     static func convertCalendarToTimestamp(year: Int, month: Int, day: Int) -> Int {
