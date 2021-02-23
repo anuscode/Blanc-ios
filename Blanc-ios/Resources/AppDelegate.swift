@@ -9,6 +9,8 @@ import SwiftyBeaver
 import SwinjectStoryboard
 import KakaoSDKCommon
 import KakaoSDKAuth
+import UserNotifications
+import Kingfisher
 
 
 let log = SwiftyBeaver.self
@@ -43,11 +45,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if #available(iOS 10.0, *) {
             // For iOS 10 display notification (sent via APNS)
             UNUserNotificationCenter.current().delegate = self
-
             let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
             UNUserNotificationCenter.current().requestAuthorization(
-                    options: authOptions,
-                    completionHandler: { _, _ in })
+                    options: authOptions) { (granted, error) in
+                guard (error == nil) else {
+                    log.error(error!.localizedDescription)
+                    return
+                }
+                if granted {
+                    log.info("APNS Push authorization has been granted..")
+                } else {
+                    log.info("APNS Push authorization has been rejected..")
+                }
+            }
         } else {
             let settings: UIUserNotificationSettings =
                     UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
@@ -154,29 +164,83 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 }
 
+extension AppDelegate {
+
+    func application(_ application: UIApplication,
+                     didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+                     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        log.info("Performing background operation..")
+        guard let push = try? PushDTO.decode(userInfo) else {
+            log.error("Failed to decode userInfo with PushDTO.")
+            return
+        }
+        Broadcast.publish(push)
+        handleBackgroundNotification(push) {
+            completionHandler(.newData)
+        }
+    }
+
+    func handleBackgroundNotification(_ push: PushDTO, completion: @escaping () -> Void) {
+        let content = UNMutableNotificationContent()
+
+        if (push.isMessage()) {
+            content.title = "새로운 메세지가 도착 했습니다."
+            content.body = "\(push.nickName ?? "??"): \(push.message ?? "??")"
+        } else {
+            content.title = "새로운 이벤트가 발생 했습니다."
+            content.body = push.message ?? ""
+        }
+
+        content.sound = UNNotificationSound.default
+
+        guard let url = URL(string: "https://storage.googleapis.com/blanc-850624.appspot.com/user_images/KAKAO%3A1637823099/KAKAO%3A1637823099_0_266fb5ae-7535-11eb-8ff8-acde48001122") else {
+            let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
+            UNUserNotificationCenter.current().add(request)
+            completion()
+            return
+        }
+
+        KingfisherManager.shared.retrieveImage(
+                with: url,
+                options: [.cacheOriginalImage],
+                progressBlock: nil,
+                completionHandler: { image, error, cacheType, imageURL in
+                    if (error != nil) {
+                        log.error(error!.localizedDescription)
+                    } else {
+                        if let attachment = UNNotificationAttachment.create(image: image, options: nil) {
+                            log.info("Adding an image attachment...")
+                            content.attachments = [attachment]
+                        }
+                    }
+                    let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
+                    let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
+                    UNUserNotificationCenter.current().add(request)
+                    completion()
+                })
+    }
+}
+
+
 extension AppDelegate: UNUserNotificationCenterDelegate {
-    //This method is to handle a notification that arrived while the app was running in the foreground
+    // This method is to handle a notification that arrived while the app was running in the foreground
+    @available(iOS 10.0, *)
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 willPresent notification: UNNotification,
                                 withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        let userInfo = notification.request.content.userInfo
-        guard let push = try? PushDTO.decode(userInfo) else {
-            log.error("Failed to decode userInfo with PushDTO.")
-            return
-        }
-        Broadcast.publish(push)
+        log.info("foreground..")
+        completionHandler([.sound])
     }
 
-    //This method is to handle a notification that arrived while the app was not in foreground
+    @available(iOS 10.0, *)
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 didReceive response: UNNotificationResponse,
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
+        // Get the meeting ID from the original notification.
         let userInfo = response.notification.request.content.userInfo
-        guard let push = try? PushDTO.decode(userInfo) else {
-            log.error("Failed to decode userInfo with PushDTO.")
-            return
-        }
-        Broadcast.publish(push)
+        log.info("user clicked notification when it's under background..")
+        // Always call the completion handler when done.
+        completionHandler()
     }
 }
 
@@ -188,5 +252,29 @@ extension AppDelegate: MessagingDelegate {
     }
 }
 
+extension UNNotificationAttachment {
 
+    static func create(image: UIImage?, options: [NSObject: AnyObject]?) -> UNNotificationAttachment? {
+
+        guard image != nil else {
+            return nil
+        }
+
+        let fileManager = FileManager.default
+        let tmpSubFolderName = ProcessInfo.processInfo.globallyUniqueString
+        let tmpSubFolderURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(tmpSubFolderName, isDirectory: true)
+        do {
+            try fileManager.createDirectory(at: tmpSubFolderURL, withIntermediateDirectories: true, attributes: nil)
+            let imageFileIdentifier = ProcessInfo.processInfo.globallyUniqueString + ".png"
+            let fileURL = tmpSubFolderURL.appendingPathComponent(imageFileIdentifier)
+            let imageData = UIImage.pngData(image!)
+            try imageData()?.write(to: fileURL)
+            let imageAttachment = try UNNotificationAttachment.init(identifier: imageFileIdentifier, url: fileURL, options: options)
+            return imageAttachment
+        } catch {
+            print("error " + error.localizedDescription)
+        }
+        return nil
+    }
+}
 
