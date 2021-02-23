@@ -6,7 +6,7 @@ class LeftSideBarView: UIView {
 
     lazy private var label: UILabel = {
         let label = UILabel()
-        label.text = "블랑"
+        label.text = "blanc"
         label.font = .boldSystemFont(ofSize: 25)
         label.textColor = .black
         return label
@@ -20,7 +20,7 @@ class LeftSideBarView: UIView {
         return dot
     }()
 
-    required init(title: String = "블랑") {
+    required init(title: String = "blanc") {
         super.init(frame: .zero)
         label.text = title
         setup()
