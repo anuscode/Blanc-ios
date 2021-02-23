@@ -168,6 +168,6 @@ class AlarmTableViewCell: UITableViewCell {
         let diameter = Const.imageDiameter
         userImage.url(push?.imageUrl, cornerRadius: 0, size: CGSize(width: diameter, height: diameter))
         line1.text = "\(push?.message ?? "ERROR")"
-        line2.text = "\(Time.calculateStaledTime(timestamp: push?.createdAt))"
+        line2.text = "\(push?.createdAt.convertToStaledTime() ?? "알 수 없음")"
     }
 }

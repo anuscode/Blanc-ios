@@ -7,6 +7,7 @@ struct Cal {
 }
 
 class Time {
+
     static func convertTimestampToCalendar(timestamp: Int) -> Cal {
         let timestamp = TimeInterval(timestamp)
         let nsDate = NSDate(timeIntervalSince1970: timestamp)
@@ -49,23 +50,5 @@ class Time {
         let year = (60 * 60 * 24 * 365)
         let age = delta / year
         return age
-    }
-
-    static func calculateStaledTime(timestamp: Int?) -> String {
-        if (timestamp == nil) {
-            return "과거"
-        }
-        let current = Int(NSDate().timeIntervalSince1970)
-        let deltaInSeconds = current - timestamp!
-        let deltaInMinutes = deltaInSeconds / 60
-        if (deltaInMinutes < 60) {
-            return "\(deltaInMinutes) 분 전"
-        }
-        let deltaInHours = deltaInMinutes / 60
-        if (deltaInHours < 24) {
-            return "\(deltaInHours) 시간 전"
-        }
-        let deltaInDays = deltaInHours / 24
-        return "\(deltaInDays) 일 전"
     }
 }

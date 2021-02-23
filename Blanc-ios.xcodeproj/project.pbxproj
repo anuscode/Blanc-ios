@@ -272,6 +272,7 @@
 		240D91B346CC87269CAF305D /* Pods_Blanc_ios_Blanc_iosUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61F4FB0474880E97BECB4B37 /* Pods_Blanc_ios_Blanc_iosUITests.framework */; };
 		69A10C304D3EE8E1BC424287 /* Pods_Blanc_ios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86136E85AB864A9141A83B37 /* Pods_Blanc_ios.framework */; };
 		7A481E8EFA2268096059CF76 /* Pods_Blanc_iosTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 89DD709C0040CF6E7F18A036 /* Pods_Blanc_iosTests.framework */; };
+		C47AA32A10ACDA94C39E6D6E /* Int+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AAF64311FE6466E824F0D /* Int+Extension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -568,6 +569,7 @@
 		89DD709C0040CF6E7F18A036 /* Pods_Blanc_iosTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Blanc_iosTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		91054CA93BF36C88B71621F7 /* Pods-Blanc-ios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Blanc-ios.debug.xcconfig"; path = "Target Support Files/Pods-Blanc-ios/Pods-Blanc-ios.debug.xcconfig"; sourceTree = "<group>"; };
 		BBF76FBD4A6DCDD1994B9BC0 /* Pods-Blanc-ios-Blanc-iosUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Blanc-ios-Blanc-iosUITests.debug.xcconfig"; path = "Target Support Files/Pods-Blanc-ios-Blanc-iosUITests/Pods-Blanc-ios-Blanc-iosUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		C47AAF64311FE6466E824F0D /* Int+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Int+Extension.swift"; sourceTree = "<group>"; };
 		DBBEBAFA0CF30E6D3B2AB0F7 /* Pods-Blanc-ios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Blanc-ios.release.xcconfig"; path = "Target Support Files/Pods-Blanc-ios/Pods-Blanc-ios.release.xcconfig"; sourceTree = "<group>"; };
 		E362B2009B17492ACEFB7438 /* Pods-Blanc-iosTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Blanc-iosTests.release.xcconfig"; path = "Target Support Files/Pods-Blanc-iosTests/Pods-Blanc-iosTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -660,6 +662,7 @@
 				104EE98F25E3703D0069B2CF /* Info.plist */,
 				104EEC8625E3736C0069B2CF /* GoogleService-Info.plist */,
 				104EE98725E3703C0069B2CF /* Blanc_ios.xcdatamodeld */,
+				C47AA431B605858F85D1FD9A /* Extensions */,
 			);
 			path = "Blanc-ios";
 			sourceTree = "<group>";
@@ -1479,6 +1482,14 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		C47AA431B605858F85D1FD9A /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				C47AAF64311FE6466E824F0D /* Int+Extension.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
 		C9BE95656549CA341B72515D /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -2023,6 +2034,7 @@
 				104EEC2A25E3728F0069B2CF /* BodyTypeViewController.swift in Sources */,
 				104EEB5825E3725D0069B2CF /* PostSingleBodyTableViewCell.swift in Sources */,
 				104EEC4F25E372950069B2CF /* ProfileTableViewCell.swift in Sources */,
+				C47AA32A10ACDA94C39E6D6E /* Int+Extension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
