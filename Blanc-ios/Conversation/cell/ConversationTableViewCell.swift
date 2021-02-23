@@ -180,7 +180,7 @@ class ConversationTableViewCell: UITableViewCell {
         let isMessageNotEmpty: Bool = lastMessage?.message.isNotEmpty() ?? false
         let message: String = isMessageNotEmpty ? lastMessage!.message! : "\(nickName) 님과 연결 되었습니다."
         let unreadMessageCount = conversation?.unreadMessageCount ?? 0
-        let staledTime = conversation?.messages?.last?.createdAt.convertToStaledTime() ?? "알 수 없음"
+        let staledTime = conversation?.messages?.last?.createdAt.asStaledTime() ?? "알 수 없음"
 
         userImage.url(partner?.avatar, cornerRadius: 0, size: CGSize(width: diameter, height: diameter))
         line1.text = "\(nickName)"

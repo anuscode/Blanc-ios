@@ -72,7 +72,7 @@ class SystemMessageTableViewCell: UITableViewCell {
 
     func bind(message: MessageDTO?) {
         self.message = message
-        let cal = Time.convertTimestampToCalendar(timestamp: message?.createdAt ?? 0)
+        let cal = (message?.createdAt ?? 0).asCalendar()
         timeLabel.text = "\(cal.year)/\(NSString(format: "%02d", cal.month))/\(cal.day)"
         messageLabel.text = message?.message ?? ""
     }

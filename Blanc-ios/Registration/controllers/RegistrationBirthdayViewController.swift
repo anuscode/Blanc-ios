@@ -204,7 +204,7 @@ class RegistrationBirthdayViewController: UIViewController {
 
         // 946731661 is timestamp for 2000/01/01
         let timestamp = birthedAt ?? 946731661
-        let cal = Time.convertTimestampToCalendar(timestamp: timestamp)
+        let cal = timestamp.asCalendar()
 
         let yearIndex = years.firstIndex(of: cal.year)
         let yearIndexPath = IndexPath(row: yearIndex!, section: 0)
