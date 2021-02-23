@@ -160,13 +160,11 @@ class ConversationViewController: UIViewController {
     private func subscribeConversationViewModel() {
         conversationViewModel?.observe()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
+                .observeOn(MainScheduler.instance)
                 .subscribe(onNext: { conversations in
                     self.conversations = conversations
-                    DispatchQueue.main.async {
-                        self.update()
-                        self.emptyView.visible(conversations.count == 0)
-                    }
+                    self.update()
+                    self.emptyView.visible(conversations.isEmpty)
                 }, onError: { err in
                     log.error(err)
                 })
