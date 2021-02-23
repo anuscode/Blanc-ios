@@ -2,11 +2,48 @@ import UIKit
 import RxSwift
 import SwinjectStoryboard
 
+
+fileprivate enum Section {
+    case Main
+}
+
+fileprivate class ConversationDataSource: UITableViewDiffableDataSource<Section, ConversationDTO> {
+
+    var conversationViewModel: ConversationViewModel?
+
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        true
+    }
+
+    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            if let item: ConversationDTO = itemIdentifier(for: indexPath) {
+                var snapshot = self.snapshot()
+                snapshot.deleteItems([item])
+                apply(snapshot)
+                conversationViewModel?.leaveConversation(conversationId: item.id)
+            }
+        }
+    }
+
+    func tableView(_ tableView: UITableView,
+                   trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        let deleteAction = UIContextualAction(style: .destructive, title: nil) { (_, _, completionHandler) in
+            completionHandler(true)
+        }
+        deleteAction.image = UIImage(systemName: "trash")
+        deleteAction.backgroundColor = .systemRed
+        let configuration = UISwipeActionsConfiguration(actions: [deleteAction])
+        return configuration
+    }
+}
+
+
 class ConversationViewController: UIViewController {
 
     private var disposeBag: DisposeBag = DisposeBag()
 
-    private var dataSource: UITableViewDiffableDataSource<Section, ConversationDTO>!
+    private var dataSource: ConversationDataSource!
 
     private var conversations: [ConversationDTO] = []
 
@@ -138,12 +175,8 @@ class ConversationViewController: UIViewController {
 
 extension ConversationViewController {
 
-    fileprivate enum Section {
-        case Main
-    }
-
     private func configureTableViewDataSource() {
-        dataSource = UITableViewDiffableDataSource<Section, ConversationDTO>(tableView: tableView) { (tableView, indexPath, conversation) -> UITableViewCell? in
+        dataSource = ConversationDataSource(tableView: tableView) { (tableView, indexPath, conversation) -> UITableViewCell? in
             guard let cell = tableView.dequeueReusableCell(
                     withIdentifier: ConversationTableViewCell.identifier, for: indexPath) as? ConversationTableViewCell else {
                 return UITableViewCell()
@@ -151,6 +184,8 @@ extension ConversationViewController {
             cell.bind(conversation: conversation, delegate: self)
             return cell
         }
+        // set viewmodel to leave conversation
+        dataSource.conversationViewModel = conversationViewModel
         tableView.dataSource = dataSource
     }
 

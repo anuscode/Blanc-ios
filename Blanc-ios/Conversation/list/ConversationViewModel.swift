@@ -37,6 +37,10 @@ class ConversationViewModel {
                 .disposed(by: disposeBag)
     }
 
+    func leaveConversation(conversationId: String?) {
+        conversationModel.leaveConversation(conversationId: conversationId)
+    }
+
     func channel(user: UserDTO?) {
         conversationModel.channel(user: user)
     }

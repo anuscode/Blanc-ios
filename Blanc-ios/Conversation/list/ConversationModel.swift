@@ -106,30 +106,6 @@ class ConversationModel {
                 .disposed(by: disposeBag)
     }
 
-//    private func subscribeMessagesChangeSet() {
-//        let messages = realm.objects(MessageEntity.self)
-//        Observable.changeset(from: messages)
-//                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-//                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-//                .subscribe(onNext: { results, changes in
-//                    let countDict = results.reduce(into: [String: Int]()) { (dict, message) in
-//                        let conversationId = message.conversationId
-//                        let count = dict[conversationId]
-//                        let value = count == nil ? 1 : count! + 1
-//                        dict.updateValue(value, forKey: conversationId)
-//                    }
-//                    self.conversations.forEach { conversation in
-//                        if let conversationId = conversation.id {
-//                            if let count = countDict[conversationId] {
-//                                conversation.unreadMessageCount = count
-//                            }
-//                        }
-//                    }
-//                    self.publish()
-//                })
-//                .disposed(by: disposeBag)
-//    }
-
     /**
      Returns last read messages as dict
      An example returning structure is like below
@@ -190,6 +166,21 @@ class ConversationModel {
         } else {
             populate()
         }
+    }
+
+    func leaveConversation(conversationId: String?) {
+        conversationService.leaveConversation(uid: session.uid, conversationId: conversationId, userId: session.id)
+                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+                .observeOn(SerialDispatchQueueScheduler(qos: .default))
+                .subscribe(onSuccess: {
+                    if let index = self.conversations.firstIndex(where: { $0.id == conversationId }) {
+                        self.conversations.remove(at: index)
+                    }
+                    self.publish()
+                }, onError: { err in
+                    log.error(err)
+                })
+                .disposed(by: disposeBag)
     }
 
     func channel(user: UserDTO?) {

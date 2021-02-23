@@ -66,11 +66,11 @@ class ConversationService {
     }
 
     // DELETE
-    func leaveConversation(uid: String?, conversationId: String?, userId: String?) {
+    func leaveConversation(uid: String?, conversationId: String?, userId: String?) -> Single<Void> {
         provider.rx.request(.leaveConversation(uid: uid, conversationId: conversationId, userId: userId))
                 .debug()
                 .filterSuccessfulStatusAndRedirectCodes()
-                .map([PostDTO].self, using: decoder)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+                .map({ _ in Void() })
     }
 }
