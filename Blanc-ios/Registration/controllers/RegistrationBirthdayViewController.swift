@@ -13,12 +13,6 @@ private typealias RSelectFieldCell = RegistrationSelectFieldCell
 
 class RegistrationBirthdayViewController: UIViewController {
 
-    private struct BirthDay {
-        var year = 1985
-        var month = 6
-        var day = 24
-    }
-
     private let disposeBag: DisposeBag = DisposeBag()
 
     private let ripple: Ripple = Ripple()
@@ -40,7 +34,7 @@ class RegistrationBirthdayViewController: UIViewController {
                         21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
                         31]
 
-    private var birthDay = BirthDay()
+    private var birthDay = Cal(year: 1985, month: 6, day: 24)
 
     lazy private var progressView: UIProgressView = {
         let progress = UIProgressView(progressViewStyle: .bar)
@@ -226,15 +220,12 @@ class RegistrationBirthdayViewController: UIViewController {
     }
 
     @objc private func didTapNextButton() {
-        let age = Time.calculateAge(
-                year: birthDay.year, month: birthDay.month, day: birthDay.day)
+        let age = birthDay.asAge()
         if age < 18 {
             toast(message: "이용 불가능 한 나이 입니다.")
             return
         }
-        let timestamp = Time.convertCalendarToTimestamp(
-                year: birthDay.year, month: birthDay.month, day: birthDay.day)
-        user?.birthedAt = timestamp
+        user?.birthedAt = birthDay.asTimestamp()
         presentNextView()
     }
 

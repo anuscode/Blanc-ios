@@ -209,13 +209,9 @@ class UserDTO: NSObject, Codable {
 
     var age: Int? {
         get {
-            Time.calculateAge(birthedAt: birthedAt)
+            birthedAt.asAge()
         }
     }
-
-//    func hash(into hasher: inout Hasher) {
-//        hasher.combine(id)
-//    }
 
     static func ==(lhs: UserDTO, rhs: UserDTO) -> Bool {
         lhs.id == rhs.id

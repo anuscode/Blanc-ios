@@ -934,7 +934,7 @@ class ProfileViewController: UIViewController {
         }
 
         if (userDTO.birthedAt != nil) {
-            let age = Time.calculateAge(birthedAt: userDTO.birthedAt!)!
+            let age = userDTO.birthedAt!.asAge()
             birthdayValueLabel.text = String(age) + " 세"
         } else {
             birthdayValueLabel.text = "생일을 입력 하세요."

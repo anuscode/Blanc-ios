@@ -5,6 +5,22 @@ public struct Cal {
     var year: Int
     var month: Int
     var day: Int
+
+    func asTimestamp() -> Int {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.locale = NSLocale(localeIdentifier: NSLocale.current.languageCode ?? "en_US_POSIX") as Locale
+        let date = formatter.date(from: "\(year)-\(month)-\(day)")
+        if date == nil {
+            return Cal(year: year, month: month, day: day - 1).asTimestamp()
+        }
+        return Int(date!.timeIntervalSince1970)
+    }
+
+    func asAge() -> Int {
+        let timestamp = asTimestamp()
+        return timestamp.asAge()
+    }
 }
 
 public extension Int {
@@ -35,6 +51,15 @@ public extension Int {
         let deltaInDays = deltaInHours / 24
         return "\(deltaInDays) 일 전"
     }
+
+    func asAge() -> Int {
+        let timestamp = self
+        let current = Int(Date().timeIntervalSince1970)
+        let delta = current - timestamp
+        let year = (60 * 60 * 24 * 365)
+        let age = delta / year
+        return age
+    }
 }
 
 public extension Optional where Wrapped == Int {
@@ -45,10 +70,21 @@ public extension Optional where Wrapped == Int {
     }
 
     func asStaledTime() -> String {
-        let timestamp: Int? = self
-        guard (timestamp != nil) else {
+        guard (self != nil) else {
             return "과거"
         }
         return self!.asStaledTime()
+    }
+
+    func asAge() -> Int? {
+        guard (self != nil) else {
+            return nil
+        }
+        let timestamp = self!
+        let current = Int(Date().timeIntervalSince1970)
+        let delta = current - timestamp
+        let year = (60 * 60 * 24 * 365)
+        let age = delta / year
+        return age
     }
 }

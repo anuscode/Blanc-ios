@@ -189,7 +189,6 @@
 		104EEBB225E372830069B2CF /* NextButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEBA725E372830069B2CF /* NextButton.swift */; };
 		104EEBB325E372830069B2CF /* EmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEBA825E372830069B2CF /* EmptyView.swift */; };
 		104EEBB425E372830069B2CF /* DistanceUtil.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEBA925E372830069B2CF /* DistanceUtil.swift */; };
-		104EEBB525E372830069B2CF /* Time.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEBAA25E372830069B2CF /* Time.swift */; };
 		104EEBB625E372830069B2CF /* HorizontalGradientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEBAB25E372830069B2CF /* HorizontalGradientView.swift */; };
 		104EEBB725E372830069B2CF /* BackButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEBAC25E372830069B2CF /* BackButton.swift */; };
 		104EEBB825E372830069B2CF /* Gradient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEBAD25E372830069B2CF /* Gradient.swift */; };
@@ -482,7 +481,6 @@
 		104EEBA725E372830069B2CF /* NextButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NextButton.swift; sourceTree = "<group>"; };
 		104EEBA825E372830069B2CF /* EmptyView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptyView.swift; sourceTree = "<group>"; };
 		104EEBA925E372830069B2CF /* DistanceUtil.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DistanceUtil.swift; sourceTree = "<group>"; };
-		104EEBAA25E372830069B2CF /* Time.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Time.swift; sourceTree = "<group>"; };
 		104EEBAB25E372830069B2CF /* HorizontalGradientView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HorizontalGradientView.swift; sourceTree = "<group>"; };
 		104EEBAC25E372830069B2CF /* BackButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackButton.swift; sourceTree = "<group>"; };
 		104EEBAD25E372830069B2CF /* Gradient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Gradient.swift; sourceTree = "<group>"; };
@@ -1197,7 +1195,6 @@
 				104EEBA725E372830069B2CF /* NextButton.swift */,
 				104EEBA825E372830069B2CF /* EmptyView.swift */,
 				104EEBA925E372830069B2CF /* DistanceUtil.swift */,
-				104EEBAA25E372830069B2CF /* Time.swift */,
 				104EEBAB25E372830069B2CF /* HorizontalGradientView.swift */,
 				104EEBAC25E372830069B2CF /* BackButton.swift */,
 				104EEBAD25E372830069B2CF /* Gradient.swift */,
@@ -1809,7 +1806,6 @@
 			files = (
 				104EEC1B25E3728F0069B2CF /* AvoidViewController.swift in Sources */,
 				104EEBD625E372890069B2CF /* SystemMessageTableViewCell.swift in Sources */,
-				104EEBB525E372830069B2CF /* Time.swift in Sources */,
 				104EEB9125E3726B0069B2CF /* UIColor+Extension.swift in Sources */,
 				104EEB6425E3725D0069B2CF /* PostViewModel.swift in Sources */,
 				104EEB6125E3725D0069B2CF /* PostCreateViewModel.swift in Sources */,
