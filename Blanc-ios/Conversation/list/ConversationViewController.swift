@@ -108,9 +108,7 @@ class ConversationViewController: UIViewController {
         navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
         navigationController?.navigationBar.shadowImage = nil
         navigationController?.navigationBar.isTranslucent = true
-        if (!emptyView.isHidden) {
-            emptyView.play()
-        }
+        !emptyView.isHidden ? emptyView.play() : ({ return })()
     }
 
     override func viewDidLoad() {
