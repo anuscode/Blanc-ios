@@ -71,6 +71,7 @@ class ConversationSingleViewController: UIViewController {
 
     lazy var bottomTextField: BottomTextField = {
         let view = BottomTextField()
+        view.placeHolder = "대화를 입력 하세요."
         view.configure(avatarUrl: conversationSingleViewModel?.getSession().user?.avatar)
         view.configure(delegate: self)
         return view
@@ -159,9 +160,12 @@ class ConversationSingleViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.navigationBar.barTintColor = .secondarySystemBackground
-        navigationItem.titleView = navigationBarContent
         view.backgroundColor = .white
+        navigationItem.titleView = navigationBarContent
+        navigationController?.navigationBar.barTintColor = .secondarySystemBackground
+        navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
+        navigationController?.navigationBar.shadowImage = nil
+        navigationController?.navigationBar.isTranslucent = true
     }
 
     override func viewDidLoad() {
