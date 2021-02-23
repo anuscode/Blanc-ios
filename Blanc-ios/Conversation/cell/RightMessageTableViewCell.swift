@@ -9,7 +9,7 @@ class RightMessageTableViewCell: UITableViewCell {
 
     lazy private var messageView: UIView = {
         let view = UIView()
-        view.backgroundColor = .primaryPink
+        view.backgroundColor = UIColor(hexCode: "#FEC23D")
         view.layer.cornerRadius = 8
         view.addSubview(messageLabel)
         messageLabel.snp.makeConstraints { make in
