@@ -1087,6 +1087,7 @@ class CharmDelegate: NSObject, TTGTextTagCollectionViewDelegate {
 }
 
 class IdealTypeDelegate: NSObject, TTGTextTagCollectionViewDelegate {
+
     let parent: ProfileViewController
 
     init(parent: ProfileViewController) {
