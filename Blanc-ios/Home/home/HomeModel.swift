@@ -48,31 +48,31 @@ class HomeModel {
         updateUserLocation()
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .flatMap { [self] it -> Single<[UserDTO]> in
+                .flatMap { [unowned self] it -> Single<[UserDTO]> in
                     listRecommendedUsers()
                 }
-                .do(afterSuccess: { [self] users in
+                .do(afterSuccess: { [unowned self] users in
                     // loop to calculate and set a distance from current user.
                     users.distance(session)
                     data.recommendedUsers = users
                 })
-                .flatMap { [self] it -> Single<[UserDTO]> in
+                .flatMap { [unowned self] it -> Single<[UserDTO]> in
                     listCloseUsers()
                 }
-                .do(afterSuccess: { [self] users in
+                .do(afterSuccess: { [unowned self] users in
                     // loop to calculate and set a distance from current user.
                     users.distance(session)
                     data.closeUsers = users
                 })
-                .flatMap { [self] it -> Single<[UserDTO]> in
+                .flatMap { [unowned self] it -> Single<[UserDTO]> in
                     listRealTimeAccessUsers()
                 }
-                .do(afterSuccess: { [self] users in
+                .do(afterSuccess: { [unowned self] users in
                     // loop to calculate and set a distance from current user.
                     users.distance(session)
                     data.realTimeUsers = users
                 })
-                .subscribe(onSuccess: { [self] _ in
+                .subscribe(onSuccess: { [unowned self] _ in
                     publish()
                 }, onError: { err in
                     log.error(err)
@@ -108,7 +108,7 @@ class HomeModel {
                     coord = coordinate
                 })
                 .flatMap({ _ -> Single<String> in
-                    self.locationService.getAddressByCoordinate(coordinate: coord)
+                    self.locationService.getAddress(by: coord)
                 })
                 .do(onSuccess: { address in
                     addr = address
@@ -120,9 +120,7 @@ class HomeModel {
                             longitude: coord?.longitude,
                             area: addr)
                 })
-                .do(onSuccess: { location in
-                    self.session.user?.location = location
-                })
+                .do(onSuccess: { location in self.session.user?.location = location })
     }
 
     func request(_ user: UserDTO?,
@@ -141,17 +139,11 @@ class HomeModel {
         }
 
         requestService.createRequest(
-                        currentUser: auth.currentUser!,
-                        uid: auth.uid,
-                        userId: user?.id,
-                        requestType: RequestType.FRIEND)
-                .do(onSuccess: { [unowned self] request in
-                    onComplete(request)
-                })
-                .flatMap { [self] _ in
-                    session.refresh()
-                }
-                .subscribe(onSuccess: { [self] _ in
+                        currentUser: auth.currentUser!, uid: auth.uid,
+                        userId: user?.id, requestType: RequestType.FRIEND)
+                .do(onSuccess: { request in onComplete(request) })
+                .flatMap({ [unowned self] _ in session.refresh() })
+                .subscribe(onSuccess: { [unowned self] _ in
                     animationDone.subscribe({ _ in
                         remove(user)
                     }).disposed(by: disposeBag)
@@ -165,12 +157,12 @@ class HomeModel {
         userService.pushPoke(uid: auth.uid, userId: user?.id)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [self] data in
+                .subscribe(onSuccess: { [unowned self] data in
                     DispatchQueue.main.async {
                         RealmService.setPokeHistory(uid: session.uid, userId: user?.id)
                     }
                     completion("상대방 옆구리를 찔렀습니다.")
-                }, onError: { [self] err in
+                }, onError: { err in
                     log.error(err)
                     completion("찔러보기 도중 에러가 발생 하였습니다.")
                 })
@@ -222,7 +214,7 @@ class HomeModel {
         let current = Int(NSDate().timeIntervalSince1970)
         let lastLoginAt = session.user?.lastLoginAt ?? 0
         let delta = current - lastLoginAt
-        if (delta < 150) {
+        if (delta < 60) {
             return
         }
 
