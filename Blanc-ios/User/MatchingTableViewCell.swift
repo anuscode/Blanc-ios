@@ -10,7 +10,7 @@ class MatchingTableViewCell: UITableViewCell {
     lazy private var label: UILabel = {
         let label = UILabel()
         label.textColor = .white
-        label.font = UIFont.boldSystemFont(ofSize: 16)
+        label.font = .boldSystemFont(ofSize: 16)
         return label
     }()
 
