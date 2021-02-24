@@ -258,13 +258,13 @@ class UserSingleViewController: UIViewController {
         if (userSingleViewModel?.isWhoMatched() ?? false) {
             requestButton.setTitle("이미 매칭 된 유저 입니다.", for: .normal)
             requestButton.isUserInteractionEnabled = false
-            requestButton.backgroundColor = .bumble0
+            requestButton.backgroundColor = UIColor.bumble3.withAlphaComponent(0.5)
         }
 
         if (userSingleViewModel?.isWhoISent() ?? false) {
             requestButton.setTitle("이미 친구신청을 보냈습니다.", for: .normal)
             requestButton.isUserInteractionEnabled = false
-            requestButton.backgroundColor = .bumble0
+            requestButton.backgroundColor = UIColor.bumble3.withAlphaComponent(0.5)
         }
 
         if (userSingleViewModel?.isWhoSentMe() ?? false) {
