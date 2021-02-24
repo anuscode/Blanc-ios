@@ -65,14 +65,13 @@ class ReceivedViewController: UIViewController {
         receivedViewModel?.observe()
                 .skip(1)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
+                .observeOn(MainScheduler.instance)
                 .subscribe(onNext: { data in
                     // no initial animation but yes afterward.
                     let animatingDifferences: Bool = !(self.data.requests.count == 0 && self.data.users.count == 0)
 
                     self.data.requests = data.requests
                     self.data.users = data.users
-
                     self.update(animatingDifferences: animatingDifferences)
                 }, onError: { err in
                     log.error(err)
