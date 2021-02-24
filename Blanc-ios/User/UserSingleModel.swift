@@ -70,11 +70,11 @@ class UserSingleModel {
                 .disposed(by: disposeBag)
     }
 
-    func request(_ user: UserDTO?,
-                 onSuccess: @escaping (_ request: RequestDTO) -> Void,
-                 onError: @escaping () -> Void
+    func createRequest(_ user: UserDTO?,
+                       onSuccess: @escaping (_ request: RequestDTO) -> Void,
+                       onError: @escaping () -> Void
     ) {
-        requestService.createLikeRequest(
+        requestService.createRequest(
                         currentUser: auth.currentUser!,
                         uid: auth.uid,
                         userId: user?.id,

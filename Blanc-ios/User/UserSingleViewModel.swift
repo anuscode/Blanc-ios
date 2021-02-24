@@ -57,7 +57,7 @@ class UserSingleViewModel {
                 .disposed(by: disposeBag)
     }
 
-    func request(_ user: UserDTO?, onError: @escaping () -> Void) {
+    func createRequest(_ user: UserDTO?, onError: @escaping () -> Void) {
         let onSuccess: (_ request: RequestDTO) -> Void = { [unowned self] request in
             // 1. 일반적으로 친구 요청을 날리게 되면 새로운 리퀘스트를
             // 생성 해야 하지만 아주 간헐적으로 상대방이 아주 근소한
@@ -70,7 +70,7 @@ class UserSingleViewModel {
             homeModel.remove(user)
         }
 
-        userSingleModel.request(user, onSuccess: onSuccess, onError: onError)
+        userSingleModel.createRequest(user, onSuccess: onSuccess, onError: onError)
     }
 
     func poke(_ user: UserDTO?, onBegin: () -> Void, completion: @escaping (_ message: String) -> Void) {

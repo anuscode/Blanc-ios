@@ -237,14 +237,12 @@ class UserSingleViewController: UIViewController {
     private func subscribeUserSingleViewModel() {
         userSingleViewModel?.observe()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
+                .observeOn(MainScheduler.instance)
                 .subscribe(onNext: { [unowned self] data in
                     self.data = data
-                    DispatchQueue.main.async {
-                        tableView.reloadData()
-                        calculateRequestButtonActivation()
-                        updateNavigation()
-                    }
+                    tableView.reloadData()
+                    calculateRequestButtonActivation()
+                    updateNavigation()
                 }, onError: { err in
                     log.error(err)
                 })
@@ -282,7 +280,8 @@ class UserSingleViewController: UIViewController {
         }
 
         if (userSingleViewModel?.isWhoSentMe() ?? false) {
-            userSingleViewModel?.request(data!.user, onError: {
+            // do not ask when it's a request already sent.
+            userSingleViewModel?.createRequest(data!.user, onError: {
                 self.toast(message: "친구신청 도중 에러가 발생 하였습니다.")
             })
             return
@@ -293,15 +292,18 @@ class UserSingleViewController: UIViewController {
                     guard (result) else {
                         return
                     }
+
                     heartLottie.begin(with: view, constraint: {
                         heartLottie.snp.makeConstraints { make in
                             make.edges.equalToSuperview().multipliedBy(0.8)
                             make.center.equalToSuperview()
                         }
                     })
-                    userSingleViewModel?.request(data!.user) {
+
+                    userSingleViewModel?.createRequest(data!.user, onError: {
                         toast(message: "친구신청 도중 에러가 발생 하였습니다.")
-                    }
+                    })
+
                 }, onError: { err in
                     log.error(err)
                 })
@@ -322,7 +324,8 @@ class UserSingleViewController: UIViewController {
                 },
                 completion: { message in
                     self.toast(message: message)
-                })
+                }
+        )
     }
 }
 

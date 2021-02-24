@@ -95,7 +95,7 @@ class RequestsModel {
     }
 
     func accept(request: RequestDTO?, onSuccess: @escaping () -> Void, onError: @escaping () -> Void) {
-        requestService.updateLikeRequest(uid: session.uid, requestId: request?.id, response: Response.ACCEPTED)
+        requestService.updateRequest(uid: session.uid, requestId: request?.id, response: Response.ACCEPTED)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
                 .flatMap({ _ -> Single<UserDTO> in self.session.refresh() })
@@ -112,7 +112,7 @@ class RequestsModel {
     }
 
     func decline(request: RequestDTO?, onError: @escaping () -> Void) {
-        requestService.updateLikeRequest(uid: session.uid, requestId: request?.id, response: Response.DECLINED)
+        requestService.updateRequest(uid: session.uid, requestId: request?.id, response: Response.DECLINED)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
                 .subscribe(onSuccess: { [self] in

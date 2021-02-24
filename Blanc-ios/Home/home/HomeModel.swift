@@ -140,7 +140,7 @@ class HomeModel {
             return
         }
 
-        requestService.createLikeRequest(
+        requestService.createRequest(
                         currentUser: auth.currentUser!,
                         uid: auth.uid,
                         userId: user?.id,

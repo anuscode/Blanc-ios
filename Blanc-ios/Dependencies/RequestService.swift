@@ -34,12 +34,12 @@ class RequestService {
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
     }
 
-    func createLikeRequest(currentUser: User, uid: String?, userId: String?, requestType: RequestType) -> Single<RequestDTO> {
+    func createRequest(currentUser: User, uid: String?, userId: String?, requestType: RequestType) -> Single<RequestDTO> {
         currentUser.rx.getIDTokenResult()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
                 .flatMap { [self] result in
-                    provider.rx.request(.createLikeRequest(
+                    provider.rx.request(.createRequest(
                                     idToken: result.token,
                                     uid: uid,
                                     userId: userId,
@@ -51,8 +51,8 @@ class RequestService {
                 .asSingle()
     }
 
-    func updateLikeRequest(uid: String?, requestId: String?, response: Response) -> Single<Void> {
-        provider.rx.request(.updateLikeRequest(uid: uid, requestId: requestId, response: response))
+    func updateRequest(uid: String?, requestId: String?, response: Response) -> Single<Void> {
+        provider.rx.request(.updateRequest(uid: uid, requestId: requestId, response: response))
                 .debug()
                 .filterSuccessfulStatusAndRedirectCodes()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
