@@ -166,19 +166,31 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 }
 
+extension AppDelegate {
+    func application(_ application: UIApplication,
+                     didReceiveRemoteNotification userInfo: [AnyHashable: Any],
+                     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        log.info("Performing background operation..")
+        guard let push = try? PushDTO.decode(userInfo) else {
+            log.error("Failed to decode userInfo with PushDTO.")
+            return
+        }
+        Broadcast.publish(push)
+        completionHandler(.newData)
+    }
+}
+
 extension AppDelegate: UNUserNotificationCenterDelegate {
     // This method is to handle a notification that arrived while the app was running in the foreground
     @available(iOS 10.0, *)
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 willPresent notification: UNNotification,
                                 withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
-        log.info("foreground..")
         let userInfo = notification.request.content.userInfo
         guard let push = try? PushDTO.decode(userInfo) else {
             log.error("Failed to decode userInfo with PushDTO.")
             return
         }
-        Broadcast.publish(push)
         completionHandler([.sound])
     }
 
