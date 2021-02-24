@@ -58,8 +58,8 @@ class AlarmModel {
         Broadcast.observe()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [unowned self]  push in
-                    pushes.append(push)
+                .subscribe(onNext: { [unowned self] push in
+                    pushes.insert(push, at: 0)
                     publish()
                 }, onError: { err in
                     log.error(err)

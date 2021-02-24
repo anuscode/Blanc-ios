@@ -59,7 +59,7 @@ class AlarmViewController: UIViewController {
         configureTableViewDataSource()
         configureSubviews()
         configureConstraints()
-        subscribeConversationViewModel()
+        subscribeAlarmViewModel()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -95,7 +95,7 @@ class AlarmViewController: UIViewController {
         }
     }
 
-    private func subscribeConversationViewModel() {
+    private func subscribeAlarmViewModel() {
         alarmViewModel?.observe()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
