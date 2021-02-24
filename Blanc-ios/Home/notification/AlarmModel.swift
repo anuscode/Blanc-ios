@@ -23,6 +23,8 @@ class AlarmModel {
         self.postService = postService
         self.alarmService = alarmService
         populate()
+        subscribeBroadcast()
+        subscribeBackground()
     }
 
     deinit {
@@ -59,6 +61,18 @@ class AlarmModel {
                 .subscribe(onNext: { [unowned self]  push in
                     pushes.append(push)
                     publish()
+                }, onError: { err in
+                    log.error(err)
+                })
+                .disposed(by: disposeBag)
+    }
+
+    private func subscribeBackground() {
+        Background.observe()
+                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+                .observeOn(SerialDispatchQueueScheduler(qos: .default))
+                .subscribe(onNext: { push in
+                    self.populate()
                 }, onError: { err in
                     log.error(err)
                 })

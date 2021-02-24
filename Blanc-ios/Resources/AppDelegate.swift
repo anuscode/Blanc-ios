@@ -26,10 +26,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private let gcmMessageIDKey = "gcm.message_id"
 
+    private let backgroundNotificationHandler = BackgroundNotificationHandler()
+
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        window = UIWindow(frame: UIScreen.main.bounds)
 
+        window = UIWindow(frame: UIScreen.main.bounds)
         KakaoSDKCommon.initSDK(appKey: "e649e517e74eff7d74d4e27050cb70d1")
 
         // firebase configuration
@@ -164,64 +166,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 }
 
-extension AppDelegate {
-
-    func application(_ application: UIApplication,
-                     didReceiveRemoteNotification userInfo: [AnyHashable: Any],
-                     fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
-        log.info("Performing background operation..")
-        guard let push = try? PushDTO.decode(userInfo) else {
-            log.error("Failed to decode userInfo with PushDTO.")
-            return
-        }
-        Broadcast.publish(push)
-        handleBackgroundNotification(push) {
-            completionHandler(.newData)
-        }
-    }
-
-    func handleBackgroundNotification(_ push: PushDTO, completion: @escaping () -> Void) {
-        let content = UNMutableNotificationContent()
-
-        if (push.isMessage()) {
-            content.title = "새로운 메세지가 도착 했습니다."
-            content.body = "\(push.nickName ?? "??"): \(push.message ?? "??")"
-        } else {
-            content.title = "새로운 이벤트가 발생 했습니다."
-            content.body = push.message ?? ""
-        }
-
-        content.sound = UNNotificationSound.default
-
-        guard let url = URL(string: "https://storage.googleapis.com/blanc-850624.appspot.com/user_images/KAKAO%3A1637823099/KAKAO%3A1637823099_0_266fb5ae-7535-11eb-8ff8-acde48001122") else {
-            let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil)
-            UNUserNotificationCenter.current().add(request)
-            completion()
-            return
-        }
-
-        KingfisherManager.shared.retrieveImage(
-                with: url,
-                options: [.cacheOriginalImage],
-                progressBlock: nil,
-                completionHandler: { image, error, cacheType, imageURL in
-                    if (error != nil) {
-                        log.error(error!.localizedDescription)
-                    } else {
-                        if let attachment = UNNotificationAttachment.create(image: image, options: nil) {
-                            log.info("Adding an image attachment...")
-                            content.attachments = [attachment]
-                        }
-                    }
-                    let trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-                    let request = UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: trigger)
-                    UNUserNotificationCenter.current().add(request)
-                    completion()
-                })
-    }
-}
-
-
 extension AppDelegate: UNUserNotificationCenterDelegate {
     // This method is to handle a notification that arrived while the app was running in the foreground
     @available(iOS 10.0, *)
@@ -229,6 +173,12 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
                                 willPresent notification: UNNotification,
                                 withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         log.info("foreground..")
+        let userInfo = notification.request.content.userInfo
+        guard let push = try? PushDTO.decode(userInfo) else {
+            log.error("Failed to decode userInfo with PushDTO.")
+            return
+        }
+        Broadcast.publish(push)
         completionHandler([.sound])
     }
 
@@ -278,3 +228,6 @@ extension UNNotificationAttachment {
     }
 }
 
+class BackgroundNotificationHandler {
+
+}

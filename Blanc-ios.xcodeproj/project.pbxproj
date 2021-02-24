@@ -95,7 +95,6 @@
 		104EEABA25E372300069B2CF /* RequestService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEAAF25E372300069B2CF /* RequestService.swift */; };
 		104EEABB25E372300069B2CF /* PostService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEAB025E372300069B2CF /* PostService.swift */; };
 		104EEABC25E372300069B2CF /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEAB125E372300069B2CF /* Preferences.swift */; };
-		104EEABD25E372300069B2CF /* Broadcast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEAB225E372300069B2CF /* Broadcast.swift */; };
 		104EEABE25E372300069B2CF /* FcmTokenManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEAB325E372300069B2CF /* FcmTokenManager.swift */; };
 		104EEABF25E372300069B2CF /* VerificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEAB425E372300069B2CF /* VerificationService.swift */; };
 		104EEAC025E372300069B2CF /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEAB525E372300069B2CF /* LocationService.swift */; };
@@ -271,7 +270,9 @@
 		240D91B346CC87269CAF305D /* Pods_Blanc_ios_Blanc_iosUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61F4FB0474880E97BECB4B37 /* Pods_Blanc_ios_Blanc_iosUITests.framework */; };
 		69A10C304D3EE8E1BC424287 /* Pods_Blanc_ios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86136E85AB864A9141A83B37 /* Pods_Blanc_ios.framework */; };
 		7A481E8EFA2268096059CF76 /* Pods_Blanc_iosTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 89DD709C0040CF6E7F18A036 /* Pods_Blanc_iosTests.framework */; };
+		C47AA2FAD71D31DAE9DF6FCA /* Broadcast.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AAA5893F5BE3DB46D70F2 /* Broadcast.swift */; };
 		C47AA32A10ACDA94C39E6D6E /* Int+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AAF64311FE6466E824F0D /* Int+Extension.swift */; };
+		C47AAE6C08203E77C969B645 /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA72570EBB462B489CDB6 /* Background.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -387,7 +388,6 @@
 		104EEAAF25E372300069B2CF /* RequestService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestService.swift; sourceTree = "<group>"; };
 		104EEAB025E372300069B2CF /* PostService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostService.swift; sourceTree = "<group>"; };
 		104EEAB125E372300069B2CF /* Preferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
-		104EEAB225E372300069B2CF /* Broadcast.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Broadcast.swift; sourceTree = "<group>"; };
 		104EEAB325E372300069B2CF /* FcmTokenManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FcmTokenManager.swift; sourceTree = "<group>"; };
 		104EEAB425E372300069B2CF /* VerificationService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerificationService.swift; sourceTree = "<group>"; };
 		104EEAB525E372300069B2CF /* LocationService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
@@ -567,6 +567,8 @@
 		89DD709C0040CF6E7F18A036 /* Pods_Blanc_iosTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Blanc_iosTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		91054CA93BF36C88B71621F7 /* Pods-Blanc-ios.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Blanc-ios.debug.xcconfig"; path = "Target Support Files/Pods-Blanc-ios/Pods-Blanc-ios.debug.xcconfig"; sourceTree = "<group>"; };
 		BBF76FBD4A6DCDD1994B9BC0 /* Pods-Blanc-ios-Blanc-iosUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Blanc-ios-Blanc-iosUITests.debug.xcconfig"; path = "Target Support Files/Pods-Blanc-ios-Blanc-iosUITests/Pods-Blanc-ios-Blanc-iosUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		C47AA72570EBB462B489CDB6 /* Background.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Background.swift; sourceTree = "<group>"; };
+		C47AAA5893F5BE3DB46D70F2 /* Broadcast.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Broadcast.swift; sourceTree = "<group>"; };
 		C47AAF64311FE6466E824F0D /* Int+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Int+Extension.swift"; sourceTree = "<group>"; };
 		DBBEBAFA0CF30E6D3B2AB0F7 /* Pods-Blanc-ios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Blanc-ios.release.xcconfig"; path = "Target Support Files/Pods-Blanc-ios/Pods-Blanc-ios.release.xcconfig"; sourceTree = "<group>"; };
 		E362B2009B17492ACEFB7438 /* Pods-Blanc-iosTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Blanc-iosTests.release.xcconfig"; path = "Target Support Files/Pods-Blanc-iosTests/Pods-Blanc-iosTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -661,6 +663,7 @@
 				104EEC8625E3736C0069B2CF /* GoogleService-Info.plist */,
 				104EE98725E3703C0069B2CF /* Blanc_ios.xcdatamodeld */,
 				C47AA431B605858F85D1FD9A /* Extensions */,
+				C47AA32B793012FCA4B8ABEA /* Broadcast */,
 			);
 			path = "Blanc-ios";
 			sourceTree = "<group>";
@@ -881,7 +884,6 @@
 				104EEAAF25E372300069B2CF /* RequestService.swift */,
 				104EEAB025E372300069B2CF /* PostService.swift */,
 				104EEAB125E372300069B2CF /* Preferences.swift */,
-				104EEAB225E372300069B2CF /* Broadcast.swift */,
 				104EEAB325E372300069B2CF /* FcmTokenManager.swift */,
 				104EEAB425E372300069B2CF /* VerificationService.swift */,
 				104EEAB525E372300069B2CF /* LocationService.swift */,
@@ -1479,6 +1481,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		C47AA32B793012FCA4B8ABEA /* Broadcast */ = {
+			isa = PBXGroup;
+			children = (
+				C47AAA5893F5BE3DB46D70F2 /* Broadcast.swift */,
+				C47AA72570EBB462B489CDB6 /* Background.swift */,
+			);
+			path = Broadcast;
+			sourceTree = "<group>";
+		};
 		C47AA431B605858F85D1FD9A /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
@@ -2007,7 +2018,6 @@
 				104EEA3B25E372060069B2CF /* RegistrationRootViewController.swift in Sources */,
 				104EEB9325E3726B0069B2CF /* Extensions.swift in Sources */,
 				104EEB0C25E3724E0069B2CF /* PostProvider.swift in Sources */,
-				104EEABD25E372300069B2CF /* Broadcast.swift in Sources */,
 				104EEA0E25E371FE0069B2CF /* FireworkSparkScheduler.swift in Sources */,
 				104EEC1E25E3728F0069B2CF /* ImageViewModel.swift in Sources */,
 				104EEB4C25E3725D0069B2CF /* PostManagementViewController.swift in Sources */,
@@ -2031,6 +2041,8 @@
 				104EEB5825E3725D0069B2CF /* PostSingleBodyTableViewCell.swift in Sources */,
 				104EEC4F25E372950069B2CF /* ProfileTableViewCell.swift in Sources */,
 				C47AA32A10ACDA94C39E6D6E /* Int+Extension.swift in Sources */,
+				C47AA2FAD71D31DAE9DF6FCA /* Broadcast.swift in Sources */,
+				C47AAE6C08203E77C969B645 /* Background.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

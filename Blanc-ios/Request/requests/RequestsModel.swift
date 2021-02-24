@@ -18,6 +18,7 @@ class RequestsModel {
         self.requestService = requestService
         populate()
         subscribeBroadcast()
+        subscribeBackground()
     }
 
     func observe() -> Observable<[RequestDTO]> {
@@ -55,6 +56,18 @@ class RequestsModel {
                             self.requests.remove(at: index!)
                         }
                     }
+                }, onError: { err in
+                    log.error(err)
+                })
+                .disposed(by: disposeBag)
+    }
+
+    private func subscribeBackground() {
+        Background.observe()
+                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+                .observeOn(SerialDispatchQueueScheduler(qos: .default))
+                .subscribe(onNext: { push in
+                    self.populate()
                 }, onError: { err in
                     log.error(err)
                 })

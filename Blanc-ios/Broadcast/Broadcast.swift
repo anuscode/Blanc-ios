@@ -14,5 +14,4 @@ class Broadcast {
     static func observe() -> Observable<PushDTO> {
         observable
     }
-
 }
