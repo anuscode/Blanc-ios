@@ -112,13 +112,11 @@ extension ReceivedViewController {
     }
 
     private func update(animatingDifferences: Bool = true) {
-        DispatchQueue.main.async { [unowned self] in
-            var snapshot = NSDiffableDataSourceSnapshot<Section, AnyHashable>()
-            snapshot.appendSections([.Request, .HighRating])
-            snapshot.appendItems(data.requests, toSection: .Request)
-            snapshot.appendItems(data.users, toSection: .HighRating)
-            dataSource.apply(snapshot, animatingDifferences: animatingDifferences, completion: nil)
-        }
+        var snapshot = NSDiffableDataSourceSnapshot<Section, AnyHashable>()
+        snapshot.appendSections([.Request, .HighRating])
+        snapshot.appendItems(data.requests, toSection: .Request)
+        snapshot.appendItems(data.users, toSection: .HighRating)
+        dataSource.apply(snapshot, animatingDifferences: animatingDifferences, completion: nil)
     }
 }
 
