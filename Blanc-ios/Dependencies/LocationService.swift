@@ -62,12 +62,12 @@ final class LocationService: NSObject {
         }
         let latitude = coordinate!.latitude
         let longitude = coordinate!.longitude
-        
-        if (latitude == nil || longitude == nil){
+
+        if (latitude == nil || longitude == nil) {
             subject.onNext(unknown)
             return subject.take(1).asSingle()
         }
-        
+
         address.reverseGeocodeLocation(CLLocation.init(latitude: latitude!, longitude: longitude!)) { (places, error) in
             if error != nil {
                 log.error(error as Any)
@@ -79,7 +79,12 @@ final class LocationService: NSObject {
                 subject.onNext(unknown)
                 return
             }
-            let address = addrList.first ?? unknown
+            // addressList example:
+            // addressList[0] => "대한민국"
+            // addressList[1] => "서울특별시 송파구 석촌동 220"
+            let addressComponents = (addrList.first ?? "").components(separatedBy: [" "])
+            let component: String? = addressComponents.count > 2 ? addressComponents[1] : addressComponents.first
+            let address = component ?? unknown
             subject.onNext(address)
         }
         return subject.take(1).asSingle()

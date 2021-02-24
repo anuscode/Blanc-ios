@@ -29,7 +29,7 @@ class PostListBody: UIView {
 
     lazy private var textsStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [
-            favoriteUserCountLabel, descriptionLabel, lastCommentLabel, goCommentsLabel
+            favoriteUserCountLabel, descriptionLabel, lastCommentLabel, commentCountLabel
         ])
         let spacing = CGFloat(PostConfig.textVerticalMargin)
         stackView.axis = .vertical
@@ -49,7 +49,6 @@ class PostListBody: UIView {
         let label = UILabel()
         label.font = .systemFont(ofSize: 17)
         label.textColor = .black
-        label.text = "3 명의 사람들이 이 게시물을 좋아합니다."
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -58,17 +57,16 @@ class PostListBody: UIView {
         let label = UILabel()
         label.font = .systemFont(ofSize: 16)
         label.textColor = .black
-        label.text = "#: 등록 된 커멘트가 없습니다."
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
-    lazy private(set) var goCommentsLabel: UILabel = {
+    lazy private(set) var commentCountLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 16)
-        label.textColor = .deepGray
-        label.text = "0개 댓글 전체 보기.."
+        label.textColor = .systemBlue
         label.translatesAutoresizingMaskIntoConstraints = false
+        label.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapCommentCountLabel))
         return label
     }()
 
@@ -76,7 +74,6 @@ class PostListBody: UIView {
         let label = UILabel()
         label.font = .systemFont(ofSize: 16)
         label.textColor = .black
-        label.text = "안녕하세요 :) 방갑습니다."
         label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -211,7 +208,7 @@ class PostListBody: UIView {
         configureLastCommentLabel()
         configureDescriptionLabel()
         configureFavoriteUserCountLabel()
-        configureGoCommentsLabel()
+        configureCommentCountLabel()
         configureHeartImage()
         configureCarousel()
     }
@@ -238,8 +235,8 @@ class PostListBody: UIView {
         }
     }
 
-    private func configureGoCommentsLabel() {
-        goCommentsLabel.text = "\(post?.comments?.count ?? 0) 개 댓글 전체 보기.."
+    private func configureCommentCountLabel() {
+        commentCountLabel.text = "\(post?.comments?.count ?? 0) 개 댓글 전체 보기.."
     }
 
     private func configureHeartImage() {
@@ -261,6 +258,10 @@ class PostListBody: UIView {
     }
 
     @objc private func didTapConversationImageView() {
+        delegate?.presentSinglePostView(post: post)
+    }
+
+    @objc private func didTapCommentCountLabel() {
         delegate?.presentSinglePostView(post: post)
     }
 }

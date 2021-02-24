@@ -144,7 +144,6 @@ class MyRatedProfileTableViewCell: UITableViewCell {
         let avg = user?.starRatingAvg ?? 0.0
         label1.text = "내 평점: \(avg)"
         label2.text = "백분위: \(percentile(score: avg))"
-        print(avg)
         score(avg)
     }
 

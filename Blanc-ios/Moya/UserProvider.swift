@@ -178,9 +178,9 @@ extension UserProvider: TargetType {
             return .requestPlain
         case .updateUserStatusPending(uid: _, userId: _):
             return .requestPlain
-        case .updateUserLocation(uid: _, userId: _, latitude: let latitude, longitude: let longitude, area: _):
+        case .updateUserLocation(uid: _, userId: _, latitude: let latitude, longitude: let longitude, area: let area):
             return .requestParameters(
-                    parameters: ["latitude": latitude ?? 0, "longitude": longitude ?? 0],
+                    parameters: ["latitude": latitude ?? 0, "longitude": longitude ?? 0, "area": area ?? "알 수 없음"],
                     encoding: URLEncoding.queryString
             )
         case .updateUserStarRatingScore(uid: _, userId: _, score: _):
