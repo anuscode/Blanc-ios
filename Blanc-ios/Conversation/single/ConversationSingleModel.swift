@@ -117,9 +117,10 @@ class ConversationSingleModel {
                         currentUser: auth.currentUser!, uid: session.uid, conversationId: conversation?.id)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [unowned self] _ in
-                    conversation?.available = true
-                    publish()
+                .flatMap({ _ in self.session.refresh() })
+                .subscribe(onSuccess: { _ in
+                    self.conversation?.available = true
+                    self.publish()
                     onCompleted()
                 }, onError: { err in
                     onError()
@@ -127,8 +128,7 @@ class ConversationSingleModel {
                 .disposed(by: disposeBag)
     }
 
-    func sendMessage(message: String,
-                     onError: @escaping () -> Void) {
+    func sendMessage(message: String, onError: @escaping () -> Void) {
         conversationService.sendMessage(uid: session.uid, conversationId: conversation?.id, message: message)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
