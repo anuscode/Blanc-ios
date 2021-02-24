@@ -33,7 +33,12 @@ class ConversationModel {
     }
 
     func observe() -> Observable<[ConversationDTO]> {
-        observable
+        observable.map { [unowned self] conversations in
+            conversations.map { [unowned self] conversation -> ConversationDTO in
+                conversation.currentUser = session.user
+                return conversation
+            }
+        }
     }
 
     private func publish() {
@@ -64,12 +69,6 @@ class ConversationModel {
         conversationService.listUserConversations(uid: session.uid)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .map { [unowned self] conversations in
-                    conversations.map { [unowned self] conversation -> ConversationDTO in
-                        conversation.currentUser = session.user
-                        return conversation
-                    }
-                }
                 .subscribe(onSuccess: { [unowned self] conversations in
                     // ordered by desc
                     self.conversations = conversations.sorted(by: {
