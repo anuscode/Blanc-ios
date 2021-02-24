@@ -12,7 +12,7 @@ class ConversationTableViewCell: UITableViewCell {
 
     private var comment: CommentDTO?
 
-    let ripple: Ripple = Ripple()
+    private let ripple: Ripple = Ripple()
 
     private var conversation: ConversationDTO?
 
@@ -41,18 +41,19 @@ class ConversationTableViewCell: UITableViewCell {
             make.centerY.equalToSuperview()
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
+            make.height.equalTo(1)
         }
 
         line1.snp.makeConstraints { make in
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
-            make.bottom.equalTo(guideLine.snp.top)
+            make.bottom.equalTo(guideLine.snp.top).offset(-1)
         }
 
         line2.snp.makeConstraints { make in
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview().priority(800)
-            make.top.equalTo(guideLine.snp.bottom)
+            make.top.equalTo(guideLine.snp.bottom).offset(1)
         }
 
         return view
@@ -72,8 +73,8 @@ class ConversationTableViewCell: UITableViewCell {
 
     lazy private var line2: UILabel = {
         let label = UILabel()
-        label.textColor = .darkGray
-        label.font = .systemFont(ofSize: 16, weight: .light)
+        label.textColor = .deepGray
+        label.font = .systemFont(ofSize: 16)
         return label
     }()
 
@@ -131,6 +132,7 @@ class ConversationTableViewCell: UITableViewCell {
         contentView.isUserInteractionEnabled = true
         ripple.activate(to: contentView)
         contentView.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapTableViewCell))
+        Timer.scheduledTimer(timeInterval: 60.0, target: self, selector: #selector(draw(_:)), userInfo: nil, repeats: true)
     }
 
     private func configureSubviews() {
@@ -172,7 +174,10 @@ class ConversationTableViewCell: UITableViewCell {
     func bind(conversation: ConversationDTO?, delegate: ConversationTableViewCellDelegate?) {
         self.conversation = conversation
         self.delegate = delegate
+        draw()
+    }
 
+    @objc private func draw() {
         let diameter = Const.imageDiameter
         let partner: UserDTO? = conversation?.partner
         let lastMessage = conversation?.messages?.last
@@ -180,7 +185,7 @@ class ConversationTableViewCell: UITableViewCell {
         let isMessageNotEmpty: Bool = lastMessage?.message.isNotEmpty() ?? false
         let message: String = isMessageNotEmpty ? lastMessage!.message! : "\(nickName) 님과 연결 되었습니다."
         let unreadMessageCount = conversation?.unreadMessageCount ?? 0
-        let staledTime = conversation?.messages?.last?.createdAt.asStaledTime() ?? "알 수 없음"
+        let staledTime = conversation?.messages?.last?.createdAt.asStaledTime() ?? (conversation?.createdAt?.asStaledTime() ?? "알 수 없음")
 
         userImage.url(partner?.avatar, cornerRadius: 0, size: CGSize(width: diameter, height: diameter))
         line1.text = "\(nickName)"
