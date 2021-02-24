@@ -270,7 +270,7 @@ class UserSingleViewController: UIViewController {
         }
 
         if (userSingleViewModel?.isWhoSentMe() ?? false) {
-            requestButton.setTitle("수락", for: .normal)
+            requestButton.setTitle("친구신청 수락", for: .normal)
             requestButton.isUserInteractionEnabled = true
             requestButton.backgroundColor = .bumble3
         }
