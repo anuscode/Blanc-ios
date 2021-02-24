@@ -41,6 +41,11 @@ public extension Int {
         let current = Int(NSDate().timeIntervalSince1970)
         let deltaInSeconds = current - timestamp
         let deltaInMinutes = deltaInSeconds / 60
+
+        if (deltaInMinutes <= 1) {
+            return "방금"
+        }
+
         if (deltaInMinutes < 60) {
             return "\(deltaInMinutes) 분 전"
         }
