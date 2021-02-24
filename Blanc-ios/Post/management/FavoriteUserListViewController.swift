@@ -14,19 +14,25 @@ class FavoriteUserListViewController: UIViewController {
 
     var favoriteUserListViewModel: FavoriteUserListViewModel?
 
+    lazy private var leftBarButtonItem: UIBarButtonItem = {
+        UIBarButtonItem(customView: LeftSideBarView(title: "좋아요 누른 사람 보기"))
+    }()
+
     lazy private var tableView: UITableView = {
         let tableView = UITableView()
         tableView.register(SmallUserProfileTableViewCell.self,
                 forCellReuseIdentifier: SmallUserProfileTableViewCell.identifier)
         tableView.allowsSelection = false
         tableView.separatorColor = .clear
+        tableView.contentInset = UIEdgeInsets(top: 15, left: 0, bottom: 0, right: 0)
         tableView.delegate = self
         return tableView
     }()
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationItem.title = "좋아요 누른 사람 보기 ♡"
+        navigationItem.leftBarButtonItem = leftBarButtonItem
+        navigationItem.leftItemsSupplementBackButton = true
         navigationController?.navigationBar.barTintColor = .white
     }
 
