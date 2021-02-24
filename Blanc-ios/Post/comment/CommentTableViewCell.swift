@@ -297,7 +297,7 @@ class CommentTableViewCell: UITableViewCell {
 
         userImage.url(comment?.commenter?.avatar, size: CGSize(width: Const.imageDiameter, height: Const.imageDiameter))
         nickNameLabel.text = comment?.commenter?.nickName ?? ""
-        dateLabel.text = "12 days ago"
+        dateLabel.text = comment?.createdAt.asStaledTime()
         commentLabel.text = comment?.comment ?? "[ERROR]"
         frontMargin.frame = CGRect(x: 0, y: 0, width: 35 * ((comment?.lv ?? 1) - 1), height: 0)
         showButtonStackView(comment?.lv ?? 1 == 1)
