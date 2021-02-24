@@ -48,12 +48,16 @@ class RequestsModel {
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
                 .subscribe(onNext: { push in
                     if (push.isRequest()) {
-                        self.appendRequest(requestId: push.requestId)
+                        self.insertRequest(requestId: push.requestId)
                     }
                     if (push.isMatched()) {
                         if let request = self.requests.first(where: { $0.id == push.requestId }) {
                             let index = self.requests.firstIndex(of: request)
                             self.requests.remove(at: index!)
+                        }
+
+                        if let requestId = push.requestId {
+                            self.session.user?.userIdsMatched?.append(requestId)
                         }
                     }
                 }, onError: { err in
@@ -74,12 +78,15 @@ class RequestsModel {
                 .disposed(by: disposeBag)
     }
 
-    private func appendRequest(requestId: String?) {
+    private func insertRequest(requestId: String?) {
         requestService.getRequest(uid: session.uid, requestId: requestId)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
                 .subscribe(onSuccess: { request in
                     self.requests.insert(request, at: 0)
+                    if let userId = request.userFrom?.id {
+                        self.session.user?.userIdsSentMeRequest?.append(userId)
+                    }
                     self.publish()
                 }, onError: { err in
                     log.error(err)
