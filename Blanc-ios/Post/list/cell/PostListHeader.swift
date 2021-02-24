@@ -36,7 +36,7 @@ class PostListHeader: UIView {
     lazy var headerLabel2: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = .darkGray
+        label.textColor = .systemGray
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
