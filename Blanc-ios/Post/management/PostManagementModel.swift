@@ -34,8 +34,7 @@ class PostManagementModel {
     }
 
     private func populate() {
-        //userService.listAllUserPosts(uid: session.uid, userId: session.id)
-        postService.listPosts(lastId: nil)
+        userService.listAllUserPosts(uid: session.uid, userId: session.id)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
                 .subscribe(onSuccess: { [self] posts in
@@ -121,6 +120,7 @@ class PostManagementModel {
                 createThumbUp(post: post, comment: comment, onError: onError)
             }
         }
+
         publish()
     }
 

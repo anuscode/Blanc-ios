@@ -80,7 +80,6 @@ class PostManagementViewController: UIViewController {
 
     lazy private var tableView: UITableView = {
         let tableView = UITableView()
-        tableView.backgroundColor = .secondarySystemBackground
         tableView.register(PostCell.self, forCellReuseIdentifier: PostCell.identifier)
         tableView.register(CommentCell.self, forCellReuseIdentifier: CommentCell.identifier)
         tableView.allowsSelection = false
@@ -105,9 +104,9 @@ class PostManagementViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.navigationBar.barTintColor = .white
         navigationItem.leftBarButtonItem = leftBarButtonItem
         navigationItem.leftItemsSupplementBackButton = true
+        navigationController?.navigationBar.barTintColor = .white
     }
 
     override func viewDidLoad() {
@@ -159,7 +158,7 @@ class PostManagementViewController: UIViewController {
         postManagementViewModel?.observe()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [self] posts in
+                .subscribe(onNext: { [unowned self] posts in
                     data = PostDTO.flatten(posts: posts).toArray()
                     DispatchQueue.main.async {
                         update()

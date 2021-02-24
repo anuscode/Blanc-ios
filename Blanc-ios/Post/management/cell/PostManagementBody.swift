@@ -101,7 +101,6 @@ class PostManagementBody: UIView {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.isUserInteractionEnabled = true
         label.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapFavoriteUsersLabel))
-        ripple.activate(to: label)
         return label
     }()
 
