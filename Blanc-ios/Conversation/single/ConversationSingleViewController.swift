@@ -321,7 +321,7 @@ class ConversationSingleViewController: UIViewController {
         }
         OpenConversationConfirmViewBuilder.create(target: self, user: conversation?.partner)
                 .subscribe(onNext: { [self] result in
-                    if (!result) {
+                    guard (result == true) else {
                         return
                     }
                     updateConversationAvailable()
