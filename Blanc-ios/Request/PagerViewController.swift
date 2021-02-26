@@ -131,6 +131,9 @@ class PagerViewController: UIViewController {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyboard.instantiateViewController(
                 withIdentifier: "ReceivedViewController") as! ReceivedViewController
+        vc.pushUserSingleViewController = {
+            self.navigationController?.pushUserSingleViewController(current: self)
+        }
         return vc
     }()
 

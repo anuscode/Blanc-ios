@@ -19,6 +19,8 @@ class ReceivedViewController: UIViewController {
 
     var receivedViewModel: ReceivedViewModel?
 
+    var pushUserSingleViewController: (() -> Void)?
+
     lazy private var tableView: UITableView = {
         let tableView = UITableView()
         tableView.register(SmallUserProfileWithButtonTableViewCell.self,
@@ -226,14 +228,7 @@ extension ReceivedViewController: UITableViewDelegate {
 extension ReceivedViewController: UserProfileCellDelegate {
     func presentUserSingleView(user: UserDTO?) {
         receivedViewModel?.channel(user: user)
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "UserSingleViewController") as! UserSingleViewController
-        vc.modalPresentationStyle = .fullScreen
-        let backBarButtonItem = UIBarButtonItem()
-        backBarButtonItem.title = ""
-        backBarButtonItem.tintColor = .black
-        navigationItem.backBarButtonItem = backBarButtonItem
-        navigationController?.pushViewController(vc, animated: true)
+        pushUserSingleViewController?()
     }
 
     func accept(request: RequestDTO?) {
