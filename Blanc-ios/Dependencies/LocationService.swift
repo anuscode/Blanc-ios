@@ -53,7 +53,7 @@ final class LocationService: NSObject {
         return subject.take(1).asSingle()
     }
 
-    func getAddressByCoordinate(coordinate: Coordinate?) -> Single<String> {
+    func getAddress(by coordinate: Coordinate?) -> Single<String> {
         let unknown: String = "알 수 없음"
         let address = CLGeocoder.init()
         let subject: ReplaySubject = ReplaySubject<String>.create(bufferSize: 1)
