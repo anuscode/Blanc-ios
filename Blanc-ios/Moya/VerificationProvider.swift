@@ -42,12 +42,18 @@ extension VerificationProvider: TargetType {
         switch self {
         case .issueSmsCode(idToken: _, uid: _, phone: let phone):
             return .requestCompositeParameters(
-                    bodyParameters: ["phone": phone!],
+                    bodyParameters: [
+                        "phone": phone!
+                    ],
                     bodyEncoding: URLEncoding.httpBody,
                     urlParameters: [:])
         case .verifySmsCode(idToken: _, uid: _, phone: let phone, smsCode: let smsCode, expiredAt: let expiredAt):
             return .requestCompositeParameters(
-                    bodyParameters: ["phone": phone!, "sms_code": smsCode!, "expired_at": expiredAt!],
+                    bodyParameters: [
+                        "phone": phone!,
+                        "sms_code": smsCode!,
+                        "expired_at": expiredAt!
+                    ],
                     bodyEncoding: URLEncoding.httpBody,
                     urlParameters: [:])
         }

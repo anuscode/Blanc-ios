@@ -2,14 +2,15 @@ import Foundation
 import UIKit
 import StoreKit
 
-
 struct Product {
     let title: String
     let discount: String
     let price: String
     let tag: String?
+    let productId: String
 
-    init(title: String, discount: String, price: String, tag: String? = nil) {
+    init(productId: String, title: String, discount: String, price: String, tag: String? = nil) {
+        self.productId = productId
         self.title = title
         self.discount = discount
         self.price = price
@@ -20,15 +21,17 @@ struct Product {
 class InAppPurchaseViewController: UIViewController {
 
     private var products: [Product] = [
-        Product(title: "포인트 5", discount: "약 0% 할인 😔", price: "₩1,500"),
-        Product(title: "포인트 15", discount: "약 2% 할인", price: "₩4,400"),
-        Product(title: "포인트 50", discount: "약 10% 할인", price: "₩13,500", tag: "할인율 대비 가격이 문안 합니다. 👍"),
-        Product(title: "포인트 100", discount: "약 15% 할인", price: "₩25,500", tag: "보통 이 상품이 가장 적절 합니다. 😃"),
-        Product(title: "포인트 200", discount: "약 25% 할인", price: "₩44,900"),
-        Product(title: "포인트 500", discount: "약 34% 할인", price: "₩99,900")
+        Product(productId: "ios.com.ground.blanc.point.2500.won", title: "포인트 10", discount: "할인 없음 😔", price: "₩2,500"),
+        Product(productId: "ios.com.ground.blanc.point.4900.won", title: "포인트 20", discount: "약 2% 할인", price: "₩4,900"),
+        Product(productId: "ios.com.ground.blanc.point.11000.won", title: "포인트 50", discount: "약 8.3% 할인", price: "₩11,000", tag: "할인율 대비 가격이 문안 합니다. 👍"),
+        Product(productId: "ios.com.ground.blanc.point.20000.won", title: "포인트 100", discount: "약 16.6% 할인", price: "₩20,000", tag: "보통 이 상품이 가장 적절 합니다. 😃"),
+        Product(productId: "ios.com.ground.blanc.point.36000.won", title: "포인트 200", discount: "약 25% 할인", price: "₩36,000"),
+        Product(productId: "ios.com.ground.blanc.point.79000.won", title: "포인트 500", discount: "약 37% 할인", price: "₩79,000")
     ]
 
     var rightSideBarView: RightSideBarView?
+
+    var inAppPurchaseViewModel: InAppPurchaseViewModel?
 
     lazy private var rightBarButtonItem: UIBarButtonItem = {
         guard (rightSideBarView != nil) else {
@@ -83,12 +86,13 @@ class InAppPurchaseViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationItem.rightBarButtonItem = rightBarButtonItem
+        navigationItem.leftBarButtonItem = leftBarButtonItem
+        navigationItem.leftItemsSupplementBackButton = true
         navigationController?.navigationBar.barTintColor = .white
         navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
         navigationController?.navigationBar.shadowImage = nil
         navigationController?.navigationBar.isTranslucent = true
-        navigationItem.rightBarButtonItem = rightBarButtonItem
-        navigationItem.leftBarButtonItem = leftBarButtonItem
     }
 
     override func viewDidLoad() {
@@ -134,37 +138,14 @@ class InAppPurchaseViewController: UIViewController {
         policyLabel.snp.makeConstraints { make in
             make.top.equalTo(tableView.snp.bottom).inset(-20)
             make.leading.equalToSuperview()
-            make.trailing.equalToSuperview()
+            make.trailing.equalTo(view.safeAreaLayoutGuide).inset(10)
         }
-    }
-
-    @objc private func didTapButton() {
-        navigationController?.startProgress()
-        IAPManager.shared.purchase(productId: "com.ground.blanc.point.1200.won",
-                onPurchased: { transaction in
-                    guard let receiptURL = Bundle.main.appStoreReceiptURL,
-                          let receiptString = try? Data(contentsOf: receiptURL).base64EncodedString() else {
-                        return
-                    }
-
-                    let requestData: [String: Any] = [
-                        "receipt-data": receiptString,
-                        "password": "0062c0812a164740bed2e43f606cf80c",
-                        "exclude-old-transactions": false
-                    ]
-                    print(receiptString)
-                    self.navigationController?.stopProgress()
-                },
-                onFailed: {
-                    self.navigationController?.stopProgress()
-                }
-        )
     }
 }
 
 extension InAppPurchaseViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 6
+        6
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -180,15 +161,16 @@ extension InAppPurchaseViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         navigationController?.startProgress()
-        IAPManager.shared.purchase(productId: "com.ground.blanc.point.1200.won",
-                onPurchased: { transaction in
-                    IAPManager.shared.finishTransaction(transaction: transaction)
+        let productId = products[indexPath.row].productId
+        inAppPurchaseViewModel?.purchase(
+                productId: productId,
+                onSuccess: {
                     self.navigationController?.stopProgress()
                 },
-                onFailed: {
+                onError: {
+                    self.toast(message: "결제 프로세스가 중단 되었습니다.")
                     self.navigationController?.stopProgress()
-                }
-        )
+                })
     }
 
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

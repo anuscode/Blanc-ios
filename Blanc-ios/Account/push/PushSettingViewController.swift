@@ -20,9 +20,7 @@ class PushSettingViewController: UIViewController {
         tableView.separatorStyle = .none
         tableView.delegate = self
         tableView.dataSource = self
-        //tableView.alwaysBounceVertical = false
-        tableView.register(PushSettingTableViewCell.self,
-                forCellReuseIdentifier: PushSettingTableViewCell.identifier)
+        tableView.register(PushSettingTableViewCell.self, forCellReuseIdentifier: PushSettingTableViewCell.identifier)
         tableView.layer.cornerRadius = 10
         tableView.layer.masksToBounds = true
         tableView.contentInset = UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0)

@@ -14,7 +14,12 @@ final class IAPManager: NSObject, SKProductsRequestDelegate, SKPaymentTransactio
     private var onFailed: (() -> Void)?
 
     enum Product: String, CaseIterable {
-        case point1200 = "com.ground.blanc.point.1200.won"
+        case point2500 = "ios.com.ground.blanc.point.2500.won",
+             point4900 = "ios.com.ground.blanc.point.4900.won",
+             point11000 = "ios.com.ground.blanc.point.11000.won",
+             point20000 = "ios.com.ground.blanc.point.20000.won",
+             point36000 = "ios.com.ground.blanc.point.36000.won",
+             point79000 = "ios.com.ground.blanc.point.79000.won"
     }
 
     public func fetchProducts() {

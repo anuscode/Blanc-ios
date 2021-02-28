@@ -65,6 +65,10 @@ extension ObjectScope {
     static let profileScope = ObjectScope(
             storageFactory: PermanentStorage.init, description: "profile scope."
     )
+
+    static let paymentScope = ObjectScope(
+            storageFactory: PermanentStorage.init, description: "payment scope"
+    )
 }
 
 
@@ -96,6 +100,7 @@ extension SwinjectStoryboard {
         defaultContainer.autoregister(PostService.self, initializer: PostService.init).inObjectScope(.container)
         defaultContainer.autoregister(ConversationService.self, initializer: ConversationService.init).inObjectScope(.container)
         defaultContainer.autoregister(AlarmService.self, initializer: AlarmService.init).inObjectScope(.container)
+        defaultContainer.autoregister(PaymentService.self, initializer: PaymentService.init).inObjectScope(.container)
 
         defaultContainer.register(Session.self) { resolver in
             let userService = resolver ~> UserService.self
@@ -426,6 +431,20 @@ extension SwinjectStoryboard {
             let profileViewModel = ProfileViewModel(profileModel: profileModel)
             return profileViewModel
         }.inObjectScope(.profileScope)
+
+
+        /** InAppPurchase dependencies **/
+        defaultContainer.register(InAppPurchaseModel.self) { resolver in
+            let session = resolver ~> Session.self
+            let paymentService = resolver ~> PaymentService.self
+            let inAppPurchaseModel = InAppPurchaseModel(session: session, paymentService: paymentService)
+            return inAppPurchaseModel
+        }.inObjectScope(.paymentScope)
+        defaultContainer.register(InAppPurchaseViewModel.self) { resolver in
+            let inAppPurchaseModel = resolver ~> InAppPurchaseModel.self
+            let inAppPurchaseViewModel = InAppPurchaseViewModel(inAppPurchaseModel: inAppPurchaseModel)
+            return inAppPurchaseViewModel
+        }.inObjectScope(.paymentScope)
     }
 
     class func configInitView() {
@@ -646,14 +665,15 @@ extension SwinjectStoryboard {
 
         defaultContainer.storyboardInitCompleted(AccountViewController.self) { resolver, controller in
             log.info("Injecting dependencies into AccountViewController")
-            controller.session = resolver ~> Session.self
             controller.accountViewModel = resolver ~> AccountViewModel.self
         }
 
         defaultContainer.storyboardInitCompleted(InAppPurchaseViewController.self) { resolver, controller in
             log.info("Injecting dependencies into InAppPurchaseViewController")
+            let inAppPurchaseViewModel = resolver ~> InAppPurchaseViewModel.self
             let rightSideBarViewModel = resolver ~> RightSideBarViewModel.self
             controller.rightSideBarView = RightSideBarView(rightSideBarViewModel: rightSideBarViewModel)
+            controller.inAppPurchaseViewModel = inAppPurchaseViewModel
         }
 
         defaultContainer.storyboardInitCompleted(PushSettingViewController.self) { resolver, controller in

@@ -1,6 +1,7 @@
 import UIKit
 import FirebaseAuth
 import SwinjectStoryboard
+import RxSwift
 
 class AccountData {
     var icon: String
@@ -16,9 +17,9 @@ class AccountViewController: UIViewController {
 
     private let auth: Auth = Auth.auth()
 
-    var accountViewModel: AccountViewModel?
+    private let disposeBag: DisposeBag = DisposeBag()
 
-    var session: Session?
+    var accountViewModel: AccountViewModel?
 
     private let fireworkController = ClassicFireworkController()
 
@@ -122,13 +123,11 @@ class AccountViewController: UIViewController {
         imageView.layer.masksToBounds = true
         imageView.width(screenWidth / 5)
         imageView.height(screenWidth / 5)
-        imageView.url(session?.user?.avatar)
         return imageView
     }()
 
     lazy var line1: UILabel = {
         let label = UILabel()
-        label.text = "\(session?.user?.nickName ?? "등록되지 않은 항목")"
         label.font = .systemFont(ofSize: 18)
         return label
     }()
@@ -136,9 +135,6 @@ class AccountViewController: UIViewController {
     lazy var line2: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14)
-        let area = session?.user?.area ?? "등록되지 않은 항목"
-        let age = session?.user?.age ?? -1
-        label.text = "\(area) · \(age)"
         return label
     }()
 
@@ -146,8 +142,6 @@ class AccountViewController: UIViewController {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14)
         label.textColor = .systemBlue
-        let point = session?.user?.point ?? 0
-        label.text = "내 잔여 포인트: \(point)"
         return label
     }()
 
@@ -316,6 +310,7 @@ class AccountViewController: UIViewController {
         super.viewDidLoad()
         configureSubviews()
         configureConstraints()
+        subscribeAccountViewModel()
     }
 
     private func configureSubviews() {
@@ -337,6 +332,29 @@ class AccountViewController: UIViewController {
             make.bottom.equalTo(view.safeAreaLayoutGuide).inset(10)
         }
     }
+
+    private func subscribeAccountViewModel() {
+        accountViewModel?.observe()
+                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+                .observeOn(MainScheduler.instance)
+                .subscribe(onNext: { user in
+                    self.update(user)
+                }, onError: { err in
+                    log.error(err)
+                })
+                .disposed(by: disposeBag)
+    }
+
+    private func update(_ user: UserDTO) {
+        let nickName = user.nickName ?? "알 수 없음"
+        let area = user.area ?? "알 수 없음"
+        let age = user.age ?? 0
+        let point = user.point ?? 0
+        currentUserImage.url(user.avatar)
+        line1.text = nickName
+        line2.text = "\(area) · \(age)세"
+        line3.text = "내 잔여 포인트: \(point)"
+    }
 }
 
 extension AccountViewController {
@@ -344,28 +362,28 @@ extension AccountViewController {
     @objc private func didTapImageButton() {
         fireworkController.addFireworks(count: 1, around: tap1)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.present(identifier: "ImageViewController")
+            self.pushViewController(identifier: "ImageViewController")
         }
     }
 
     @objc private func didTapProfileButton() {
         fireworkController.addFireworks(count: 1, around: tap2)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.present(identifier: "ProfileViewController")
+            self.pushViewController(identifier: "ProfileViewController")
         }
     }
 
     @objc private func didTapStarRatingButton() {
         fireworkController.addFireworks(count: 1, around: tap3)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.present(identifier: "MyRatedScoreViewController")
+            self.pushViewController(identifier: "MyRatedScoreViewController")
         }
     }
 
     @objc private func didTapAvoidButton() {
         fireworkController.addFireworks(count: 1, around: tap4)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.present(identifier: "AvoidViewController")
+            self.pushViewController(identifier: "AvoidViewController")
         }
     }
 
@@ -382,7 +400,7 @@ extension AccountViewController {
         }
     }
 
-    private func present(storyboard: String = "Main", identifier: String) {
+    private func pushViewController(storyboard: String = "Main", identifier: String) {
         let storyboard = UIStoryboard(name: storyboard, bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: identifier)
         let backBarButtonItem = UIBarButtonItem()
@@ -447,12 +465,12 @@ extension AccountViewController: UITableViewDelegate, UITableViewDataSource {
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
         if (indexPath.section == 0) {
-            present(identifier: "InAppPurchaseViewController")
+            pushViewController(identifier: "InAppPurchaseViewController")
         }
 
         if (indexPath.section == 1) {
             if (indexPath.row == 0) {
-                present(identifier: "PushSettingViewController")
+                pushViewController(identifier: "PushSettingViewController")
             } else {
                 logout()
             }
