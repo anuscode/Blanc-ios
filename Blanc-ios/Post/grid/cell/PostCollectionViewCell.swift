@@ -85,7 +85,6 @@ class PostCollectionViewCell: UICollectionViewCell {
 
         let resource = self.post?.resources?.first
         let contentDimension = fixedDimension * (isLargeScale ? 2 : 1)
-        print(contentDimension)
         let contentSize = CGSize(width: contentDimension, height: contentDimension)
         imageView.url(resource?.url, size: contentSize)
 
