@@ -31,6 +31,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
+        IAPManager.shared.fetchProducts()
+
         window = UIWindow(frame: UIScreen.main.bounds)
         KakaoSDKCommon.initSDK(appKey: "e649e517e74eff7d74d4e27050cb70d1")
 

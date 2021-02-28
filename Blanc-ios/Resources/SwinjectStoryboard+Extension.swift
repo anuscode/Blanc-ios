@@ -116,14 +116,15 @@ extension SwinjectStoryboard {
             return MainTabBarViewModel(conversationModel: conversationModel)
         }
 
-
         /** Home dependencies **/
         defaultContainer.register(HomeModel.self) { resolver in
             let session = resolver ~> Session.self
             let userService = resolver ~> UserService.self
             let requestService = resolver ~> RequestService.self
             let locationService = resolver ~> LocationService.self
-            let homeModel = HomeModel(session: session, userService: userService, requestService: requestService, locationService: locationService)
+            let homeModel = HomeModel(
+                    session: session, userService: userService,
+                    requestService: requestService, locationService: locationService)
             return homeModel
         }.inObjectScope(.mainScope)
         defaultContainer.register(HomeViewModel.self) { resolver in
@@ -136,8 +137,7 @@ extension SwinjectStoryboard {
             let homeViewModel = HomeViewModel(
                     session: session, channel: channel,
                     homeModel: homeModel, sendingModel: sendingModel,
-                    requestsModel: requestsModel, conversationModel: conversationModel
-            )
+                    requestsModel: requestsModel, conversationModel: conversationModel)
             return homeViewModel
         }.inObjectScope(.mainScope)
 
@@ -648,6 +648,12 @@ extension SwinjectStoryboard {
             log.info("Injecting dependencies into AccountViewController")
             controller.session = resolver ~> Session.self
             controller.accountViewModel = resolver ~> AccountViewModel.self
+        }
+
+        defaultContainer.storyboardInitCompleted(InAppPurchaseViewController.self) { resolver, controller in
+            log.info("Injecting dependencies into InAppPurchaseViewController")
+            let rightSideBarViewModel = resolver ~> RightSideBarViewModel.self
+            controller.rightSideBarView = RightSideBarView(rightSideBarViewModel: rightSideBarViewModel)
         }
 
         defaultContainer.storyboardInitCompleted(PushSettingViewController.self) { resolver, controller in

@@ -551,6 +551,34 @@ extension UINavigationController {
     }
 }
 
+extension UINavigationController {
+
+    static private var progress: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        view.isUserInteractionEnabled = true
+        var indicator: UIActivityIndicatorView = UIActivityIndicatorView(style: .white)
+        indicator.startAnimating()
+        view.addSubview(indicator)
+        indicator.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        return view
+    }()
+
+    func startProgress() {
+        view.addSubview(UINavigationController.progress)
+        view.bringSubviewToFront(UINavigationController.progress)
+        UINavigationController.progress.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+    }
+
+    func stopProgress() {
+        UINavigationController.progress.removeFromSuperview()
+    }
+}
+
 extension Array where Element == UserDTO {
     func distance(_ user: UserDTO?) {
         forEach {

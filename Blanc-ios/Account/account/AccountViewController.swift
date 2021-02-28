@@ -447,7 +447,7 @@ extension AccountViewController: UITableViewDelegate, UITableViewDataSource {
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
         if (indexPath.section == 0) {
-            // present(identifier: "PushSettingViewController")
+            present(identifier: "InAppPurchaseViewController")
         }
 
         if (indexPath.section == 1) {
