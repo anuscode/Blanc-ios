@@ -30,7 +30,7 @@ extension MessageDTO {
         message.id = push.messageId
         message.conversationId = push.conversationId
         message.userId = push.userId
-        // message.category = push.category
+        message.category = push.category
         message.url = push.url
         message.message = push.message
         message.createdAt = push.createdAt
@@ -51,7 +51,7 @@ class ConversationDTO: NSObject, Codable {
     var title: String?
     var createdAt: Int?
     var participants: [UserDTO]?
-    var participantsMapper: [UserDTO]?
+    var references: [UserDTO]?
     var messages: [MessageDTO]?
     var available: Bool?
 
@@ -71,7 +71,7 @@ extension ConversationDTO {
             if (currentUser == nil) {
                 return nil
             }
-            return participantsMapper?.first {
+            return references?.first {
                 $0.id != currentUser?.id
             }
         }

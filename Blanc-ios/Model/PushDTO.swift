@@ -33,6 +33,7 @@ class PushDTO: NSObject, Decodable {
     var messageId: String?
 
     var pushType: PushType?
+    var category: Category?
     var nickName: String?
     var imageUrl: String?
     var message: String?
@@ -41,7 +42,7 @@ class PushDTO: NSObject, Decodable {
 
     enum CodingKeys: String, CodingKey {
         case pushId, userId, url, postId, commentId, requestId, conversationId, messageId,
-             pushType, nickName, imageUrl, message, createdAt, isRead
+             pushType, category, nickName, imageUrl, message, createdAt, isRead
     }
 
     static func ==(lhs: PushDTO, rhs: PushDTO) -> Bool {
@@ -102,6 +103,12 @@ class PushDTO: NSObject, Decodable {
             pushType = try values.decode(PushType?.self, forKey: .pushType)
         } catch {
             pushType = nil
+        }
+
+        do {
+            category = try values.decode(Category?.self, forKey: .category)
+        } catch {
+            category = nil
         }
 
         do {

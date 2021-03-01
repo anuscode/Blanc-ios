@@ -248,7 +248,7 @@ class ConversationSingleViewController: UIViewController {
     private func showInactiveViewIfRequired() {
         inactiveConversationView.visible(conversation?.available != true)
         inactiveUserImage.url(conversation?.partner?.avatar)
-        if (conversation?.participantsMapper?.count ?? 0 > 1) {
+        if (conversation?.references?.count ?? 0 > 1) {
             inactiveLabel1.text = "\(conversation?.partner?.nickName ?? "알 수 없음") 님과 연결 되었습니다."
         } else {
             inactiveLabel1.text = "해당 사용자가 대화방을 나갔습니다."
