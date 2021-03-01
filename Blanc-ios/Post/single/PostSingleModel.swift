@@ -179,7 +179,7 @@ class PostSingleModel {
                     }
                     publish()
                 }, onError: { err in
-                    onError("댓글 싫어요 삭제에 실패 하였습니다.")
+                    onError("댓글 생성에 실패 하였습니다.")
                 })
                 .disposed(by: disposeBag)
     }
