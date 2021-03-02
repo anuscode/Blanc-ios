@@ -72,16 +72,16 @@ class RegistrationEducationViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         view.backgroundColor = .bumble1
+    }
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow),
                 name: UIResponder.keyboardWillShowNotification, object: nil
         )
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide),
                 name: UIResponder.keyboardWillHideNotification, object: nil
         )
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
         configureSubviews()
         configureConstraints()
         subscribeViewModel()

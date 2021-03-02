@@ -109,17 +109,20 @@ class PostSingleViewController: UIViewController {
     }
 
     private func configureConstraints() {
+
         tableView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide)
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
             make.bottom.equalTo(bottomTextField.snp.top)
         }
+
         bottomTextField.snp.makeConstraints { make in
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
             make.bottom.equalTo(view.safeAreaLayoutGuide)
         }
+
         closeTapBackground.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
@@ -128,18 +131,18 @@ class PostSingleViewController: UIViewController {
     private func subscribePostSingleViewModel() {
         postSingleViewModel?.observe()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [unowned self] post in
+                .observeOn(MainScheduler.instance)
+                .subscribe(onNext: { post in
                     self.post = post
                     self.comments = CommentDTO.flatten(comments: post.comments).toArray() as! [CommentDTO]
 
                     let isFirst = self.post == nil
                     let isThumbUpdates = self.post?.comments?.count == post.comments?.count
-                    update(animatingDifferences: (!isFirst && !isThumbUpdates))
+                    self.update(animatingDifferences: (!isFirst && !isThumbUpdates))
 
                     if (self.post?.enableComment == false) {
-                        bottomTextField.placeHolder = "댓글이 금지 된 게시물 입니다."
-                        bottomTextField.isEnabled = false
+                        self.bottomTextField.placeHolder = "댓글이 금지 된 게시물 입니다."
+                        self.bottomTextField.isEnabled = false
                     }
                 }, onError: { err in
                     log.error(err)
