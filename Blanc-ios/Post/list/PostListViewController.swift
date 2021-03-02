@@ -52,6 +52,7 @@ class PostListViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationItem.backBarButtonItem = UIBarButtonItem.back
         navigationItem.leftBarButtonItem = leftBarButtonItem
         navigationItem.leftItemsSupplementBackButton = true
         navigationController?.navigationBar.barTintColor = .white
@@ -155,7 +156,7 @@ extension PostListViewController: PostBodyDelegate {
 
     func presentSinglePostView(post: PostDTO?) {
         channel(post: post)
-        navigationController?.pushPostSingleViewController(current: self)
+        navigationController?.pushViewController(.postSingle, current: self)
     }
 
     func isCurrentUserFavoritePost(_ post: PostDTO?) -> Bool {
@@ -174,7 +175,7 @@ extension PostListViewController: PostHeaderDelegate {
 
     func didTapUserImage(user: UserDTO?) -> Void {
         channel(user: user)
-        navigationController?.pushUserSingleViewController(current: self)
+        navigationController?.pushViewController(.userSingle, current: self)
     }
 
     private func channel(user: UserDTO?) {

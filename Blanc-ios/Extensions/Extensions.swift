@@ -288,3 +288,12 @@ extension Array where Element == UserDTO {
         distance(session.user)
     }
 }
+
+extension UIBarButtonItem {
+    static let back: UIBarButtonItem = {
+        let item = UIBarButtonItem()
+        item.title = ""
+        item.tintColor = .black
+        return item
+    }()
+}

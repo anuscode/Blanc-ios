@@ -149,9 +149,10 @@ class PagerViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.navigationBar.barTintColor = .white
+        navigationItem.backBarButtonItem = UIBarButtonItem.back
         navigationItem.rightBarButtonItem = rightBarButtonItem
         navigationItem.leftBarButtonItem = leftBarButtonItem
+        navigationController?.navigationBar.barTintColor = .white
     }
 
     override func viewDidLoad() {

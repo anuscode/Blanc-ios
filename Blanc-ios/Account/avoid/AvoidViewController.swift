@@ -64,9 +64,10 @@ class AvoidViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        view.backgroundColor = .secondarySystemBackground
+        navigationItem.backBarButtonItem = UIBarButtonItem.back
         navigationItem.leftBarButtonItem = leftBarButtonItem
         navigationItem.leftItemsSupplementBackButton = true
-        view.backgroundColor = .secondarySystemBackground
     }
 
     override func viewWillDisappear(_ animated: Bool) {

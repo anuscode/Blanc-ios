@@ -196,8 +196,9 @@ class PostViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         view.backgroundColor = .secondarySystemBackground
-        navigationController?.navigationBar.barTintColor = .white
+        navigationItem.backBarButtonItem = UIBarButtonItem.back
         navigationItem.leftBarButtonItem = leftBarButtonItem
+        navigationController?.navigationBar.barTintColor = .white
     }
 
     override func viewDidLoad() {
@@ -246,45 +247,14 @@ class PostViewController: UIViewController {
     private func subscribePostViewModel() {
         postViewModel?.observe()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [self] posts in
+                .observeOn(MainScheduler.instance)
+                .subscribe(onNext: { posts in
                     self.posts = posts
-                    DispatchQueue.main.async {
-                        update()
-                    }
-                    prefetch(urls: self.posts.map {
-                        ($0.resources?.first?.url)
-                    })
+                    self.update()
                 }, onError: { err in
                     log.error(err)
                 })
                 .disposed(by: disposeBag)
-    }
-
-    private func prefetch(urls: [String?]) {
-
-//        let URLs: [URL] = urls.map { url in
-//            URL(string: url ?? "")
-//        }.filter {
-//            $0 != nil
-//        } as! [URL]
-//        let prefetch = ImagePrefetcher(urls: URLs,
-//                options: [.cacheMemoryOnly],
-//                progressBlock: nil,
-//                completionHandler: {
-//                    (skippedResources, failedResources, completedResources) -> () in
-//                    ImageCache.default.retrieveImage(forKey: urls[0]!, options: [.onlyFromCache]) { (image, _) in
-//                        guard image != nil else {
-//                            return
-//                        }
-//                        print("saving \(urls[0]!)")
-//                        ImageCache.default.store(image!, forKey: urls[0]!)
-//                    }
-//                    print("These resources are skipped: \(skippedResources)")
-//                    print("These resources are failed: \(failedResources)")
-//                    print("These resources are prefetched: \(completedResources)")
-//                })
-//        prefetch.start()
     }
 
     @objc func didTapFloatingActionButton() {
@@ -292,7 +262,7 @@ class PostViewController: UIViewController {
             UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseIn], animations: { [self] in
                 fab1.transform = CGAffineTransform(translationX: 0, y: 0)
                 fab2.transform = CGAffineTransform(translationX: 0, y: 0)
-            }, completion: { [self] _ in
+            }, completion: { [unowned self] _ in
                 fab1.visible(false)
                 fab2.visible(false)
                 fab2LottieView.stop()
@@ -310,34 +280,11 @@ class PostViewController: UIViewController {
     }
 
     @objc func didTapFloatingActionButton1() {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let vc = storyboard.instantiateViewController(
-                withIdentifier: "PostManagementViewController") as! PostManagementViewController
-        vc.modalPresentationStyle = .fullScreen
-
-        let backBarButtonItem = UIBarButtonItem()
-        backBarButtonItem.title = ""
-        backBarButtonItem.tintColor = .black
-        navigationItem.backBarButtonItem = backBarButtonItem
-        vc.prepare()
-        hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(vc, animated: true)
-        hidesBottomBarWhenPushed = false
+        navigationController?.pushViewController(.postManagement, current: self)
     }
 
     @objc func didTapFloatingActionButton2() {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let vc = storyboard.instantiateViewController(
-                withIdentifier: "PostCreateViewController") as! PostCreateViewController
-        vc.modalPresentationStyle = .fullScreen
-
-        let backBarButtonItem = UIBarButtonItem()
-        backBarButtonItem.title = ""
-        backBarButtonItem.tintColor = .black
-        navigationItem.backBarButtonItem = backBarButtonItem
-        hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(vc, animated: true)
-        hidesBottomBarWhenPushed = false
+        navigationController?.pushViewController(.postCreate, current: self)
     }
 }
 
@@ -371,17 +318,9 @@ extension PostViewController: UICollectionViewDelegate {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyboard.instantiateViewController(
                 withIdentifier: "PostListViewController") as! PostListViewController
-        vc.modalPresentationStyle = .fullScreen
-
-        let backBarButtonItem = UIBarButtonItem()
-        backBarButtonItem.title = ""
-        backBarButtonItem.tintColor = .black
-        navigationItem.backBarButtonItem = backBarButtonItem
         vc.scrollToRow = indexPath.row
         vc.prepare()
-        hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(vc, animated: true)
-        hidesBottomBarWhenPushed = false
+        navigationController?.pushViewController(vc, current:self)
     }
 }
 
@@ -398,11 +337,7 @@ extension PostViewController: GridLayoutDelegate {
     func scaleForItem(inCollectionView collectionView: UICollectionView, withLayout layout: UICollectionViewLayout, atIndexPath indexPath: IndexPath) -> UInt {
         let index = indexPath.row
         let post = posts[index]
-        if (index % division == reminder && !post.isTextOnly()) {
-            return 2
-        } else {
-            return 1
-        }
+        return (index % division == reminder && !post.isTextOnly()) ? 2 : 1
     }
 
     func itemFlexibleDimension(inCollectionView collectionView: UICollectionView, withLayout layout: UICollectionViewLayout, fixedDimension: CGFloat) -> CGFloat {

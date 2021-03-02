@@ -12,6 +12,7 @@ class RegistrationRootViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         view.backgroundColor = .bumble1
+        navigationItem.backBarButtonItem = UIBarButtonItem.back
     }
 
     override func viewDidLoad() {

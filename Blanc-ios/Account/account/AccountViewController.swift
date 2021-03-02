@@ -298,12 +298,13 @@ class AccountViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        view.backgroundColor = .secondarySystemBackground
         navigationController?.navigationBar.barTintColor = .white
         navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
         navigationController?.navigationBar.shadowImage = nil
         navigationController?.navigationBar.isTranslucent = true
+        navigationItem.backBarButtonItem = UIBarButtonItem.back
         navigationItem.leftBarButtonItem = leftBarButtonItem
-        view.backgroundColor = .secondarySystemBackground
     }
 
     override func viewDidLoad() {

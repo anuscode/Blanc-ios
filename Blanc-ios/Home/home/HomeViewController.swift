@@ -79,13 +79,6 @@ class HomeViewController: UIViewController {
         return UIBarButtonItem(customView: rightSideBarView!)
     }()
 
-    lazy private var backBarButtonItem: UIBarButtonItem = {
-        let item = UIBarButtonItem()
-        item.title = ""
-        item.tintColor = .black
-        return item
-    }()
-
     lazy private var homeLoading1: HomeLoading = {
         HomeLoading()
     }()
@@ -96,7 +89,7 @@ class HomeViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationItem.backBarButtonItem = backBarButtonItem
+        navigationItem.backBarButtonItem = UIBarButtonItem.back
         navigationItem.rightBarButtonItem = rightBarButtonItem
         navigationItem.leftBarButtonItem = leftBarButtonItem
         navigationController?.navigationBar.barTintColor = .white
@@ -343,7 +336,7 @@ extension HomeViewController: UserCardCellDelegate {
 
     func didTapSearchView(_ user: UserDTO?) {
         homeViewModel?.channel(user: user)
-        navigationController?.pushViewController(.userSingle, hideBottomWhenStart: true, hideBottomWhenEnd: false)
+        navigationController?.pushViewController(.userSingle, current: self)
     }
 
     func confirm(_ user: UserDTO?) -> Observable<Bool> {
@@ -351,13 +344,13 @@ extension HomeViewController: UserCardCellDelegate {
     }
 
     func request(_ user: UserDTO?, animationDone: Observable<Void>) {
-        homeViewModel?.request(user, animationDone: animationDone) { [self] message in
+        homeViewModel?.request(user, animationDone: animationDone) { [unowned self] message in
             toast(message: message)
         }
     }
 
     func poke(_ user: UserDTO?, onBegin: () -> Void) {
-        homeViewModel?.poke(user, onBegin: onBegin, completion: { [self] message in
+        homeViewModel?.poke(user, onBegin: onBegin, completion: { [unowned self] message in
             toast(message: message)
         })
     }

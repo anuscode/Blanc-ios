@@ -3,20 +3,35 @@ import UIKit
 
 enum Identifier: String {
     case userSingle = "UserSingleViewController",
+         postList = "PostListViewController",
          postSingle = "PostSingleViewController",
+         postManagement = "PostManagementViewController",
+         postCreate = "PostCreateViewController",
          alarms = "AlarmViewController"
 }
 
 extension UINavigationController {
 
     func pushViewController(_ identifier: Identifier,
+                            current: UIViewController? = nil,
                             hideBottomWhenStart: Bool = true,
-                            hideBottomWhenEnd: Bool = false) {
+                            hideBottomWhenEnd: Bool = false,
+                            animated: Bool = true) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: identifier.rawValue)
-        hidesBottomBarWhenPushed = hideBottomWhenStart
-        pushViewController(vc, animated: true)
-        hidesBottomBarWhenPushed = hideBottomWhenEnd
+        current?.hidesBottomBarWhenPushed = hideBottomWhenStart
+        pushViewController(vc, animated: animated)
+        current?.hidesBottomBarWhenPushed = hideBottomWhenEnd
+    }
+
+    func pushViewController(_ vc: UIViewController,
+                            current: UIViewController? = nil,
+                            hideBottomWhenStart: Bool = true,
+                            hideBottomWhenEnd: Bool = false,
+                            animated: Bool = true) {
+        current?.hidesBottomBarWhenPushed = hideBottomWhenStart
+        pushViewController(vc, animated: animated)
+        current?.hidesBottomBarWhenPushed = hideBottomWhenEnd
     }
 
     func pushUserSingleViewController(current: UIViewController) {
