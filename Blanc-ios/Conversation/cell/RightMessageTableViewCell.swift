@@ -26,9 +26,8 @@ class RightMessageTableViewCell: UITableViewCell {
         return label
     }()
 
-    lazy private var time: UILabel = {
+    lazy private var timeLabel: UILabel = {
         let label = UILabel()
-        label.text = "11:05"
         label.textColor = .gray
         label.font = .systemFont(ofSize: 10, weight: .thin)
         return label
@@ -44,13 +43,9 @@ class RightMessageTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
-    }
-
     private func configureSubviews() {
         contentView.addSubview(messageView)
-        contentView.addSubview(time)
+        contentView.addSubview(timeLabel)
     }
 
     private func configureConstraints() {
@@ -60,7 +55,7 @@ class RightMessageTableViewCell: UITableViewCell {
             make.bottom.equalToSuperview()
         }
 
-        time.snp.makeConstraints { make in
+        timeLabel.snp.makeConstraints { make in
             make.trailing.equalTo(messageView.snp.leading).inset(-5)
             make.bottom.equalTo(messageView.snp.bottom)
         }
@@ -68,11 +63,15 @@ class RightMessageTableViewCell: UITableViewCell {
 
     func bind(message: MessageDTO?) {
         self.message = message
-        let text = message?.message ?? ""
-        let size = getTextSize(text, padding: 12)
-        messageLabel.text = text
-        messageView.width(size.width)
-        messageView.height(size.height)
+        let message = message?.message ?? ""
+        let time = self.message?.createdAt?.asHourMinute() ?? ""
+        let textSize = getTextSize(message, padding: 12)
+
+        messageLabel.text = message
+        timeLabel.text = time
+
+        messageView.width(textSize.width)
+        messageView.height(textSize.height)
     }
 
     private func getTextSize(_ text: String, padding: CGFloat) -> CGSize {
