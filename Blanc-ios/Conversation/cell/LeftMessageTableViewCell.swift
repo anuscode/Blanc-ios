@@ -22,7 +22,6 @@ class LeftMessageTableViewCell: UITableViewCell {
 
     lazy private var nickName: UILabel = {
         let label = UILabel()
-        label.text = "핑크겅듀"
         label.textColor = UIColor(red: 91 / 255, green: 98 / 255, blue: 107 / 255, alpha: 1.0)
         label.font = .systemFont(ofSize: 14)
         return label
@@ -104,6 +103,7 @@ class LeftMessageTableViewCell: UITableViewCell {
     func bind(user: UserDTO?, message: MessageDTO?) {
         self.message = message
         userImage.url(user?.avatar, size: CGSize(width: Const.imageDiameter, height: Const.imageDiameter))
+        nickName.text = user?.nickName ?? "알 수 없음"
         messageLabel.text = message?.message ?? ""
         let size = getTextSize(message?.message ?? "", padding: 12)
         messageView.width(size.width)
