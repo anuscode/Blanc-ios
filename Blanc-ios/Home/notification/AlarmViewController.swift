@@ -154,7 +154,7 @@ extension AlarmViewController: UITableViewDelegate {
             }
             alarmViewModel?.getPost(postId: postId, onSuccess: { [unowned self] post in
                 channel?.next(value: post)
-                navigationController?.pushPostSingleViewController(current: self)
+                navigationController?.pushViewController(.postSingle, current: self)
             }, onError: { [unowned self] in
                 toast(message: "게시물 정보를 가져오지 못했습니다.")
             })
@@ -167,7 +167,7 @@ extension AlarmViewController: UITableViewDelegate {
 
         alarmViewModel?.getUser(userId: userId, onSuccess: { [unowned self] user in
             channel?.next(value: user)
-            navigationController?.pushUserSingleViewController(current: self)
+            navigationController?.pushViewController(.userSingle, current: self)
         }, onError: { [unowned self] in
             toast(message: "유저 정보를 가져오지 못했습니다.")
         })

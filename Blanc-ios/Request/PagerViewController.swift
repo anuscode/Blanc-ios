@@ -68,7 +68,7 @@ class PagerViewController: UIViewController {
             return UIBarButtonItem()
         }
         rightSideBarView!.delegate {
-            self.navigationController?.pushAlarmViewController(current: self)
+            self.navigationController?.pushViewController(.alarms, current: self)
         }
         return UIBarButtonItem(customView: rightSideBarView!)
     }()
@@ -132,7 +132,7 @@ class PagerViewController: UIViewController {
         let vc = storyboard.instantiateViewController(
                 withIdentifier: "ReceivedViewController") as! ReceivedViewController
         vc.pushUserSingleViewController = {
-            self.navigationController?.pushUserSingleViewController(current: self)
+            self.navigationController?.pushViewController(.userSingle, current: self)
         }
         return vc
     }()
@@ -142,7 +142,7 @@ class PagerViewController: UIViewController {
         let vc = storyboard.instantiateViewController(
                 withIdentifier: "SendingViewController") as! SendingViewController
         vc.pushUserSingleViewController = {
-            self.navigationController?.pushUserSingleViewController(current: self)
+            self.navigationController?.pushViewController(.userSingle, current: self)
         }
         return vc
     }()

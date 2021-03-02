@@ -74,7 +74,7 @@ class HomeViewController: UIViewController {
             return UIBarButtonItem()
         }
         rightSideBarView!.delegate {
-            self.navigationController?.pushAlarmViewController(current: self)
+            self.navigationController?.pushViewController(.alarms, current: self)
         }
         return UIBarButtonItem(customView: rightSideBarView!)
     }()
@@ -201,7 +201,7 @@ class HomeViewController: UIViewController {
     }
 
     @objc private func didTapAlarmImage() {
-        navigationController?.pushAlarmViewController(current: self)
+        navigationController?.pushViewController(.alarms, current: self)
     }
 }
 

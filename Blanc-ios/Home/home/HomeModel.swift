@@ -45,12 +45,13 @@ class HomeModel {
     }
 
     private func populate() {
-        updateUserLocation()
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .flatMap { [unowned self] it -> Single<[UserDTO]> in
-                    listRecommendedUsers()
-                }
+//        updateUserLocation()
+//                .observeOn(SerialDispatchQueueScheduler(qos: .default))
+//                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+//                .flatMap { [unowned self] it -> Single<[UserDTO]> in
+//
+//                }
+        listRecommendedUsers()
                 .do(afterSuccess: { [unowned self] users in
                     // loop to calculate and set a distance from current user.
                     users.distance(session)
