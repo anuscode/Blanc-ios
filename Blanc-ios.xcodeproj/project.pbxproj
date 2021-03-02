@@ -180,7 +180,6 @@
 		104EEB9025E3726B0069B2CF /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEB8A25E3726B0069B2CF /* Constants.swift */; };
 		104EEB9125E3726B0069B2CF /* UIColor+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEB8B25E3726B0069B2CF /* UIColor+Extension.swift */; };
 		104EEB9225E3726B0069B2CF /* SwinjectStoryboard+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEB8C25E3726B0069B2CF /* SwinjectStoryboard+Extension.swift */; };
-		104EEB9325E3726B0069B2CF /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEB8D25E3726B0069B2CF /* Extensions.swift */; };
 		104EEB9425E3726B0069B2CF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEB8E25E3726B0069B2CF /* AppDelegate.swift */; };
 		104EEB9525E3726B0069B2CF /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEB8F25E3726B0069B2CF /* SceneDelegate.swift */; };
 		104EEB9C25E372700069B2CF /* Spinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEB9A25E372700069B2CF /* Spinner.swift */; };
@@ -273,12 +272,16 @@
 		69A10C304D3EE8E1BC424287 /* Pods_Blanc_ios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86136E85AB864A9141A83B37 /* Pods_Blanc_ios.framework */; };
 		7A481E8EFA2268096059CF76 /* Pods_Blanc_iosTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 89DD709C0040CF6E7F18A036 /* Pods_Blanc_iosTests.framework */; };
 		C47AA032B7DA2F2DEC912127 /* InAppPurchaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AADDF123DA705D0D31C70 /* InAppPurchaseModel.swift */; };
+		C47AA1900B60991001A67110 /* UIViewController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA38B8F28E7FCD81FD02B /* UIViewController+Extension.swift */; };
 		C47AA29524543C2555487AEE /* InAppPurchaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA3977CB04CBF6AB4CA3B /* InAppPurchaseViewModel.swift */; };
 		C47AA2FAD71D31DAE9DF6FCA /* Broadcast.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AAA5893F5BE3DB46D70F2 /* Broadcast.swift */; };
 		C47AA32A10ACDA94C39E6D6E /* Int+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AAF64311FE6466E824F0D /* Int+Extension.swift */; };
 		C47AA5367AADBB4F4B6D9994 /* PaymentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA1D5E6462D0679248909 /* PaymentService.swift */; };
 		C47AA5B49233DD1E59C6D074 /* InAppPurchaseTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AAC81B4B9E7A00D3EA155 /* InAppPurchaseTableViewCell.swift */; };
+		C47AA762523F50CBEE156306 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA8F623619E368CA03001 /* Extensions.swift */; };
+		C47AA7C626C4C16AA8A06DA9 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AAB4E79358AC85B769BE6 /* UIView+Extension.swift */; };
 		C47AA83E4F1FC818AC7EB61E /* InAppPurchaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AACA33B78F7DBDE4957FF /* InAppPurchaseViewController.swift */; };
+		C47AA9B1451CD90F013EFECF /* UINavigationController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA39FA440727C495C4A05 /* UINavigationController+Extension.swift */; };
 		C47AAA1BC448AEA0E6315C5B /* PaymentDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA7CE2AEB97BACCEA02C2 /* PaymentDTO.swift */; };
 		C47AAD85E43E692FE7FE3D32 /* PaymentProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA6B42E110C411BA90F59 /* PaymentProvider.swift */; };
 		C47AAE486B285D2EC2F3C8E0 /* IAPHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA1210DF0D858645ADADD /* IAPHelper.swift */; };
@@ -483,7 +486,6 @@
 		104EEB8A25E3726B0069B2CF /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		104EEB8B25E3726B0069B2CF /* UIColor+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Extension.swift"; sourceTree = "<group>"; };
 		104EEB8C25E3726B0069B2CF /* SwinjectStoryboard+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SwinjectStoryboard+Extension.swift"; sourceTree = "<group>"; };
-		104EEB8D25E3726B0069B2CF /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		104EEB8E25E3726B0069B2CF /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		104EEB8F25E3726B0069B2CF /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		104EEB9A25E372700069B2CF /* Spinner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Spinner.swift; sourceTree = "<group>"; };
@@ -581,11 +583,15 @@
 		BBF76FBD4A6DCDD1994B9BC0 /* Pods-Blanc-ios-Blanc-iosUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Blanc-ios-Blanc-iosUITests.debug.xcconfig"; path = "Target Support Files/Pods-Blanc-ios-Blanc-iosUITests/Pods-Blanc-ios-Blanc-iosUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		C47AA1210DF0D858645ADADD /* IAPHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = IAPHelper.swift; sourceTree = "<group>"; };
 		C47AA1D5E6462D0679248909 /* PaymentService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PaymentService.swift; sourceTree = "<group>"; };
+		C47AA38B8F28E7FCD81FD02B /* UIViewController+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extension.swift"; sourceTree = "<group>"; };
 		C47AA3977CB04CBF6AB4CA3B /* InAppPurchaseViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppPurchaseViewModel.swift; sourceTree = "<group>"; };
+		C47AA39FA440727C495C4A05 /* UINavigationController+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UINavigationController+Extension.swift"; sourceTree = "<group>"; };
 		C47AA6B42E110C411BA90F59 /* PaymentProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PaymentProvider.swift; sourceTree = "<group>"; };
 		C47AA72570EBB462B489CDB6 /* Background.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Background.swift; sourceTree = "<group>"; };
 		C47AA7CE2AEB97BACCEA02C2 /* PaymentDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PaymentDTO.swift; sourceTree = "<group>"; };
+		C47AA8F623619E368CA03001 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		C47AAA5893F5BE3DB46D70F2 /* Broadcast.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Broadcast.swift; sourceTree = "<group>"; };
+		C47AAB4E79358AC85B769BE6 /* UIView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
 		C47AAC81B4B9E7A00D3EA155 /* InAppPurchaseTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppPurchaseTableViewCell.swift; sourceTree = "<group>"; };
 		C47AACA33B78F7DBDE4957FF /* InAppPurchaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppPurchaseViewController.swift; sourceTree = "<group>"; };
 		C47AADDF123DA705D0D31C70 /* InAppPurchaseModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppPurchaseModel.swift; sourceTree = "<group>"; };
@@ -1191,7 +1197,6 @@
 				104EEB8A25E3726B0069B2CF /* Constants.swift */,
 				104EEB8B25E3726B0069B2CF /* UIColor+Extension.swift */,
 				104EEB8C25E3726B0069B2CF /* SwinjectStoryboard+Extension.swift */,
-				104EEB8D25E3726B0069B2CF /* Extensions.swift */,
 				104EEB8E25E3726B0069B2CF /* AppDelegate.swift */,
 				104EEB8F25E3726B0069B2CF /* SceneDelegate.swift */,
 			);
@@ -1522,6 +1527,10 @@
 			isa = PBXGroup;
 			children = (
 				C47AAF64311FE6466E824F0D /* Int+Extension.swift */,
+				C47AA39FA440727C495C4A05 /* UINavigationController+Extension.swift */,
+				C47AAB4E79358AC85B769BE6 /* UIView+Extension.swift */,
+				C47AA38B8F28E7FCD81FD02B /* UIViewController+Extension.swift */,
+				C47AA8F623619E368CA03001 /* Extensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -2064,7 +2073,6 @@
 				104EEB9225E3726B0069B2CF /* SwinjectStoryboard+Extension.swift in Sources */,
 				104EEB5425E3725D0069B2CF /* PostSingleViewController.swift in Sources */,
 				104EEA3B25E372060069B2CF /* RegistrationRootViewController.swift in Sources */,
-				104EEB9325E3726B0069B2CF /* Extensions.swift in Sources */,
 				104EEB0C25E3724E0069B2CF /* PostProvider.swift in Sources */,
 				104EEA0E25E371FE0069B2CF /* FireworkSparkScheduler.swift in Sources */,
 				104EEC1E25E3728F0069B2CF /* ImageViewModel.swift in Sources */,
@@ -2099,6 +2107,10 @@
 				C47AAA1BC448AEA0E6315C5B /* PaymentDTO.swift in Sources */,
 				C47AA29524543C2555487AEE /* InAppPurchaseViewModel.swift in Sources */,
 				C47AA032B7DA2F2DEC912127 /* InAppPurchaseModel.swift in Sources */,
+				C47AA9B1451CD90F013EFECF /* UINavigationController+Extension.swift in Sources */,
+				C47AA7C626C4C16AA8A06DA9 /* UIView+Extension.swift in Sources */,
+				C47AA1900B60991001A67110 /* UIViewController+Extension.swift in Sources */,
+				C47AA762523F50CBEE156306 /* Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
