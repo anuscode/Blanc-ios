@@ -8,7 +8,7 @@ class MainTabBarController: UITabBarController {
     private let disposeBag: DisposeBag = DisposeBag()
 
     // Foreground Notification Candidates..
-    private let foreground: [PushType?] = [
+    private let foreground: [PushFor?] = [
         .POKE, .REQUEST, .COMMENT, .FAVORITE, .MATCHED, .THUMB_UP,
         .OPENED, .LOG_OUT, .APPROVAL, .LOOK_UP, .STAR_RATING
     ]
@@ -78,6 +78,6 @@ class MainTabBarController: UITabBarController {
     }
 
     private func isForegroundNotifiable(_ push: PushDTO) -> Bool {
-        foreground.contains(push.pushType)
+        foreground.contains(push.pushFor)
     }
 }
