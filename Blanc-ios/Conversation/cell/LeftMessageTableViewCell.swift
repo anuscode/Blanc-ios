@@ -20,7 +20,7 @@ class LeftMessageTableViewCell: UITableViewCell {
         return imageView
     }()
 
-    lazy private var nickName: UILabel = {
+    lazy private var nickNameLabel: UILabel = {
         let label = UILabel()
         label.textColor = UIColor(red: 91 / 255, green: 98 / 255, blue: 107 / 255, alpha: 1.0)
         label.font = .systemFont(ofSize: 14)
@@ -46,9 +46,8 @@ class LeftMessageTableViewCell: UITableViewCell {
         return label
     }()
 
-    lazy private var time: UILabel = {
+    lazy private var timeLabel: UILabel = {
         let label = UILabel()
-        label.text = "11:05"
         label.textColor = .gray
         label.font = .systemFont(ofSize: 10, weight: .thin)
         return label
@@ -64,15 +63,11 @@ class LeftMessageTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
-    }
-
     private func configureSubviews() {
         contentView.addSubview(userImage)
-        contentView.addSubview(nickName)
+        contentView.addSubview(nickNameLabel)
         contentView.addSubview(messageView)
-        contentView.addSubview(time)
+        contentView.addSubview(timeLabel)
     }
 
     private func configureConstraints() {
@@ -83,18 +78,18 @@ class LeftMessageTableViewCell: UITableViewCell {
             make.height.equalTo(Const.imageDiameter)
         }
 
-        nickName.snp.makeConstraints { make in
+        nickNameLabel.snp.makeConstraints { make in
             make.top.equalTo(userImage.snp.top)
             make.leading.equalTo(userImage.snp.trailing).inset(-10)
         }
 
         messageView.snp.makeConstraints { make in
-            make.top.equalTo(nickName.snp.bottom).inset(-3)
+            make.top.equalTo(nickNameLabel.snp.bottom).inset(-3)
             make.leading.equalTo(userImage.snp.trailing).inset(-5)
             make.bottom.equalToSuperview().inset(5)
         }
 
-        time.snp.makeConstraints { make in
+        timeLabel.snp.makeConstraints { make in
             make.leading.equalTo(messageView.snp.trailing).inset(-5)
             make.bottom.equalTo(messageView.snp.bottom)
         }
@@ -102,12 +97,20 @@ class LeftMessageTableViewCell: UITableViewCell {
 
     func bind(user: UserDTO?, message: MessageDTO?) {
         self.message = message
-        userImage.url(user?.avatar, size: CGSize(width: Const.imageDiameter, height: Const.imageDiameter))
-        nickName.text = user?.nickName ?? "알 수 없음"
-        messageLabel.text = message?.message ?? ""
-        let size = getTextSize(message?.message ?? "", padding: 12)
-        messageView.width(size.width)
-        messageView.height(size.height)
+        let avatar = user?.avatar
+        let nickName = user?.nickName ?? "알 수 없음"
+        let message = message?.message ?? ""
+        let time = self.message?.createdAt?.asHourMinute() ?? ""
+        let textSize = getTextSize(message, padding: 12)
+        let imageSize = CGSize(width: Const.imageDiameter, height: Const.imageDiameter)
+
+        userImage.url(avatar, size: imageSize)
+        nickNameLabel.text = nickName
+        messageLabel.text = message
+        timeLabel.text = time
+
+        messageView.width(textSize.width)
+        messageView.height(textSize.height)
     }
 
     private func getTextSize(_ text: String, padding: CGFloat) -> CGSize {

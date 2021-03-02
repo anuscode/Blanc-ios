@@ -65,31 +65,45 @@ public extension Int {
         let age = delta / year
         return age
     }
+
+    func asHourMinute() -> String {
+        let date = Date(timeIntervalSince1970: TimeInterval(self))
+        let dateFormatter = DateFormatter()
+        dateFormatter.timeZone = .current
+        dateFormatter.locale = .current
+        dateFormatter.dateFormat = "HH:mm"
+        return dateFormatter.string(from: date)
+    }
 }
 
 public extension Optional where Wrapped == Int {
 
     internal func asCalendar() -> Cal {
-        let timestamp = self ?? 0
-        return timestamp.asCalendar()
+        let this = self ?? 0
+        return this.asCalendar()
     }
 
     func asStaledTime() -> String {
         guard (self != nil) else {
             return "과거"
         }
-        return self!.asStaledTime()
+        let this: Int = self!
+        return this.asStaledTime()
     }
 
     func asAge() -> Int? {
         guard (self != nil) else {
             return nil
         }
-        let timestamp = self!
-        let current = Int(Date().timeIntervalSince1970)
-        let delta = current - timestamp
-        let year = (60 * 60 * 24 * 365)
-        let age = delta / year
-        return age
+        let this: Int = self!
+        return this.asAge()
+    }
+
+    func asHourMinute() -> String? {
+        guard (self != nil) else {
+            return nil
+        }
+        let this: Int = self!
+        return this.asHourMinute()
     }
 }
