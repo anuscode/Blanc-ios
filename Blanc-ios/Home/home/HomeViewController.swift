@@ -79,6 +79,13 @@ class HomeViewController: UIViewController {
         return UIBarButtonItem(customView: rightSideBarView!)
     }()
 
+    lazy private var backBarButtonItem: UIBarButtonItem = {
+        let item = UIBarButtonItem()
+        item.title = ""
+        item.tintColor = .black
+        return item
+    }()
+
     lazy private var homeLoading1: HomeLoading = {
         HomeLoading()
     }()
@@ -89,12 +96,13 @@ class HomeViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationItem.backBarButtonItem = backBarButtonItem
+        navigationItem.rightBarButtonItem = rightBarButtonItem
+        navigationItem.leftBarButtonItem = leftBarButtonItem
         navigationController?.navigationBar.barTintColor = .white
         navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
         navigationController?.navigationBar.shadowImage = nil
         navigationController?.navigationBar.isTranslucent = true
-        navigationItem.rightBarButtonItem = rightBarButtonItem
-        navigationItem.leftBarButtonItem = leftBarButtonItem
         homeViewModel?.updateUserLastLoginAt()
         animations.forEach({ view in view.play() })
     }
@@ -332,9 +340,10 @@ extension HomeViewController: UITableViewDelegate {
 }
 
 extension HomeViewController: UserCardCellDelegate {
+
     func didTapSearchView(_ user: UserDTO?) {
         homeViewModel?.channel(user: user)
-        navigationController?.pushUserSingleViewController(current: self)
+        navigationController?.pushViewController(.userSingle, hideBottomWhenStart: true, hideBottomWhenEnd: false)
     }
 
     func confirm(_ user: UserDTO?) -> Observable<Bool> {

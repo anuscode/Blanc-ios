@@ -1,18 +1,34 @@
 import Foundation
 import UIKit
 
+enum Identifier: String {
+    case userSingle = "UserSingleViewController",
+         postSingle = "PostSingleViewController",
+         alarms = "AlarmViewController"
+}
 
 extension UINavigationController {
+
+    func pushViewController(_ identifier: Identifier,
+                            hideBottomWhenStart: Bool = true,
+                            hideBottomWhenEnd: Bool = false) {
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: identifier.rawValue)
+        hidesBottomBarWhenPushed = hideBottomWhenStart
+        pushViewController(vc, animated: true)
+        hidesBottomBarWhenPushed = hideBottomWhenEnd
+    }
+
     func pushUserSingleViewController(current: UIViewController) {
         DispatchQueue.main.async { [unowned self] in
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             let vc = storyboard.instantiateViewController(withIdentifier: "UserSingleViewController")
             vc.modalPresentationStyle = .fullScreen
-            current.hidesBottomBarWhenPushed = true
             let backBarButtonItem = UIBarButtonItem()
             backBarButtonItem.title = ""
             backBarButtonItem.tintColor = .black
             current.navigationItem.backBarButtonItem = backBarButtonItem
+            current.hidesBottomBarWhenPushed = true
             pushViewController(vc, animated: true)
             current.hidesBottomBarWhenPushed = false
         }
@@ -23,10 +39,10 @@ extension UINavigationController {
             let storyboard = UIStoryboard(name: "Main", bundle: nil)
             let vc = storyboard.instantiateViewController(withIdentifier: "PostSingleViewController")
             vc.modalPresentationStyle = .fullScreen
-            current.hidesBottomBarWhenPushed = true
             let backBarButtonItem = UIBarButtonItem()
             backBarButtonItem.title = ""
             backBarButtonItem.tintColor = .black
+            current.hidesBottomBarWhenPushed = true
             current.navigationItem.backBarButtonItem = backBarButtonItem
             pushViewController(vc, animated: true)
             current.hidesBottomBarWhenPushed = false
@@ -36,6 +52,7 @@ extension UINavigationController {
     func pushAlarmViewController(current: UIViewController) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "AlarmViewController")
+        vc.modalPresentationStyle = .fullScreen
         let backBarButtonItem = UIBarButtonItem()
         backBarButtonItem.title = ""
         backBarButtonItem.tintColor = .black
