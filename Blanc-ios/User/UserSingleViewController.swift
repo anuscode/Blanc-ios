@@ -180,11 +180,11 @@ class UserSingleViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         extendedLayoutIncludesOpaqueBars = true
+        navigationItem.titleView = navigationBarContent
         navigationController?.navigationBar.addSubview(navigationBarContent)
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.isTranslucent = true
-        navigationItem.titleView = navigationBarContent
         navigationUserLabel.visible(false)
         navigationUserImage.visible(false)
     }
@@ -199,10 +199,12 @@ class UserSingleViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         extendedLayoutIncludesOpaqueBars = false
-        navigationController?.setNavigationBarHidden(false, animated: animated)
-        navigationController?.navigationBar.isTranslucent = false
-        navigationController?.navigationBar.alpha = 100
         navigationBarContent.alpha = 100
+        navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
+        navigationController?.navigationBar.shadowImage = nil
+        navigationController?.navigationBar.isTranslucent = true
+        navigationController?.navigationBar.alpha = 100
+        navigationController?.setNavigationBarHidden(false, animated: animated)
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -222,8 +224,8 @@ class UserSingleViewController: UIViewController {
 
     private func configureConstraints() {
         let window = UIApplication.shared.windows[0]
-        tableView.frame = CGRect(x: 0, y: 0, width: view.width,
-                height: view.height - CGFloat(Const.bottomViewHeight) - window.safeAreaInsets.bottom)
+        let height = view.height - CGFloat(Const.bottomViewHeight) - window.safeAreaInsets.bottom
+        tableView.frame = CGRect(x: 0, y: 0, width: view.width, height: height)
 
         bottomView.snp.makeConstraints { make in
             make.bottom.equalTo(view.safeAreaLayoutGuide)
@@ -255,6 +257,7 @@ class UserSingleViewController: UIViewController {
     }
 
     private func calculateRequestButtonActivation() {
+
         if (userSingleViewModel?.isWhoMatched() ?? false) {
             requestButton.setTitle("이미 매칭 된 유저 입니다.", for: .normal)
             requestButton.isUserInteractionEnabled = false
