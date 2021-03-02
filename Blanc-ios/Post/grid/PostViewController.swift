@@ -280,7 +280,11 @@ class PostViewController: UIViewController {
     }
 
     @objc func didTapFloatingActionButton1() {
-        navigationController?.pushViewController(.postManagement, current: self)
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let vc = storyboard.instantiateViewController(
+                withIdentifier: "PostManagementViewController") as! PostManagementViewController
+        vc.prepare()
+        navigationController?.pushViewController(vc, current: self)
     }
 
     @objc func didTapFloatingActionButton2() {
@@ -320,7 +324,7 @@ extension PostViewController: UICollectionViewDelegate {
                 withIdentifier: "PostListViewController") as! PostListViewController
         vc.scrollToRow = indexPath.row
         vc.prepare()
-        navigationController?.pushViewController(vc, current:self)
+        navigationController?.pushViewController(vc, current: self)
     }
 }
 
