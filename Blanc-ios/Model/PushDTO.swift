@@ -1,9 +1,17 @@
 import Foundation
 
 var foregroundNotifications: [PushFor] = [
-    PushFor.POKE, PushFor.REQUEST, PushFor.COMMENT, PushFor.FAVORITE, PushFor.MATCHED,
-    PushFor.THUMB_UP, PushFor.OPENED, PushFor.LOG_OUT, PushFor.APPROVAL, PushFor.LOOK_UP,
-    PushFor.STAR_RATING
+    .POKE,
+    .REQUEST,
+    .COMMENT,
+    .FAVORITE,
+    .MATCHED,
+    .THUMB_UP,
+    .OPENED,
+    .LOG_OUT,
+    .APPROVAL,
+    .LOOK_UP,
+    .STAR_RATING
 ]
 
 enum PushFor: String, Codable {
@@ -31,7 +39,6 @@ class PushDTO: NSObject, Decodable {
     var requestId: String?
     var conversationId: String?
     var messageId: String?
-
     var pushFor: PushFor?
     var category: Category?
     var nickName: String?
@@ -41,8 +48,21 @@ class PushDTO: NSObject, Decodable {
     var isRead: Bool?
 
     enum CodingKeys: String, CodingKey {
-        case pushId, userId, url, postId, commentId, requestId, conversationId, messageId,
-             pushFor, category, nickName, imageUrl, message, createdAt, isRead
+        case pushId,
+             userId,
+             url,
+             postId,
+             commentId,
+             requestId,
+             conversationId,
+             messageId,
+             pushFor,
+             category,
+             nickName,
+             imageUrl,
+             message,
+             createdAt,
+             isRead
     }
 
     static func ==(lhs: PushDTO, rhs: PushDTO) -> Bool {
@@ -175,15 +195,15 @@ extension PushDTO: Encodable {
 extension PushDTO {
 
     func isApproval() -> Bool {
-        pushFor == PushFor.APPROVAL
+        pushFor == .APPROVAL
     }
 
     func isPoke() -> Bool {
-        pushFor == PushFor.POKE && userId.isNotEmpty()
+        pushFor == .POKE && userId.isNotEmpty()
     }
 
     func isLookUp() -> Bool {
-        pushFor == PushFor.LOOK_UP && userId.isNotEmpty()
+        pushFor == .LOOK_UP && userId.isNotEmpty()
     }
 
     /**
@@ -194,19 +214,19 @@ extension PushDTO {
      - Returns: Whether it's a request push message or not.
      **/
     func isRequest() -> Bool {
-        pushFor == PushFor.REQUEST && requestId.isNotEmpty()
+        pushFor == .REQUEST && requestId.isNotEmpty()
     }
 
     func isFavorite() -> Bool {
-        pushFor == PushFor.FAVORITE && postId.isNotEmpty()
+        pushFor == .FAVORITE && postId.isNotEmpty()
     }
 
     func isComment() -> Bool {
-        pushFor == PushFor.COMMENT && postId.isNotEmpty()
+        pushFor == .COMMENT && postId.isNotEmpty()
     }
 
     func isThumbUp() -> Bool {
-        pushFor == PushFor.THUMB_UP && postId.isNotEmpty()
+        pushFor == .THUMB_UP && postId.isNotEmpty()
     }
 
     /**
@@ -215,7 +235,7 @@ extension PushDTO {
      - Returns: Whether it's high rating push message or not.
      **/
     func isStarRating() -> Bool {
-        pushFor == PushFor.STAR_RATING && userId.isNotEmpty()
+        pushFor == .STAR_RATING && userId.isNotEmpty()
     }
 
     /**
@@ -230,7 +250,7 @@ extension PushDTO {
      - Returns: Whether it's matched push message or not.
      **/
     func isMatched() -> Bool {
-        pushFor == PushFor.MATCHED && conversationId.isNotEmpty()
+        pushFor == .MATCHED && conversationId.isNotEmpty()
     }
 
     /**
@@ -239,14 +259,14 @@ extension PushDTO {
      - Returns: Whether it's matched push message or not.
      **/
     func isOpened() -> Bool {
-        pushFor == PushFor.OPENED && conversationId.isNotEmpty()
+        pushFor == .OPENED && conversationId.isNotEmpty()
     }
 
     func isMessage() -> Bool {
-        pushFor == PushFor.CONVERSATION && conversationId.isNotEmpty() && messageId.isNotEmpty()
+        pushFor == .CONVERSATION && conversationId.isNotEmpty() && messageId.isNotEmpty()
     }
 
     func isLogout() -> Bool {
-        pushFor == PushFor.LOG_OUT
+        pushFor == .LOG_OUT
     }
 }
