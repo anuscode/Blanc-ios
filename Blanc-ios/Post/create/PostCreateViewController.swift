@@ -48,10 +48,19 @@ class PostCreateViewController: UIViewController {
         textView.keyboardType = .default
         textView.sizeToFit()
         textView.layer.cornerRadius = 10
-        textView.text = "글 작성은 이곳에서 가능합니다."
         textView.delegate = self
         textView.textContainerInset = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
+        textView.rx.text.subscribe(onNext: { text in
+            self.placeholder.visible(text.isEmpty())
+        }).disposed(by: disposeBag)
         return textView
+    }()
+
+    lazy private var placeholder: UILabel = {
+        let label = UILabel()
+        label.text = "하고싶은 말을 입력 하세요."
+        label.textColor = .systemGray
+        return label
     }()
 
     lazy private var enableCommentLabel: UILabel = {
@@ -127,9 +136,9 @@ class PostCreateViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.navigationBar.barTintColor = .white
         navigationItem.leftBarButtonItem = leftBarButtonItem
         navigationItem.leftItemsSupplementBackButton = true
+        navigationController?.navigationBar.barTintColor = .white
     }
 
     override func viewDidLoad() {
@@ -150,13 +159,13 @@ class PostCreateViewController: UIViewController {
     }
 
     private func configureSubviews() {
+        view.addSubview(textView)
+        view.addSubview(placeholder)
         view.addSubview(enableCommentLabel)
         view.addSubview(enableCommentSwitch)
-        view.addSubview(bottomView)
         view.addSubview(collectionView)
-
+        view.addSubview(bottomView)
         view.addSubview(transparentView)
-        view.addSubview(textView)
         view.addSubview(loadingView)
     }
 
@@ -167,6 +176,11 @@ class PostCreateViewController: UIViewController {
             make.centerX.equalToSuperview()
             make.height.equalTo(200)
             make.width.equalToSuperview().multipliedBy(0.8)
+        }
+
+        placeholder.snp.makeConstraints { make in
+            make.top.equalTo(textView.snp.top).inset(23)
+            make.leading.equalTo(textView.snp.leading).inset(20)
         }
 
         enableCommentLabel.snp.makeConstraints { make in
@@ -207,13 +221,13 @@ class PostCreateViewController: UIViewController {
         let isImageRegistered = images.count > 0
 
         if (!isDescriptionRegistered && !isImageRegistered) {
-            toast(title: "등록 된 내용이 없습니다.", message: "이미지 or 게시글 중 최소 한개는 반드시 충족 되야합니다.", seconds: 2.5)
+            let title = "등록 된 내용이 없습니다."
+            let message = "이미지 or 게시글 중 최소 한개는 반드시 충족 되야합니다."
+            toast(title: title, message: message)
             return
         }
 
-        let files = images.filter {
-            $0 != nil
-        } as! [UIImage]
+        let files = images.filter({ $0 != nil }) as! [UIImage]
         let description = textView.text
         let enableComment = enableCommentSwitch.isOn
 
@@ -223,7 +237,7 @@ class PostCreateViewController: UIViewController {
                 files: files,
                 description: description,
                 enableComment: enableComment,
-                onCompleted: { [self] in
+                onCompleted: { [unowned self] in
                     DispatchQueue.main.async {
                         loadingView.visible(false)
                         toast(message: "게시물이 등록 되었습니다.") {
@@ -231,7 +245,7 @@ class PostCreateViewController: UIViewController {
                         }
                     }
                 },
-                onError: { [self] in
+                onError: { [unowned self] in
                     DispatchQueue.main.async {
                         loadingView.visible(false)
                         toast(message: "핑스타그램 게시물 등록에 실패 하였습니다.")
@@ -247,10 +261,6 @@ class PostCreateViewController: UIViewController {
 extension PostCreateViewController: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
         transparentView.visible(true)
-        if (isFirstBeginEditing) {
-            textView.text = ""
-            isFirstBeginEditing = false
-        }
     }
 
     func textViewDidEndEditing(_ textView: UITextView) {
@@ -284,7 +294,7 @@ extension PostCreateViewController: PostCreateResourceCollectionViewCellDelegate
     func delete(image: UIImage?) {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
 
-        let deleteAction = UIAlertAction(title: "이미지 삭제", style: .default) { [self] (action) in
+        let deleteAction = UIAlertAction(title: "이미지 삭제", style: .default) { [unowned self] (action) in
             let index = images.firstIndex(of: image)
             if (index == nil) {
                 toast(message: "예상치 못한 에러가 발생 하였습니다.")
@@ -331,7 +341,7 @@ extension PostCreateViewController: CropViewControllerDelegate, UIImagePickerCon
                                    withRect cropRect: CGRect,
                                    angle: Int) {
         loadingView.visible(true)
-        UIImage.resize(image: image, maxKb: 1500) { [self] resizedImage in
+        UIImage.resize(image: image, maxKb: 1200) { [unowned self] resizedImage in
             DispatchQueue.main.async {
                 images.append(resizedImage)
                 collectionView.reloadData()
