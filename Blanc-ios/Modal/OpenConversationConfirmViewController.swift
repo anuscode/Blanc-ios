@@ -3,8 +3,9 @@ import UIKit
 import RxSwift
 
 
-class OpenConversationConfirmViewBuilder {
-    static func create(target: UIViewController, user: UserDTO?) -> Observable<Bool> {
+class OpenConversationConfirmViewController: BaseConfirmViewController {
+
+    static func present(target: UIViewController, user: UserDTO?) -> Observable<ConfirmResult> {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let controller = storyboard.instantiateViewController(
                 withIdentifier: "OpenConversationConfirmViewController") as! OpenConversationConfirmViewController
@@ -12,9 +13,6 @@ class OpenConversationConfirmViewBuilder {
         target.present(controller, animated: false, completion: nil)
         return controller.observe().take(1)
     }
-}
-
-class OpenConversationConfirmViewController: BottomModalViewController {
 
     // user to request
     private var user: UserDTO? = nil
@@ -45,7 +43,7 @@ class OpenConversationConfirmViewController: BottomModalViewController {
         return imageView
     }()
 
-    lazy private var nickNameLabel: UILabel = {
+    lazy private var subjectLabel: UILabel = {
         var label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "여자_테스트계정_1\n님에게 친구 신청을 합니다."
@@ -202,7 +200,7 @@ class OpenConversationConfirmViewController: BottomModalViewController {
         label.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
-        view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapConfirmButton))
+        view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapPurchaseButton))
         view.visible(false)
         return view
     }()
@@ -212,14 +210,14 @@ class OpenConversationConfirmViewController: BottomModalViewController {
         view.backgroundColor = .clear
         configureSubviews()
         configureConstraints()
-        Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(drawView), userInfo: nil, repeats: true)
-        drawView()
+        Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(update), userInfo: nil, repeats: true)
+        update()
     }
 
     private func configureSubviews() {
         contentView.addSubview(blancLabel)
         contentView.addSubview(userImage)
-        contentView.addSubview(nickNameLabel)
+        contentView.addSubview(subjectLabel)
         contentView.addSubview(consumePointBackgroundView)
         contentView.addSubview(purchaseView)
         contentView.addSubview(timeLeftLabel)
@@ -241,7 +239,7 @@ class OpenConversationConfirmViewController: BottomModalViewController {
             make.height.equalTo(35)
         }
 
-        nickNameLabel.snp.makeConstraints { make in
+        subjectLabel.snp.makeConstraints { make in
             make.centerY.equalTo(userImage.snp.centerY)
             make.leading.equalTo(userImage.snp.trailing).inset(-10)
         }
@@ -278,13 +276,16 @@ class OpenConversationConfirmViewController: BottomModalViewController {
         }
     }
 
-    @objc private func drawView() {
-        nickNameLabel.text = "\(user?.nickName ?? "[ERROR]")\n님에게 친구 신청을 합니다."
+    @objc private func update() {
+        subjectLabel.text = getSubjectText()
         pointLeftLabel.text = getRemainingPointText()
         timeLeftLabel.text = getRemainingTimeText()
-        consumePointLabel.text = isFreePassAvailable() ? "무료" : "포인트 1개"
+        consumePointLabel.text = getConsumePointText()
 
-        if (isFreePassAvailable() || isPointAvailable()) {
+        if (isFreePassAvailable()) {
+            confirmButton.visible(true)
+            purchaseButton.visible(false)
+        } else if (isPointAvailable()) {
             confirmButton.visible(true)
             purchaseButton.visible(false)
         } else {
@@ -326,6 +327,14 @@ class OpenConversationConfirmViewController: BottomModalViewController {
         return "무료 요청까지 남은 시간: \(String(format: "%02d", hours)):\(String(format: "%02d", minutes)):\(String(format: "%02d", seconds))"
     }
 
+    private func getConsumePointText() -> String {
+        isFreePassAvailable() ? "무료" : "포인트 5개"
+    }
+
+    private func getSubjectText() -> String {
+        "\(user?.nickName ?? "[ERROR]")\n님에게 친구 신청을 합니다."
+    }
+
     private func getRemainingPointText() -> String {
         let point: Float? = session?.user?.point
         return "잔여 포인트: " + ((point != nil && point! >= 0) ? "\(point!)" : "[ERROR]")
@@ -336,6 +345,6 @@ class OpenConversationConfirmViewController: BottomModalViewController {
     }
 
     @objc private func didTapPurchaseButton() {
-        decline()
+        purchase()
     }
 }

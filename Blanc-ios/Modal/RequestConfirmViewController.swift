@@ -3,17 +3,15 @@ import UIKit
 import RxSwift
 
 
-class RequestConfirmViewBuilder {
-    static func create(target: UIViewController, user: UserDTO?) -> Observable<Bool> {
+class RequestConfirmViewController: BaseConfirmViewController {
+
+    static func present(target: UIViewController, user: UserDTO?) -> Observable<ConfirmResult> {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let controller = storyboard.instantiateViewController(withIdentifier: "RequestConfirmViewController") as! RequestConfirmViewController
         controller.setUser(user)
         target.present(controller, animated: false, completion: nil)
         return controller.observe().take(1)
     }
-}
-
-class RequestConfirmViewController: BottomModalViewController {
 
     // user to request
     private var user: UserDTO? = nil
@@ -44,7 +42,7 @@ class RequestConfirmViewController: BottomModalViewController {
         return imageView
     }()
 
-    lazy private var nickNameLabel: UILabel = {
+    lazy private var subjectLabel: UILabel = {
         var label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "여자_테스트계정_1\n님에게 친구 신청을 합니다."
@@ -201,7 +199,7 @@ class RequestConfirmViewController: BottomModalViewController {
         label.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
-        view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapConfirmButton))
+        view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapPurchaseButton))
         view.visible(false)
         return view
     }()
@@ -211,14 +209,20 @@ class RequestConfirmViewController: BottomModalViewController {
         view.backgroundColor = .clear
         configureSubviews()
         configureConstraints()
-        Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(drawView), userInfo: nil, repeats: true)
-        drawView()
+        update()
+        Timer.scheduledTimer(
+                timeInterval: 1.0,
+                target: self,
+                selector: #selector(update),
+                userInfo: nil,
+                repeats: true
+        )
     }
 
     private func configureSubviews() {
         contentView.addSubview(pingmeLabel)
         contentView.addSubview(userImage)
-        contentView.addSubview(nickNameLabel)
+        contentView.addSubview(subjectLabel)
         contentView.addSubview(consumePointBackgroundView)
         contentView.addSubview(purchaseView)
         contentView.addSubview(timeLeftLabel)
@@ -240,7 +244,7 @@ class RequestConfirmViewController: BottomModalViewController {
             make.height.equalTo(35)
         }
 
-        nickNameLabel.snp.makeConstraints { make in
+        subjectLabel.snp.makeConstraints { make in
             make.centerY.equalTo(userImage.snp.centerY)
             make.leading.equalTo(userImage.snp.trailing).inset(-10)
         }
@@ -277,18 +281,24 @@ class RequestConfirmViewController: BottomModalViewController {
         }
     }
 
-    @objc private func drawView() {
-        nickNameLabel.text = "\(user?.nickName ?? "[ERROR]")\n님에게 친구 신청을 합니다."
+    @objc private func update() {
+        subjectLabel.text = getSubjectText()
         pointLeftLabel.text = getRemainingPointText()
         timeLeftLabel.text = getRemainingTimeText()
-        consumePointLabel.text = isFreePassAvailable() ? "무료" : "포인트 1개"
+        consumePointLabel.text = getConsumePointLabel()
 
-        if (isFreePassAvailable() || isPointAvailable()) {
+        if (isFreePassAvailable()) {
             confirmButton.visible(true)
             purchaseButton.visible(false)
+            return
+        } else if (isPointAvailable()) {
+            confirmButton.visible(true)
+            purchaseButton.visible(false)
+            return
         } else {
             confirmButton.visible(false)
             purchaseButton.visible(true)
+            return
         }
     }
 
@@ -301,11 +311,11 @@ class RequestConfirmViewController: BottomModalViewController {
     }
 
     private func isFreePassAvailable() -> Bool {
-        let seconds = getRemainingSeconds()
-        return seconds == 0
+        let seconds = getSecondsLeftUntilFreePass()
+        return seconds <= 0
     }
 
-    private func getRemainingSeconds() -> Int {
+    private func getSecondsLeftUntilFreePass() -> Int {
         let tokens = session?.user?.freePassTokens ?? []
         let availableAfter: Int = tokens.min() ?? 9223372036854775800
         let current = Int(NSDate().timeIntervalSince1970)
@@ -313,8 +323,12 @@ class RequestConfirmViewController: BottomModalViewController {
         return (delta > 0) ? delta : 0
     }
 
+    private func getSubjectText() -> String {
+        "\(user?.nickName ?? "[ERROR]")\n님에게 친구 신청을 합니다."
+    }
+
     private func getRemainingTimeText() -> String {
-        let remaining = getRemainingSeconds()
+        let remaining = getSecondsLeftUntilFreePass()
         if (remaining <= 0) {
             return "무료 요청이 가능 합니다."
         }
@@ -330,11 +344,15 @@ class RequestConfirmViewController: BottomModalViewController {
         return "잔여 포인트: " + ((point != nil && point! >= 0) ? "\(point!)" : "[ERROR]")
     }
 
+    private func getConsumePointLabel() -> String {
+        isFreePassAvailable() ? "무료" : "포인트 5개"
+    }
+
     @objc private func didTapConfirmButton() {
         accept()
     }
 
     @objc private func didTapPurchaseButton() {
-        decline()
+        purchase()
     }
 }

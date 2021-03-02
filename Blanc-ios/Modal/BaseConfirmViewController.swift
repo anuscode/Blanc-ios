@@ -4,9 +4,15 @@ import RxSwift
 
 import Foundation
 
-class BottomModalViewController: UIViewController {
 
-    internal let observable: ReplaySubject = ReplaySubject<Bool>.create(bufferSize: 1)
+enum ConfirmResult {
+    case accept, decline, purchase
+}
+
+
+class BaseConfirmViewController: UIViewController {
+
+    internal let observable: ReplaySubject = ReplaySubject<ConfirmResult>.create(bufferSize: 1)
 
     lazy private var background: UIView = {
         let view = UIView()
@@ -77,17 +83,22 @@ class BottomModalViewController: UIViewController {
         decline()
     }
 
-    internal func observe() -> Observable<Bool> {
+    internal func observe() -> Observable<ConfirmResult> {
         observable
     }
 
     internal func accept() {
-        observable.onNext(true)
+        observable.onNext(.accept)
+        dismiss(animated: true)
+    }
+
+    internal func purchase() {
+        observable.onNext(.purchase)
         dismiss(animated: true)
     }
 
     internal func decline() {
-        observable.onNext(false)
+        observable.onNext(.decline)
         dismiss(animated: true)
     }
 }

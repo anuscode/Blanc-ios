@@ -85,7 +85,7 @@
 		104EEA9025E372160069B2CF /* heart_2_2.json in Resources */ = {isa = PBXBuildFile; fileRef = 104EEA7825E372160069B2CF /* heart_2_2.json */; };
 		104EEA9625E3721C0069B2CF /* RequestConfirmViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEA9225E3721C0069B2CF /* RequestConfirmViewController.swift */; };
 		104EEA9725E3721C0069B2CF /* NotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEA9325E3721C0069B2CF /* NotificationView.swift */; };
-		104EEA9825E3721C0069B2CF /* BottomModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEA9425E3721C0069B2CF /* BottomModalViewController.swift */; };
+		104EEA9825E3721C0069B2CF /* BaseConfirmViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEA9425E3721C0069B2CF /* BaseConfirmViewController.swift */; };
 		104EEA9925E3721C0069B2CF /* OpenConversationConfirmViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEA9525E3721C0069B2CF /* OpenConversationConfirmViewController.swift */; };
 		104EEA9D25E372240069B2CF /* Channel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEA9B25E372240069B2CF /* Channel.swift */; };
 		104EEAA525E3722A0069B2CF /* SmsConfirmViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEAA325E3722A0069B2CF /* SmsConfirmViewController.swift */; };
@@ -391,7 +391,7 @@
 		104EEA7825E372160069B2CF /* heart_2_2.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = heart_2_2.json; sourceTree = "<group>"; };
 		104EEA9225E3721C0069B2CF /* RequestConfirmViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestConfirmViewController.swift; sourceTree = "<group>"; };
 		104EEA9325E3721C0069B2CF /* NotificationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NotificationView.swift; sourceTree = "<group>"; };
-		104EEA9425E3721C0069B2CF /* BottomModalViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BottomModalViewController.swift; sourceTree = "<group>"; };
+		104EEA9425E3721C0069B2CF /* BaseConfirmViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseConfirmViewController.swift; sourceTree = "<group>"; };
 		104EEA9525E3721C0069B2CF /* OpenConversationConfirmViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OpenConversationConfirmViewController.swift; sourceTree = "<group>"; };
 		104EEA9B25E372240069B2CF /* Channel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Channel.swift; sourceTree = "<group>"; };
 		104EEAA325E3722A0069B2CF /* SmsConfirmViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SmsConfirmViewController.swift; sourceTree = "<group>"; };
@@ -879,7 +879,7 @@
 			children = (
 				104EEA9225E3721C0069B2CF /* RequestConfirmViewController.swift */,
 				104EEA9325E3721C0069B2CF /* NotificationView.swift */,
-				104EEA9425E3721C0069B2CF /* BottomModalViewController.swift */,
+				104EEA9425E3721C0069B2CF /* BaseConfirmViewController.swift */,
 				104EEA9525E3721C0069B2CF /* OpenConversationConfirmViewController.swift */,
 			);
 			path = Modal;
@@ -1929,7 +1929,7 @@
 				104EEB7F25E372650069B2CF /* ReceivedViewModel.swift in Sources */,
 				104EEA4725E372060069B2CF /* RegistrationOccupationViewController.swift in Sources */,
 				104EEB4D25E3725D0069B2CF /* PostManagementBody.swift in Sources */,
-				104EEA9825E3721C0069B2CF /* BottomModalViewController.swift in Sources */,
+				104EEA9825E3721C0069B2CF /* BaseConfirmViewController.swift in Sources */,
 				104EEB6725E3725D0069B2CF /* PostCollectionViewCell.swift in Sources */,
 				104EEC2B25E3728F0069B2CF /* BloodTypeViewController.swift in Sources */,
 				104EEC2D25E3728F0069B2CF /* TextFieldCell.swift in Sources */,

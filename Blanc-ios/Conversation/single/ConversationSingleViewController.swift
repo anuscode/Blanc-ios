@@ -315,16 +315,25 @@ class ConversationSingleViewController: UIViewController {
     }
 
     @objc private func didTapActivateButton() {
-        if (conversation?.partner == nil) {
-            toast(message: "해당 사용자가 존재하지 않습니다.")
+        guard let partner = conversation?.partner else {
+            toast(message: "해당 유저를 찾을 수 없습니다...")
             return
         }
-        OpenConversationConfirmViewBuilder.create(target: self, user: conversation?.partner)
+        OpenConversationConfirmViewController
+                .present(target: self, user: partner)
                 .subscribe(onNext: { [self] result in
-                    guard (result == true) else {
+                    if (result == .accept) {
+                        updateConversationAvailable()
                         return
                     }
-                    updateConversationAvailable()
+
+                    if (result == .purchase) {
+
+                    }
+
+                    if (result == .decline) {
+                        log.info("declined open conversation confirm.")
+                    }
                 }, onError: { err in
                     log.error(err)
                 })

@@ -14,10 +14,11 @@ class StarTapGesture: UITapGestureRecognizer {
 
 protocol UserCardCellDelegate: class {
     func didTapSearchView(_ user: UserDTO?)
-    func confirm(_ user: UserDTO?) -> Observable<Bool>
+    func confirm(_ user: UserDTO?) -> Observable<ConfirmResult>
     func request(_ user: UserDTO?, animationDone: Observable<Void>)
     func poke(_ user: UserDTO?, onBegin: () -> Void)
     func rate(_ user: UserDTO?, score: Int)
+    func purchase()
     func getStarRatingIRated(_ user: UserDTO?) -> StarRating?
 }
 
@@ -530,15 +531,19 @@ class UserCardTableViewCell: UITableViewCell {
         fireworkController.addFireworks(count: 2, around: button2)
         delegate?.confirm(user)
                 .subscribe(onNext: { [unowned self] result in
-                    guard result else {
-                        return
+                    switch (result) {
+                    case .accept:
+                        let done = heartLottie.begin(with: contentView, constraint: {
+                            heartLottie.snp.makeConstraints { make in
+                                make.edges.equalTo(carousel.snp.edges)
+                            }
+                        })
+                        delegate?.request(user, animationDone: done)
+                    case .purchase:
+                        delegate?.purchase()
+                    case .decline:
+                        log.info("declined request user..")
                     }
-                    let done = heartLottie.begin(with: contentView, constraint: {
-                        heartLottie.snp.makeConstraints { make in
-                            make.edges.equalTo(carousel.snp.edges)
-                        }
-                    })
-                    delegate?.request(user, animationDone: done)
                 }, onError: { err in
                     log.error(err)
                 })

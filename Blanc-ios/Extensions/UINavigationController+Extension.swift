@@ -7,7 +7,8 @@ enum Identifier: String {
          postSingle = "PostSingleViewController",
          postManagement = "PostManagementViewController",
          postCreate = "PostCreateViewController",
-         alarms = "AlarmViewController"
+         alarms = "AlarmViewController",
+         inAppPurchase = "InAppPurchaseViewController"
 }
 
 extension UINavigationController {

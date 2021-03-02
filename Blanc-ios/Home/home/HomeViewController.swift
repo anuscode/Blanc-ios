@@ -339,8 +339,8 @@ extension HomeViewController: UserCardCellDelegate {
         navigationController?.pushViewController(.userSingle, current: self)
     }
 
-    func confirm(_ user: UserDTO?) -> Observable<Bool> {
-        RequestConfirmViewBuilder.create(target: self, user: user)
+    func confirm(_ user: UserDTO?) -> Observable<ConfirmResult> {
+        RequestConfirmViewController.present(target: self, user: user)
     }
 
     func request(_ user: UserDTO?, animationDone: Observable<Void>) {
@@ -363,5 +363,9 @@ extension HomeViewController: UserCardCellDelegate {
 
     func getStarRatingIRated(_ user: UserDTO?) -> StarRating? {
         homeViewModel?.getStarRatingIRated(user)
+    }
+
+    func purchase() {
+        navigationController?.pushViewController(.inAppPurchase, current: self)
     }
 }

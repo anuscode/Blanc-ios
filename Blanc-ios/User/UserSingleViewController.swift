@@ -278,7 +278,7 @@ class UserSingleViewController: UIViewController {
     }
 
     @objc private func request(user: UserDTO?) {
-        if (data == nil || data?.user == nil) {
+        guard let user = data?.user else {
             return
         }
 
@@ -290,23 +290,25 @@ class UserSingleViewController: UIViewController {
             return
         }
 
-        RequestConfirmViewBuilder.create(target: self, user: data!.user)
+        RequestConfirmViewController
+                .present(target: self, user: user)
                 .subscribe(onNext: { [unowned self] result in
-                    guard (result) else {
-                        return
+                    switch (result) {
+                    case .accept:
+                        heartLottie.begin(with: view, constraint: {
+                            heartLottie.snp.makeConstraints { make in
+                                make.edges.equalToSuperview().multipliedBy(0.8)
+                                make.center.equalToSuperview()
+                            }
+                        })
+                        userSingleViewModel?.createRequest(user, onError: {
+                            toast(message: "친구신청 도중 에러가 발생 하였습니다.")
+                        })
+                    case .purchase:
+                        navigationController?.pushViewController(.inAppPurchase, current: self)
+                    case .decline:
+                        log.info("declined request user..")
                     }
-
-                    heartLottie.begin(with: view, constraint: {
-                        heartLottie.snp.makeConstraints { make in
-                            make.edges.equalToSuperview().multipliedBy(0.8)
-                            make.center.equalToSuperview()
-                        }
-                    })
-
-                    userSingleViewModel?.createRequest(data!.user, onError: {
-                        toast(message: "친구신청 도중 에러가 발생 하였습니다.")
-                    })
-
                 }, onError: { err in
                     log.error(err)
                 })
