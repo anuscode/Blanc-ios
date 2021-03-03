@@ -49,7 +49,7 @@ class ConversationService {
                                      conversationId: String?) -> Single<Void> {
         currentUser.rx.getIDTokenResult()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .flatMap { [self] result in
+                .flatMap { [unowned self] result in
                     provider.rx.request(.updateConversationAvailable(
                                     idToken: result.token,
                                     uid: uid,

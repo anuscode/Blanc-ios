@@ -122,7 +122,7 @@ class MyRatedScoreViewController: UIViewController {
         myRatedScoreViewModel?.observe()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [self] data in
+                .subscribe(onNext: { [unowned self] data in
                     self.data = data
                     DispatchQueue.main.async {
                         tableView.reloadData()

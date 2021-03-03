@@ -33,7 +33,7 @@ class RequestsModel {
         requestService.listRequests(uid: session.uid)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [self] requests in
+                .subscribe(onSuccess: { [unowned self] requests in
                     self.requests = requests
                     publish()
                 }, onError: { err in
@@ -115,7 +115,7 @@ class RequestsModel {
         requestService.updateRequest(uid: session.uid, requestId: request?.id, response: Response.DECLINED)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [self] in
+                .subscribe(onSuccess: { [unowned self] in
                     let index = requests.firstIndex(of: request!)
                     if (index != nil) {
                         requests.remove(at: index!)

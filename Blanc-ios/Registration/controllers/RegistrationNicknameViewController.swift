@@ -124,7 +124,7 @@ class RegistrationNicknameViewController: UIViewController {
     private func subscribeViewModel() {
         registrationViewModel?.observe()
                 .take(1)
-                .subscribe(onNext: { [self] user in
+                .subscribe(onNext: { [unowned self] user in
                     userDTO = user
                     update()
                 }, onError: { err in
@@ -161,7 +161,7 @@ class RegistrationNicknameViewController: UIViewController {
     }
 
     @objc func keyboardWillShow(notification: NSNotification) {
-        DispatchQueue.main.async { [self] in
+        DispatchQueue.main.async { [unowned self] in
             let screenHeight = UIScreen.main.bounds.height
             if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
                 let keyboardHeight = keyboardSize.height

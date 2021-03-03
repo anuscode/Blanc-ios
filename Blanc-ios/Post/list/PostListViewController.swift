@@ -13,7 +13,7 @@ class PostListViewController: UIViewController {
 
     private var disposeBag: DisposeBag = DisposeBag()
 
-    lazy private var dataSource: DataSource<Section, PostDTO> = DataSource<Section, PostDTO>(tableView: tableView) { [self] (tableView, indexPath, post) -> UITableViewCell? in
+    lazy private var dataSource: DataSource<Section, PostDTO> = DataSource<Section, PostDTO>(tableView: tableView) { [unowned self] (tableView, indexPath, post) -> UITableViewCell? in
         let cell = tableView.dequeueReusableCell(withIdentifier: ResourceTableViewCell.identifier,
                 for: indexPath) as! ResourceTableViewCell
         cell.bind(post: post, headerDelegate: self, bodyDelegate: self)
@@ -84,7 +84,7 @@ class PostListViewController: UIViewController {
         postViewModel?.observe()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [self] posts in
+                .subscribe(onNext: { [unowned self] posts in
                     self.posts = posts.enumerated()
                             .filter { index, item in
                                 index >= scrollToRow ?? 0

@@ -259,7 +259,7 @@ class PostViewController: UIViewController {
 
     @objc func didTapFloatingActionButton() {
         if (isOpened) {
-            UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseIn], animations: { [self] in
+            UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseIn], animations: { [unowned self] in
                 fab1.transform = CGAffineTransform(translationX: 0, y: 0)
                 fab2.transform = CGAffineTransform(translationX: 0, y: 0)
             }, completion: { [unowned self] _ in
@@ -271,7 +271,7 @@ class PostViewController: UIViewController {
             fab1.visible(true)
             fab2.visible(true)
             fab2LottieView.play()
-            UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseIn], animations: { [self] in
+            UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseIn], animations: { [unowned self] in
                 fab1.transform = CGAffineTransform(translationX: 0, y: -100)
                 fab2.transform = CGAffineTransform(translationX: 0, y: -50)
             })
@@ -299,7 +299,7 @@ extension PostViewController {
     }
 
     private func configureCollectionView() {
-        dataSource = UICollectionViewDiffableDataSource<Section, PostDTO>(collectionView: collectionView) { [self] (collectionView, indexPath, post) -> UICollectionViewCell? in
+        dataSource = UICollectionViewDiffableDataSource<Section, PostDTO>(collectionView: collectionView) { [unowned self] (collectionView, indexPath, post) -> UICollectionViewCell? in
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PostCollectionViewCell.identifier, for: indexPath) as! PostCollectionViewCell
             let index = indexPath.row
             let isLargeScale: Bool = (index % division == reminder && !post.isTextOnly())

@@ -130,7 +130,7 @@ class NicknameViewController: UIViewController {
 
     private func subscribeViewModel() {
         profileViewModel?.observe()
-                .subscribe(onNext: { [self] user in
+                .subscribe(onNext: { [unowned self] user in
                     userDTO = user
                     nicknameTextField.text = userDTO?.nickname
                     let value = userDTO?.nickname ?? ""

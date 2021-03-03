@@ -68,7 +68,7 @@ class FavoriteUserListViewController: UIViewController {
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
                 .subscribe(onNext: { users in
                     self.users = users
-                    DispatchQueue.main.async { [self] in
+                    DispatchQueue.main.async { [unowned self] in
                         update()
                     }
                 }, onError: { err in

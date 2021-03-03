@@ -85,7 +85,7 @@ class PushSettingViewController: UIViewController {
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
                 .subscribe(onNext: { pushSetting in
                     self.pushSetting = pushSetting
-                    DispatchQueue.main.async { [self] in
+                    DispatchQueue.main.async { [unowned self] in
                         tableView.reloadData()
                     }
                 }, onError: { err in
@@ -140,7 +140,7 @@ extension PushSettingViewController: UITableViewDelegate, UITableViewDataSource 
 
 extension PushSettingViewController: PushSettingTableViewCellDelegate {
     func update(attribute: PushSettingAttribute) {
-        pushSettingViewModel?.update(attribute) { [self] in
+        pushSettingViewModel?.update(attribute) { [unowned self] in
             toast(message: "설정 저장에 실패 하였습니다.")
         }
     }

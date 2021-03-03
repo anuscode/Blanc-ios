@@ -31,7 +31,7 @@ class SendingViewController: UIViewController {
         emptyView.primaryText = "아직 관심을 준 상대가 없습니다."
         emptyView.secondaryText = "내가 4점 이상 점수를 준 사람들이\n이곳에 표시 됩니다."
         emptyView.buttonText = "메인 화면으로.."
-        emptyView.didTapButtonDelegate = { [self] in
+        emptyView.didTapButtonDelegate = { [unowned self] in
             self.tabBarController?.selectedIndex = 0
         }
         emptyView.visible(false)
@@ -82,7 +82,7 @@ class SendingViewController: UIViewController {
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
                 .subscribe(onNext: { users in
                     self.users = users
-                    DispatchQueue.main.async { [self] in
+                    DispatchQueue.main.async { [unowned self] in
                         update()
                         emptyView.visible(users.count == 0)
                     }

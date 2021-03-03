@@ -68,7 +68,7 @@ class PushSettingTableViewCell: UITableViewCell {
         if (attribute == nil) {
             return
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [unowned self] in
             delegate?.update(attribute: attribute!)
         }
     }

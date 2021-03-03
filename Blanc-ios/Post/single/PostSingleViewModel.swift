@@ -38,7 +38,7 @@ class PostSingleViewModel {
         postSingleModel.observe()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [self] post in
+                .subscribe(onNext: { [unowned self] post in
                     self.post = post
                     publish()
                 }, onError: { err in

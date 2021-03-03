@@ -232,13 +232,13 @@ extension ReceivedViewController: UserProfileCellDelegate {
     }
 
     func accept(request: RequestDTO?) {
-        receivedViewModel?.accept(request: request, onError: { [self] in
+        receivedViewModel?.accept(request: request, onError: { [unowned self] in
             toast(message: "요청 수락에 실패 하였습니다.")
         })
     }
 
     func decline(request: RequestDTO?) {
-        receivedViewModel?.decline(request: request, onError: { [self] in
+        receivedViewModel?.decline(request: request, onError: { [unowned self] in
             toast(message: "요청 거절에 실패 하였습니다.")
         })
     }

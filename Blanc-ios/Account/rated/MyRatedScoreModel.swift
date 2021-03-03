@@ -39,7 +39,7 @@ class MyRatedScoreModel {
         userService.listUsersRatedMe(uid: session.uid, userId: session.id)
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [self] raters in
+                .subscribe(onSuccess: { [unowned self] raters in
                     data.raters = raters
                     data.currentUser = session.user
                     publish()

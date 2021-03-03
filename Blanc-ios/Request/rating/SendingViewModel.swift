@@ -28,7 +28,7 @@ class SendingViewModel {
         sendingModel.observe()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [self] users in
+                .subscribe(onNext: { [unowned self] users in
                     self.users = users
                     publish()
                 }, onError: { err in

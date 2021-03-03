@@ -110,7 +110,7 @@ class DrinkViewController: UIViewController {
 
     private func subscribeViewModel() {
         profileViewModel?.observe()
-                .subscribe(onNext: { [self] userDTO in
+                .subscribe(onNext: { [unowned self] userDTO in
                     self.userDTO = userDTO
                     setInitialValue(userDTO.drinkId)
                 }, onError: { err in

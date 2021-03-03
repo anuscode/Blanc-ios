@@ -881,9 +881,9 @@ class ProfileViewController: UIViewController {
     @objc func didTapSaveButton(_ sender: UITapGestureRecognizer) {
         profileViewModel?.updateUserProfile()
                 .observeOn(MainScheduler.instance)
-                .subscribe(onSuccess: { [self] in
+                .subscribe(onSuccess: { [unowned self] in
                     navigationController?.popToRootViewController(animated: true)
-                }, onError: { [self] err in
+                }, onError: { [unowned self] err in
                     toast(message: "프로필 저장 중 에러가 발생 하였습니다.")
                     log.error(err)
                 })
@@ -894,7 +894,7 @@ class ProfileViewController: UIViewController {
         profileViewModel?.observe()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(MainScheduler.instance)
-                .subscribe(onNext: { [self] userDTO in
+                .subscribe(onNext: { [unowned self] userDTO in
                     setValue(userDTO: userDTO)
                     clearFragments()
                 }, onError: { err in

@@ -130,7 +130,7 @@ class IntroductionViewController: UIViewController, UITextViewDelegate {
 
     private func subscribeViewModel() {
         profileViewModel?.observe()
-                .subscribe(onNext: { [self] user in
+                .subscribe(onNext: { [unowned self] user in
                     userDTO = user
                     introductionTextField.text = userDTO?.introduction
                 }, onError: { err in

@@ -18,7 +18,7 @@ class ImageViewModel {
 
     private func subscribeImageViewModel() {
         imageModel.observe()
-                .subscribe(onNext: { [self] userDTO in
+                .subscribe(onNext: { [unowned self] userDTO in
                     self.userDTO = userDTO
                     publish()
                 }, onError: { err in

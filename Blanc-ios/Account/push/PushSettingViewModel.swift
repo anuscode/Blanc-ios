@@ -31,7 +31,7 @@ class PushSettingViewModel {
         pushSettingModel.observe()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [self] pushSetting in
+                .subscribe(onNext: { [unowned self] pushSetting in
                     self.pushSetting = pushSetting
                     publish()
                 }, onError: { err in

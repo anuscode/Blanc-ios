@@ -155,10 +155,10 @@ class SmsViewController: UIViewController {
 
         spinnerView.visible(true)
         verificationService?.issueSmsCode(currentUser: auth.currentUser!, uid: auth.uid, phone: phone)
-                .do(onDispose: { [self] in
+                .do(onDispose: { [unowned self] in
                     spinnerView.visible(false)
                 })
-                .subscribe(onSuccess: { [self] verificationDTO in
+                .subscribe(onSuccess: { [unowned self] verificationDTO in
                     if (verificationDTO.issued == true) {
                         let smsConfirmViewController = SmsConfirmViewController()
                         let session = SwinjectStoryboard.defaultContainer.resolve(Session.self)
@@ -173,7 +173,7 @@ class SmsViewController: UIViewController {
                     } else {
                         toast(message: verificationDTO.reason)
                     }
-                }, onError: { [self]err in
+                }, onError: { [unowned self]err in
                     log.error(err)
                     toast(message: "문자 요청에 실패 하였습니다.")
                 }).disposed(by: disposeBag)

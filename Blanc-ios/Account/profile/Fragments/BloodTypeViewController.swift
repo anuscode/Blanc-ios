@@ -110,7 +110,7 @@ class BloodTypeViewController: UIViewController {
 
     private func subscribeViewModel() {
         profileViewModel?.observe()
-                .subscribe(onNext: { [self] userDTO in
+                .subscribe(onNext: { [unowned self] userDTO in
                     self.userDTO = userDTO
                     setInitialValue(userDTO.bloodId)
                 }, onError: { err in

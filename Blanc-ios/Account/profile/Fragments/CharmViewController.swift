@@ -121,7 +121,7 @@ class CharmViewController: UIViewController {
 
     private func subscribeViewModel() {
         profileViewModel?.observe()
-                .subscribe(onNext: { [self] userDTO in
+                .subscribe(onNext: { [unowned self] userDTO in
                     self.userDTO = userDTO
                     initSelectedValues(userDTO.charmIds)
                 }, onError: { err in

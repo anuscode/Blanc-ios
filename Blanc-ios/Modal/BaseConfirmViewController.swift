@@ -70,10 +70,10 @@ class BaseConfirmViewController: UIViewController {
     }
 
     private func showContentView() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [unowned self] in
             let top = CGAffineTransform(translationX: 0, y: 0)
             contentView.visible(true)
-            UIView.animate(withDuration: 0.3, animations: { [self] in
+            UIView.animate(withDuration: 0.3, animations: { [unowned self] in
                 contentView.transform = top
             })
         }

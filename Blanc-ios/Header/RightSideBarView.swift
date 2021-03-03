@@ -145,7 +145,7 @@ class RightSideBarView: UIView {
         rightSideBarViewModel.observe()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [self] data in
+                .subscribe(onNext: { [unowned self] data in
                     DispatchQueue.main.async {
                         badge(data.hasUnreadPushes)
                         amount(data.point)

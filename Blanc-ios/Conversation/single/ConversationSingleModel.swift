@@ -65,7 +65,7 @@ class ConversationSingleModel {
                     partner?.distance = partner?.distance(from: self.session.user, type: String.self)
                 })
                 .map { [unowned self] conversation -> ConversationDTO in
-                    conversation.messages = conversation.messages?.map { [self] message -> MessageDTO in
+                    conversation.messages = conversation.messages?.map { [unowned self] message -> MessageDTO in
                         message.isCurrentUserMessage = (message.userId == session.id && message.userId != nil)
                         return message
                     }

@@ -121,7 +121,7 @@ class IdealTypeViewController: UIViewController {
 
     private func subscribeViewModel() {
         profileViewModel?.observe()
-                .subscribe(onNext: { [self] userDTO in
+                .subscribe(onNext: { [unowned self] userDTO in
                     self.userDTO = userDTO
                     initSelectedValues(userDTO.idealTypeIds)
                 }, onError: { err in

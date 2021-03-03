@@ -66,7 +66,7 @@ class RegistrationModel {
 
     func uploadUserImage(index: Int?, file: UIImage, onSuccess: @escaping () -> Void, onError: @escaping () -> Void) {
         userService.uploadUserImage(uid: auth.uid, userId: user?.id, index: index, file: file)
-                .do(onSuccess: { [self] imageDTO in
+                .do(onSuccess: { [unowned self] imageDTO in
                     let index = user?.userImagesTemp?.firstIndex(where: {
                         $0.index == imageDTO.index
                     })
@@ -92,7 +92,7 @@ class RegistrationModel {
         userService.deleteUserImage(uid: auth.uid, userId: user?.id, index: index)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [self] _ in
+                .subscribe(onSuccess: { [unowned self] _ in
                     let index = user?.userImagesTemp?.firstIndex(where: {
                         $0.index == index
                     })
@@ -111,7 +111,7 @@ class RegistrationModel {
         userService.updateUserStatusPending(uid: auth.uid, userId: session.user?.id)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(MainScheduler.instance)
-                .subscribe(onSuccess: { [self] _ in
+                .subscribe(onSuccess: { [unowned self] _ in
                     session.user?.status = Status.PENDING
                     session.publish()
                     user?.status = Status.PENDING

@@ -121,7 +121,7 @@ class HeightViewController: UIViewController {
 
     private func subscribeViewModel() {
         profileViewModel?.observe()
-                .subscribe(onNext: { [self] userDTO in
+                .subscribe(onNext: { [unowned self] userDTO in
                     self.userDTO = userDTO
                     setInitialValue(userDTO.height)
                 }, onError: { err in

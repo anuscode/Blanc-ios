@@ -51,7 +51,7 @@ class MyRatedCarouselTableViewCell: UITableViewCell {
 
     func bind(user: UserDTO?) {
         self.user = user
-        DispatchQueue.main.async { [self] in
+        DispatchQueue.main.async { [unowned self] in
             carousel.reloadData()
         }
     }

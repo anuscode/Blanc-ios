@@ -28,7 +28,7 @@ class AvoidViewModel {
         avoidModel.observe()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [self] contacts in
+                .subscribe(onNext: { [unowned self] contacts in
                     self.contacts = contacts
                     publish()
                 }, onError: { err in

@@ -46,7 +46,7 @@ class PostManagementViewController: UIViewController {
 
     var postManagementViewModel: PostManagementViewModel?
 
-    lazy private var dataSource: DataSource<Section, Postable> = DataSource<Section, Postable>(tableView: tableView) { [self] (tableView, indexPath, data) -> UITableViewCell? in
+    lazy private var dataSource: DataSource<Section, Postable> = DataSource<Section, Postable>(tableView: tableView) { [unowned self] (tableView, indexPath, data) -> UITableViewCell? in
         if (data is PostDTO) {
             let cell = tableView.dequeueReusableCell(withIdentifier: PostCell.identifier, for: indexPath) as! PostCell
             cell.bind(post: (data as! PostDTO), delegate: self)
@@ -71,7 +71,7 @@ class PostManagementViewController: UIViewController {
         emptyView.primaryText = "앗!? 관리 가능한 게시물이\n존재하지 않습니다."
         emptyView.secondaryText = "나의 게시물은 이곳에서 관리 할 수 있습니다."
         emptyView.buttonText = "메인 화면으로.."
-        emptyView.didTapButtonDelegate = { [self] in
+        emptyView.didTapButtonDelegate = { [unowned self] in
             self.navigationController?.popToRootViewController(animated: true)
         };
         emptyView.visible(false)
@@ -246,7 +246,7 @@ extension PostManagementViewController: UITableViewDelegate {
 extension PostManagementViewController: PostManagementTableViewCellDelegate {
 
     func favorite(_ post: PostDTO?) {
-        postManagementViewModel?.favorite(post: post) { [self] in
+        postManagementViewModel?.favorite(post: post) { [unowned self] in
             toast(message: "좋아요 도중 에러가 발생 하였습니다.")
         }
     }
@@ -282,14 +282,14 @@ extension PostManagementViewController: PostManagementTableViewCellDelegate {
 extension PostManagementViewController: CommentTableViewCellDelegate {
     func thumbUp(comment: CommentDTO?) {
         let post = data.findApplicablePost(comment: comment)
-        postManagementViewModel?.thumbUp(post: post, comment: comment, onError: { [self] message in
+        postManagementViewModel?.thumbUp(post: post, comment: comment, onError: { [unowned self] message in
             toast(message: message)
         })
     }
 
     func thumbDown(comment: CommentDTO?) {
         let post = data.findApplicablePost(comment: comment)
-        postManagementViewModel?.thumbDown(post: post, comment: comment, onError: { [self] message in
+        postManagementViewModel?.thumbDown(post: post, comment: comment, onError: { [unowned self] message in
             toast(message: message)
         })
     }
@@ -318,7 +318,7 @@ extension PostManagementViewController: CommentTableViewCellDelegate {
 extension PostManagementViewController: BottomTextFieldDelegate {
     func trigger(message: String) {
         let post = data.findApplicablePost(comment: replyTo)
-        postManagementViewModel?.createComment(postId: post?.id, commentId: replyTo?.id, comment: message, onError: { [self] message in
+        postManagementViewModel?.createComment(postId: post?.id, commentId: replyTo?.id, comment: message, onError: { [unowned self] message in
             toast(message: message)
         })
         dismissTextField()

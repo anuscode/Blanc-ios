@@ -105,13 +105,13 @@ class InitPagerViewController: UIPageViewController {
         }
 
         userService?.isRegistered(uid: uid)
-                .subscribe(onSuccess: { [self] isExists in
+                .subscribe(onSuccess: { [unowned self] isExists in
                     if (!isExists) {
                         subject.onNext(View.SMS)
                         return
                     }
                     routeBySession(subject)
-                }, onError: { [self] err in
+                }, onError: { [unowned self] err in
                     log.error(err)
                     toast(message: "유저 가입정보를 가져오는데 실패 하였습니다.")
                 })
@@ -122,13 +122,13 @@ class InitPagerViewController: UIPageViewController {
 
     private func routeBySession(_ subject: ReplaySubject<View>) {
         session?.generate()
-                .subscribe(onSuccess: { [self] user in
+                .subscribe(onSuccess: { [unowned self] user in
                     if (session?.user?.available == true) {
                         subject.onNext(View.MAIN)
                     } else {
                         subject.onNext(View.REGISTRATION)
                     }
-                }, onError: { [self] err in
+                }, onError: { [unowned self] err in
                     log.error(err)
                     replace(withIdentifier: "LoginViewController")
                     toast(message: "세션 정보를 가져오는데 실패 하였습니다.")

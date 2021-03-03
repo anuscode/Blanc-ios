@@ -123,7 +123,7 @@ class RegistrationBloodTypeViewController: UIViewController {
     private func subscribeViewModel() {
         registrationViewModel?.observe()
                 .take(1)
-                .subscribe(onNext: { [self] user in
+                .subscribe(onNext: { [unowned self] user in
                     self.user = user
                     update()
                 }, onError: { err in

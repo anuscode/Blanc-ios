@@ -28,7 +28,7 @@ class MainTabBarViewModel {
         conversationModel.observe()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [self] conversations in
+                .subscribe(onNext: { [unowned self] conversations in
                     let hasUnread = conversations.first(where: {
                         $0.unreadMessageCount ?? 0 > 0
                     }) != nil

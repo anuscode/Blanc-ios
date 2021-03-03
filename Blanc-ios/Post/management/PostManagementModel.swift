@@ -37,7 +37,7 @@ class PostManagementModel {
         userService.listAllUserPosts(uid: session.uid, userId: session.id)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [self] posts in
+                .subscribe(onSuccess: { [unowned self] posts in
                     self.posts = posts
                     publish()
                 }, onError: { err in
@@ -58,7 +58,7 @@ class PostManagementModel {
         postService.createFavorite(uid: session.uid, postId: post?.id)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [self] _ in
+                .subscribe(onSuccess: { [unowned self] _ in
                     if (session.id == nil) {
                         return
                     }
@@ -66,7 +66,7 @@ class PostManagementModel {
                         post?.favoriteUserIds?.append(session.id!)
                     }
                     publish()
-                }, onError: { [self] err in
+                }, onError: { [unowned self] err in
                     log.info(err)
                     onError?()
                     publish()
@@ -78,7 +78,7 @@ class PostManagementModel {
         postService.deleteFavorite(uid: session.uid, postId: post?.id)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [self] _ in
+                .subscribe(onSuccess: { [unowned self] _ in
                     if (session.id == nil) {
                         return
                     }
@@ -86,7 +86,7 @@ class PostManagementModel {
                         post?.favoriteUserIds?.remove(at: index)
                     }
                     publish()
-                }, onError: { [self] err in
+                }, onError: { [unowned self] err in
                     log.info(err)
                     onError?()
                     publish()
@@ -128,7 +128,7 @@ class PostManagementModel {
         postService.createThumbUp(uid: session.uid, postId: post?.id, commentId: comment?.id)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [self] _ in
+                .subscribe(onSuccess: { [unowned self] _ in
                     log.info("Successfully created thumb up..")
                 }, onError: { err in
                     onError("댓글 좋아요 생성에 실패 하였습니다.")
@@ -140,7 +140,7 @@ class PostManagementModel {
         postService.deleteThumbUp(uid: session.uid, postId: post?.id, commentId: comment?.id)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [self] _ in
+                .subscribe(onSuccess: { [unowned self] _ in
                     log.info("Successfully deleted thumb up..")
                 }, onError: { err in
                     onError("댓글 좋아요 삭제에 실패 하였습니다.")
@@ -175,7 +175,7 @@ class PostManagementModel {
         postService.createThumbDown(uid: session.uid, postId: post?.id, commentId: comment?.id)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [self] _ in
+                .subscribe(onSuccess: { [unowned self] _ in
                     log.info("Successfully created thumb down..")
                 }, onError: { err in
                     onError("댓글 싫어요 생성에 실패 하였습니다.")
@@ -187,7 +187,7 @@ class PostManagementModel {
         postService.deleteThumbDown(uid: session.uid, postId: post?.id, commentId: comment?.id)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [self] _ in
+                .subscribe(onSuccess: { [unowned self] _ in
                     log.info("Successfully deleted thumb down..")
                 }, onError: { err in
                     onError("댓글 싫어요 삭제에 실패 하였습니다.")
@@ -228,7 +228,7 @@ class PostManagementModel {
         postService.createComment(uid: auth.uid, postId: postId, commentId: commentId, comment: comment)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [self] createdComment in
+                .subscribe(onSuccess: { [unowned self] createdComment in
                     log.info("Successfully created comment..")
                     if (commentId != nil) {
                         if let index = post?.comments?.firstIndex(where: { $0.id == commentId }) {

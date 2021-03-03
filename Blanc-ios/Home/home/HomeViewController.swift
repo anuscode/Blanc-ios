@@ -19,7 +19,7 @@ class HomeViewController: UIViewController {
 
     private var isLoading: Bool = true {
         didSet {
-            DispatchQueue.main.async { [self] in
+            DispatchQueue.main.async { [unowned self] in
                 shimmer1.visible(isLoading)
                 shimmer2.visible(isLoading)
                 homeLoading1.visible(isLoading)
@@ -115,7 +115,7 @@ class HomeViewController: UIViewController {
     }
 
     private func configureTableView() {
-        dataSource = UITableViewDiffableDataSource<Section, UserDTO>(tableView: tableView) { [self] (tableView, indexPath, user) -> UITableViewCell? in
+        dataSource = UITableViewDiffableDataSource<Section, UserDTO>(tableView: tableView) { [unowned self] (tableView, indexPath, user) -> UITableViewCell? in
             if (indexPath.section == 0) {
                 let cell = tableView.dequeueReusableCell(withIdentifier: UserCardTableViewCell.identifier, for: indexPath) as! UserCardTableViewCell
                 let user = data.recommendedUsers[indexPath.row]
@@ -195,7 +195,7 @@ class HomeViewController: UIViewController {
         snapshot.appendItems(data.recommendedUsers, toSection: .Recommendation)
         snapshot.appendItems(data.closeUsers, toSection: .Close)
         snapshot.appendItems(data.realTimeUsers, toSection: .RealTime)
-        dataSource.apply(snapshot, animatingDifferences: true) { [self] in
+        dataSource.apply(snapshot, animatingDifferences: true) { [unowned self] in
             isLoading = false
         }
     }
@@ -356,7 +356,7 @@ extension HomeViewController: UserCardCellDelegate {
     }
 
     func rate(_ user: UserDTO?, score: Int) {
-        homeViewModel?.rate(user, score: score) { [self] message in
+        homeViewModel?.rate(user, score: score) { [unowned self] message in
             toast(message: message)
         }
     }

@@ -174,7 +174,7 @@ class RegistrationBirthdayViewController: UIViewController {
     private func subscribeViewModel() {
         registrationViewModel?.observe()
                 .take(1)
-                .subscribe(onNext: { [self] userDTO in
+                .subscribe(onNext: { [unowned self] userDTO in
                     user = userDTO
                     update(userDTO.birthedAt)
                 }, onError: { err in

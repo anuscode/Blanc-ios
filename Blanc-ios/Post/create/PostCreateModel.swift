@@ -20,9 +20,9 @@ class PostCreateModel {
         postService.createPost(uid: session.uid, files: files, description: description, enableComment: enableComment)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [self] in
+                .subscribe(onSuccess: { [unowned self] in
                     onCompleted()
-                }, onError: { [self] err in
+                }, onError: { err in
                     onError()
                 })
                 .disposed(by: disposeBag)

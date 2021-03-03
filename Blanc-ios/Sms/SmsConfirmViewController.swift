@@ -182,7 +182,7 @@ class SmsConfirmViewController: UIViewController {
     }
 
     @objc private func didTapResetButton() {
-        dismiss(animated: true) { [self] in
+        dismiss(animated: true) { [unowned self] in
             interval?.dispose()
         }
     }
@@ -203,7 +203,7 @@ class SmsConfirmViewController: UIViewController {
                         smsCode: smsCode,
                         expiredAt: verificationDTO?.expiredAt
                 )
-                .do(onSuccess: { [self] it in
+                .do(onSuccess: { [unowned self] it in
                     if (it.verified != true) {
                         let message = "문자 인증에 실패 하였습니다."
                         toast(message: it.reason ?? message)
@@ -214,7 +214,7 @@ class SmsConfirmViewController: UIViewController {
                     log.error(err)
                     self.activateConfirmButton(true)
                 })
-                .flatMap { [self] it -> Single<UserDTO> in
+                .flatMap { [unowned self] it -> Single<UserDTO> in
                     userService!.createUser(
                             currentUser: auth.currentUser!,
                             uid: auth.uid,
@@ -253,7 +253,7 @@ class SmsConfirmViewController: UIViewController {
         let current = Int(NSDate().timeIntervalSince1970)
         let seconds = expiredAt - current
         if (seconds <= 0) {
-            dismiss(animated: true) { [self] in
+            dismiss(animated: true) { [unowned self] in
                 interval?.dispose()
             }
             return "시간 만료"
@@ -263,7 +263,7 @@ class SmsConfirmViewController: UIViewController {
 
     private func showRemainingTime() {
         interval = Observable<Int>.interval(1.0, scheduler: MainScheduler.instance)
-                .subscribe(onNext: { [self] _ in
+                .subscribe(onNext: { [unowned self] _ in
                     let expiredAt = verificationDTO?.expiredAt ?? 0
                     let formatted = formatRemainingTime(expiredAt: expiredAt)
                     timeLeftLabel.text = formatted

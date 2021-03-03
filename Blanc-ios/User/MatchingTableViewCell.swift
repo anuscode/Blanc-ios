@@ -49,7 +49,7 @@ class MatchingTableViewCell: UITableViewCell {
     }
 
     func bind(message: String?) {
-        DispatchQueue.main.async { [self] in
+        DispatchQueue.main.async { [unowned self] in
             label.text = message
         }
     }

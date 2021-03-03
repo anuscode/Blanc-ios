@@ -518,7 +518,7 @@ class UserCardTableViewCell: UITableViewCell {
             switchCardBodyMode(to: .star)
         }
         button1.isUserInteractionEnabled = false
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [unowned self] in
             button1.isUserInteractionEnabled = true
         }
     }
@@ -654,7 +654,7 @@ extension UserCardTableViewCell {
         label1.visible(true)
         label2.visible(true)
         label3.visible(true)
-        UIView.animate(withDuration: 0.4, animations: { [self] in
+        UIView.animate(withDuration: 0.4, animations: { [unowned self] in
             label1.transform = left
             label2.transform = left
             label3.transform = left
@@ -663,11 +663,11 @@ extension UserCardTableViewCell {
 
     private func hideLabels() {
         let right = CGAffineTransform(translationX: width, y: 0)
-        UIView.animate(withDuration: 0.4, animations: { [self] in
+        UIView.animate(withDuration: 0.4, animations: { [unowned self] in
             label1.transform = right
             label2.transform = right
             label3.transform = right
-        }) { [self] (finished) in
+        }) { [unowned self] (finished) in
             label1.isHidden = finished
             label2.isHidden = finished
             label3.isHidden = finished
@@ -677,16 +677,16 @@ extension UserCardTableViewCell {
     private func showStars() {
         let right = CGAffineTransform(translationX: 0, y: 0)
         starsView.visible(true)
-        UIView.animate(withDuration: 0.4, animations: { [self] in
+        UIView.animate(withDuration: 0.4, animations: { [unowned self] in
             starsView.transform = right
         })
     }
 
     private func hideStars() {
         let left = CGAffineTransform(translationX: -width, y: 0)
-        UIView.animate(withDuration: 0.4, animations: { [self] in
+        UIView.animate(withDuration: 0.4, animations: { [unowned self] in
             starsView.transform = left
-        }) { [self] (finished) in
+        }) { [unowned self] (finished) in
             starsView.isHidden = finished
         }
     }

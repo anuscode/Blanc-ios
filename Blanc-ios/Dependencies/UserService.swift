@@ -21,7 +21,7 @@ class UserService {
                 .debug()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .flatMap { [self] result in
+                .flatMap { [unowned self] result in
                     provider.rx.request(.getSession(idToken: result.token, uid: uid))
                             .debug()
                             .filterSuccessfulStatusAndRedirectCodes()
@@ -131,7 +131,7 @@ class UserService {
                 .debug()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .flatMap { [self] result in
+                .flatMap { [unowned self] result in
                     provider.rx.request(.createUser(
                                     idToken: result.token,
                                     uid: uid,
@@ -228,7 +228,7 @@ class UserService {
                 .debug()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .flatMap { [self] result in
+                .flatMap { [unowned self] result in
                     provider.rx.request(.updateUserProfile(
                                     idToken: result.token,
                                     uid: uid,
@@ -256,19 +256,19 @@ class UserService {
                 .debug()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .flatMap { [self] result in
-                    provider.rx.request(
-                                    .updateUserContacts(
-                                            idToken: result.token,
-                                            uid: uid,
-                                            userId: userId,
-                                            phones: phones)
+                .flatMap({ [unowned self] result in
+                    provider.rx
+                            .request(.updateUserContacts(
+                                    idToken: result.token,
+                                    uid: uid,
+                                    userId: userId,
+                                    phones: phones)
                             )
                             .debug()
                             .filterSuccessfulStatusAndRedirectCodes()
                             .map({ _ in Void() })
                             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                }
+                })
                 .asSingle()
     }
 

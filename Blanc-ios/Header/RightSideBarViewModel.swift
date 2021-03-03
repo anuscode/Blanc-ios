@@ -37,7 +37,7 @@ class RightSideBarViewModel {
         session.observe()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [self] user in
+                .subscribe(onNext: { [unowned self] user in
                     data.point = user.point ?? 0.0
                     publish()
                 }, onError: { err in
@@ -49,7 +49,7 @@ class RightSideBarViewModel {
         alarmModel.observe()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [self] pushes in
+                .subscribe(onNext: { [unowned self] pushes in
                     data.hasUnreadPushes = pushes.filter {
                         $0.isRead != true
                     }.count > 0

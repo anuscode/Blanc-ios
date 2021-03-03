@@ -74,7 +74,7 @@ class PostModel {
         postService.createFavorite(uid: session.uid, postId: post?.id)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [self] _ in
+                .subscribe(onSuccess: { [unowned self] _ in
                     if (session.id == nil) {
                         return
                     }
@@ -82,7 +82,7 @@ class PostModel {
                         post?.favoriteUserIds?.append(session.id!)
                     }
                     publish()
-                }, onError: { [self] err in
+                }, onError: { [unowned self] err in
                     log.error(err)
                     onError()
                     publish()
@@ -94,7 +94,7 @@ class PostModel {
         postService.deleteFavorite(uid: session.uid, postId: post?.id)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [self] _ in
+                .subscribe(onSuccess: { [unowned self] _ in
                     if (session.id == nil) {
                         return
                     }
@@ -102,7 +102,7 @@ class PostModel {
                         post?.favoriteUserIds?.remove(at: index)
                     }
                     publish()
-                }, onError: { [self] err in
+                }, onError: { [unowned self] err in
                     log.info(err)
                     onError?()
                     publish()

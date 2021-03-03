@@ -23,7 +23,7 @@ class InitSecondViewController: UIViewController {
         configureSubviews()
         configureConstraints()
 
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [unowned self] in
             fireworkController.addFireworks(count: 6, sparks: 8, around: pingme)
         }
     }

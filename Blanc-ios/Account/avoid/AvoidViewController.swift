@@ -102,7 +102,7 @@ class AvoidViewController: UIViewController {
         avoidViewModel?.observe()
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [self] contacts in
+                .subscribe(onNext: { [unowned self] contacts in
                     self.contacts = contacts
                     DispatchQueue.main.async {
                         update()

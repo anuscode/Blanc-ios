@@ -69,7 +69,7 @@ class PendingModel {
                 .take(1)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [self] user in
+                .subscribe(onNext: { [unowned self] user in
                     userDTO = user
                     publish()
                 }, onError: { err in
@@ -82,7 +82,7 @@ class PendingModel {
         userService.updateUserProfile(currentUser: auth.currentUser!, uid: auth.uid, userId: userDTO?.id, user: userDTO!)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .do(onSuccess: { [self] response in
+                .do(onSuccess: { [unowned self] response in
                     guard userDTO != nil else {
                         return
                     }
@@ -94,7 +94,7 @@ class PendingModel {
 
     func uploadUserImage(index: Int?, file: UIImage) -> Single<ImageDTO> {
         userService.uploadUserImage(uid: auth.uid, userId: userDTO?.id, index: index, file: file)
-                .do(onSuccess: { [self] imageDTO in
+                .do(onSuccess: { [unowned self] imageDTO in
                     let index = userDTO?.userImagesTemp?.firstIndex(where: { $0.index == imageDTO.index })
                     if (index != nil) {
                         userDTO?.userImagesTemp?.remove(at: index!)
@@ -113,14 +113,14 @@ class PendingModel {
         userService.deleteUserImage(uid: auth.uid, userId: userDTO?.id, index: index)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [self] _ in
+                .subscribe(onSuccess: { [unowned self] _ in
                     let index = userDTO?.userImagesTemp?.firstIndex(where: { $0.index == index })
                     if (index != nil) {
                         userDTO?.userImagesTemp?.remove(at: index!)
                     }
                     userDTO?.status = Status.OPENED
                     publish()
-                }, onError: { [self] err in
+                }, onError: { [unowned self] err in
                     log.error(err)
                 })
                 .disposed(by: disposeBag)
@@ -130,7 +130,7 @@ class PendingModel {
         userService.updateUserStatusPending(uid: auth.uid, userId: session.user?.id)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .do(onSuccess: { [self] _ in
+                .do(onSuccess: { [unowned self] _ in
                     session.user?.status = Status.PENDING
                     session.publish()
                     userDTO?.status = Status.PENDING

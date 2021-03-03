@@ -42,7 +42,7 @@ class ConversationModel {
     }
 
     private func publish() {
-        DispatchQueue.main.async { [self] in
+        DispatchQueue.main.async { [unowned self] in
             selectLastReadMessages()
                     .do(onNext: { dictionary in
                         conversations.forEach { conversation in

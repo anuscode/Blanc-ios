@@ -321,7 +321,7 @@ class ConversationSingleViewController: UIViewController {
         }
         OpenConversationConfirmViewController
                 .present(target: self, user: partner)
-                .subscribe(onNext: { [self] result in
+                .subscribe(onNext: { [unowned self] result in
                     if (result == .accept) {
                         updateConversationAvailable()
                         return
@@ -341,9 +341,9 @@ class ConversationSingleViewController: UIViewController {
     }
 
     private func updateConversationAvailable() {
-        conversationSingleViewModel?.updateConversationAvailable(conversation: conversation, onCompleted: { [self] in
+        conversationSingleViewModel?.updateConversationAvailable(conversation: conversation, onCompleted: { [unowned self] in
             toast(message: "대화방이 정상적으로 열렸습니다.")
-        }, onError: { [self] in
+        }, onError: { [unowned self] in
             toast(message: "대화방을 여는 도중 에러가 발생 하였습니다.")
         })
     }
@@ -392,7 +392,7 @@ extension ConversationSingleViewController {
         var snapshot = NSDiffableDataSourceSnapshot<Section, MessageDTO>()
         snapshot.appendSections([.Main])
         snapshot.appendItems(conversation?.messages ?? [])
-        dataSource?.apply(snapshot, animatingDifferences: animatingDifferences) { [self] in
+        dataSource?.apply(snapshot, animatingDifferences: animatingDifferences) { [unowned self] in
             if (conversation?.messages?.count ?? 0 > 0) {
                 tableView.scrollToRow(at: IndexPath(row: ((conversation?.messages?.count ?? 1) - 1), section: 0),
                         at: .bottom, animated: true)
@@ -420,7 +420,7 @@ extension ConversationSingleViewController: UITableViewDelegate {
 
 extension ConversationSingleViewController: BottomTextFieldDelegate {
     func trigger(message: String) {
-        conversationSingleViewModel?.sendMessage(message: message) { [self] in
+        conversationSingleViewModel?.sendMessage(message: message) { [unowned self] in
             toast(message: "메시지 전송에 실패 하였습니다.")
         }
         dismissTextField()

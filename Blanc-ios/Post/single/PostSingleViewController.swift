@@ -181,7 +181,7 @@ extension PostSingleViewController {
     }
 
     private func configureTableViewDataSource() {
-        dataSource = UITableViewDiffableDataSource<Section, AnyHashable>(tableView: tableView) { [self] (tableView, indexPath, item) -> UITableViewCell? in
+        dataSource = UITableViewDiffableDataSource<Section, AnyHashable>(tableView: tableView) { [unowned self] (tableView, indexPath, item) -> UITableViewCell? in
             if let post = item as? PostDTO {
                 guard let cell = tableView.dequeueReusableCell(
                         withIdentifier: PostSingleBodyTableViewCell.identifier, for: indexPath) as? PostSingleBodyTableViewCell else {
@@ -232,13 +232,13 @@ extension PostSingleViewController: UITableViewDelegate {
 extension PostSingleViewController: CommentTableViewCellDelegate {
 
     func thumbUp(comment: CommentDTO?) {
-        postSingleViewModel?.thumbUp(post: post, comment: comment, onError: { [self] message in
+        postSingleViewModel?.thumbUp(post: post, comment: comment, onError: { [unowned self] message in
             toast(message: message)
         })
     }
 
     func thumbDown(comment: CommentDTO?) {
-        postSingleViewModel?.thumbDown(post: post, comment: comment, onError: { [self] message in
+        postSingleViewModel?.thumbDown(post: post, comment: comment, onError: { [unowned self] message in
             toast(message: message)
         })
     }

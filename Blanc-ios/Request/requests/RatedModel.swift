@@ -33,7 +33,7 @@ class RatedModel {
         userService.listUsersRatedMeHigh(uid: session.uid, userId: session.id)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [self] users in
+                .subscribe(onSuccess: { [unowned self] users in
                     self.users = users
                     publish()
                 }, onError: { err in

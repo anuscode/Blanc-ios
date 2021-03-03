@@ -301,7 +301,7 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
         spinner.visible(true)
         cropViewController.dismiss(animated: true, completion: nil)
 
-        UIImage.resize(image: image, maxKb: 1000) { [self] resizedImage in
+        UIImage.resize(image: image, maxKb: 1000) { [unowned self] resizedImage in
             DispatchQueue.main.async {
                 updateImageViewWithImage(resizedImage!, cropViewController: cropViewController)
             }
@@ -404,12 +404,12 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
     private func subscribeViewModel() {
         registrationViewModel?.observe()
                 .observeOn(MainScheduler.instance)
-                .subscribe(onNext: { [self] userDTO in
+                .subscribe(onNext: { [unowned self] userDTO in
                     user = userDTO
                     DispatchQueue.main.async {
                         update(userDTO)
                     }
-                }, onError: { [self] err in
+                }, onError: { [unowned self] err in
                     log.error(err)
                     toast(message: "알 수 없는 에러가 발생 하였습니다.")
                 })
@@ -500,7 +500,7 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
             self.present(imagePicker, animated: true, completion: nil)
         }
 
-        let deleteAction = UIAlertAction(title: "이미지 삭제", style: .default) { [self] (action) in
+        let deleteAction = UIAlertAction(title: "이미지 삭제", style: .default) { [unowned self] (action) in
             let imageView = sender.view as! UIImageView
             if (user?.getTempImageUrl(index: imageView.tag).isEmpty ?? true) {
                 toast(message: "등록 된 이미지가 없습니다.")
@@ -545,13 +545,13 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
 
         spinner.visible(true)
         registrationViewModel?.updateUserStatusPending(
-                onSuccess: { [self] in
+                onSuccess: { [unowned self] in
                     DispatchQueue.main.async {
                         spinner.visible(false)
                         presentPendingViewController()
                     }
                 },
-                onError: { [self] in
+                onError: { [unowned self] in
                     DispatchQueue.main.async {
                         spinner.visible(false)
                         toast(message: "심사 요청에 실패 하였습니다.")

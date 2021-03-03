@@ -56,7 +56,7 @@ class AvoidModel {
             try contactStore.enumerateContacts(with: request) { (contact, stop) in
                 contacts.append(contact)
             }
-            contacts.forEach { [self] contact in
+            contacts.forEach { [unowned self] contact in
                 if (contact.phoneNumbers.count == 0) {
                     return
                 }

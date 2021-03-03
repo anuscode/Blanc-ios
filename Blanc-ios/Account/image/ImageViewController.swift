@@ -406,11 +406,11 @@ class ImageViewController: UIViewController, CropViewControllerDelegate, UIImage
         updateImageViewWithImage(image, cropViewController: cropViewController)
         pendingViewModel?.uploadUserImage(index: selectedImageView?.tag, file: image)
                 .observeOn(MainScheduler.instance)
-                .do(onDispose: { [self] in
+                .do(onDispose: { [unowned self] in
                     spinner.visible(false)
                     configureImagesClickable(true)
                 })
-                .subscribe(onError: { [self] err in
+                .subscribe(onError: { [unowned self] err in
                     toast(message: "이미지 업로드에 실패 하였습니다.")
                     log.error(err)
                 }).disposed(by: disposeBag)
@@ -454,7 +454,7 @@ class ImageViewController: UIViewController, CropViewControllerDelegate, UIImage
             self.present(imagePicker, animated: true, completion: nil)
         }
 
-        let deleteAction = UIAlertAction(title: "이미지 삭제", style: .default) { [self] (action) in
+        let deleteAction = UIAlertAction(title: "이미지 삭제", style: .default) { [unowned self] (action) in
 
             let imageView = sender.view as! UIImageView
             if ((userDTO?.getTempImageUrl(index: imageView.tag).isEmpty ?? true)) {
@@ -610,10 +610,10 @@ class ImageViewController: UIViewController, CropViewControllerDelegate, UIImage
     private func subscribeViewModel() {
         pendingViewModel?.observe()
                 .observeOn(MainScheduler.instance)
-                .subscribe(onNext: { [self] userDTO in
+                .subscribe(onNext: { [unowned self] userDTO in
                     self.userDTO = userDTO
                     configureImageViews(userDTO)
-                }, onError: { [self] err in
+                }, onError: { [unowned self] err in
                     log.error(err)
                     toast(message: "알 수 없는 에러가 발생 하였습니다.")
                 })
@@ -704,17 +704,17 @@ class ImageViewController: UIViewController, CropViewControllerDelegate, UIImage
         spinner.visible(true)
         pendingViewModel?.updateUserStatusPending()
                 .observeOn(MainScheduler.instance)
-                .do(onDispose: { [self] in
+                .do(onDispose: { [unowned self] in
                     spinner.visible(false)
                 })
-                .do(onSuccess: { [self] _ in
+                .do(onSuccess: { [unowned self] _ in
                     toast(message: "심사 요청을 하였습니다.")
                 })
                 .delay(TimeInterval(1), scheduler: MainScheduler.instance)
                 .observeOn(MainScheduler.asyncInstance)
-                .subscribe(onSuccess: { [self] userDTO in
+                .subscribe(onSuccess: { [unowned self] userDTO in
                     navigationController?.popToRootViewController(animated: true)
-                }, onError: { [self] err in
+                }, onError: { [unowned self] err in
                     toast(message: "심사 요청에 실패 하였습니다.")
                 })
                 .disposed(by: disposeBag)

@@ -46,7 +46,7 @@ class Session {
         let user = auth.currentUser
         let uid = auth.uid
         return userService.getSession(currentUser: user!, uid: uid)
-                .do(onSuccess: { [self] user in
+                .do(onSuccess: { [unowned self] user in
                     self.user = user
                     self.user?.uid = uid
                     publish()
@@ -68,7 +68,7 @@ class Session {
     func refresh() -> Single<UserDTO> {
         userService.getSession(currentUser: auth.currentUser!, uid: auth.uid)
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .do(afterSuccess: { [self] user in
+                .do(afterSuccess: { [unowned self] user in
                     update(user)
                 })
     }

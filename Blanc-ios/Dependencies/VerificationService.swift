@@ -20,7 +20,7 @@ class VerificationService {
     func issueSmsCode(currentUser: User, uid: String?, phone: String?) -> Single<VerificationDTO> {
         currentUser.rx.getIDTokenResult()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .flatMap { [self] result in
+                .flatMap { [unowned self] result in
                     provider.rx.request(.issueSmsCode(idToken: result.token, uid: uid, phone: phone))
                             .debug()
                             .filterSuccessfulStatusAndRedirectCodes()
@@ -36,7 +36,7 @@ class VerificationService {
                        expiredAt: Int?) -> Single<VerificationDTO> {
         currentUser.rx.getIDTokenResult()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .flatMap { [self] result -> Single<VerificationDTO> in
+                .flatMap { [unowned self] result -> Single<VerificationDTO> in
                     provider.rx.request(.verifySmsCode(
                                     idToken: result.token,
                                     uid: uid,

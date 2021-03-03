@@ -28,7 +28,7 @@ class ConversationViewModel {
         conversationModel.observe()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [self] conversations in
+                .subscribe(onNext: { [unowned self] conversations in
                     self.conversations = conversations
                     publish()
                 }, onError: { err in

@@ -18,7 +18,7 @@ class PendingViewModel {
 
     private func observeViewModel() {
         pendingModel.observe()
-                .subscribe(onNext: { [self] userDTO in
+                .subscribe(onNext: { [unowned self] userDTO in
                     self.userDTO = userDTO
                     publish()
                     log.info(userDTO)

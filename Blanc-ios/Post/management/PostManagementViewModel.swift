@@ -31,7 +31,7 @@ class PostManagementViewModel {
         postManagementModel.observe()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [self] posts in
+                .subscribe(onNext: { [unowned self] posts in
                     self.posts = posts
                     publish()
                 }, onError: { err in

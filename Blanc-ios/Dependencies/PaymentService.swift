@@ -25,7 +25,7 @@ class PaymentService {
         currentUser.rx.getIDTokenResult()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .flatMap { [self] result in
+                .flatMap { [unowned self] result in
                     provider.rx.request(.purchase(
                                     idToken: result.token,
                                     uid: uid,

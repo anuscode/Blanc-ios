@@ -31,7 +31,7 @@ class MyRatedScoreViewModel {
         myRatedScoreModel.observe()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [self] data in
+                .subscribe(onNext: { [unowned self] data in
                     self.data = data
                     publish()
                 }, onError: { err in

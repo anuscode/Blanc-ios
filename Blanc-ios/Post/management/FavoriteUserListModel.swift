@@ -42,7 +42,7 @@ class FavoriteUserListModel {
                 .take(1)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [self] post in
+                .subscribe(onNext: { [unowned self] post in
                     populate(post: post)
                 }, onError: { err in
                     log.error(err)
@@ -54,7 +54,7 @@ class FavoriteUserListModel {
         postService.listAllFavoriteUsers(uid: session.uid, postId: post?.id)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [self] users in
+                .subscribe(onSuccess: { [unowned self] users in
                     self.users = users
                     publish()
                 }, onError: { err in

@@ -40,7 +40,7 @@ class PostSingleModel {
         channel.observe(PostDTO.self)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [self] post in
+                .subscribe(onNext: { [unowned self] post in
                     self.post = post
                     publish()
                 }, onError: { err in
@@ -76,7 +76,7 @@ class PostSingleModel {
         postService.createThumbUp(uid: session.uid, postId: post?.id, commentId: comment?.id)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [self] _ in
+                .subscribe(onSuccess: { [unowned self] _ in
                     log.info("Successfully created thumb up..")
                 }, onError: { err in
                     onError("댓글 좋아요 생성에 실패 하였습니다.")
@@ -88,7 +88,7 @@ class PostSingleModel {
         postService.deleteThumbUp(uid: session.uid, postId: post?.id, commentId: comment?.id)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [self] _ in
+                .subscribe(onSuccess: { [unowned self] _ in
                     log.info("Successfully deleted thumb up..")
                 }, onError: { err in
                     onError("댓글 좋아요 삭제에 실패 하였습니다.")
@@ -123,7 +123,7 @@ class PostSingleModel {
         postService.createThumbDown(uid: session.uid, postId: post?.id, commentId: comment?.id)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [self] _ in
+                .subscribe(onSuccess: { [unowned self] _ in
                     log.info("Successfully created thumb down..")
                 }, onError: { err in
                     onError("댓글 싫어요 생성에 실패 하였습니다.")
@@ -135,7 +135,7 @@ class PostSingleModel {
         postService.deleteThumbDown(uid: session.uid, postId: post?.id, commentId: comment?.id)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [self] _ in
+                .subscribe(onSuccess: { [unowned self] _ in
                     log.info("Successfully deleted thumb down..")
                 }, onError: { err in
                     onError("댓글 싫어요 삭제에 실패 하였습니다.")
@@ -168,7 +168,7 @@ class PostSingleModel {
         postService.createComment(uid: auth.uid, postId: postId, commentId: commentId, comment: comment)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [self] createdComment in
+                .subscribe(onSuccess: { [unowned self] createdComment in
                     log.info("Successfully created comment..")
                     if (commentId != nil) {
                         if let index = post?.comments?.firstIndex(where: { $0.id == commentId }) {
@@ -197,7 +197,7 @@ class PostSingleModel {
         postService.createFavorite(uid: session.uid, postId: post?.id)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [self] _ in
+                .subscribe(onSuccess: { [unowned self] _ in
                     if (session.id == nil) {
                         return
                     }
@@ -205,10 +205,10 @@ class PostSingleModel {
                         post?.favoriteUserIds?.append(session.id!)
                     }
                     publish()
-                }, onError: { [self] err in
+                }, onError: { err in
                     log.error(err)
                     onError()
-                    publish()
+                    self.publish()
                 })
                 .disposed(by: disposeBag)
     }
@@ -217,7 +217,7 @@ class PostSingleModel {
         postService.deleteFavorite(uid: session.uid, postId: post?.id)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [self] _ in
+                .subscribe(onSuccess: { [unowned self] _ in
                     if (session.id == nil) {
                         return
                     }
@@ -225,7 +225,7 @@ class PostSingleModel {
                         post?.favoriteUserIds?.remove(at: index)
                     }
                     publish()
-                }, onError: { [self] err in
+                }, onError: { [unowned self] err in
                     log.info(err)
                     onError?()
                     publish()

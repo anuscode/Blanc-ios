@@ -125,7 +125,7 @@ extension UIView {
 
         var single = Single.just(Void())
         for _ in 1...count {
-            single = single.flatMap({ [self]_ -> Single<Void> in
+            single = single.flatMap({ [unowned self]_ -> Single<Void> in
                 self.bounce(withDuration: withDuration, delay: delay, options: options)
             })
         }
