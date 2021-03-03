@@ -278,6 +278,7 @@
 		C47AA32A10ACDA94C39E6D6E /* Int+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AAF64311FE6466E824F0D /* Int+Extension.swift */; };
 		C47AA5367AADBB4F4B6D9994 /* PaymentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA1D5E6462D0679248909 /* PaymentService.swift */; };
 		C47AA5B49233DD1E59C6D074 /* InAppPurchaseTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AAC81B4B9E7A00D3EA155 /* InAppPurchaseTableViewCell.swift */; };
+		C47AA6736124D16BB662F3AC /* SettingDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AAAA7C98EAFA1F0DE87DB /* SettingDTO.swift */; };
 		C47AA762523F50CBEE156306 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA8F623619E368CA03001 /* Extensions.swift */; };
 		C47AA7C626C4C16AA8A06DA9 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AAB4E79358AC85B769BE6 /* UIView+Extension.swift */; };
 		C47AA83E4F1FC818AC7EB61E /* InAppPurchaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AACA33B78F7DBDE4957FF /* InAppPurchaseViewController.swift */; };
@@ -591,6 +592,7 @@
 		C47AA7CE2AEB97BACCEA02C2 /* PaymentDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PaymentDTO.swift; sourceTree = "<group>"; };
 		C47AA8F623619E368CA03001 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		C47AAA5893F5BE3DB46D70F2 /* Broadcast.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Broadcast.swift; sourceTree = "<group>"; };
+		C47AAAA7C98EAFA1F0DE87DB /* SettingDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingDTO.swift; sourceTree = "<group>"; };
 		C47AAB4E79358AC85B769BE6 /* UIView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
 		C47AAC81B4B9E7A00D3EA155 /* InAppPurchaseTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppPurchaseTableViewCell.swift; sourceTree = "<group>"; };
 		C47AACA33B78F7DBDE4957FF /* InAppPurchaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppPurchaseViewController.swift; sourceTree = "<group>"; };
@@ -985,6 +987,7 @@
 				104EEAF425E372480069B2CF /* RequestDTO.swift */,
 				104EEAF525E372480069B2CF /* RaterDTO.swift */,
 				C47AA7CE2AEB97BACCEA02C2 /* PaymentDTO.swift */,
+				C47AAAA7C98EAFA1F0DE87DB /* SettingDTO.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -2111,6 +2114,7 @@
 				C47AA7C626C4C16AA8A06DA9 /* UIView+Extension.swift in Sources */,
 				C47AA1900B60991001A67110 /* UIViewController+Extension.swift in Sources */,
 				C47AA762523F50CBEE156306 /* Extensions.swift in Sources */,
+				C47AA6736124D16BB662F3AC /* SettingDTO.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

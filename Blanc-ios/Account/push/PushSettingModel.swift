@@ -13,109 +13,89 @@ enum PushSettingAttribute: String {
          lookup = "내 프로필 열람 한 유저"
 }
 
-class PushSetting: Encodable, Decodable {
-    var all: Bool {
-        get {
-            let flags: Set<Bool> = [poke, request, comment, highRate, match, favoriteComment, conversation, lookup]
-            return flags.count == 1 && flags.contains(true)
-        }
-        set(newValue) {
-            poke = newValue
-            request = newValue
-            comment = newValue
-            highRate = newValue
-            match = newValue
-            favoriteComment = newValue
-            conversation = newValue
-            lookup = newValue
-        }
-    }
-    var poke: Bool = true
-    var request: Bool = true
-    var comment: Bool = true
-    var highRate: Bool = true
-    var match: Bool = true
-    var favoriteComment: Bool = true
-    var conversation: Bool = true
-    var lookup: Bool = true
-
-    private func iterate() -> [Bool] {
-        []
-    }
-
-    func encode() throws -> Data {
-        try PropertyListEncoder().encode(self)
-    }
-
-    static func decode(data: Data) throws -> PushSetting {
-        try PropertyListDecoder().decode(PushSetting.self, from: data)
-    }
-}
-
 class PushSettingModel {
 
-    private let key = "push_setting"
-
-    private let pref = UserDefaults.standard
+    private let disposeBag: DisposeBag = DisposeBag()
 
     private let observable: ReplaySubject = ReplaySubject<PushSetting>.create(bufferSize: 1)
 
-    private var pushSetting: PushSetting
+    private var pushSetting: PushSetting?
 
-    init() {
-        let data = pref.value(forKey: key) as? Data
-        var pushSetting: PushSetting
-        if (data == nil) {
-            pushSetting = PushSetting()
-        } else {
-            if let result = try? PushSetting.decode(data: data!) {
-                pushSetting = result
-            } else {
-                pushSetting = PushSetting()
-            }
-        }
-        self.pushSetting = pushSetting
-        publish()
+    private var session: Session
+
+    private var userService: UserService
+
+    init(session: Session, userService: UserService) {
+        self.session = session
+        self.userService = userService
+        populate()
     }
 
     func observe() -> Observable<PushSetting> {
         observable
     }
 
+    private func populate() {
+        userService.getPushSetting(uid: session.uid, userId: session.id)
+                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+                .observeOn(SerialDispatchQueueScheduler(qos: .default))
+                .subscribe(onSuccess: { pushSetting in
+                    self.pushSetting = pushSetting
+                    self.publish()
+                }, onError: { err in
+                    log.error(err)
+                })
+                .disposed(by: disposeBag)
+    }
+
     private func publish() {
+        guard let pushSetting = pushSetting else {
+            return
+        }
         observable.onNext(pushSetting)
     }
 
     func update(_ attribute: PushSettingAttribute, onError: @escaping () -> Void) {
-        // all, poke, request, comment, highRate, match, favoriteComment, conversation, lookup
+
+        guard let pushSetting = pushSetting else {
+            return
+        }
+
         if (attribute == PushSettingAttribute.all) {
             pushSetting.all = !pushSetting.all
         } else if (attribute == PushSettingAttribute.poke) {
-            pushSetting.poke = !pushSetting.poke
+            pushSetting.poke = !(pushSetting.poke ?? false)
         } else if (attribute == PushSettingAttribute.request) {
-            pushSetting.request = !pushSetting.request
+            pushSetting.request = !(pushSetting.request ?? false)
         } else if (attribute == PushSettingAttribute.comment) {
-            pushSetting.comment = !pushSetting.comment
+            pushSetting.comment = !(pushSetting.comment ?? false)
         } else if (attribute == PushSettingAttribute.highRate) {
-            pushSetting.highRate = !pushSetting.highRate
+            pushSetting.highRate = !(pushSetting.highRate ?? false)
         } else if (attribute == PushSettingAttribute.match) {
-            pushSetting.match = !pushSetting.match
+            pushSetting.match = !(pushSetting.match ?? false)
         } else if (attribute == PushSettingAttribute.favoriteComment) {
-            pushSetting.favoriteComment = !pushSetting.favoriteComment
+            pushSetting.favoriteComment = !(pushSetting.favoriteComment ?? false)
         } else if (attribute == PushSettingAttribute.conversation) {
-            pushSetting.conversation = !pushSetting.conversation
+            pushSetting.conversation = !(pushSetting.conversation ?? false)
         } else if (attribute == PushSettingAttribute.lookup) {
-            pushSetting.lookup = !pushSetting.lookup
+            pushSetting.lookup = !(pushSetting.lookup ?? false)
         } else {
             fatalError("WATCH OUT YOUR ASS HOLE..")
         }
 
-        if let encoded = try? pushSetting.encode() {
-            pref.set(encoded, forKey: key)
-        } else {
-            onError()
-        }
-
+        updateUserPushSetting()
         publish()
+    }
+
+    private func updateUserPushSetting() {
+        userService.updateUserPushSetting(uid: session.uid, userId: session.id, pushSetting: pushSetting!)
+                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+                .observeOn(SerialDispatchQueueScheduler(qos: .default))
+                .subscribe(onSuccess: { _ in
+                    log.info("Successfully push setting updated...")
+                }, onError: { err in
+                    log.error(err)
+                })
+                .disposed(by: disposeBag)
     }
 }

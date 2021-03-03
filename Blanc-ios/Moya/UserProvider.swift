@@ -16,6 +16,8 @@ enum UserProvider {
     case listUsersIRatedHigh(uid: String?, userId: String?)
     case listUsersRatedMe(uid: String?, userId: String?)
 
+    case getPushSetting(uid: String?, userId: String?)
+
     // POST
     case createUser(idToken: String?, uid: String?, phone: String?, smsCode: String?, smsToken: String?)
     case signInWithKakaoToken(idToken: String?)
@@ -32,6 +34,7 @@ enum UserProvider {
     case updateUserProfile(idToken: String?, uid: String?, userId: String?, userDTO: UserDTO)
     case updateUserLastLoginAt(uid: String?, userId: String?)
     case updateUserContacts(idToken: String?, uid: String?, userId: String?, phones: [String])
+    case updateUserPushSetting(uid: String?, userId: String?, pushSetting: PushSetting)
 
     // DELETE
     case deleteUserImage(uid: String?, userId: String?, index: Int)
@@ -52,6 +55,8 @@ extension UserProvider: TargetType {
             return "users/\(userId ?? "")"
         case .isRegistered(uid: let uid):
             return "users/uid/\(uid ?? "")"
+        case .getPushSetting(uid: _, userId: let userId):
+            return "users/\(userId ?? "")/setting/push"
         case .listRecommendedUsers(uid: _, userId: let userId):
             return "users/\(userId ?? "")/recommendation"
         case .listCloseUsers(uid: _, userId: let userId):
@@ -90,6 +95,8 @@ extension UserProvider: TargetType {
             return "users/\(userId ?? "")/last_login_at"
         case .updateUserContacts(idToken: _, uid: _, userId: let userId, phones: _):
             return "users/\(userId ?? "")/contacts"
+        case .updateUserPushSetting(uid: _, userId: let userId, pushSetting: _):
+            return "users/\(userId ?? "")/setting/push"
         case .deleteUserImage(uid: _, userId: let userId, index: let index):
             return "users/\(userId ?? "")/user_images/\(index)"
         }
@@ -99,14 +106,15 @@ extension UserProvider: TargetType {
         switch self {
         case .getSession(idToken: _, uid: _),
              .getUser(userId: _),
-             .isRegistered(uid: _),
+             .getPushSetting(uid: _, userId: _),
              .listRecommendedUsers(uid: _, userId: _),
              .listCloseUsers(uid: _, userId: _),
              .listRealTimeAccessUsers(uid: _, userId: _),
              .listAllUserPosts(uid: _, userId: _),
              .listUsersRatedMeHigh(uid: _, userId: _),
              .listUsersIRatedHigh(uid: _, userId: _),
-             .listUsersRatedMe(uid: _, userId: _):
+             .listUsersRatedMe(uid: _, userId: _),
+             .isRegistered(uid: _):
             return .get
         case .createUser(idToken: _, uid: _, phone: _, smsCode: _, smsToken: _),
              .signInWithKakaoToken(idToken: _),
@@ -120,7 +128,8 @@ extension UserProvider: TargetType {
              .updateUserProfile(idToken: _, uid: _, userId: _, userDTO: _),
              .updateUserLastLoginAt(uid: _, userId: _),
              .updateUserContacts(idToken: _, uid: _, userId: _, phones: _),
-             .updateDeviceToken(uid: _, deviceToken: _):
+             .updateDeviceToken(uid: _, deviceToken: _),
+             .updateUserPushSetting(uid: _, userId: _, pushSetting: _):
             return .put
         case .deleteUserImage(uid: _, userId: _, index: _):
             return .delete
@@ -138,6 +147,8 @@ extension UserProvider: TargetType {
         case .getUser(userId: _):
             return .requestPlain
         case .isRegistered(uid: _):
+            return .requestPlain
+        case .getPushSetting(uid: _, userId: _):
             return .requestPlain
         case .listRecommendedUsers(uid: _, userId: _):
             return .requestPlain
@@ -195,6 +206,11 @@ extension UserProvider: TargetType {
             let encoder = JSONEncoder()
             encoder.keyEncodingStrategy = .convertToSnakeCase
             return .requestCustomJSONEncodable(phones, encoder: encoder)
+        case .updateUserPushSetting(uid: _, userId: _, pushSetting: let pushSetting):
+            let encoder = JSONEncoder()
+            encoder.keyEncodingStrategy = .convertToSnakeCase
+            return .requestCustomJSONEncodable(pushSetting, encoder: encoder)
+
             /** DELETE **/
         case .deleteUserImage(uid: _, userId: _, index: _):
             return .requestPlain
@@ -211,6 +227,9 @@ extension UserProvider: TargetType {
         case .getUser(userId: _):
             return headers
         case .isRegistered(uid: let uid):
+            headers["uid"] = uid
+            return headers
+        case .getPushSetting(uid: let uid, userId: _):
             headers["uid"] = uid
             return headers
         case .listRecommendedUsers(uid: let uid, userId: _):
@@ -276,6 +295,9 @@ extension UserProvider: TargetType {
             return headers
         case .updateUserContacts(idToken: let idToken, uid: let uid, userId: _, phones: _):
             headers["id-token"] = idToken
+            headers["uid"] = uid
+            return headers
+        case .updateUserPushSetting(uid: let uid, userId: _, pushSetting: _):
             headers["uid"] = uid
             return headers
         case .deleteUserImage(uid: let uid, userId: _, index: _):

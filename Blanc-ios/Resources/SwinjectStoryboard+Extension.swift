@@ -358,7 +358,9 @@ extension SwinjectStoryboard {
 
         /** PushSetting dependencies **/
         defaultContainer.register(PushSettingModel.self) { resolver in
-            let pushSettingModel = PushSettingModel()
+            let session = resolver ~> Session.self
+            let userService = resolver ~> UserService.self
+            let pushSettingModel = PushSettingModel(session: session, userService: userService)
             return pushSettingModel
         }.inObjectScope(.pushSettingScope)
         defaultContainer.register(PushSettingViewModel.self) { resolver in
