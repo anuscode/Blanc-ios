@@ -347,12 +347,12 @@ class AccountViewController: UIViewController {
     }
 
     private func update(_ user: UserDTO) {
-        let nickName = user.nickName ?? "알 수 없음"
+        let nickname = user.nickname ?? "알 수 없음"
         let area = user.area ?? "알 수 없음"
         let age = user.age ?? 0
         let point = user.point ?? 0
         currentUserImage.url(user.avatar)
-        line1.text = nickName
+        line1.text = nickname
         line2.text = "\(area) · \(age)세"
         line3.text = "내 잔여 포인트: \(point)"
     }

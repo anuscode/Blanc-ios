@@ -203,7 +203,7 @@ class MyRatedSmallUserProfileTableViewCell: UITableViewCell {
 
         let diameter = Const.imageDiameter
         userImage.url(rater?.user?.avatar, cornerRadius: 0, size: CGSize(width: diameter, height: diameter))
-        line1.text = "\(rater?.user?.nickName ?? "알 수 없음"), \(rater?.user?.age ?? -1)"
+        line1.text = "\(rater?.user?.nickname ?? "알 수 없음"), \(rater?.user?.age ?? -1)"
         line2.text = "\(rater?.user?.area ?? "알 수 없음") · \(rater?.user?.distance ?? "알 수 없음")"
         line3.text = "\(rater?.user?.occupation ?? "알 수 없음") · \(rater?.user?.education ?? "알 수 없음")"
         stars.enumerated().forEach { index, star in

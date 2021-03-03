@@ -97,9 +97,9 @@ class BottomTextField: UIView {
 
     private lazy var replyToTextsStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [
-            nickNameToReply, commentToReply
+            nicknameToReply, commentToReply
         ])
-        stackView.setCustomSpacing(4, after: nickNameToReply)
+        stackView.setCustomSpacing(4, after: nicknameToReply)
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
         stackView.isLayoutMarginsRelativeArrangement = true
@@ -107,7 +107,7 @@ class BottomTextField: UIView {
         return stackView
     }()
 
-    private lazy var nickNameToReply: UILabel = {
+    private lazy var nicknameToReply: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 15)
         label.visible(false)
@@ -224,7 +224,7 @@ class BottomTextField: UIView {
     }
 
     func configure(replyTo: CommentDTO?) {
-        nickNameToReply.text = "\(replyTo?.commenter?.nickName ?? "[ERROR]") 님에게 답글.."
+        nicknameToReply.text = "\(replyTo?.commenter?.nickname ?? "[ERROR]") 님에게 답글.."
         commentToReply.text = replyTo?.comment ?? "..."
         controlReplyToVisibility(true)
         textField.becomeFirstResponder()
@@ -235,7 +235,7 @@ class BottomTextField: UIView {
     }
 
     func dismiss() {
-        nickNameToReply.text = ""
+        nicknameToReply.text = ""
         commentToReply.text = ""
         textField.text = ""
         didChangeTextField()

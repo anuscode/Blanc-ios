@@ -113,7 +113,7 @@ class PostManagementHeader: UIView {
 
     func bind(post: PostDTO?) {
         headerImage.url(post?.author?.avatar, size: CGSize(width: Constant.headerImageDiameter, height: Constant.headerImageDiameter))
-        headerLabel1.text = "\(post?.author?.nickName ?? "알 수 없음") · \(post?.author?.age ?? -1)"
+        headerLabel1.text = "\(post?.author?.nickname ?? "알 수 없음") · \(post?.author?.age ?? -1)"
         let calendar = (post?.createdAt ?? 0).asCalendar()
         headerLabel2.text = "\(calendar.year)/\(calendar.month)/\(calendar.day) 일에 작성 된 게시물"
     }

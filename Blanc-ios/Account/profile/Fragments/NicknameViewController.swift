@@ -35,7 +35,7 @@ class NicknameViewController: UIViewController {
         return label
     }()
 
-    private let nickNameTextField: MDCOutlinedTextField = {
+    private let nicknameTextField: MDCOutlinedTextField = {
         let textField = MDCOutlinedTextField()
         let rightImage = UIImageView(image: UIImage(systemName: "pencil.and.outline"))
         rightImage.image = rightImage.image?.withRenderingMode(.alwaysTemplate)
@@ -84,7 +84,7 @@ class NicknameViewController: UIViewController {
         view.layer.cornerRadius = 15
         view.layer.add(FragmentConfig.transition, forKey: nil)
         addSubviews()
-        nickNameTextField.addTarget(self, action: #selector(didChangeTextField), for: .editingChanged)
+        nicknameTextField.addTarget(self, action: #selector(didChangeTextField), for: .editingChanged)
         subscribeViewModel()
     }
 
@@ -95,16 +95,16 @@ class NicknameViewController: UIViewController {
                 width: view.width - 50,
                 height: FragmentConfig.titleHeight)
 
-        nickNameTextField.frame = CGRect(
+        nicknameTextField.frame = CGRect(
                 x: 25,
                 y: titleLabel.bottom + FragmentConfig.contentMarginTop,
                 width: view.width - 50,
                 height: 60)
-        nickNameTextField.becomeFirstResponder()
+        nicknameTextField.becomeFirstResponder()
 
         warningLabel.frame = CGRect(
                 x: 25,
-                y: nickNameTextField.bottom + FragmentConfig.warningTextMarginTop,
+                y: nicknameTextField.bottom + FragmentConfig.warningTextMarginTop,
                 width: view.width - 50,
                 height: 35)
 
@@ -132,8 +132,8 @@ class NicknameViewController: UIViewController {
         profileViewModel?.observe()
                 .subscribe(onNext: { [self] user in
                     userDTO = user
-                    nickNameTextField.text = userDTO?.nickName
-                    let value = userDTO?.nickName ?? ""
+                    nicknameTextField.text = userDTO?.nickname
+                    let value = userDTO?.nickname ?? ""
                     activateConfirmButton(!value.isEmpty)
                 }, onError: { err in
                     log.error(err)
@@ -143,25 +143,25 @@ class NicknameViewController: UIViewController {
 
     private func addSubviews() {
         view.addSubview(titleLabel)
-        view.addSubview(nickNameTextField)
+        view.addSubview(nicknameTextField)
         view.addSubview(warningLabel)
         view.addSubview(confirmButton)
         view.addSubview(loadingView)
     }
 
     @objc private func didChangeTextField() {
-        let value = nickNameTextField.text ?? ""
+        let value = nicknameTextField.text ?? ""
         activateConfirmButton(!value.isEmpty)
     }
 
     @objc private func didTapConfirmButton() {
-        let value = nickNameTextField.text ?? ""
+        let value = nicknameTextField.text ?? ""
         guard (!value.isEmpty) else {
             toast(message: "닉네임은 필수 값 입니다.")
             log.info("nickname: empty value found..")
             return
         }
-        userDTO?.nickName = value
+        userDTO?.nickname = value
         view.removeFromSuperview()
         log.info("nickname: \(value) confirmed..")
         profileViewModel?.update()

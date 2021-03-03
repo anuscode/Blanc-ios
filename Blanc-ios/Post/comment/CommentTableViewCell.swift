@@ -62,7 +62,7 @@ class CommentTableViewCell: UITableViewCell {
         return imageView
     }()
 
-    lazy private var nickNameLabel: UILabel = {
+    lazy private var nicknameLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14)
         label.textColor = .darkText
@@ -238,7 +238,7 @@ class CommentTableViewCell: UITableViewCell {
         contentView.addSubview(content)
         content.addSubview(frontMargin)
         content.addSubview(userImage)
-        content.addSubview(nickNameLabel)
+        content.addSubview(nicknameLabel)
         content.addSubview(dateLabel)
         content.addSubview(commentLabel)
         content.addSubview(authorFavoriteCommentStackView)
@@ -261,20 +261,20 @@ class CommentTableViewCell: UITableViewCell {
             make.height.equalTo(Const.imageDiameter)
         }
 
-        nickNameLabel.snp.makeConstraints { make in
+        nicknameLabel.snp.makeConstraints { make in
             make.leading.equalTo(userImage.snp.trailing).inset(-11)
             make.top.equalToSuperview()
         }
 
         dateLabel.snp.makeConstraints { make in
-            make.leading.equalTo(nickNameLabel.snp.trailing).inset(-8)
-            make.top.equalTo(nickNameLabel.snp.top)
-            make.bottom.equalTo(nickNameLabel.snp.bottom)
+            make.leading.equalTo(nicknameLabel.snp.trailing).inset(-8)
+            make.top.equalTo(nicknameLabel.snp.top)
+            make.bottom.equalTo(nicknameLabel.snp.bottom)
         }
 
         commentLabel.snp.makeConstraints { make in
             make.leading.equalTo(userImage.snp.trailing).inset(-11)
-            make.top.equalTo(nickNameLabel.snp.bottom).inset(-1)
+            make.top.equalTo(nicknameLabel.snp.bottom).inset(-1)
             make.trailing.equalToSuperview().inset(10)
         }
 
@@ -296,7 +296,7 @@ class CommentTableViewCell: UITableViewCell {
         self.delegate = delegate
 
         userImage.url(comment?.commenter?.avatar, size: CGSize(width: Const.imageDiameter, height: Const.imageDiameter))
-        nickNameLabel.text = comment?.commenter?.nickName ?? ""
+        nicknameLabel.text = comment?.commenter?.nickname ?? ""
         dateLabel.text = comment?.createdAt.asStaledTime()
         commentLabel.text = comment?.comment ?? "[ERROR]"
         frontMargin.frame = CGRect(x: 0, y: 0, width: 35 * ((comment?.lv ?? 1) - 1), height: 0)

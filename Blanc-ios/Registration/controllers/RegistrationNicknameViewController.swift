@@ -142,7 +142,7 @@ class RegistrationNicknameViewController: UIViewController {
     }
 
     private func update() {
-        nicknameTextField.text = userDTO?.nickName
+        nicknameTextField.text = userDTO?.nickname
     }
 
     @objc private func didTapNextButton() {
@@ -151,7 +151,7 @@ class RegistrationNicknameViewController: UIViewController {
             toast(message: "닉네임은 필수 값 입니다.")
             return
         }
-        userDTO?.nickName = value
+        userDTO?.nickname = value
         presentNextView()
     }
 

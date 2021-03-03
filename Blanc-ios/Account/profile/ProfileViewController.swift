@@ -923,7 +923,7 @@ class ProfileViewController: UIViewController {
     }
 
     private func setValue(userDTO: UserDTO) {
-        nicknameValueLabel.text = userDTO.nickName ?? "닉네임을 입력 하세요."
+        nicknameValueLabel.text = userDTO.nickname ?? "닉네임을 입력 하세요."
 
         if (userDTO.sex == Sex.MALE) {
             sexValueLabel.text = "남자"

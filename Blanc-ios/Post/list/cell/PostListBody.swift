@@ -229,7 +229,7 @@ class PostListBody: UIView {
     private func configureLastCommentLabel() {
         let lastComment = post?.comments?.first
         if (lastComment != nil) {
-            lastCommentLabel.text = "\(lastComment?.commenter?.nickName ?? "알 수 없음"): \(lastComment?.comment ?? "알 수 없음.")"
+            lastCommentLabel.text = "\(lastComment?.commenter?.nickname ?? "알 수 없음"): \(lastComment?.comment ?? "알 수 없음.")"
         } else {
             lastCommentLabel.text = "#: 등록 된 커멘트가 없습니다."
         }

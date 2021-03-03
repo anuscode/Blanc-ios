@@ -242,14 +242,14 @@ class ConversationSingleViewController: UIViewController {
 
     private func updateNavigation() {
         navigationUserImage.url(conversation?.partner?.avatar)
-        navigationUserLabel.text = "\(conversation?.partner?.nickName ?? "알 수 없음"), \(conversation?.partner?.age ?? -1)"
+        navigationUserLabel.text = "\(conversation?.partner?.nickname ?? "알 수 없음"), \(conversation?.partner?.age ?? -1)"
     }
 
     private func showInactiveViewIfRequired() {
         inactiveConversationView.visible(conversation?.available != true)
         inactiveUserImage.url(conversation?.partner?.avatar)
         if (conversation?.references?.count ?? 0 > 1) {
-            inactiveLabel1.text = "\(conversation?.partner?.nickName ?? "알 수 없음") 님과 연결 되었습니다."
+            inactiveLabel1.text = "\(conversation?.partner?.nickname ?? "알 수 없음") 님과 연결 되었습니다."
         } else {
             inactiveLabel1.text = "해당 사용자가 대화방을 나갔습니다."
         }

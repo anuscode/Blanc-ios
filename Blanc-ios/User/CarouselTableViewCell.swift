@@ -109,7 +109,7 @@ class CarouselTableViewCell: UITableViewCell {
         self.user = user
         pageControl.numberOfPages = user?.userImages?.count ?? 0
         carousel.reloadData()
-        label1.text = "\(self.user?.nickName ?? "알 수 없음"), \(user?.age ?? -1)"
+        label1.text = "\(self.user?.nickname ?? "알 수 없음"), \(user?.age ?? -1)"
         label2.text = "\(self.user?.area ?? "알 수 없음") · \(user?.distance ?? "알 수 없음")"
     }
 }

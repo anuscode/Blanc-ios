@@ -616,10 +616,10 @@ class UserCardTableViewCell: UITableViewCell {
     func bind(user: UserDTO) {
         self.user = user
         pageControl.numberOfPages = user.userImages?.count ?? 0
-        label1.text = "\(user.nickName ?? "알 수 없음"), \(user.age ?? -1)"
+        label1.text = "\(user.nickname ?? "알 수 없음"), \(user.age ?? -1)"
         label2.text = "\(user.area ?? "알 수 없음") · \(user.distance ?? "알 수 없음")"
         label3.text = "\(user.occupation ?? "알 수 없음") · 1일 전 접속"
-        starLabel.text = "\(user.nickName ?? "알 수 없음")님의 매력을 알려주세요."
+        starLabel.text = "\(user.nickname ?? "알 수 없음")님의 매력을 알려주세요."
         carousel.reloadData()
     }
 }

@@ -102,7 +102,7 @@ class UserDTO: NSObject, Codable {
         }
     }
     var uid: String?
-    var nickName: String?
+    var nickname: String?
     var sex: Sex?
     var birthedAt: Int?
     var height: Int?

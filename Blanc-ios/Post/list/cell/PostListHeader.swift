@@ -111,12 +111,12 @@ class PostListHeader: UIView {
         self.user = user
         self.delegate = delegate
         headerImage.url(user?.avatar, size: CGSize(width: Constant.headerImageDiameter, height: Constant.headerImageDiameter))
-        headerLabel1.text = "\(user?.nickName ?? "알 수 없음") · \(user?.age ?? -1)"
+        headerLabel1.text = "\(user?.nickname ?? "알 수 없음") · \(user?.age ?? -1)"
         headerLabel2.text = "\(user?.occupation ?? "알 수 없음") · \(user?.area ?? "알 수 없음")"
     }
 
     @objc func didTapUserImage() {
-        log.info("Touched header user image: \(user?.nickName ?? "")")
+        log.info("Touched header user image: \(user?.nickname ?? "")")
         delegate?.didTapUserImage(user: user)
     }
 }

@@ -54,7 +54,7 @@ class AccountProfileTableViewCell: UITableViewCell {
 
     lazy var line1: UILabel = {
         let label = UILabel()
-        label.text = "\(session?.user?.nickName ?? "등록되지 않은 항목")"
+        label.text = "\(session?.user?.nickname ?? "등록되지 않은 항목")"
         label.font = .systemFont(ofSize: 22)
         return label
     }()

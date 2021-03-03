@@ -253,7 +253,7 @@ class UserSingleViewController: UIViewController {
 
     private func updateNavigation() {
         navigationUserImage.url(data?.user?.avatar)
-        navigationUserLabel.text = "\(data?.user?.nickName ?? "알 수 없음"), \(data?.user?.age ?? -1)"
+        navigationUserLabel.text = "\(data?.user?.nickname ?? "알 수 없음"), \(data?.user?.age ?? -1)"
     }
 
     private func calculateRequestButtonActivation() {

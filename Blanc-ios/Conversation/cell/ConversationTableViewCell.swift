@@ -181,14 +181,14 @@ class ConversationTableViewCell: UITableViewCell {
         let diameter = Const.imageDiameter
         let partner: UserDTO? = conversation?.partner
         let lastMessage = conversation?.messages?.last
-        let nickName = partner?.nickName ?? "알 수 없음"
+        let nickname = partner?.nickname ?? "알 수 없음"
         let isMessageNotEmpty: Bool = lastMessage?.message.isNotEmpty() ?? false
-        let message: String = isMessageNotEmpty ? lastMessage!.message! : "\(nickName) 님과 연결 되었습니다."
+        let message: String = isMessageNotEmpty ? lastMessage!.message! : "\(nickname) 님과 연결 되었습니다."
         let unreadMessageCount = conversation?.unreadMessageCount ?? 0
         let staledTime = conversation?.messages?.last?.createdAt.asStaledTime() ?? (conversation?.createdAt?.asStaledTime() ?? "알 수 없음")
 
         userImage.url(partner?.avatar, cornerRadius: 0, size: CGSize(width: diameter, height: diameter))
-        line1.text = "\(nickName)"
+        line1.text = "\(nickname)"
         line2.text = "\(message)"
         unreadMessageCountLabel.text = "\(unreadMessageCount)"
         unreadMessageCountView.visible(unreadMessageCount > 0)

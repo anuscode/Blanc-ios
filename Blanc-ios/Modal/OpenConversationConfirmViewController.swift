@@ -332,7 +332,7 @@ class OpenConversationConfirmViewController: BaseConfirmViewController {
     }
 
     private func getSubjectText() -> String {
-        "\(user?.nickName ?? "[ERROR]")\n님에게 친구 신청을 합니다."
+        "\(user?.nickname ?? "[ERROR]")\n님에게 친구 신청을 합니다."
     }
 
     private func getRemainingPointText() -> String {

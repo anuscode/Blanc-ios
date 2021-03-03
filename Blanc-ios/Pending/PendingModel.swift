@@ -5,7 +5,6 @@ import SwiftyBeaver
 
 public enum Empty {
     case nickname
-    case nickName
     case sex
     case birthedAt
     case height
@@ -146,7 +145,7 @@ class PendingModel {
     }
 
     func nextEmpty() -> Empty? {
-        if userDTO?.nickName == nil || userDTO?.nickName?.isEmpty ?? true {
+        if userDTO?.nickname == nil || userDTO?.nickname?.isEmpty ?? true {
             return Empty.nickname
         }
         if userDTO?.sex == nil {

@@ -20,7 +20,7 @@ class LeftMessageTableViewCell: UITableViewCell {
         return imageView
     }()
 
-    lazy private var nickNameLabel: UILabel = {
+    lazy private var nicknameLabel: UILabel = {
         let label = UILabel()
         label.textColor = UIColor(red: 91 / 255, green: 98 / 255, blue: 107 / 255, alpha: 1.0)
         label.font = .systemFont(ofSize: 14)
@@ -65,7 +65,7 @@ class LeftMessageTableViewCell: UITableViewCell {
 
     private func configureSubviews() {
         contentView.addSubview(userImage)
-        contentView.addSubview(nickNameLabel)
+        contentView.addSubview(nicknameLabel)
         contentView.addSubview(messageView)
         contentView.addSubview(timeLabel)
     }
@@ -78,13 +78,13 @@ class LeftMessageTableViewCell: UITableViewCell {
             make.height.equalTo(Const.imageDiameter)
         }
 
-        nickNameLabel.snp.makeConstraints { make in
+        nicknameLabel.snp.makeConstraints { make in
             make.top.equalTo(userImage.snp.top)
             make.leading.equalTo(userImage.snp.trailing).inset(-10)
         }
 
         messageView.snp.makeConstraints { make in
-            make.top.equalTo(nickNameLabel.snp.bottom).inset(-3)
+            make.top.equalTo(nicknameLabel.snp.bottom).inset(-3)
             make.leading.equalTo(userImage.snp.trailing).inset(-5)
             make.bottom.equalToSuperview().inset(5)
         }
@@ -98,14 +98,14 @@ class LeftMessageTableViewCell: UITableViewCell {
     func bind(user: UserDTO?, message: MessageDTO?) {
         self.message = message
         let avatar = user?.avatar
-        let nickName = user?.nickName ?? "알 수 없음"
+        let nickname = user?.nickname ?? "알 수 없음"
         let message = message?.message ?? ""
         let time = self.message?.createdAt?.asHourMinute() ?? ""
         let textSize = getTextSize(message, padding: 12)
         let imageSize = CGSize(width: Const.imageDiameter, height: Const.imageDiameter)
 
         userImage.url(avatar, size: imageSize)
-        nickNameLabel.text = nickName
+        nicknameLabel.text = nickname
         messageLabel.text = message
         timeLabel.text = time
 

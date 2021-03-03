@@ -41,7 +41,7 @@ class PushDTO: NSObject, Decodable {
     var messageId: String?
     var pushFor: PushFor?
     var category: Category?
-    var nickName: String?
+    var nickname: String?
     var imageUrl: String?
     var message: String?
     var createdAt: Int?
@@ -58,7 +58,7 @@ class PushDTO: NSObject, Decodable {
              messageId,
              pushFor,
              category,
-             nickName,
+             nickname,
              imageUrl,
              message,
              createdAt,
@@ -132,9 +132,9 @@ class PushDTO: NSObject, Decodable {
         }
 
         do {
-            nickName = try values.decode(String?.self, forKey: .nickName)
+            nickname = try values.decode(String?.self, forKey: .nickname)
         } catch {
-            nickName = nil
+            nickname = nil
         }
 
         do {
@@ -184,7 +184,7 @@ extension PushDTO: Encodable {
         try container.encode(conversationId, forKey: .conversationId)
         try container.encode(messageId, forKey: .messageId)
         try container.encode(pushFor, forKey: .pushFor)
-        try container.encode(nickName, forKey: .nickName)
+        try container.encode(nickname, forKey: .nickname)
         try container.encode(imageUrl, forKey: .imageUrl)
         try container.encode(message, forKey: .message)
         try container.encode(createdAt, forKey: .createdAt)
