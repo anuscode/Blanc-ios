@@ -114,16 +114,11 @@ class PostModel {
     }
 
     func sync(post: PostDTO?) {
-        guard post != nil else {
+        guard let post = post,
+              let index = posts.firstIndex(where: { $0.id == post.id }) else {
             return
         }
-        let index = posts.firstIndex {
-            $0.id == post?.id
-        }
-
-        if (index != nil) {
-            posts[index!] = post!
-            publish()
-        }
+        posts[index] = post
+        publish()
     }
 }
