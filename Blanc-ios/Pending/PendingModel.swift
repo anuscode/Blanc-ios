@@ -61,7 +61,7 @@ class PendingModel {
     }
 
     func observe() -> Observable<UserDTO> {
-        observable.asObservable()
+        observable
     }
 
     private func populate() {
@@ -89,9 +89,7 @@ class PendingModel {
                     session.update(userDTO!)
                     publish()
                 })
-                .map { _ in
-                    Void()
-                }
+                .map({ _ in Void() })
     }
 
     func uploadUserImage(index: Int?, file: UIImage) -> Single<ImageDTO> {
