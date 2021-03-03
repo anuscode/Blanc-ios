@@ -41,15 +41,6 @@ class PostListViewController: UIViewController {
         return tableView
     }()
 
-    lazy private var favoriteLottie: AnimationView = {
-        let animationView = AnimationView()
-        animationView.animation = Animation.named("heart_2_2")
-        animationView.contentMode = .scaleAspectFit
-        animationView.loopMode = .playOnce
-        animationView.animationSpeed = 3
-        return animationView
-    }()
-
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationItem.backBarButtonItem = UIBarButtonItem.back
@@ -71,7 +62,6 @@ class PostListViewController: UIViewController {
 
     private func configureSubviews() {
         view.addSubview(tableView)
-        view.addSubview(favoriteLottie)
     }
 
     private func configureConstraints() {
@@ -140,13 +130,6 @@ extension PostListViewController: PostBodyDelegate {
 
     func favorite(post: PostDTO?) {
         postViewModel?.favorite(post: post,
-                onBefore: {
-                    self.favoriteLottie.begin(with: self.view, constraint: {
-                        self.favoriteLottie.snp.makeConstraints { make in
-                            make.edges.equalToSuperview()
-                        }
-                    })
-                },
                 onError: {
                     DispatchQueue.main.async {
                         self.toast(message: "좋아요 도중 에러가 발생 하였습니다.")

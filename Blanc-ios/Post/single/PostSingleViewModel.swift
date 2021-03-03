@@ -71,8 +71,8 @@ class PostSingleViewModel {
         postSingleModel.createComment(postId: postId, commentId: commentId, comment: comment, onError: onError)
     }
 
-    func favorite(onBefore: @escaping () -> Void, onError: @escaping () -> Void) {
-        postSingleModel.favorite(onBefore: onBefore, onError: onError)
+    func favorite(onError: @escaping () -> Void) {
+        postSingleModel.favorite(onError: onError)
     }
 
     func isCurrentUserFavoritePost() -> Bool {

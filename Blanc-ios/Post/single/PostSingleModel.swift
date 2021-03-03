@@ -184,11 +184,10 @@ class PostSingleModel {
                 .disposed(by: disposeBag)
     }
 
-    func favorite(onBefore: @escaping () -> Void, onError: @escaping () -> Void) {
+    func favorite(onError: @escaping () -> Void) {
         if ((post?.favoriteUserIds?.contains(session.id ?? "")) == true) {
             deleteFavorite(post, onError: onError)
         } else {
-            onBefore()
             createFavorite(post, onError: onError)
         }
     }
@@ -225,10 +224,10 @@ class PostSingleModel {
                         post?.favoriteUserIds?.remove(at: index)
                     }
                     publish()
-                }, onError: { [unowned self] err in
+                }, onError: { err in
                     log.info(err)
                     onError?()
-                    publish()
+                    self.publish()
                 })
                 .disposed(by: disposeBag)
     }

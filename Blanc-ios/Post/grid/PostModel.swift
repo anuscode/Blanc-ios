@@ -61,11 +61,10 @@ class PostModel {
                 .disposed(by: disposeBag)
     }
 
-    func favorite(post: PostDTO?, onBefore: @escaping () -> Void, onError: @escaping () -> Void) {
+    func favorite(post: PostDTO?, onError: @escaping () -> Void) {
         if ((post?.favoriteUserIds?.contains(session.id ?? "")) == true) {
             deleteFavorite(post, onError: onError)
         } else {
-            onBefore()
             createFavorite(post, onError: onError)
         }
     }
@@ -102,10 +101,10 @@ class PostModel {
                         post?.favoriteUserIds?.remove(at: index)
                     }
                     publish()
-                }, onError: { [unowned self] err in
+                }, onError: { err in
                     log.info(err)
                     onError?()
-                    publish()
+                    self.publish()
                 })
                 .disposed(by: disposeBag)
     }

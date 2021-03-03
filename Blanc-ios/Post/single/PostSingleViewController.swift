@@ -52,15 +52,6 @@ class PostSingleViewController: UIViewController {
         return tableView
     }()
 
-    lazy private var favoriteLottie: AnimationView = {
-        let animationView = AnimationView()
-        animationView.animation = Animation.named("heart_2_2")
-        animationView.contentMode = .scaleAspectFit
-        animationView.loopMode = .playOnce
-        animationView.animationSpeed = 3
-        return animationView
-    }()
-
     lazy var bottomTextField: BottomTextField = {
         let view = BottomTextField()
         view.configure(avatarUrl: session?.user?.avatar)
@@ -278,13 +269,7 @@ extension PostSingleViewController: BottomTextFieldDelegate {
 
 extension PostSingleViewController: PostSingleTableViewCellDelegate {
     func favorite() {
-        postSingleViewModel?.favorite(onBefore: {
-            self.favoriteLottie.begin(with: self.view, constraint: {
-                self.favoriteLottie.snp.makeConstraints { make in
-                    make.edges.equalToSuperview()
-                }
-            })
-        }, onError: {
+        postSingleViewModel?.favorite(onError: {
             DispatchQueue.main.async {
                 self.toast(message: "좋아요 도중 에러가 발생 하였습니다.")
             }

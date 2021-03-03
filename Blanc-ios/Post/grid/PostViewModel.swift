@@ -44,8 +44,8 @@ class PostViewModel {
         postModel.populate()
     }
 
-    func favorite(post: PostDTO?, onBefore: @escaping () -> Void, onError: @escaping () -> Void) {
-        postModel.favorite(post: post, onBefore: onBefore, onError: onError)
+    func favorite(post: PostDTO?, onError: @escaping () -> Void) {
+        postModel.favorite(post: post, onError: onError)
     }
 
     func isCurrentUserFavoritePost(_ post: PostDTO?) -> Bool {
