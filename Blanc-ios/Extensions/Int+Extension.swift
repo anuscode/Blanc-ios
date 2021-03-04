@@ -57,6 +57,19 @@ public extension Int {
         return "\(deltaInDays) 일 전"
     }
 
+    func asStaledDay() -> String {
+        let timestamp: Int = self
+        let current = Int(NSDate().timeIntervalSince1970)
+        let deltaInSeconds = current - timestamp
+        let deltaInMinutes = deltaInSeconds / 60
+        let deltaInHours = deltaInMinutes / 60
+        let deltaInDays = deltaInHours / 24
+        if (deltaInDays <= 1) {
+            return "오늘"
+        }
+        return "\(deltaInDays)일 전"
+    }
+
     func asAge() -> Int {
         let timestamp = self
         let current = Int(Date().timeIntervalSince1970)

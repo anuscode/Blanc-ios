@@ -119,20 +119,17 @@ class HomeViewController: UIViewController {
             if (indexPath.section == 0) {
                 let cell = tableView.dequeueReusableCell(withIdentifier: UserCardTableViewCell.identifier, for: indexPath) as! UserCardTableViewCell
                 let user = data.recommendedUsers[indexPath.row]
-                cell.delegate = self
-                cell.bind(user: user)
+                cell.bind(user: user, delegate: self)
                 return cell
             } else if (indexPath.section == 1) {
                 let cell = tableView.dequeueReusableCell(withIdentifier: UserCardTableViewCell.identifier, for: indexPath) as! UserCardTableViewCell
                 let user = data.closeUsers[indexPath.row]
-                cell.delegate = self
-                cell.bind(user: user)
+                cell.bind(user: user, delegate: self)
                 return cell
             } else if (indexPath.section == 2) {
                 let cell = tableView.dequeueReusableCell(withIdentifier: UserCardTableViewCell.identifier, for: indexPath) as! UserCardTableViewCell
                 let user = data.realTimeUsers[indexPath.row]
-                cell.delegate = self
-                cell.bind(user: user)
+                cell.bind(user: user, delegate: self)
                 return cell
             } else {
                 return nil

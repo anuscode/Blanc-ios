@@ -50,9 +50,9 @@ class UserCardTableViewCell: UITableViewCell {
 
     private let fireworkController = ClassicFireworkController()
 
-    private var user: UserDTO?
+    private weak var user: UserDTO?
 
-    var delegate: UserCardCellDelegate?
+    private weak var delegate: UserCardCellDelegate?
 
     lazy private var carousel: FSPagerView = {
         let pagerView = FSPagerView(frame: frame)
@@ -613,13 +613,22 @@ class UserCardTableViewCell: UITableViewCell {
         }
     }
 
-    func bind(user: UserDTO) {
+    func bind(user: UserDTO, delegate: UserCardCellDelegate) {
         self.user = user
-        pageControl.numberOfPages = user.userImages?.count ?? 0
-        label1.text = "\(user.nickname ?? "알 수 없음"), \(user.age ?? -1)"
-        label2.text = "\(user.area ?? "알 수 없음") · \(user.distance ?? "알 수 없음")"
-        label3.text = "\(user.occupation ?? "알 수 없음") · 1일 전 접속"
-        starLabel.text = "\(user.nickname ?? "알 수 없음")님의 매력을 알려주세요."
+        self.delegate = delegate
+
+        let numberOfPages = user.userImages?.count ?? 0
+        let label1Text = "\(user.nickname ?? "알 수 없음"), \(user.age ?? 0)"
+        let label2Text = "\(user.area ?? "알 수 없음") · \(user.distance ?? "알 수 없음")"
+        let label3Text = "\(user.occupation ?? "알 수 없음") · \(user.lastLoginAt?.asStaledDay() ?? "오래 전") 접속"
+        let starLabelText = "\(user.nickname ?? "알 수 없음")님의 매력을 알려주세요."
+
+        pageControl.numberOfPages = numberOfPages
+        label1.text = label1Text
+        label2.text = label2Text
+        label3.text = label3Text
+        starLabel.text = starLabelText
+
         carousel.reloadData()
     }
 }
@@ -654,56 +663,55 @@ extension UserCardTableViewCell {
         label1.visible(true)
         label2.visible(true)
         label3.visible(true)
-        UIView.animate(withDuration: 0.4, animations: { [unowned self] in
-            label1.transform = left
-            label2.transform = left
-            label3.transform = left
+        UIView.animate(withDuration: 0.4, animations: {
+            self.label1.transform = left
+            self.label2.transform = left
+            self.label3.transform = left
         })
     }
 
     private func hideLabels() {
         let right = CGAffineTransform(translationX: width, y: 0)
-        UIView.animate(withDuration: 0.4, animations: { [unowned self] in
-            label1.transform = right
-            label2.transform = right
-            label3.transform = right
-        }) { [unowned self] (finished) in
-            label1.isHidden = finished
-            label2.isHidden = finished
-            label3.isHidden = finished
+        UIView.animate(withDuration: 0.4, animations: {
+            self.label1.transform = right
+            self.label2.transform = right
+            self.label3.transform = right
+        }) { (finished) in
+            self.label1.isHidden = finished
+            self.label2.isHidden = finished
+            self.label3.isHidden = finished
         }
     }
 
     private func showStars() {
         let right = CGAffineTransform(translationX: 0, y: 0)
         starsView.visible(true)
-        UIView.animate(withDuration: 0.4, animations: { [unowned self] in
-            starsView.transform = right
+        UIView.animate(withDuration: 0.4, animations: {
+            self.starsView.transform = right
         })
     }
 
     private func hideStars() {
         let left = CGAffineTransform(translationX: -width, y: 0)
-        UIView.animate(withDuration: 0.4, animations: { [unowned self] in
-            starsView.transform = left
-        }) { [unowned self] (finished) in
-            starsView.isHidden = finished
+        UIView.animate(withDuration: 0.4, animations: {
+            self.starsView.transform = left
+        }) { (finished) in
+            self.starsView.isHidden = finished
         }
     }
 
     private func switchCardBodyMode(to: Mode) {
-        if (to == .label) {
+        switch (to) {
+        case .label:
             showLabels()
             hideStars()
-            return
-        }
-
-        hideLabels()
-        showStars()
-
-        if (delegate?.getStarRatingIRated(user) != nil) {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                self.switchCardBodyMode(to: .label)
+        case .star:
+            hideLabels()
+            showStars()
+            if (delegate?.getStarRatingIRated(user) != nil) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    self.switchCardBodyMode(to: .label)
+                }
             }
         }
     }
