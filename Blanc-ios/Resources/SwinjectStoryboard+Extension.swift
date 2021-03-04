@@ -89,10 +89,6 @@ extension SwinjectStoryboard {
         /** Root dependencies **/
         defaultContainer.autoregister(Preferences.self, initializer: Preferences.init).inObjectScope(.container)
         defaultContainer.autoregister(CLLocationManager.self, initializer: CLLocationManager.init).inObjectScope(.container)
-        defaultContainer.register(LocationService.self) { resolver in
-            let locationManager = resolver ~> CLLocationManager.self
-            return LocationService(manager: locationManager)
-        }.inObjectScope(.container)
 
         defaultContainer.autoregister(UserService.self, initializer: UserService.init).inObjectScope(.container)
         defaultContainer.autoregister(VerificationService.self, initializer: VerificationService.init).inObjectScope(.container)
@@ -126,10 +122,8 @@ extension SwinjectStoryboard {
             let session = resolver ~> Session.self
             let userService = resolver ~> UserService.self
             let requestService = resolver ~> RequestService.self
-            let locationService = resolver ~> LocationService.self
             let homeModel = HomeModel(
-                    session: session, userService: userService,
-                    requestService: requestService, locationService: locationService)
+                    session: session, userService: userService, requestService: requestService)
             return homeModel
         }.inObjectScope(.mainScope)
         defaultContainer.register(HomeViewModel.self) { resolver in
@@ -460,7 +454,6 @@ extension SwinjectStoryboard {
     class func configLoginView() {
         defaultContainer.storyboardInitCompleted(LoginViewController.self) { resolver, controller in
             log.info("Injecting dependencies into LoginViewController")
-            controller.locationService = resolver ~> LocationService.self
             controller.userService = resolver ~> UserService.self
             controller.session = resolver ~> Session.self
         }

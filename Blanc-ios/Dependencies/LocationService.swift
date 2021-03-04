@@ -10,47 +10,32 @@ enum Result<T> {
 
 final class LocationService: NSObject {
 
+    static var shared: LocationService = LocationService()
+
+    private var location: ReplaySubject = ReplaySubject<Coordinate>.create(bufferSize: 1)
+
+    private let isReady: ReplaySubject = ReplaySubject<Void>.create(bufferSize: 1)
+
     private let manager: CLLocationManager
 
-    init(manager: CLLocationManager) {
-        self.manager = manager
+    override init() {
+        manager = CLLocationManager()
         super.init()
         manager.delegate = self
-    }
-
-    var newLocation: ((Result<CLLocation>) -> Void)?
-
-    var didChangeStatus: ((Bool) -> Void)?
-
-    var status: CLAuthorizationStatus {
-        CLLocationManager.authorizationStatus()
-    }
-
-    func requestLocationAuthorization() {
-        manager.delegate = self
         manager.desiredAccuracy = kCLLocationAccuracyBest
-        manager.requestAlwaysAuthorization()
-        if CLLocationManager.locationServicesEnabled() {
-            manager.startUpdatingLocation()
-        }
-    }
-
-    func requestLocation() {
-        manager.requestLocation()
     }
 
     func getCurrentLocation() -> Single<Coordinate> {
-        let subject: ReplaySubject = ReplaySubject<Coordinate>.create(bufferSize: 1)
-        newLocation = { result in
-            switch result {
-            case .success(let location):
-                subject.onNext(Coordinate(location))
-            case .failure(let _):
-                subject.onNext(Coordinate(nil))
-            }
+        location = ReplaySubject<Coordinate>.create(bufferSize: 1)
+        let isLocationEnabled = CLLocationManager.locationServicesEnabled()
+        let isLocationAuthorized = CLLocationManager.authorizationStatus().rawValue > 2
+
+        if isLocationEnabled && isLocationAuthorized {
+            manager.startUpdatingLocation()
+        } else {
+            manager.requestAlwaysAuthorization()
         }
-        requestLocation()
-        return subject.take(1).asSingle()
+        return location.take(1).asSingle()
     }
 
     func getAddress(by coordinate: Coordinate?) -> Single<String> {
@@ -74,8 +59,8 @@ final class LocationService: NSObject {
                 subject.onNext(unknown)
                 return
             }
-            guard let placemark = places?.first,
-                  let addrList = placemark.addressDictionary?["FormattedAddressLines"] as? [String] else {
+            guard let place = places?.first,
+                  let addrList = place.addressDictionary?["FormattedAddressLines"] as? [String] else {
                 subject.onNext(unknown)
                 return
             }
@@ -96,24 +81,38 @@ final class LocationService: NSObject {
 }
 
 extension LocationService: CLLocationManagerDelegate {
+
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
-        newLocation?(.failure(error))
+        location.onNext(Coordinate(nil))
         manager.stopUpdatingLocation()
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let location = locations.sorted(by: { $0.timestamp > $1.timestamp }).first {
-            newLocation?(.success(location))
+        if let current = locations.sorted(by: { $0.timestamp > $1.timestamp }).first {
+            location.onNext(Coordinate(current))
+        } else {
+            location.onNext(Coordinate(nil))
         }
         manager.stopUpdatingLocation()
     }
 
-    func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+    /*
+     *  locationManagerDidChangeAuthorization:
+     *
+     *  Discussion:
+     *    Invoked when either the authorizationStatus or
+     *    accuracyAuthorization properties change
+     */
+    @available(iOS 14.0, *)
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        let status = manager.authorizationStatus
         switch status {
         case .notDetermined, .restricted, .denied:
-            didChangeStatus?(false)
+            location.onNext(Coordinate(nil))
+            manager.stopUpdatingLocation()
         default:
-            didChangeStatus?(true)
+            manager.startUpdatingLocation()
         }
+        isReady.onNext(Void())
     }
 }

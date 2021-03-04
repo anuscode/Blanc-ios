@@ -1,16 +1,14 @@
 import AuthenticationServices  // Apple login.
+import CoreLocation
 import CryptoKit
-
 import Firebase
 import GoogleSignIn
 import RxFirebase
 import RxSwift
 import UIKit
 import Lottie
-
 import FBSDKCoreKit
 import FBSDKLoginKit
-
 import KakaoSDKAuth
 import RxKakaoSDKAuth
 import KakaoSDKUser
@@ -27,7 +25,7 @@ class LoginViewController: UIViewController {
 
     private let fireworkController = ClassicFireworkController()
 
-    var locationService: LocationService?
+    private let manager = CLLocationManager()
 
     var userService: UserService?
 
@@ -319,7 +317,8 @@ class LoginViewController: UIViewController {
         view.backgroundColor = .white
         GIDSignIn.sharedInstance().presentingViewController = self
         GIDSignIn.sharedInstance().delegate = self
-        locationService?.requestLocationAuthorization()
+
+        manager.requestAlwaysAuthorization()
     }
 
     override func viewDidLoad() {
@@ -504,7 +503,7 @@ class LoginViewController: UIViewController {
     }
 
     private func signInWithKakaoCredential() {
-        guard KakaoSDKAuth.AuthApi.isKakaoTalkLoginAvailable() else {
+        guard UserApi.isKakaoTalkLoginAvailable() else {
             toast(message: "카카오톡이 미설치 이거나 미인증 상태 입니다.")
             return
         }
@@ -514,7 +513,7 @@ class LoginViewController: UIViewController {
             return
         }
 
-        KakaoSDKAuth.AuthApi.shared.rx.loginWithKakaoTalk()
+        UserApi.shared.rx.loginWithKakaoTalk()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(MainScheduler.instance)
                 .do(onNext: { [unowned self] authResult in
@@ -565,13 +564,12 @@ class LoginViewController: UIViewController {
 
     private func login() {
         session?.generate()
+                .observeOn(MainScheduler.instance)
                 .subscribe(onSuccess: { [unowned self]_ in
                     if (session?.user?.available == true) {
-                        replace(storyboard: "Main",
-                                withIdentifier: "MainTabBarController")
+                        replace(storyboard: "Main", withIdentifier: "MainTabBarController")
                     } else {
-                        replace(storyboard: "Registration",
-                                withIdentifier: "RegistrationNavigationViewController")
+                        replace(storyboard: "Registration", withIdentifier: "RegistrationNavigationViewController")
                     }
                 }, onError: { err in
                     log.error(err)
@@ -660,8 +658,7 @@ extension LoginViewController: ASAuthorizationControllerDelegate,
     // Adapted from https://auth0.com/docs/api-auth/tutorials/nonce#generate-a-cryptographically-random-nonce
     private func randomNonceString(length: Int = 32) -> String {
         precondition(length > 0)
-        let charset: Array<Character> =
-                Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
+        let charset: Array<Character> = Array("0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._")
         var result = ""
         var remainingLength = length
 

@@ -25,17 +25,13 @@ class HomeModel {
 
     private var requestService: RequestService
 
-    private var locationService: LocationService
-
     init(session: Session,
          userService: UserService,
-         requestService: RequestService,
-         locationService: LocationService) {
+         requestService: RequestService) {
 
         self.session = session
         self.userService = userService
         self.requestService = requestService
-        self.locationService = locationService
         populate()
     }
 
@@ -106,12 +102,12 @@ class HomeModel {
         let userId: String? = session.id
         var coord: Coordinate?
         var addr: String?
-        return locationService.getCurrentLocation()
+        return LocationService.shared.getCurrentLocation()
                 .do(onSuccess: { coordinate in
                     coord = coordinate
                 })
                 .flatMap({ _ -> Single<String> in
-                    self.locationService.getAddress(by: coord)
+                    LocationService.shared.getAddress(by: coord)
                 })
                 .do(onSuccess: { address in
                     addr = address
