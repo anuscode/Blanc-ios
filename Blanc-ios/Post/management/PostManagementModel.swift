@@ -217,25 +217,21 @@ class PostManagementModel {
     }
 
     func createComment(postId: String?, commentId: String?, comment: String, onError: @escaping (_ message: String?) -> Void) {
-
-        let post = posts.first(where: { $0.id == postId })
-
-        if (post == nil) {
+        guard let post = posts.first(where: { $0.id == postId }) else {
             onError("코멘트 생성에 실패 하였습니다.")
             return
         }
-
         postService.createComment(uid: auth.uid, postId: postId, commentId: commentId, comment: comment)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
                 .subscribe(onSuccess: { [unowned self] createdComment in
                     log.info("Successfully created comment..")
-                    if (commentId != nil) {
-                        if let index = post?.comments?.firstIndex(where: { $0.id == commentId }) {
-                            post?.comments?[index].comments?.insert(createdComment, at: 0)
+                    if let commentId = commentId {
+                        if let index = post.comments?.firstIndex(where: { $0.id == commentId }) {
+                            post.comments?[index].comments?.insert(createdComment, at: 0)
                         }
                     } else {
-                        post?.comments?.insert(createdComment, at: 0)
+                        post.comments?.insert(createdComment, at: 0)
                     }
                     publish()
                 }, onError: { err in
@@ -244,4 +240,19 @@ class PostManagementModel {
                 .disposed(by: disposeBag)
     }
 
+    func deletePost(postId: String?, onError: @escaping () -> Void) {
+        postService.deletePost(uid: session.uid, postId: postId)
+                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+                .observeOn(SerialDispatchQueueScheduler(qos: .default))
+                .subscribe(onSuccess: { _ in
+                    if let index = self.posts.firstIndex(where: { $0.id == postId }) {
+                        self.posts.remove(at: index)
+                        self.publish()
+                    }
+                }, onError: { err in
+                    log.error(err)
+                    onError()
+                })
+                .disposed(by: disposeBag)
+    }
 }

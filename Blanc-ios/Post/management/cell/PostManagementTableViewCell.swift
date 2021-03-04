@@ -1,10 +1,11 @@
 import Foundation
 import UIKit
 
-protocol PostManagementTableViewCellDelegate {
+protocol PostManagementTableViewCellDelegate: class {
     func favorite(_ post: PostDTO?)
     func isCurrentUserFavoritePost(_ post: PostDTO?) -> Bool
     func presentFavoriteUserListView(_ post: PostDTO?)
+    func deletePost(postId: String?)
 }
 
 class PostManagementTableViewCell: UITableViewCell {
@@ -63,7 +64,7 @@ class PostManagementTableViewCell: UITableViewCell {
     }
 
     func bind(post: PostDTO?, delegate: PostManagementTableViewCellDelegate? = nil) {
-        header.bind(post: post)
+        header.bind(post: post, delegate: delegate)
         body.bind(post: post, delegate: delegate)
     }
 }

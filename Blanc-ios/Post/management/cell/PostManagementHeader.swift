@@ -8,7 +8,11 @@ class PostManagementHeader: UIView {
         static let headerHeight: Int = 55
     }
 
-    lazy var headerImage: UIImageView = {
+    private weak var post: PostDTO?
+
+    private weak var delegate: PostManagementTableViewCellDelegate?
+
+    lazy private var headerImage: UIImageView = {
         let imageView: UIImageView = UIImageView()
         imageView.layer.cornerRadius = CGFloat(Constant.headerImageDiameter / 2)
         imageView.clipsToBounds = true
@@ -16,7 +20,7 @@ class PostManagementHeader: UIView {
         return imageView
     }()
 
-    lazy var headerLabel1: UILabel = {
+    lazy private var headerLabel1: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 16)
         label.textColor = .darkText
@@ -24,7 +28,7 @@ class PostManagementHeader: UIView {
         return label
     }()
 
-    lazy var headerLabel2: UILabel = {
+    lazy private var headerLabel2: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14)
         label.textColor = .darkGray
@@ -32,19 +36,20 @@ class PostManagementHeader: UIView {
         return label
     }()
 
-    lazy var verticalCenterGuideLine: UIView = {
+    lazy private var verticalCenterGuideLine: UIView = {
         let view = UIView()
         return view
     }()
 
-    lazy var deleteLabel: UILabel = {
+    lazy private var deleteLabel: UILabel = {
         let label = UILabel()
         label.text = "삭제"
         label.textColor = .systemBlue
+        label.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(deletePost))
         return label
     }()
 
-    lazy var header: UIView = {
+    lazy private var header: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(headerImage)
@@ -111,10 +116,19 @@ class PostManagementHeader: UIView {
         }
     }
 
-    func bind(post: PostDTO?) {
-        headerImage.url(post?.author?.avatar, size: CGSize(width: Constant.headerImageDiameter, height: Constant.headerImageDiameter))
-        headerLabel1.text = "\(post?.author?.nickname ?? "알 수 없음") · \(post?.author?.age ?? -1)"
+    @objc func deletePost() {
+        delegate?.deletePost(postId: post?.id)
+    }
+
+    func bind(post: PostDTO?, delegate: PostManagementTableViewCellDelegate? = nil) {
+        self.post = post
+        self.delegate = delegate
+
+        let url = post?.author?.avatar
         let calendar = (post?.createdAt ?? 0).asCalendar()
+
+        headerImage.url(url, size: CGSize(width: Constant.headerImageDiameter, height: Constant.headerImageDiameter))
+        headerLabel1.text = "\(post?.author?.nickname ?? "알 수 없음") · \(post?.author?.age ?? -1)"
         headerLabel2.text = "\(calendar.year)/\(calendar.month)/\(calendar.day) 일에 작성 된 게시물"
     }
 }

@@ -454,19 +454,18 @@ class LoginViewController: UIViewController {
         progressLabel.text = "토큰 발급중.."
 
         auth.rx.signInAndRetrieveData(with: credential)
+                .observeOn(MainScheduler.instance)
                 .do(onNext: { [unowned self] authResult in
-                    DispatchQueue.main.async {
-                        progressLabel.text = "회원 정보 조회 중.."
-                    }
+                    progressLabel.text = "회원 정보 조회 중.."
                 })
+                .observeOn(SerialDispatchQueueScheduler(qos: .default))
                 .flatMap({ [unowned self] authDataResult -> Single<Bool> in
                     let uid = authDataResult.user.uid
                     return userService!.isRegistered(uid: uid)
                 })
+                .observeOn(MainScheduler.instance)
                 .do(onNext: { [unowned self] authResult in
-                    DispatchQueue.main.async {
-                        progressLabel.text = "세션 정보 수립 중.."
-                    }
+                    progressLabel.text = "세션 정보 수립 중.."
                 })
                 .subscribe(onNext: { [unowned self] isExists in
                     if (isExists) {

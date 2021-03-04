@@ -71,4 +71,8 @@ class PostManagementViewModel {
     func createComment(postId: String?, commentId: String?, comment: String, onError: @escaping (_ message: String?) -> Void) {
         postManagementModel.createComment(postId: postId, commentId: commentId, comment: comment, onError: onError)
     }
+
+    func deletePost(postId: String?, onError: @escaping () -> Void) {
+        postManagementModel.deletePost(postId: postId, onError: onError)
+    }
 }

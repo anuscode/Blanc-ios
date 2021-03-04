@@ -406,18 +406,16 @@ class ImageViewController: UIViewController, CropViewControllerDelegate, UIImage
         updateImageViewWithImage(image, cropViewController: cropViewController)
         pendingViewModel?.uploadUserImage(index: selectedImageView?.tag, file: image)
                 .observeOn(MainScheduler.instance)
-                .do(onDispose: { [unowned self] in
-                    spinner.visible(false)
-                    configureImagesClickable(true)
-                })
-                .subscribe(onError: { [unowned self] err in
-                    toast(message: "이미지 업로드에 실패 하였습니다.")
+                .subscribe(onSuccess: { _ in
+                    self.spinner.visible(false)
+                    self.configureImagesClickable(true)
+                }, onError: { err in
+                    self.toast(message: "이미지 업로드에 실패 하였습니다.")
                     log.error(err)
                 }).disposed(by: disposeBag)
     }
 
-    public func updateImageViewWithImage(_ image: UIImage,
-                                         cropViewController: CropViewController) {
+    public func updateImageViewWithImage(_ image: UIImage, cropViewController: CropViewController) {
         selectedImageView?.image = image
         selectedImageView?.contentMode = .scaleAspectFill
         selectedImageView?.clipsToBounds = true

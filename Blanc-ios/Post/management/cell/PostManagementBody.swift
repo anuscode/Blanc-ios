@@ -4,11 +4,11 @@ import FSPagerView
 
 class PostManagementBody: UIView {
 
-    private var post: PostDTO?
-
     private let ripple = Ripple()
 
-    private var delegate: PostManagementTableViewCellDelegate?
+    private weak var post: PostDTO?
+
+    private weak var delegate: PostManagementTableViewCellDelegate?
 
     lazy private var carouselStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [carousel])

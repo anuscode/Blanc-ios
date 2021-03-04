@@ -256,10 +256,10 @@ extension PostManagementViewController: PostManagementTableViewCellDelegate {
     }
 
     func presentFavoriteUserListView(_ post: PostDTO?) {
-        if (post == nil) {
+        guard let post = post else {
             return
         }
-        channel?.next(value: post!)
+        channel?.next(value: post)
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyboard.instantiateViewController(
                 withIdentifier: "FavoriteUserListViewController") as! FavoriteUserListViewController
@@ -271,26 +271,44 @@ extension PostManagementViewController: PostManagementTableViewCellDelegate {
         navigationController?.pushViewController(vc, animated: true)
     }
 
-    private func channel(post: PostDTO?) {
-        if (post == nil) {
-            return
+    func deletePost(postId: String?) {
+        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let deleteAction = UIAlertAction(title: "게시물 삭제", style: .default) { (action) in
+            self.postManagementViewModel?.deletePost(postId: postId, onError: {
+                self.toast(message: "포스트 삭제에 실패 하였습니다.")
+            })
         }
-        channel?.next(value: post!)
+
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        cancelAction.setValue(UIColor.red, forKey: "titleTextColor")
+
+        alertController.addAction(cancelAction)
+        alertController.addAction(deleteAction)
+        alertController.modalPresentationStyle = .popover
+
+        let presentationController = alertController.popoverPresentationController
+        present(alertController, animated: true, completion: nil)
+    }
+
+    private func channel(post: PostDTO?) {
+        if let post = post {
+            channel?.next(value: post)
+        }
     }
 }
 
 extension PostManagementViewController: CommentTableViewCellDelegate {
     func thumbUp(comment: CommentDTO?) {
         let post = data.findApplicablePost(comment: comment)
-        postManagementViewModel?.thumbUp(post: post, comment: comment, onError: { [unowned self] message in
-            toast(message: message)
+        postManagementViewModel?.thumbUp(post: post, comment: comment, onError: { message in
+            self.toast(message: message)
         })
     }
 
     func thumbDown(comment: CommentDTO?) {
         let post = data.findApplicablePost(comment: comment)
-        postManagementViewModel?.thumbDown(post: post, comment: comment, onError: { [unowned self] message in
-            toast(message: message)
+        postManagementViewModel?.thumbDown(post: post, comment: comment, onError: { message in
+            self.toast(message: message)
         })
     }
 
@@ -318,9 +336,13 @@ extension PostManagementViewController: CommentTableViewCellDelegate {
 extension PostManagementViewController: BottomTextFieldDelegate {
     func trigger(message: String) {
         let post = data.findApplicablePost(comment: replyTo)
-        postManagementViewModel?.createComment(postId: post?.id, commentId: replyTo?.id, comment: message, onError: { [unowned self] message in
-            toast(message: message)
-        })
+        postManagementViewModel?.createComment(
+                postId: post?.id,
+                commentId: replyTo?.id,
+                comment: message,
+                onError: { [unowned self] message in
+                    toast(message: message)
+                })
         dismissTextField()
     }
 
