@@ -98,7 +98,7 @@ class PostViewController: UIViewController {
 
         let label = UILabel()
         label.text = "지난 게시물 관리"
-        label.font = .systemFont(ofSize: 11)
+        label.font = .systemFont(ofSize: 11, weight: .semibold)
 
         textView.addSubview(label)
         label.snp.makeConstraints { make in
@@ -156,7 +156,7 @@ class PostViewController: UIViewController {
 
         let label = UILabel()
         label.text = "게시물 작성"
-        label.font = .systemFont(ofSize: 11)
+        label.font = .systemFont(ofSize: 11, weight: .semibold)
 
         textView.addSubview(label)
         label.snp.makeConstraints { make in
