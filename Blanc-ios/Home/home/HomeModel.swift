@@ -120,9 +120,9 @@ class HomeModel {
                     self.userService.updateUserLocation(
                             uid: uid,
                             userId: userId,
-                            latitude: coord?.latitude,
-                            longitude: coord?.longitude,
-                            area: addr
+                            latitude: coord?.latitude ?? 0,
+                            longitude: coord?.longitude ?? 0,
+                            area: addr ?? "알 수 없음"
                     )
                 })
                 .do(onSuccess: { location in

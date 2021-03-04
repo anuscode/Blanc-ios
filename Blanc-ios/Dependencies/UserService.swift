@@ -201,15 +201,19 @@ class UserService {
                 .map(UserDTO.self, using: decoder)
     }
 
-    func updateUserLocation(uid: String?, userId: String?,
-                            latitude: Double?, longitude: Double?, area: String?) -> Single<Location> {
+    func updateUserLocation(uid: String?,
+                            userId: String?,
+                            latitude: Double,
+                            longitude: Double,
+                            area: String) -> Single<Location> {
         provider.rx.request(
                         .updateUserLocation(
                                 uid: uid,
                                 userId: userId,
                                 latitude: latitude,
                                 longitude: longitude,
-                                area: area)
+                                area: area
+                        )
                 )
                 .debug()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))

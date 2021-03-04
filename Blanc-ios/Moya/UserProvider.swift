@@ -29,7 +29,7 @@ enum UserProvider {
     // PUT
     case updateDeviceToken(uid: String?, deviceToken: String?)
     case updateUserStatusPending(uid: String?, userId: String?)
-    case updateUserLocation(uid: String?, userId: String?, latitude: Double?, longitude: Double?, area: String?)
+    case updateUserLocation(uid: String?, userId: String?, latitude: Double, longitude: Double, area: String)
     case updateUserStarRatingScore(uid: String?, userId: String?, score: Int)
     case updateUserProfile(idToken: String?, uid: String?, userId: String?, userDTO: UserDTO)
     case updateUserLastLoginAt(uid: String?, userId: String?)
@@ -170,7 +170,8 @@ extension UserProvider: TargetType {
             return .requestCompositeParameters(
                     bodyParameters: ["phone": phone!, "sms_code": smsCode!, "sms_token": smsToken!],
                     bodyEncoding: URLEncoding.httpBody,
-                    urlParameters: [:])
+                    urlParameters: [:]
+            )
         case .signInWithKakaoToken(idToken: _):
             return .requestPlain
         case .pushPoke(uid: _, userId: _):
@@ -189,9 +190,16 @@ extension UserProvider: TargetType {
             return .requestPlain
         case .updateUserStatusPending(uid: _, userId: _):
             return .requestPlain
-        case .updateUserLocation(uid: _, userId: _, latitude: let latitude, longitude: let longitude, area: let area):
+        case .updateUserLocation(uid: _, userId: _, latitude: var latitude, longitude: var longitude, area: var area):
+            latitude = latitude ?? 0
+            longitude = longitude ?? 0
+            area = area ?? "알 수 없음"
             return .requestParameters(
-                    parameters: ["latitude": latitude ?? 0, "longitude": longitude ?? 0, "area": area ?? "알 수 없음"],
+                    parameters: [
+                        "latitude": latitude,
+                        "longitude": longitude,
+                        "area": area
+                    ],
                     encoding: URLEncoding.queryString
             )
         case .updateUserStarRatingScore(uid: _, userId: _, score: _):
