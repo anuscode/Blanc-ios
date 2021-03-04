@@ -114,7 +114,6 @@ class PostCreateViewController: UIViewController {
             make.trailing.equalToSuperview().inset(20)
             make.height.equalTo(45)
         }
-        createButton.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapCreateButton))
         return view
     }()
 
@@ -124,6 +123,7 @@ class PostCreateViewController: UIViewController {
         button.backgroundColor = .bumble3
         button.setTitle("게시글 등록", for: .normal)
         button.layer.cornerRadius = 5
+        button.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapCreateButton))
         ripple.activate(to: button)
         return button
     }()
@@ -217,7 +217,7 @@ class PostCreateViewController: UIViewController {
 
     @objc func didTapCreateButton() {
 
-        let isDescriptionRegistered = (textView.text ?? "").count > 0 && !isFirstBeginEditing
+        let isDescriptionRegistered = textView.text.isNotEmpty()
         let isImageRegistered = images.count > 0
 
         if (!isDescriptionRegistered && !isImageRegistered) {

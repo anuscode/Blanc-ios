@@ -13,7 +13,7 @@ class PostListViewController: UIViewController {
 
     private var disposeBag: DisposeBag = DisposeBag()
 
-    lazy private var dataSource: DataSource<Section, PostDTO> = DataSource<Section, PostDTO>(tableView: tableView) { [unowned self] (tableView, indexPath, post) -> UITableViewCell? in
+    lazy private var dataSource: DataSource<Section, PostDTO> = DataSource<Section, PostDTO>(tableView: tableView) { (tableView, indexPath, post) -> UITableViewCell? in
         let cell = tableView.dequeueReusableCell(withIdentifier: ResourceTableViewCell.identifier,
                 for: indexPath) as! ResourceTableViewCell
         cell.bind(post: post, headerDelegate: self, bodyDelegate: self)
@@ -73,7 +73,7 @@ class PostListViewController: UIViewController {
     private func subscribePostViewModel() {
         postViewModel?.observe()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
+                .observeOn(MainScheduler.instance)
                 .subscribe(onNext: { [unowned self] posts in
                     self.posts = posts.enumerated()
                             .filter { index, item in
@@ -81,9 +81,7 @@ class PostListViewController: UIViewController {
                             }.map {
                                 $1
                             }
-                    DispatchQueue.main.async {
-                        update()
-                    }
+                    update()
                 }, onError: { err in
                     log.error(err)
                 })
@@ -129,7 +127,8 @@ extension PostListViewController: UITableViewDelegate {
 extension PostListViewController: PostBodyDelegate {
 
     func favorite(post: PostDTO?) {
-        postViewModel?.favorite(post: post,
+        postViewModel?.favorite(
+                post: post,
                 onError: {
                     DispatchQueue.main.async {
                         self.toast(message: "좋아요 도중 에러가 발생 하였습니다.")

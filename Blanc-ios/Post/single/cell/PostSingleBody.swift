@@ -149,10 +149,9 @@ class PostSingleBody: UIView {
 
     private func configureCarousel() {
         if ((post?.resources?.count ?? 0) > 0) {
-            carousel.visible(true)
             carousel.reloadData()
         } else {
-            carousel.visible(false)
+            carousel.height(0)
         }
     }
 
@@ -161,11 +160,7 @@ class PostSingleBody: UIView {
     }
 
     private func setDescriptionLabel() {
-        if (post?.description == nil || post?.description == "") {
-            descriptionLabel.text = "이미지 only 게시물 입니다."
-        } else {
-            descriptionLabel.text = post?.description
-        }
+        descriptionLabel.text = post?.description.isEmpty() == true ? "이미지 only 게시물 입니다." : post?.description
     }
 
     private func setHeartImage() {
