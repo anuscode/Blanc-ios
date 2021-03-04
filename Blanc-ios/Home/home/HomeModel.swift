@@ -27,8 +27,11 @@ class HomeModel {
 
     private var locationService: LocationService
 
-    init(session: Session, userService: UserService, requestService: RequestService,
+    init(session: Session,
+         userService: UserService,
+         requestService: RequestService,
          locationService: LocationService) {
+
         self.session = session
         self.userService = userService
         self.requestService = requestService
@@ -45,13 +48,12 @@ class HomeModel {
     }
 
     private func populate() {
-//        updateUserLocation()
-//                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-//                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-//                .flatMap { [unowned self] it -> Single<[UserDTO]> in
-//
-//                }
-        listRecommendedUsers()
+        updateUserLocation()
+                .observeOn(SerialDispatchQueueScheduler(qos: .default))
+                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+                .flatMap { [unowned self] it -> Single<[UserDTO]> in
+                    listRecommendedUsers()
+                }
                 .do(afterSuccess: { [unowned self] users in
                     // loop to calculate and set a distance from current user.
                     users.distance(session)
@@ -116,12 +118,16 @@ class HomeModel {
                 })
                 .flatMap({ _ -> Single<Location> in
                     self.userService.updateUserLocation(
-                            uid: uid, userId: userId,
+                            uid: uid,
+                            userId: userId,
                             latitude: coord?.latitude,
                             longitude: coord?.longitude,
-                            area: addr)
+                            area: addr
+                    )
                 })
-                .do(onSuccess: { location in self.session.user?.location = location })
+                .do(onSuccess: { location in
+                    self.session.user?.location = location
+                })
     }
 
     func request(_ user: UserDTO?,

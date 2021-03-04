@@ -226,6 +226,7 @@ class SmsConfirmViewController: UIViewController {
                 .flatMap { it -> Single<Void> in
                     self.session!.generate()
                 }
+                .observeOn(MainScheduler.instance)
                 .subscribe(onSuccess: { _ in
                     self.spinnerView.visible(false)
                     self.interval?.dispose()

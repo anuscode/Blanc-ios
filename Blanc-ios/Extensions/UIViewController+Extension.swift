@@ -4,7 +4,7 @@ import UIKit
 extension UIViewController {
     func toast(title: String? = nil, message: String?, seconds: Double = 1.5, callback: (() -> Void)? = nil) {
         DispatchQueue.main.async { [unowned self] in
-            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            let alert = UIAlertController(title: title ?? "", message: message ?? "", preferredStyle: .alert)
             alert.view.backgroundColor = .black
             alert.view.alpha = 0.5
             alert.view.layer.cornerRadius = 15

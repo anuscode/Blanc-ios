@@ -203,10 +203,14 @@ class UserService {
 
     func updateUserLocation(uid: String?, userId: String?,
                             latitude: Double?, longitude: Double?, area: String?) -> Single<Location> {
-        provider.rx.request(.updateUserLocation(
-                        uid: uid, userId: userId,
-                        latitude: latitude, longitude: longitude,
-                        area: area))
+        provider.rx.request(
+                        .updateUserLocation(
+                                uid: uid,
+                                userId: userId,
+                                latitude: latitude,
+                                longitude: longitude,
+                                area: area)
+                )
                 .debug()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))

@@ -155,6 +155,8 @@ class SmsViewController: UIViewController {
 
         spinnerView.visible(true)
         verificationService?.issueSmsCode(currentUser: auth.currentUser!, uid: auth.uid, phone: phone)
+                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+                .observeOn(MainScheduler.instance)
                 .do(onDispose: { [unowned self] in
                     spinnerView.visible(false)
                 })
