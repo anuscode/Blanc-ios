@@ -92,7 +92,7 @@ class RightSideBarView: UIView {
         self.rightSideBarViewModel = rightSideBarViewModel
         super.init(frame: .zero)
         setup()
-        subscribeRightSideBarViewModel()
+        bind()
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -129,30 +129,28 @@ class RightSideBarView: UIView {
         delegate?()
     }
 
-    private func badge(_ isShown: Bool) {
-        inside.backgroundColor = isShown ? .systemPink : .systemGray3
-    }
-
-    private func amount(_ amount: Float) {
-        amountLabel.text = "\(amount)"
-    }
-
     func delegate(_ delegate: @escaping () -> Void) {
         self.delegate = delegate
     }
 
-    private func subscribeRightSideBarViewModel() {
+    private func bind() {
+
         rightSideBarViewModel.observe()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [unowned self] data in
-                    DispatchQueue.main.async {
-                        badge(data.hasUnreadPushes)
-                        amount(data.point)
-                    }
-                }, onError: { err in
-                    log.error(err)
+                .map({ data -> UIColor in
+                    let isShown = data.hasUnreadPushes
+                    return isShown ? .systemPink : .systemGray3
                 })
+                .observeOn(MainScheduler.asyncInstance)
+                .bind(to: inside.rx.backgroundColor)
+                .disposed(by: disposeBag)
+
+        rightSideBarViewModel.observe()
+                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+                .map({ data -> String in
+                    "\(data.point)"
+                })
+                .bind(to: amountLabel.rx.text)
                 .disposed(by: disposeBag)
     }
 }
