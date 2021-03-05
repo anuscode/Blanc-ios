@@ -56,8 +56,8 @@ class RegistrationSexViewController: UIViewController {
             make.centerY.equalToSuperview()
         }
 
-        view.addSubview(checkMale)
-        checkMale.snp.makeConstraints { make in
+        view.addSubview(maleCheckmark)
+        maleCheckmark.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(20)
             make.centerY.equalToSuperview()
         }
@@ -75,10 +75,10 @@ class RegistrationSexViewController: UIViewController {
         return view
     }()
 
-    private lazy var checkMale: UIImageView = {
+    private lazy var maleCheckmark: UIImageView = {
         let view = UIImageView()
-        view.image = UIImage(systemName: "checkmark")
-        view.image?.withTintColor(.black, renderingMode: .alwaysOriginal)
+        let image = UIImage(systemName: "checkmark")?.withTintColor(.systemBlue, renderingMode: .alwaysOriginal)
+        view.image = image
         view.visible(false)
         return view
     }()
@@ -101,8 +101,8 @@ class RegistrationSexViewController: UIViewController {
             make.centerY.equalToSuperview()
         }
 
-        view.addSubview(checkFemale)
-        checkFemale.snp.makeConstraints { make in
+        view.addSubview(femaleCheckmark)
+        femaleCheckmark.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(20)
             make.centerY.equalToSuperview()
         }
@@ -120,10 +120,10 @@ class RegistrationSexViewController: UIViewController {
         return view
     }()
 
-    private lazy var checkFemale: UIImageView = {
+    private lazy var femaleCheckmark: UIImageView = {
         let view = UIImageView()
-        view.image = UIImage(systemName: "checkmark")
-        view.image?.withTintColor(.black, renderingMode: .alwaysOriginal)
+        let image = UIImage(systemName: "checkmark")?.withTintColor(.systemBlue, renderingMode: .alwaysOriginal)
+        view.image = image
         view.visible(false)
         return view
     }()
@@ -151,7 +151,7 @@ class RegistrationSexViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        view.backgroundColor = .bumble1
+        view.backgroundColor = .systemBlue
     }
 
     override func viewDidLoad() {
@@ -230,12 +230,12 @@ class RegistrationSexViewController: UIViewController {
                 self.user = user
 
                 let isMale = user.sex == .MALE
-                self.male.layer.borderColor = isMale ? UIColor.bumble1.cgColor : UIColor.white.cgColor
-                self.checkMale.visible(isMale)
+                self.male.layer.borderColor = isMale ? UIColor.systemBlue.cgColor : UIColor.white.cgColor
+                self.maleCheckmark.visible(isMale)
 
                 let isFemale = !isMale
-                self.female.layer.borderColor = isFemale ? UIColor.bumble1.cgColor : UIColor.white.cgColor
-                self.checkFemale.visible(isFemale)
+                self.female.layer.borderColor = isFemale ? UIColor.systemBlue.cgColor : UIColor.white.cgColor
+                self.femaleCheckmark.visible(isFemale)
             })
             .disposed(by: disposeBag)
     }

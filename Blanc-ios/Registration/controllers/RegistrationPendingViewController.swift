@@ -11,7 +11,7 @@ class RegistrationPendingViewController: UIViewController {
 
     private let disposeBag: DisposeBag = DisposeBag()
 
-    var ripple = Ripple()
+    private var ripple = Ripple()
 
     lazy private var fallenStarBackgroundView: FallenStarBackgroundView = {
         let view = FallenStarBackgroundView()

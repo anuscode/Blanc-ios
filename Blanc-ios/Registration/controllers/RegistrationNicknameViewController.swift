@@ -41,12 +41,6 @@ class RegistrationNicknameViewController: UIViewController {
         return label
     }()
 
-    lazy private var underLine1: UIView = {
-        let view = UIView()
-        view.backgroundColor = .bumble1
-        return view
-    }()
-
     lazy private var nicknameTextField: UITextField = {
         let textField = UITextField()
         textField.addPadding(direction: .left, width: 15)
@@ -58,7 +52,7 @@ class RegistrationNicknameViewController: UIViewController {
         textField.keyboardType = .default
         textField.backgroundColor = .secondarySystemBackground
         textField.layer.cornerRadius = RConfig.cornerRadius
-        textField.tintColor = .bumble3
+        textField.tintColor = .systemBlue
         let rightView = UIView()
         textField.rightView = rightView
         textField.rightViewMode = .always
