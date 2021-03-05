@@ -6,39 +6,33 @@ class RegistrationViewModel {
 
     private let disposeBag: DisposeBag = DisposeBag()
 
-    private let observable: ReplaySubject = ReplaySubject<UserDTO>.create(bufferSize: 1)
-
     private let registrationModel: RegistrationModel
 
-    private var user: UserDTO?
+    let user: ReplaySubject = ReplaySubject<UserDTO>.create(bufferSize: 1)
 
     init(registrationModel: RegistrationModel) {
         self.registrationModel = registrationModel
         subscribeRegistrationModel()
     }
 
-    private func publish() {
-        if (user == nil) {
-            return
-        }
-        observable.onNext(user!)
+    func update() {
+        registrationModel.publish()
     }
 
     func observe() -> Observable<UserDTO> {
-        observable
+        user
     }
 
     private func subscribeRegistrationModel() {
-        registrationModel.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { user in
-                    self.user = user
-                    self.publish()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        registrationModel
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onNext: { user in
+                self.user.onNext(user)
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     func updateUserProfile(onSuccess: @escaping () -> Void, onError: @escaping () -> Void) {
@@ -56,5 +50,4 @@ class RegistrationViewModel {
     func updateUserStatusPending(onSuccess: @escaping () -> Void, onError: @escaping () -> Void) {
         registrationModel.updateUserStatusPending(onSuccess: onSuccess, onError: onError)
     }
-
 }

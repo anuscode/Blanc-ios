@@ -3,6 +3,7 @@ import FirebaseAuth
 import Foundation
 import UIKit
 import RxSwift
+import RxCocoa
 import SwinjectStoryboard
 
 
@@ -14,7 +15,12 @@ class RegistrationNicknameViewController: UIViewController {
 
     var registrationViewModel: RegistrationViewModel?
 
-    var userDTO: UserDTO?
+    var user: UserDTO?
+
+    lazy private var fallenStarBackgroundView: FallenStarBackgroundView = {
+        let view = FallenStarBackgroundView()
+        return view
+    }()
 
     lazy private var progressView: UIProgressView = {
         let progress = UIProgressView(progressViewStyle: .bar)
@@ -45,9 +51,10 @@ class RegistrationNicknameViewController: UIViewController {
         let textField = UITextField()
         textField.addPadding(direction: .left, width: 15)
         textField.attributedPlaceholder = NSAttributedString(
-                string: "닉네임을 입력 하세요.", attributes: [.foregroundColor: UIColor.deepGray]
+            string: "닉네임을 입력 하세요.",
+            attributes: [.foregroundColor: UIColor.deepGray]
         )
-        textField.font = .systemFont(ofSize: 22, weight: .light)
+        textField.font = .systemFont(ofSize: 18, weight: .light)
         textField.keyboardType = .default
         textField.backgroundColor = .secondarySystemBackground
         textField.layer.cornerRadius = RConfig.cornerRadius
@@ -75,20 +82,33 @@ class RegistrationNicknameViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        view.backgroundColor = .bumble1
+        view.backgroundColor = .white
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow),
-                name: UIResponder.keyboardWillShowNotification, object: nil
+        NotificationCenter.default.addObserver(
+            self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil
         )
         configureSubviews()
         configureConstraints()
         subscribeViewModel()
     }
 
+    private func configureSubviews() {
+        view.addSubview(fallenStarBackgroundView)
+        view.addSubview(progressView)
+        view.addSubview(titleLabel)
+        view.addSubview(nicknameTextField)
+        view.addSubview(noticeLabel)
+        view.addSubview(nextButton)
+    }
+
     private func configureConstraints() {
+
+        fallenStarBackgroundView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
 
         progressView.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(RConfig.horizontalMargin)
@@ -106,7 +126,7 @@ class RegistrationNicknameViewController: UIViewController {
             make.leading.equalToSuperview().inset(RConfig.horizontalMargin)
             make.trailing.equalToSuperview().inset(RConfig.horizontalMargin)
             make.top.equalTo(titleLabel.snp.bottom).offset(20)
-            make.height.equalTo(RConfig.cellHeight)
+            make.height.equalTo(60)
         }
 
         noticeLabel.snp.makeConstraints { make in
@@ -122,36 +142,29 @@ class RegistrationNicknameViewController: UIViewController {
     }
 
     private func subscribeViewModel() {
-        registrationViewModel?.observe()
-                .take(1)
-                .subscribe(onNext: { [unowned self] user in
-                    userDTO = user
-                    update()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
-    }
-
-    private func configureSubviews() {
-        view.addSubview(progressView)
-        view.addSubview(titleLabel)
-        view.addSubview(nicknameTextField)
-        view.addSubview(noticeLabel)
-        view.addSubview(nextButton)
+        registrationViewModel?
+            .observe()
+            .take(1)
+            .subscribe(onNext: { user in
+                self.user = user
+                self.update()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     private func update() {
-        nicknameTextField.text = userDTO?.nickname
+        nicknameTextField.text = user?.nickname
     }
 
     @objc private func didTapNextButton() {
-        let value = nicknameTextField.text ?? ""
-        guard (!value.isEmpty) else {
-            toast(message: "닉네임은 필수 값 입니다.")
+        let nickname = nicknameTextField.text ?? ""
+        if (nickname.isEmpty) {
+            toast(message: "닉네임이 입력 되지 않았습니다..")
             return
         }
-        userDTO?.nickname = value
+        user?.nickname = nickname
         presentNextView()
     }
 

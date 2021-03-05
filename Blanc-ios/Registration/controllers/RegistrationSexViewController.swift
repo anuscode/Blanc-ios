@@ -16,6 +16,11 @@ class RegistrationSexViewController: UIViewController {
 
     private var user: UserDTO?
 
+    lazy private var fallenStarBackgroundView: FallenStarBackgroundView = {
+        let view = FallenStarBackgroundView()
+        return view
+    }()
+
     lazy private var progressView: UIProgressView = {
         let progress = UIProgressView(progressViewStyle: .bar)
         progress.trackTintColor = .white
@@ -37,12 +42,12 @@ class RegistrationSexViewController: UIViewController {
         let view = UIView()
         view.layer.cornerRadius = RConfig.cornerRadius
         view.layer.masksToBounds = true
-        view.backgroundColor = .white
+        view.backgroundColor = .secondarySystemBackground
         view.layer.borderWidth = 2
         view.layer.borderColor = UIColor.white.cgColor
 
         let label = UILabel()
-        label.font = .systemFont(ofSize: 22, weight: .light)
+        label.font = .systemFont(ofSize: 18)
         label.text = "남자"
 
         view.addSubview(label)
@@ -57,29 +62,37 @@ class RegistrationSexViewController: UIViewController {
             make.centerY.equalToSuperview()
         }
 
+        view.rx
+            .tapGesture()
+            .when(.recognized)
+            .subscribe(onNext: { _ in
+                self.user?.sex = .MALE
+                self.registrationViewModel?.update()
+            })
+            .disposed(by: disposeBag)
+
         ripple.activate(to: view)
-        view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapMaleButton))
         return view
     }()
 
     private lazy var checkMale: UIImageView = {
         let view = UIImageView()
         view.image = UIImage(systemName: "checkmark")
-        view.image?.withTintColor(.systemBlue)
+        view.image?.withTintColor(.black, renderingMode: .alwaysOriginal)
         view.visible(false)
         return view
     }()
 
     private lazy var female: UIView = {
         let view = UIView()
-        view.layer.cornerRadius = 15
+        view.layer.cornerRadius = RConfig.cornerRadius
         view.layer.masksToBounds = true
-        view.backgroundColor = .white
+        view.backgroundColor = .secondarySystemBackground
         view.layer.borderWidth = 2
         view.layer.borderColor = UIColor.white.cgColor
 
         let label = UILabel()
-        label.font = .systemFont(ofSize: 22, weight: .light)
+        label.font = .systemFont(ofSize: 18)
         label.text = "여자"
 
         view.addSubview(label)
@@ -94,15 +107,23 @@ class RegistrationSexViewController: UIViewController {
             make.centerY.equalToSuperview()
         }
 
+        view.rx
+            .tapGesture()
+            .when(.recognized)
+            .subscribe(onNext: { _ in
+                self.user?.sex = .FEMALE
+                self.registrationViewModel?.update()
+            })
+            .disposed(by: disposeBag)
+
         ripple.activate(to: view)
-        view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapFemaleButton))
         return view
     }()
 
     private lazy var checkFemale: UIImageView = {
         let view = UIImageView()
         view.image = UIImage(systemName: "checkmark")
-        view.image?.withTintColor(.systemBlue)
+        view.image?.withTintColor(.black, renderingMode: .alwaysOriginal)
         view.visible(false)
         return view
     }()
@@ -140,7 +161,22 @@ class RegistrationSexViewController: UIViewController {
         subscribeViewModel()
     }
 
+    private func configureSubviews() {
+        view.addSubview(fallenStarBackgroundView)
+        view.addSubview(progressView)
+        view.addSubview(titleLabel)
+        view.addSubview(male)
+        view.addSubview(female)
+        view.addSubview(noticeLabel)
+        view.addSubview(nextButton)
+        view.addSubview(backButton)
+    }
+
     private func configureConstraints() {
+
+        fallenStarBackgroundView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
 
         progressView.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(RConfig.horizontalMargin)
@@ -158,14 +194,14 @@ class RegistrationSexViewController: UIViewController {
             make.leading.equalToSuperview().inset(RConfig.horizontalMargin)
             make.trailing.equalToSuperview().inset(RConfig.horizontalMargin)
             make.top.equalTo(titleLabel.snp.bottom).offset(20)
-            make.height.equalTo(RConfig.cellHeight)
+            make.height.equalTo(60)
         }
 
         female.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(RConfig.horizontalMargin)
             make.trailing.equalToSuperview().inset(RConfig.horizontalMargin)
             make.top.equalTo(male.snp.bottom).inset(-10)
-            make.height.equalTo(RConfig.cellHeight)
+            make.height.equalTo(60)
         }
 
         noticeLabel.snp.makeConstraints { make in
@@ -186,49 +222,22 @@ class RegistrationSexViewController: UIViewController {
     }
 
     private func subscribeViewModel() {
-        registrationViewModel?.observe()
-                .take(1)
-                .subscribe(onNext: { [unowned self] user in
-                    self.user = user
-                    update()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
-    }
+        registrationViewModel?
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { user in
+                self.user = user
 
-    private func configureSubviews() {
-        view.addSubview(progressView)
-        view.addSubview(titleLabel)
-        view.addSubview(male)
-        view.addSubview(female)
-        view.addSubview(noticeLabel)
-        view.addSubview(nextButton)
-        view.addSubview(backButton)
-    }
+                let isMale = user.sex == .MALE
+                self.male.layer.borderColor = isMale ? UIColor.bumble1.cgColor : UIColor.white.cgColor
+                self.checkMale.visible(isMale)
 
-    private func update() {
-        if (user?.sex == Sex.MALE) {
-            didTapMaleButton()
-        } else if (user?.sex == Sex.FEMALE) {
-            didTapFemaleButton()
-        }
-    }
-
-    @objc private func didTapMaleButton() {
-        male.layer.borderColor = UIColor.systemBlue.cgColor
-        female.layer.borderColor = UIColor.white.cgColor
-        checkMale.visible(true)
-        checkFemale.visible(false)
-        user?.sex = Sex.MALE
-    }
-
-    @objc private func didTapFemaleButton() {
-        female.layer.borderColor = UIColor.systemBlue.cgColor
-        male.layer.borderColor = UIColor.white.cgColor
-        checkFemale.visible(true)
-        checkMale.visible(false)
-        user?.sex = Sex.FEMALE
+                let isFemale = !isMale
+                self.female.layer.borderColor = isFemale ? UIColor.bumble1.cgColor : UIColor.white.cgColor
+                self.checkFemale.visible(isFemale)
+            })
+            .disposed(by: disposeBag)
     }
 
     @objc private func didTapNextButton() {

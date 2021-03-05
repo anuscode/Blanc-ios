@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 
 class RConfig {
-    static let cornerRadius: CGFloat = 15
+    static let cornerRadius: CGFloat = 7
     static let progressCount: Float = 15
     static let titleSize: CGFloat = 30
     static let noticeSize: CGFloat = 14
@@ -14,5 +14,4 @@ class RConfig {
     static let nextBottomMargin: CGFloat = 40
     static let backLeadingMargin: CGFloat = 20
     static let backBottomMargin: CGFloat = 40
-    static let cellHeight: CGFloat = 70
 }
