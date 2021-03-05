@@ -51,11 +51,11 @@ class RegistrationBirthdayViewController: UIViewController {
         return label
     }()
 
-    lazy private var resultTitleLabel: UILabel = {
+    lazy private var resultSubjectLabel: UILabel = {
         let label = UILabel()
         label.textColor = .systemGray
         label.font = .systemFont(ofSize: 12)
-        label.text = "생년월일"
+        label.text = "생년월일을 알려주세요."
         return label
     }()
 
@@ -73,18 +73,16 @@ class RegistrationBirthdayViewController: UIViewController {
     lazy private var resultLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
-        label.text = "1985/06/24"
+        label.text = "입력 된 값이 없습니다."
         return label
     }()
 
     lazy private var pickerView: UIPickerView = {
         let pickerView = UIPickerView()
-        pickerView.layer.cornerRadius = RConfig.cornerRadius
-        pickerView.layer.masksToBounds = true
         pickerView.delegate = self
         pickerView.dataSource = self
-
-        pickerView.rx.itemSelected
+        pickerView.rx
+            .itemSelected
             .subscribe { (row, component) in
                 switch component {
                 case 0:
@@ -100,7 +98,6 @@ class RegistrationBirthdayViewController: UIViewController {
                     "\(self.birthDay.year)년 \(self.birthDay.month)월 \(self.birthDay.day)일"
             }
             .disposed(by: disposeBag)
-
         return pickerView
     }()
 
@@ -141,7 +138,7 @@ class RegistrationBirthdayViewController: UIViewController {
         view.addSubview(fallenStarBackgroundView)
         view.addSubview(progressView)
         view.addSubview(titleLabel)
-        view.addSubview(resultTitleLabel)
+        view.addSubview(resultSubjectLabel)
         view.addSubview(resultView)
         view.addSubview(pickerView)
         view.addSubview(noticeLabel)
@@ -167,13 +164,13 @@ class RegistrationBirthdayViewController: UIViewController {
             make.top.equalTo(progressView.snp.bottom).offset(RConfig.titleTopMargin)
         }
 
-        resultTitleLabel.snp.makeConstraints { make in
+        resultSubjectLabel.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(10)
             make.leading.equalToSuperview().inset(RConfig.horizontalMargin)
         }
 
         resultView.snp.makeConstraints { make in
-            make.top.equalTo(resultTitleLabel.snp.bottom).offset(5)
+            make.top.equalTo(resultSubjectLabel.snp.bottom).offset(5)
             make.centerX.equalToSuperview()
             make.width.equalTo((view.width - RConfig.horizontalMargin * 2))
             make.height.equalTo(50)
@@ -210,16 +207,20 @@ class RegistrationBirthdayViewController: UIViewController {
             .take(1)
             .subscribe(onNext: { user in
                 self.user = user
-                self.update(user.birthedAt)
+                self.update()
             }, onError: { err in
                 log.error(err)
             })
             .disposed(by: disposeBag)
     }
 
-    private func update(_ birthedAt: Int?) {
+    private func update() {
 
-        let timestamp = birthedAt ?? Cal(year: 2000, month: 06, day: 15).asTimestamp()
+        if user?.birthedAt == nil {
+            user?.birthedAt = Cal(year: 2000, month: 06, day: 15).asTimestamp()
+        }
+
+        let timestamp = user?.birthedAt ?? Cal(year: 2000, month: 06, day: 15).asTimestamp()
         let cal = timestamp.asCalendar()
 
         if let yearIndex = years.firstIndex(where: { $0 == cal.year }) {
