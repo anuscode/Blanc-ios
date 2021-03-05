@@ -48,7 +48,7 @@ class RegistrationNicknameViewController: UIViewController {
             string: "닉네임을 입력 하세요.",
             attributes: [.foregroundColor: UIColor.deepGray]
         )
-        textField.font = .systemFont(ofSize: 18, weight: .light)
+        textField.font = .systemFont(ofSize: 18)
         textField.keyboardType = .default
         textField.backgroundColor = .secondarySystemBackground
         textField.layer.cornerRadius = RConfig.cornerRadius
