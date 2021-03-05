@@ -99,7 +99,6 @@
 		104EEABC25E372300069B2CF /* Preferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEAB125E372300069B2CF /* Preferences.swift */; };
 		104EEABE25E372300069B2CF /* FcmTokenManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEAB325E372300069B2CF /* FcmTokenManager.swift */; };
 		104EEABF25E372300069B2CF /* VerificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEAB425E372300069B2CF /* VerificationService.swift */; };
-		104EEAC025E372300069B2CF /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEAB525E372300069B2CF /* LocationService.swift */; };
 		104EEAD025E372360069B2CF /* UserCardTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEAC625E372360069B2CF /* UserCardTableViewCell.swift */; };
 		104EEAD125E372360069B2CF /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEAC725E372360069B2CF /* HomeViewModel.swift */; };
 		104EEAD225E372360069B2CF /* HomeLoading.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEAC825E372360069B2CF /* HomeLoading.swift */; };
@@ -413,7 +412,6 @@
 		104EEAB125E372300069B2CF /* Preferences.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Preferences.swift; sourceTree = "<group>"; };
 		104EEAB325E372300069B2CF /* FcmTokenManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FcmTokenManager.swift; sourceTree = "<group>"; };
 		104EEAB425E372300069B2CF /* VerificationService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerificationService.swift; sourceTree = "<group>"; };
-		104EEAB525E372300069B2CF /* LocationService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
 		104EEAC625E372360069B2CF /* UserCardTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserCardTableViewCell.swift; sourceTree = "<group>"; };
 		104EEAC725E372360069B2CF /* HomeViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
 		104EEAC825E372360069B2CF /* HomeLoading.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HomeLoading.swift; sourceTree = "<group>"; };
@@ -931,7 +929,6 @@
 				104EEAB125E372300069B2CF /* Preferences.swift */,
 				104EEAB325E372300069B2CF /* FcmTokenManager.swift */,
 				104EEAB425E372300069B2CF /* VerificationService.swift */,
-				104EEAB525E372300069B2CF /* LocationService.swift */,
 				C47AA1D5E6462D0679248909 /* PaymentService.swift */,
 			);
 			path = Dependencies;
@@ -2119,7 +2116,6 @@
 				104EEB8025E372650069B2CF /* RatedModel.swift in Sources */,
 				104EEB4A25E3725D0069B2CF /* CommentTableViewCell.swift in Sources */,
 				104EEAF825E372480069B2CF /* Postable.swift in Sources */,
-				104EEAC025E372300069B2CF /* LocationService.swift in Sources */,
 				104EEAFA25E372480069B2CF /* PostDTO.swift in Sources */,
 				104EEB5525E3725D0069B2CF /* PostSingleModel.swift in Sources */,
 				104EEA4825E372060069B2CF /* RegistrationImageViewController.swift in Sources */,
