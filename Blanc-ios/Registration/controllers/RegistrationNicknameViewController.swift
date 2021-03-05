@@ -159,12 +159,12 @@ class RegistrationNicknameViewController: UIViewController {
             return
         }
         user?.nickname = nickname
-        presentNextView()
+        next()
     }
 
-    private func presentNextView() {
+    private func next() {
         let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.present(identifier: "RegistrationSexViewController")
+        navigation.stackAfterClear(identifier: "RegistrationSexViewController")
     }
 
     @objc func keyboardWillShow(notification: NSNotification) {

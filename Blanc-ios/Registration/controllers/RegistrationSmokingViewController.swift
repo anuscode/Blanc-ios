@@ -157,21 +157,21 @@ class RegistrationSmokingViewController: UIViewController {
             toast(message: "흡연이 입력 되지 않았습니다.")
             return
         }
-        presentNextView()
+        next()
     }
 
     @objc private func didTapBackButton() {
-        presentBackView()
+        back()
     }
 
-    private func presentNextView() {
+    private func next() {
         let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.present(identifier: "RegistrationBloodTypeViewController")
+        navigation.stackAfterClear(identifier: "RegistrationBloodTypeViewController")
     }
 
-    private func presentBackView() {
+    private func back() {
         let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.present(identifier: "RegistrationDrinkViewController", animated: false)
+        navigation.stackAfterClear(identifier: "RegistrationDrinkViewController", animated: false)
     }
 }
 

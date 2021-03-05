@@ -157,21 +157,21 @@ class RegistrationBodyTypeViewController: UIViewController {
             toast(message: "체형이 입력 되지 않았습니다.")
             return
         }
-        presentNextView()
+        next()
     }
 
     @objc private func didTapBackButton() {
-        presentBackView()
+        back()
     }
 
-    private func presentNextView() {
+    private func next() {
         let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.present(identifier: "RegistrationOccupationViewController")
+        navigation.stackAfterClear(identifier: "RegistrationOccupationViewController")
     }
 
-    private func presentBackView() {
+    private func back() {
         let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.present(identifier: "RegistrationHeightViewController", animated: false)
+        navigation.stackAfterClear(identifier: "RegistrationHeightViewController", animated: false)
     }
 }
 

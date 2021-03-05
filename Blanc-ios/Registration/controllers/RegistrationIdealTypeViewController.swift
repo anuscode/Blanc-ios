@@ -180,21 +180,21 @@ class RegistrationIdealTypeViewController: UIViewController {
             toast(message: "이상형은 최소 3개 이상 요구 됩니다.")
             return
         }
-        presentNextView()
+        next()
     }
 
     @objc private func didTapBackButton() {
-        presentBackView()
+        back()
     }
 
-    private func presentNextView() {
+    private func next() {
         let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.present(identifier: "RegistrationInterestsViewController")
+        navigation.stackAfterClear(identifier: "RegistrationInterestsViewController")
     }
 
-    private func presentBackView() {
+    private func back() {
         let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.present(identifier: "RegistrationCharmViewController", animated: false)
+        navigation.stackAfterClear(identifier: "RegistrationCharmViewController", animated: false)
     }
 }
 

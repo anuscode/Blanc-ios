@@ -562,7 +562,7 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
 
     private func presentPendingViewController() {
         let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.present(identifier: "PendingViewController", animated: true)
+        navigation.stackAfterClear(identifier: "PendingViewController", animated: true)
     }
 }
 

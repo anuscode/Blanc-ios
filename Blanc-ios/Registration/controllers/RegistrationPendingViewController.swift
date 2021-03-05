@@ -206,6 +206,6 @@ class RegistrationPendingViewController: UIViewController {
 
     @objc private func didTapImageButton() {
         let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.present(identifier: "RegistrationImageViewController", animated: true)
+        navigation.stackAfterClear(identifier: "RegistrationImageViewController", animated: true)
     }
 }

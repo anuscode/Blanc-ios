@@ -15,7 +15,7 @@ class RegistrationNavigationViewController: UINavigationController {
         super.viewDidLoad()
     }
 
-    func present(identifier: String, animated: Bool = true) {
+    func stackAfterClear(identifier: String, animated: Bool = true) {
         let storyboard = UIStoryboard(name: "Registration", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: identifier)
         popToRootViewController(animated: false)

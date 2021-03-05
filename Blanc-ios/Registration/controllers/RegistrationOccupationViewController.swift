@@ -176,21 +176,21 @@ class RegistrationOccupationViewController: UIViewController {
             toast(message: "직업이 입력 되지 않았습니다.")
             return
         }
-        presentNextView()
+        next()
     }
 
     @objc private func didTapBackButton() {
-        presentBackView()
+        back()
     }
 
-    private func presentNextView() {
+    private func next() {
         let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.present(identifier: "RegistrationEducationViewController")
+        navigation.stackAfterClear(identifier: "RegistrationEducationViewController")
     }
 
-    private func presentBackView() {
+    private func back() {
         let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.present(identifier: "RegistrationBodyTypeViewController", animated: false)
+        navigation.stackAfterClear(identifier: "RegistrationBodyTypeViewController", animated: false)
     }
 
     @objc private func keyboardWillShow(notification: NSNotification) {

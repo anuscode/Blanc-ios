@@ -180,21 +180,21 @@ class RegistrationCharmViewController: UIViewController {
             toast(message: "매력은 최소 3개 이상 요구 됩니다.")
             return
         }
-        presentNextView()
+        next()
     }
 
     @objc private func didTapBackButton() {
-        presentBackView()
+        back()
     }
 
-    private func presentNextView() {
+    private func next() {
         let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.present(identifier: "RegistrationIdealTypeViewController")
+        navigation.stackAfterClear(identifier: "RegistrationIdealTypeViewController")
     }
 
-    private func presentBackView() {
+    private func back() {
         let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.present(identifier: "RegistrationBloodTypeViewController", animated: false)
+        navigation.stackAfterClear(identifier: "RegistrationBloodTypeViewController", animated: false)
     }
 }
 

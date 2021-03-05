@@ -157,21 +157,21 @@ class RegistrationBloodTypeViewController: UIViewController {
             toast(message: "혈액형이 입력 되지 않았습니다.")
             return
         }
-        presentNextView()
+        next()
     }
 
     @objc private func didTapBackButton() {
-        presentBackView()
+        back()
     }
 
-    private func presentNextView() {
+    private func next() {
         let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.present(identifier: "RegistrationCharmViewController")
+        navigation.stackAfterClear(identifier: "RegistrationCharmViewController")
     }
 
-    private func presentBackView() {
+    private func back() {
         let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.present(identifier: "RegistrationSmokingViewController", animated: false)
+        navigation.stackAfterClear(identifier: "RegistrationSmokingViewController", animated: false)
     }
 }
 

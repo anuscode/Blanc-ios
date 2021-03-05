@@ -245,20 +245,20 @@ class RegistrationSexViewController: UIViewController {
             toast(message: "성별이 입력 되지 않았습니다.")
             return
         }
-        presentNextView()
+        next()
     }
 
     @objc private func didTapBackButton() {
-        presentBackView()
+        back()
     }
 
-    private func presentNextView() {
+    private func next() {
         let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.present(identifier: "RegistrationBirthdayViewController")
+        navigation.stackAfterClear(identifier: "RegistrationBirthdayViewController")
     }
 
-    private func presentBackView() {
+    private func back() {
         let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.present(identifier: "RegistrationNicknameViewController", animated: false)
+        navigation.stackAfterClear(identifier: "RegistrationNicknameViewController", animated: false)
     }
 }

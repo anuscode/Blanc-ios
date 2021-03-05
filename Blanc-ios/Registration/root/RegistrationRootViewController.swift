@@ -46,11 +46,11 @@ class RegistrationRootViewController: UIViewController {
 
     private func presentNicknameView() {
         let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.present(identifier: "RegistrationNicknameViewController", animated: false)
+        navigation.stackAfterClear(identifier: "RegistrationNicknameViewController", animated: false)
     }
 
     private func presentPendingView() {
         let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.present(identifier: "PendingViewController", animated: false)
+        navigation.stackAfterClear(identifier: "PendingViewController", animated: false)
     }
 }

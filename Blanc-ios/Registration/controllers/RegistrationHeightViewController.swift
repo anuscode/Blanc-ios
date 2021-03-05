@@ -172,21 +172,21 @@ class RegistrationHeightViewController: UIViewController {
             toast(message: "키가 입력 되지 않았습니다.")
             return
         }
-        presentNextView()
+        next()
     }
 
     @objc private func didTapBackButton() {
-        presentBackView()
+        back()
     }
 
-    private func presentNextView() {
+    private func next() {
         let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.present(identifier: "RegistrationBodyTypeViewController")
+        navigation.stackAfterClear(identifier: "RegistrationBodyTypeViewController")
     }
 
-    private func presentBackView() {
+    private func back() {
         let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.present(identifier: "RegistrationBirthdayViewController", animated: false)
+        navigation.stackAfterClear(identifier: "RegistrationBirthdayViewController", animated: false)
     }
 }
 

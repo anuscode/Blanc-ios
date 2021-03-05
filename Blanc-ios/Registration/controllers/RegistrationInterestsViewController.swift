@@ -182,7 +182,7 @@ class RegistrationInterestsViewController: UIViewController {
 
         registrationViewModel?.updateUserProfile(onSuccess: {
             DispatchQueue.main.async {
-                self.presentNextView()
+                self.next()
             }
         }, onError: {
             self.toast(message: "유저 프로필 업데이트 중 에러가 발생 하였습니다.")
@@ -190,17 +190,17 @@ class RegistrationInterestsViewController: UIViewController {
     }
 
     @objc private func didTapBackButton() {
-        presentBackView()
+        back()
     }
 
-    private func presentNextView() {
+    private func next() {
         let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.present(identifier: "RegistrationImageViewController")
+        navigation.stackAfterClear(identifier: "RegistrationImageViewController")
     }
 
-    private func presentBackView() {
+    private func back() {
         let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.present(identifier: "RegistrationIdealTypeViewController", animated: false)
+        navigation.stackAfterClear(identifier: "RegistrationIdealTypeViewController", animated: false)
     }
 }
 
