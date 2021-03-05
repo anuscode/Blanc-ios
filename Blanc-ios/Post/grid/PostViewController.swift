@@ -245,16 +245,17 @@ class PostViewController: UIViewController {
     }
 
     private func subscribePostViewModel() {
-        postViewModel?.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(MainScheduler.instance)
-                .subscribe(onNext: { posts in
-                    self.posts = posts
-                    self.update()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        postViewModel?
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { posts in
+                self.posts = posts
+                self.update()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     @objc func didTapFloatingActionButton() {
@@ -282,7 +283,7 @@ class PostViewController: UIViewController {
     @objc func didTapFloatingActionButton1() {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyboard.instantiateViewController(
-                withIdentifier: "PostManagementViewController") as! PostManagementViewController
+            withIdentifier: "PostManagementViewController") as! PostManagementViewController
         vc.prepare()
         navigationController?.pushViewController(vc, current: self)
     }
@@ -321,7 +322,7 @@ extension PostViewController: UICollectionViewDelegate {
     public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyboard.instantiateViewController(
-                withIdentifier: "PostListViewController") as! PostListViewController
+            withIdentifier: "PostListViewController") as! PostListViewController
         vc.scrollToRow = indexPath.row
         vc.prepare()
         navigationController?.pushViewController(vc, current: self)
@@ -329,7 +330,9 @@ extension PostViewController: UICollectionViewDelegate {
 }
 
 extension PostViewController: UICollectionViewDelegateFlowLayout {
-    public func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+    public func collectionView(_ collectionView: UICollectionView,
+                               willDisplay cell: UICollectionViewCell,
+                               forItemAt indexPath: IndexPath) {
         if (indexPath.row == posts.count - 10) {
             log.info("loading more posts..")
             postViewModel?.populate()
@@ -338,13 +341,17 @@ extension PostViewController: UICollectionViewDelegateFlowLayout {
 }
 
 extension PostViewController: GridLayoutDelegate {
-    func scaleForItem(inCollectionView collectionView: UICollectionView, withLayout layout: UICollectionViewLayout, atIndexPath indexPath: IndexPath) -> UInt {
+    func scaleForItem(inCollectionView collectionView: UICollectionView,
+                      withLayout layout: UICollectionViewLayout,
+                      atIndexPath indexPath: IndexPath) -> UInt {
         let index = indexPath.row
         let post = posts[index]
         return (index % division == reminder && !post.isTextOnly()) ? 2 : 1
     }
 
-    func itemFlexibleDimension(inCollectionView collectionView: UICollectionView, withLayout layout: UICollectionViewLayout, fixedDimension: CGFloat) -> CGFloat {
+    func itemFlexibleDimension(inCollectionView collectionView: UICollectionView,
+                               withLayout layout: UICollectionViewLayout,
+                               fixedDimension: CGFloat) -> CGFloat {
         fixedDimension
     }
 }
