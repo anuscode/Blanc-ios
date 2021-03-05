@@ -1,6 +1,7 @@
 import Foundation
 import UIKit
 import RxSwift
+import RxGesture
 
 class RightSideBarView: UIView {
 
@@ -19,7 +20,15 @@ class RightSideBarView: UIView {
         imageView.layer.cornerRadius = 15
         imageView.layer.masksToBounds = true
         imageView.isUserInteractionEnabled = true
-        imageView.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapBellImage))
+
+        imageView.rx
+                .tapGesture()
+                .when(.recognized)
+                .subscribe(onNext: { _ in
+                    self.delegate?()
+                })
+                .disposed(by: disposeBag)
+
         ripple.activate(to: imageView)
         return imageView
     }()
@@ -91,7 +100,8 @@ class RightSideBarView: UIView {
     required init(rightSideBarViewModel: RightSideBarViewModel) {
         self.rightSideBarViewModel = rightSideBarViewModel
         super.init(frame: .zero)
-        setup()
+        configureSubviews()
+        configureConstraints()
         bind()
     }
 
@@ -99,11 +109,13 @@ class RightSideBarView: UIView {
         fatalError()
     }
 
-    private func setup() {
+    private func configureSubviews() {
         addSubview(bell)
         addSubview(outside)
         addSubview(point)
+    }
 
+    private func configureConstraints() {
         point.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.bottom.equalToSuperview()
@@ -123,10 +135,6 @@ class RightSideBarView: UIView {
             make.top.equalTo(bell.snp.top).inset(3)
             make.trailing.equalTo(bell.snp.trailing).inset(3)
         }
-    }
-
-    @objc private func didTapBellImage() {
-        delegate?()
     }
 
     func delegate(_ delegate: @escaping () -> Void) {
@@ -150,6 +158,7 @@ class RightSideBarView: UIView {
                 .map({ data -> String in
                     "\(data.point)"
                 })
+                .observeOn(MainScheduler.asyncInstance)
                 .bind(to: amountLabel.rx.text)
                 .disposed(by: disposeBag)
     }

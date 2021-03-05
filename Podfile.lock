@@ -232,6 +232,9 @@ PODS:
     - FirebaseCore (~> 6)
     - RxCocoa (~> 5)
     - RxSwift (~> 5)
+  - RxGesture (3.0.2):
+    - RxCocoa (~> 5.1)
+    - RxSwift (~> 5.1)
   - RxKakaoSDKAuth (2.4.0):
     - KakaoSDKAuth (= 2.4.0)
     - RxKakaoSDKCommon (= 2.4.0)
@@ -292,6 +295,7 @@ DEPENDENCIES:
   - Parchment (~> 3.0)
   - RealmSwift
   - RxFirebase/Auth
+  - RxGesture
   - RxKakaoSDKAuth
   - RxKakaoSDKCommon
   - RxKakaoSDKUser
@@ -348,6 +352,7 @@ SPEC REPOS:
     - RxCocoa
     - RxFirebase
     - RxFirebaseAuthentication
+    - RxGesture
     - RxKakaoSDKAuth
     - RxKakaoSDKCommon
     - RxKakaoSDKUser
@@ -405,6 +410,7 @@ SPEC CHECKSUMS:
   RxCocoa: 32065309a38d29b5b0db858819b5bf9ef038b601
   RxFirebase: 45e6448c69c7212e21f8ba89144443f916437861
   RxFirebaseAuthentication: 5d0573fd641947ed857346624d1c849bbd86bdff
+  RxGesture: d6bd7447ca3a596c7a9702a6a2b6a2bb5d8bae54
   RxKakaoSDKAuth: d95ac81d9fb9d291be90e24283dd73b79cdeeeda
   RxKakaoSDKCommon: da3e99053ba21e4c57f1777a78b3f1c8607c3b95
   RxKakaoSDKUser: 4819f8e777acffbd0cacdc119e62e6014363e581
@@ -419,6 +425,6 @@ SPEC CHECKSUMS:
   SwinjectStoryboard: 32512ef16c2b0ff5b8f823b23539c4a50f6d3383
   TTGTagCollectionView: 86fcbfa6a7493c9e860b01c2e693cffc8acf6de1
 
-PODFILE CHECKSUM: 6a21c880d12e4ed4fbe18dae9aead8d8082992d4
+PODFILE CHECKSUM: d722d8855e7893bc112d22b245ce552390faa73b
 
 COCOAPODS: 1.10.0

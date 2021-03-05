@@ -10,6 +10,7 @@ target 'Blanc-ios' do
   pod 'SwinjectStoryboard'
 
   pod 'Moya/RxSwift', '~> 14.0'
+  pod "RxGesture"
 
   pod 'MaterialComponents/Ripple'
   pod 'MaterialComponents/TextControls+FilledTextAreas'
