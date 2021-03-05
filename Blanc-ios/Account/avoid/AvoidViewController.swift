@@ -100,17 +100,17 @@ class AvoidViewController: UIViewController {
 
     private func subscribeAvoidViewModel() {
         avoidViewModel?.observe()
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [unowned self] contacts in
-                    self.contacts = contacts
-                    DispatchQueue.main.async {
-                        update()
-                    }
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onNext: { [unowned self] contacts in
+                self.contacts = contacts
+                DispatchQueue.main.async {
+                    update()
+                }
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     private func populate() {
@@ -139,8 +139,8 @@ extension AvoidViewController {
     private func configureTableViewDataSource() {
         dataSource = UITableViewDiffableDataSource<Section, Contact>(tableView: tableView) { (tableView, indexPath, contact) -> UITableViewCell? in
             guard let cell = tableView.dequeueReusableCell(
-                    withIdentifier: AvoidTableViewCell.identifier,
-                    for: indexPath) as? AvoidTableViewCell else {
+                withIdentifier: AvoidTableViewCell.identifier,
+                for: indexPath) as? AvoidTableViewCell else {
                 return UITableViewCell()
             }
             cell.bind(contact: contact)
