@@ -21,20 +21,18 @@ class RegistrationBirthdayViewController: UIViewController {
 
     private var user: UserDTO?
 
-    private var years = [1971, 1972, 1973, 1974, 1975, 1976, 1977, 1978, 1979, 1980,
-                         1981, 1982, 1983, 1984, 1985, 1986, 1987, 1988, 1989, 1990,
-                         1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998, 1999, 2000,
-                         2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010,
-                         2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020]
+    private var years = Array(stride(from: 1971, to: 2020, by: 1))
 
-    private var months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+    private var months = Array(stride(from: 1, to: 12, by: 1))
 
-    private var days = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
-                        11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
-                        21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
-                        31]
+    private var days = Array(stride(from: 1, to: 31, by: 1))
 
     private var birthDay = Cal(year: 1985, month: 6, day: 24)
+
+    lazy private var fallenStarBackgroundView: FallenStarBackgroundView = {
+        let view = FallenStarBackgroundView()
+        return view
+    }()
 
     lazy private var progressView: UIProgressView = {
         let progress = UIProgressView(progressViewStyle: .bar)
@@ -44,7 +42,7 @@ class RegistrationBirthdayViewController: UIViewController {
         return progress
     }()
 
-    private let titleLabel: UILabel = {
+    lazy private var titleLabel: UILabel = {
         let label = UILabel()
         label.text = "생일"
         label.font = UIFont.boldSystemFont(ofSize: RConfig.titleSize)
@@ -53,43 +51,63 @@ class RegistrationBirthdayViewController: UIViewController {
         return label
     }()
 
-    lazy private var yearTableView: UITableView = {
-        let tableView = UITableView()
-        tableView.register(RSelectFieldCell.self, forCellReuseIdentifier: RSelectFieldCell.identifier)
-        tableView.layer.cornerRadius = RConfig.cornerRadius
-        tableView.layer.masksToBounds = true
-        tableView.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMinXMinYCorner]
-        tableView.separatorColor = .clear
-        tableView.delegate = self
-        tableView.dataSource = self
-        return tableView
+    lazy private var resultTitleLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .systemGray
+        label.font = .systemFont(ofSize: 12)
+        label.text = "생년월일"
+        return label
     }()
 
-    lazy private var monthTableView: UITableView = {
-        let tableView = UITableView()
-        tableView.register(RSelectFieldCell.self, forCellReuseIdentifier: RSelectFieldCell.identifier)
-        tableView.separatorColor = .clear
-        tableView.delegate = self
-        tableView.dataSource = self
-        return tableView
+    lazy private var resultView: UIView = {
+        let view = UIView()
+        view.layer.cornerRadius = 8
+        view.backgroundColor = .secondarySystemBackground
+        view.addSubview(resultLabel)
+        resultLabel.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+        return view
     }()
 
-    lazy private var dayTableView: UITableView = {
-        let tableView = UITableView()
-        tableView.register(RSelectFieldCell.self, forCellReuseIdentifier: RSelectFieldCell.identifier)
-        tableView.layer.cornerRadius = RConfig.cornerRadius
-        tableView.layer.masksToBounds = true
-        tableView.layer.maskedCorners = [.layerMaxXMaxYCorner, .layerMaxXMinYCorner]
-        tableView.separatorColor = .clear
-        tableView.delegate = self
-        tableView.dataSource = self
-        return tableView
+    lazy private var resultLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.text = "1985/06/24"
+        return label
     }()
 
-    private let noticeLabel: UILabel = {
+    lazy private var pickerView: UIPickerView = {
+        let pickerView = UIPickerView()
+        pickerView.layer.cornerRadius = RConfig.cornerRadius
+        pickerView.layer.masksToBounds = true
+        pickerView.delegate = self
+        pickerView.dataSource = self
+
+        pickerView.rx.itemSelected
+            .subscribe { (row, component) in
+                switch component {
+                case 0:
+                    self.birthDay.year = self.years[row]
+                case 1:
+                    self.birthDay.month = self.months[row]
+                case 2:
+                    self.birthDay.day = self.days[row]
+                default:
+                    break
+                }
+                self.resultLabel.text =
+                    "\(self.birthDay.year)년 \(self.birthDay.month)월 \(self.birthDay.day)일"
+            }
+            .disposed(by: disposeBag)
+
+        return pickerView
+    }()
+
+    lazy private var noticeLabel: UILabel = {
         let label = UILabel()
         label.text = "1. 만 18세 미만은 이용 할 수 없습니다."
-        label.font = UIFont.systemFont(ofSize: RConfig.noticeSize)
+        label.font = .systemFont(ofSize: RConfig.noticeSize)
         label.numberOfLines = 4;
         label.textColor = .black
         return label
@@ -109,7 +127,7 @@ class RegistrationBirthdayViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        view.backgroundColor = .bumble1
+        view.backgroundColor = .white
     }
 
     override func viewDidLoad() {
@@ -119,7 +137,23 @@ class RegistrationBirthdayViewController: UIViewController {
         subscribeViewModel()
     }
 
+    private func configureSubviews() {
+        view.addSubview(fallenStarBackgroundView)
+        view.addSubview(progressView)
+        view.addSubview(titleLabel)
+        view.addSubview(resultTitleLabel)
+        view.addSubview(resultView)
+        view.addSubview(pickerView)
+        view.addSubview(noticeLabel)
+        view.addSubview(nextButton)
+        view.addSubview(backButton)
+    }
+
     private func configureConstraints() {
+
+        fallenStarBackgroundView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
 
         progressView.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(RConfig.horizontalMargin)
@@ -133,31 +167,30 @@ class RegistrationBirthdayViewController: UIViewController {
             make.top.equalTo(progressView.snp.bottom).offset(RConfig.titleTopMargin)
         }
 
-        yearTableView.snp.makeConstraints { make in
+        resultTitleLabel.snp.makeConstraints { make in
+            make.top.equalTo(titleLabel.snp.bottom).offset(10)
             make.leading.equalToSuperview().inset(RConfig.horizontalMargin)
-            make.width.equalTo((view.width - RConfig.horizontalMargin * 2) / 3)
-            make.height.equalTo(44 * 9)
-            make.top.equalTo(titleLabel.snp.bottom).offset(20)
         }
 
-        monthTableView.snp.makeConstraints { make in
-            make.leading.equalTo(yearTableView.snp.trailing)
-            make.width.equalTo((view.width - RConfig.horizontalMargin * 2) / 3)
-            make.height.equalTo(44 * 9)
-            make.top.equalTo(titleLabel.snp.bottom).offset(20)
+        resultView.snp.makeConstraints { make in
+            make.top.equalTo(resultTitleLabel.snp.bottom).offset(5)
+            make.centerX.equalToSuperview()
+            make.width.equalTo((view.width - RConfig.horizontalMargin * 2))
+            make.height.equalTo(50)
         }
 
-        dayTableView.snp.makeConstraints { make in
-            make.leading.equalTo(monthTableView.snp.trailing)
-            make.width.equalTo((view.width - RConfig.horizontalMargin * 2) / 3)
-            make.height.equalTo(44 * 9)
-            make.top.equalTo(titleLabel.snp.bottom).offset(20)
+        pickerView.snp.makeConstraints { make in
+            make.top.equalTo(resultView.snp.bottom)
+            make.centerX.equalToSuperview()
+            make.width.equalTo((view.width - RConfig.horizontalMargin))
+            make.height.equalTo(44 * 7)
         }
 
         noticeLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(RConfig.horizontalMargin)
             make.trailing.equalToSuperview().inset(RConfig.horizontalMargin)
-            make.top.equalTo(yearTableView.snp.bottom).offset(RConfig.noticeTopMargin)
+            // make.top.equalTo(pickerView.snp.bottom).offset(RConfig.noticeTopMargin)
+            make.top.equalTo(pickerView.snp.bottom)
         }
 
         nextButton.snp.makeConstraints { make in
@@ -172,51 +205,37 @@ class RegistrationBirthdayViewController: UIViewController {
     }
 
     private func subscribeViewModel() {
-        registrationViewModel?.observe()
-                .take(1)
-                .subscribe(onNext: { [unowned self] userDTO in
-                    user = userDTO
-                    update(userDTO.birthedAt)
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
-    }
-
-    private func configureSubviews() {
-        view.addSubview(progressView)
-        view.addSubview(titleLabel)
-        view.addSubview(yearTableView)
-        view.addSubview(monthTableView)
-        view.addSubview(dayTableView)
-        view.addSubview(noticeLabel)
-        view.addSubview(nextButton)
-        view.addSubview(backButton)
+        registrationViewModel?
+            .observe()
+            .take(1)
+            .subscribe(onNext: { user in
+                self.user = user
+                self.update(user.birthedAt)
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     private func update(_ birthedAt: Int?) {
 
-        // 946731661 is timestamp for 2000/01/01
-        let timestamp = birthedAt ?? 946731661
+        let timestamp = birthedAt ?? Cal(year: 2000, month: 06, day: 15).asTimestamp()
         let cal = timestamp.asCalendar()
 
-        let yearIndex = years.firstIndex(of: cal.year)
-        let yearIndexPath = IndexPath(row: yearIndex!, section: 0)
-        yearTableView.selectRow(at: yearIndexPath, animated: true, scrollPosition: .top)
-        yearTableView.delegate?.tableView!(yearTableView, didSelectRowAt: yearIndexPath)
-        yearTableView.scrollToRow(at: yearIndexPath, at: .top, animated: true)
+        if let yearIndex = years.firstIndex(where: { $0 == cal.year }) {
+            pickerView.selectRow(yearIndex, inComponent: 0, animated: true)
+            pickerView.delegate?.pickerView?(pickerView, didSelectRow: yearIndex, inComponent: 0)
+        }
 
-        let monthIndex = months.firstIndex(of: cal.month)
-        let monthIndexPath = IndexPath(row: monthIndex!, section: 0)
-        monthTableView.selectRow(at: monthIndexPath, animated: true, scrollPosition: .top)
-        monthTableView.delegate?.tableView!(monthTableView, didSelectRowAt: monthIndexPath)
-        monthTableView.scrollToRow(at: monthIndexPath, at: .top, animated: true)
+        if let monthIndex = months.firstIndex(where: { $0 == cal.month }) {
+            pickerView.selectRow(monthIndex, inComponent: 1, animated: true)
+            pickerView.delegate?.pickerView?(pickerView, didSelectRow: monthIndex, inComponent: 1)
+        }
 
-        let dayIndex = days.firstIndex(of: cal.day)
-        let dayIndexPath = IndexPath(row: dayIndex!, section: 0)
-        dayTableView.selectRow(at: dayIndexPath, animated: true, scrollPosition: .top)
-        dayTableView.delegate?.tableView!(dayTableView, didSelectRowAt: dayIndexPath)
-        dayTableView.scrollToRow(at: dayIndexPath, at: .top, animated: true)
+        if let dayIndex = days.firstIndex(where: { $0 == cal.day }) {
+            pickerView.selectRow(dayIndex, inComponent: 2, animated: true)
+            pickerView.delegate?.pickerView?(pickerView, didSelectRow: dayIndex, inComponent: 2)
+        }
     }
 
     @objc private func didTapNextButton() {
@@ -226,92 +245,53 @@ class RegistrationBirthdayViewController: UIViewController {
             return
         }
         user?.birthedAt = birthDay.asTimestamp()
-        presentNextView()
+        next()
     }
 
     @objc private func didTapBackButton() {
-        presentBackView()
+        back()
     }
 
-    private func presentNextView() {
+    private func next() {
         let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.present(identifier: "RegistrationHeightViewController")
+        navigation.stackAfterClear(identifier: "RegistrationHeightViewController")
     }
 
-    private func presentBackView() {
+    private func back() {
         let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.present(identifier: "RegistrationSexViewController", animated: false)
+        navigation.stackAfterClear(identifier: "RegistrationSexViewController", animated: false)
     }
 }
 
 
-extension RegistrationBirthdayViewController: UITableViewDelegate, UITableViewDataSource {
+extension RegistrationBirthdayViewController: UIPickerViewDataSource, UIPickerViewDelegate {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        return 3
+    }
 
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if (tableView == yearTableView) {
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        switch (component) {
+        case 0:
             return years.count
-        } else if tableView == monthTableView {
+        case 1:
             return months.count
-        } else if tableView == dayTableView {
+        case 2:
             return days.count
-        } else {
-            fatalError("Invalid Table found.")
+        default:
+            fatalError("Invalid component found.")
         }
     }
 
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if (tableView == yearTableView) {
-            let cell = tableView.dequeueReusableCell(withIdentifier: RSelectFieldCell.identifier, for: indexPath) as! RSelectFieldCell
-            cell.textLabel?.text = String(years[indexPath.row])
-            cell.textLabel?.font = .systemFont(ofSize: 17)
-            cell.textLabel?.textAlignment = .center
-            if birthDay.year == years[indexPath.row] {
-                cell.select()
-            }
-            return cell
-        } else if tableView == monthTableView {
-            let cell = tableView.dequeueReusableCell(withIdentifier: RSelectFieldCell.identifier, for: indexPath) as! RSelectFieldCell
-            cell.textLabel?.text = String(months[indexPath.row])
-            cell.textLabel?.font = .systemFont(ofSize: 17)
-            cell.textLabel?.textAlignment = .center
-            if birthDay.month == months[indexPath.row] {
-                cell.select()
-            }
-            return cell
-        } else if tableView == dayTableView {
-            let cell = tableView.dequeueReusableCell(withIdentifier: RSelectFieldCell.identifier, for: indexPath) as! RSelectFieldCell
-            cell.textLabel?.text = String(days[indexPath.row])
-            cell.textLabel?.font = .systemFont(ofSize: 17)
-            cell.textLabel?.textAlignment = .center
-            if birthDay.day == days[indexPath.row] {
-                cell.select()
-            }
-            return cell
-        } else {
-            fatalError("Invalid Table found.")
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        switch (component) {
+        case 0:
+            return "\(years[row])"
+        case 1:
+            return "\(months[row])"
+        case 2:
+            return "\(days[row])"
+        default:
+            fatalError("Invalid component found.")
         }
-    }
-
-    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if (tableView == yearTableView) {
-            let year = years[indexPath.row]
-            birthDay.year = year
-        } else if tableView == monthTableView {
-            let month = months[indexPath.row]
-            birthDay.month = month
-        } else if tableView == dayTableView {
-            let day = days[indexPath.row]
-            birthDay.day = day
-        } else {
-            fatalError("Invalid Table found.")
-        }
-
-        let cell = tableView.cellForRow(at: indexPath) as? RSelectFieldCell
-        cell?.select()
-    }
-
-    public func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        let cell = tableView.cellForRow(at: indexPath) as? RSelectFieldCell
-        cell?.deselect()
     }
 }
