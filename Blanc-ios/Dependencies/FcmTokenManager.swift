@@ -30,14 +30,15 @@ public class FcmTokenManager {
             return
         }
 
-        userService.updateDeviceToken(uid: session.uid, deviceToken: deviceToken)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { _ in
-                    log.info("Successfully updated device token..")
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        userService
+            .updateDeviceToken(uid: session.uid, deviceToken: deviceToken)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onSuccess: { _ in
+                log.info("Successfully updated device token..")
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 }

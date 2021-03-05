@@ -45,32 +45,32 @@ class Session {
     func generate() -> Single<Void> {
         let user = auth.currentUser
         let uid = auth.uid
-        return userService.getSession(currentUser: user!, uid: uid)
-                .do(onSuccess: { [unowned self] user in
-                    self.user = user
-                    self.user?.uid = uid
-                    publish()
-                })
-                .flatMap({ user -> Single<UserDTO> in
-                    let token = self.preferences.getDeviceToken()
-                    log.info("Token: \(token ?? "EMPTY")")
-                    if (token != nil && token != user.deviceToken) {
-                        return self.userService.updateDeviceToken(uid: uid, deviceToken: token)
-                    } else {
-                        return Single.just(UserDTO())
-                    }
-                })
-                .map({ _ in
-                    Void()
-                })
+        return userService
+            .getSession(currentUser: user!, uid: uid)
+            .do(onSuccess: { [unowned self] user in
+                self.user = user
+                self.user?.uid = uid
+                publish()
+            })
+            .flatMap({ user -> Single<UserDTO> in
+                let token = self.preferences.getDeviceToken()
+                log.info("Token: \(token ?? "EMPTY")")
+                if (token != nil && token != user.deviceToken) {
+                    return self.userService.updateDeviceToken(uid: uid, deviceToken: token)
+                } else {
+                    return Single.just(UserDTO())
+                }
+            })
+            .map({ _ in Void() })
     }
 
     func refresh() -> Single<UserDTO> {
-        userService.getSession(currentUser: auth.currentUser!, uid: auth.uid)
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .do(afterSuccess: { [unowned self] user in
-                    update(user)
-                })
+        userService
+            .getSession(currentUser: auth.currentUser!, uid: auth.uid)
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .do(afterSuccess: { [unowned self] user in
+                update(user)
+            })
     }
 
     func update(_ userDTO: UserDTO) {
@@ -88,24 +88,24 @@ class Session {
 
     private func subscribeBroadcast() {
         Broadcast.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { push in
-                    if (push.isRequest()) {
-                        self.user?.userIdsSentMeRequest?.append(push.userId!)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onNext: { push in
+                if (push.isRequest()) {
+                    self.user?.userIdsSentMeRequest?.append(push.userId!)
+                }
+                if (push.isMatched()) {
+                    if let index = self.user?.userIdsISentRequest?.firstIndex(of: push.userId!) {
+                        self.user?.userIdsISentRequest?.remove(at: index)
                     }
-                    if (push.isMatched()) {
-                        if let index = self.user?.userIdsISentRequest?.firstIndex(of: push.userId!) {
-                            self.user?.userIdsISentRequest?.remove(at: index)
-                        }
-                        if let index = self.user?.userIdsSentMeRequest?.firstIndex(of: push.userId!) {
-                            self.user?.userIdsSentMeRequest?.remove(at: index)
-                        }
-                        self.user?.userIdsMatched?.append(push.userId!)
+                    if let index = self.user?.userIdsSentMeRequest?.firstIndex(of: push.userId!) {
+                        self.user?.userIdsSentMeRequest?.remove(at: index)
                     }
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+                    self.user?.userIdsMatched?.append(push.userId!)
+                }
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 }

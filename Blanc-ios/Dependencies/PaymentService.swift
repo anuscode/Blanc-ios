@@ -22,21 +22,22 @@ class PaymentService {
     }
 
     func purchase(currentUser: User, uid: String, userId: String, token: String) -> Single<PaymentDTO> {
-        currentUser.rx.getIDTokenResult()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .flatMap { [unowned self] result in
-                    provider.rx.request(.purchase(
-                                    idToken: result.token,
-                                    uid: uid,
-                                    userId: userId,
-                                    token: token)
-                            )
-                            .debug()
-                            .filterSuccessfulStatusAndRedirectCodes()
-                            .map(PaymentDTO.self, using: decoder)
-                            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                }
-                .asSingle()
+        currentUser
+            .rx.getIDTokenResult()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .flatMap { [unowned self] result in
+                provider.rx.request(.purchase(
+                        idToken: result.token,
+                        uid: uid,
+                        userId: userId,
+                        token: token)
+                    )
+                    .debug()
+                    .filterSuccessfulStatusAndRedirectCodes()
+                    .map(PaymentDTO.self, using: decoder)
+                    .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            }
+            .asSingle()
     }
 }

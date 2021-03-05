@@ -18,15 +18,17 @@ class VerificationService {
     }
 
     func issueSmsCode(currentUser: User, uid: String?, phone: String?) -> Single<VerificationDTO> {
-        currentUser.rx.getIDTokenResult()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .flatMap { [unowned self] result in
-                    provider.rx.request(.issueSmsCode(idToken: result.token, uid: uid, phone: phone))
-                            .debug()
-                            .filterSuccessfulStatusAndRedirectCodes()
-                            .map(VerificationDTO.self, using: decoder)
-                }
-                .asSingle()
+        currentUser.rx
+            .getIDTokenResult()
+            .debug()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .flatMap { [unowned self] result in
+                provider.rx.request(.issueSmsCode(idToken: result.token, uid: uid, phone: phone))
+                    .debug()
+                    .filterSuccessfulStatusAndRedirectCodes()
+                    .map(VerificationDTO.self, using: decoder)
+            }
+            .asSingle()
     }
 
     func verifySmsCode(currentUser: User,
@@ -34,19 +36,21 @@ class VerificationService {
                        phone: String?,
                        smsCode: String?,
                        expiredAt: Int?) -> Single<VerificationDTO> {
-        currentUser.rx.getIDTokenResult()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .flatMap { [unowned self] result -> Single<VerificationDTO> in
-                    provider.rx.request(.verifySmsCode(
-                                    idToken: result.token,
-                                    uid: uid,
-                                    phone: phone,
-                                    smsCode: smsCode,
-                                    expiredAt: expiredAt))
-                            .debug()
-                            .filterSuccessfulStatusAndRedirectCodes()
-                            .map(VerificationDTO.self, using: decoder)
-                }
-                .asSingle()
+        currentUser.rx
+            .getIDTokenResult()
+            .debug()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .flatMap { [unowned self] result -> Single<VerificationDTO> in
+                provider.rx.request(.verifySmsCode(
+                        idToken: result.token,
+                        uid: uid,
+                        phone: phone,
+                        smsCode: smsCode,
+                        expiredAt: expiredAt))
+                    .debug()
+                    .filterSuccessfulStatusAndRedirectCodes()
+                    .map(VerificationDTO.self, using: decoder)
+            }
+            .asSingle()
     }
 }
