@@ -16,23 +16,14 @@ class RegistrationHeightViewController: UIViewController {
 
     private var user: UserDTO?
 
-    private var labelSource = [
-        "150 cm", "151 cm", "152 cm", "153 cm", "154 cm", "155 cm", "156 cm", "157 cm", "158 cm", "159 cm",
-        "160 cm", "161 cm", "162 cm", "163 cm", "164 cm", "165 cm", "166 cm", "167 cm", "168 cm", "169 cm",
-        "170 cm", "171 cm", "172 cm", "173 cm", "174 cm", "175 cm", "176 cm", "177 cm", "178 cm", "179 cm",
-        "180 cm", "181 cm", "182 cm", "183 cm", "184 cm", "185 cm", "186 cm", "187 cm", "188 cm", "189 cm",
-        "190 cm", "191 cm", "192 cm", "193 cm", "194 cm", "195 cm", "196 cm", "197 cm", "198 cm", "199 cm",
-        "200 cm"
-    ]
+    private var labelSource = Array(stride(from: 100, to: 220, by: 1)).map({ "\($0) cm" })
 
-    private var dataSource = [
-        150, 151, 152, 153, 154, 155, 156, 157, 158, 159,
-        160, 161, 162, 163, 164, 165, 166, 167, 168, 169,
-        170, 171, 172, 173, 174, 175, 176, 177, 178, 179,
-        180, 181, 182, 183, 184, 185, 186, 187, 188, 189,
-        190, 191, 192, 193, 194, 195, 196, 197, 198, 199,
-        200
-    ]
+    private var dataSource = Array(stride(from: 100, to: 220, by: 1))
+
+    lazy private var fallenStarBackgroundView: FallenStarBackgroundView = {
+        let view = FallenStarBackgroundView()
+        return view
+    }()
 
     lazy private var progressView: UIProgressView = {
         let progress = UIProgressView(progressViewStyle: .bar)
@@ -51,15 +42,44 @@ class RegistrationHeightViewController: UIViewController {
         return label
     }()
 
-    lazy private var tableView: UITableView = {
-        var tableView = UITableView()
-        tableView.layer.cornerRadius = RConfig.cornerRadius
-        tableView.layer.masksToBounds = true
-        tableView.separatorColor = .clear
-        tableView.register(RegistrationSelectFieldCell.self, forCellReuseIdentifier: RegistrationSelectFieldCell.identifier)
-        tableView.delegate = self
-        tableView.dataSource = self
-        return tableView
+    lazy private var resultSubjectLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .systemGray
+        label.font = .systemFont(ofSize: 12)
+        label.text = "당신의 키를 알려주세요."
+        return label
+    }()
+
+    lazy private var resultView: UIView = {
+        let view = UIView()
+        view.layer.cornerRadius = 8
+        view.backgroundColor = .secondarySystemBackground
+        view.addSubview(resultLabel)
+        resultLabel.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+        return view
+    }()
+
+    lazy private var resultLabel: UILabel = {
+        let label = UILabel()
+        label.textAlignment = .center
+        label.text = "입력 된 값이 없습니다."
+        return label
+    }()
+
+    lazy private var pickerView: UIPickerView = {
+        let pickerView = UIPickerView()
+        pickerView.delegate = self
+        pickerView.dataSource = self
+        pickerView.rx
+            .itemSelected
+            .subscribe(onNext: { (row, component) in
+                self.user?.height = self.dataSource[row]
+                self.resultLabel.text = self.labelSource[row]
+            })
+            .disposed(by: disposeBag)
+        return pickerView
     }()
 
     lazy private var noticeLabel: UILabel = {
@@ -97,6 +117,10 @@ class RegistrationHeightViewController: UIViewController {
 
     private func configureConstraints() {
 
+        fallenStarBackgroundView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+
         progressView.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(RConfig.horizontalMargin)
             make.trailing.equalToSuperview().inset(RConfig.horizontalMargin)
@@ -109,17 +133,29 @@ class RegistrationHeightViewController: UIViewController {
             make.top.equalTo(progressView.snp.bottom).offset(RConfig.titleTopMargin)
         }
 
-        tableView.snp.makeConstraints { make in
+        resultSubjectLabel.snp.makeConstraints { make in
+            make.top.equalTo(titleLabel.snp.bottom).offset(10)
             make.leading.equalToSuperview().inset(RConfig.horizontalMargin)
-            make.trailing.equalToSuperview().inset(RConfig.horizontalMargin)
-            make.top.equalTo(titleLabel.snp.bottom).offset(20)
-            make.bottom.equalTo(nextButton.snp.top).inset(-50)
+        }
+
+        resultView.snp.makeConstraints { make in
+            make.top.equalTo(resultSubjectLabel.snp.bottom).offset(5)
+            make.centerX.equalToSuperview()
+            make.width.equalTo((view.width - RConfig.horizontalMargin * 2))
+            make.height.equalTo(50)
+        }
+
+        pickerView.snp.makeConstraints { make in
+            make.top.equalTo(resultView.snp.bottom)
+            make.centerX.equalToSuperview()
+            make.width.equalTo((view.width - RConfig.horizontalMargin))
+            make.height.equalTo(44 * 7)
         }
 
         noticeLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(RConfig.horizontalMargin)
             make.trailing.equalToSuperview().inset(RConfig.horizontalMargin)
-            make.top.equalTo(tableView.snp.bottom).offset(RConfig.noticeTopMargin)
+            make.top.equalTo(pickerView.snp.bottom).offset(RConfig.noticeTopMargin)
         }
 
         nextButton.snp.makeConstraints { make in
@@ -135,40 +171,41 @@ class RegistrationHeightViewController: UIViewController {
 
     private func subscribeViewModel() {
         registrationViewModel?.observe()
-                .take(1)
-                .subscribe(onNext: { [unowned self] user in
-                    self.user = user
-                    update()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+            .take(1)
+            .subscribe(onNext: { [unowned self] user in
+                self.user = user
+                update()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     private func configureSubviews() {
+        view.addSubview(fallenStarBackgroundView)
         view.addSubview(progressView)
         view.addSubview(titleLabel)
-        view.addSubview(tableView)
+        view.addSubview(resultSubjectLabel)
+        view.addSubview(resultView)
+        view.addSubview(pickerView)
         view.addSubview(noticeLabel)
         view.addSubview(nextButton)
         view.addSubview(backButton)
     }
 
     private func update() {
-        if (user?.height == nil) {
-            return
+        if user?.height == nil {
+            user?.height = 160
         }
-
-        if let index = dataSource.firstIndex(of: user!.height!) {
-            let indexPath = IndexPath(row: index, section: 0)
-            tableView.selectRow(at: indexPath, animated: true, scrollPosition: .top)
-            tableView.delegate?.tableView!(tableView, didSelectRowAt: indexPath)
-            tableView.scrollToRow(at: indexPath, at: .top, animated: true)
+        let height = user?.height
+        if let index = dataSource.firstIndex(where: { $0 == height }) {
+            pickerView.selectRow(index, inComponent: 0, animated: true)
+            pickerView.delegate?.pickerView?(pickerView, didSelectRow: index, inComponent: 0)
         }
     }
 
     @objc private func didTapNextButton() {
-        if (user?.height == nil) {
+        if user?.height == nil {
             toast(message: "키가 입력 되지 않았습니다.")
             return
         }
@@ -191,38 +228,16 @@ class RegistrationHeightViewController: UIViewController {
 }
 
 
-extension RegistrationHeightViewController: UITableViewDelegate, UITableViewDataSource {
-    public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if (dataSource.count != labelSource.count) {
-            fatalError("Please check the dataSource and labelSource..")
-        }
-        return dataSource.count
+extension RegistrationHeightViewController: UIPickerViewDataSource, UIPickerViewDelegate {
+    func numberOfComponents(in pickerView: UIPickerView) -> Int {
+        1
     }
 
-    public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: RegistrationSelectFieldCell.identifier, for: indexPath) as! RegistrationSelectFieldCell
-        let data = dataSource[indexPath.row]
-        cell.textLabel?.text = labelSource[indexPath.row]
-        cell.textLabel?.textAlignment = .center
-        if data == user?.height {
-            cell.select()
-        }
-        return cell
+    func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
+        dataSource.count
     }
 
-    public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let cell = tableView.cellForRow(at: indexPath) as? RegistrationSelectFieldCell
-        cell?.select()
-        let value = dataSource[indexPath.row]
-        user?.height = value
-    }
-
-    public func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        let cell = tableView.cellForRow(at: indexPath) as? RegistrationSelectFieldCell
-        cell?.deselect()
-    }
-
-    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        48
+    func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
+        labelSource[row]
     }
 }
