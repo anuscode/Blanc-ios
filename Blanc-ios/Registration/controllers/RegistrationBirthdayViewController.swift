@@ -21,11 +21,11 @@ class RegistrationBirthdayViewController: UIViewController {
 
     private var user: UserDTO?
 
-    private var years = Array(stride(from: 1971, to: 2020, by: 1))
+    private var years = Array(stride(from: 1971, to: 2021 + 1, by: 1))
 
-    private var months = Array(stride(from: 1, to: 12, by: 1))
+    private var months = Array(stride(from: 1, to: 12 + 1, by: 1))
 
-    private var days = Array(stride(from: 1, to: 31, by: 1))
+    private var days = Array(stride(from: 1, to: 31 + 1, by: 1))
 
     private var birthDay = Cal(year: 1985, month: 6, day: 24)
 
