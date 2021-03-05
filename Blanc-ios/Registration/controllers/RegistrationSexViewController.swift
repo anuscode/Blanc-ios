@@ -122,7 +122,7 @@ class RegistrationSexViewController: UIViewController {
 
     private lazy var femaleCheckmark: UIImageView = {
         let view = UIImageView()
-        let image = UIImage(systemName: "checkmark")?.withTintColor(.systemBlue, renderingMode: .alwaysOriginal)
+        let image = UIImage(systemName: "checkmark")?.withTintColor(.tinderPink, renderingMode: .alwaysOriginal)
         view.image = image
         view.visible(false)
         return view
@@ -233,8 +233,8 @@ class RegistrationSexViewController: UIViewController {
                 self.male.layer.borderColor = isMale ? UIColor.systemBlue.cgColor : UIColor.white.cgColor
                 self.maleCheckmark.visible(isMale)
 
-                let isFemale = !isMale
-                self.female.layer.borderColor = isFemale ? UIColor.systemBlue.cgColor : UIColor.white.cgColor
+                let isFemale = user.sex == .FEMALE
+                self.female.layer.borderColor = isFemale ? UIColor.tinderPink.cgColor : UIColor.white.cgColor
                 self.femaleCheckmark.visible(isFemale)
             })
             .disposed(by: disposeBag)
