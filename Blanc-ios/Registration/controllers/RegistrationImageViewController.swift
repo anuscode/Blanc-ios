@@ -18,7 +18,12 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
 
     private var user: UserDTO?
 
-    var registrationViewModel: RegistrationViewModel?
+    internal var registrationViewModel: RegistrationViewModel?
+
+    lazy private var starFallView: StarFallView = {
+        let view = StarFallView()
+        return view
+    }()
 
     lazy private var progressView: UIProgressView = {
         let progress = UIProgressView(progressViewStyle: .bar)
@@ -163,7 +168,7 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
 
     lazy private var imageView1: UIImageView = {
         let imageView = UIImageView()
-        imageView.backgroundColor = .white
+        imageView.backgroundColor = UIColor.secondarySystemBackground.withAlphaComponent(0.8)
         imageView.isUserInteractionEnabled = true
         imageView.contentMode = .scaleAspectFit
         imageView.layer.cornerRadius = 16
@@ -178,7 +183,7 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
 
     lazy private var imageView2: UIImageView = {
         let imageView = UIImageView()
-        imageView.backgroundColor = .white
+        imageView.backgroundColor = UIColor.secondarySystemBackground.withAlphaComponent(0.8)
         imageView.isUserInteractionEnabled = true
         imageView.contentMode = .scaleAspectFit
         imageView.layer.cornerRadius = 8
@@ -194,7 +199,7 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
 
     lazy private var imageView3: UIImageView = {
         let imageView = UIImageView()
-        imageView.backgroundColor = .white
+        imageView.backgroundColor = UIColor.secondarySystemBackground.withAlphaComponent(0.8)
         imageView.isUserInteractionEnabled = true
         imageView.contentMode = .scaleAspectFit
         imageView.layer.cornerRadius = 8
@@ -210,7 +215,7 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
 
     lazy private var imageView4: UIImageView = {
         let imageView = UIImageView()
-        imageView.backgroundColor = .white
+        imageView.backgroundColor = UIColor.secondarySystemBackground.withAlphaComponent(0.8)
         imageView.isUserInteractionEnabled = true
         imageView.contentMode = .scaleAspectFit
         imageView.layer.cornerRadius = 8
@@ -226,7 +231,7 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
 
     lazy private var imageView5: UIImageView = {
         let imageView = UIImageView()
-        imageView.backgroundColor = .white
+        imageView.backgroundColor = UIColor.secondarySystemBackground.withAlphaComponent(0.8)
         imageView.isUserInteractionEnabled = true
         imageView.contentMode = .scaleAspectFit
         imageView.layer.cornerRadius = 8
@@ -242,7 +247,7 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
 
     lazy private var imageView6: UIImageView = {
         let imageView = UIImageView()
-        imageView.backgroundColor = .white
+        imageView.backgroundColor = UIColor.secondarySystemBackground.withAlphaComponent(0.8)
         imageView.isUserInteractionEnabled = true
         imageView.contentMode = .scaleAspectFit
         imageView.layer.cornerRadius = 8
@@ -315,22 +320,22 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
             }
 
             registrationViewModel?.uploadUserImage(
-                    index: selectedImageView?.tag,
-                    file: resizedImage!,
-                    onSuccess: {
-                        DispatchQueue.main.async {
-                            spinner.visible(false)
-                            configureImagesClickable(true)
-                        }
-                    },
-                    onError: {
-                        DispatchQueue.main.async {
-                            spinner.visible(false)
-                            configureImagesClickable(true)
-                            toast(message: "이미지 업로드에 실패 하였습니다.")
-                            selectedImageView?.image = UIImage(named: "ic_avatar")
-                        }
+                index: selectedImageView?.tag,
+                file: resizedImage!,
+                onSuccess: {
+                    DispatchQueue.main.async {
+                        spinner.visible(false)
+                        configureImagesClickable(true)
                     }
+                },
+                onError: {
+                    DispatchQueue.main.async {
+                        spinner.visible(false)
+                        configureImagesClickable(true)
+                        toast(message: "이미지 업로드에 실패 하였습니다.")
+                        selectedImageView?.image = UIImage(named: "ic_avatar")
+                    }
+                }
             )
         }
     }
@@ -343,7 +348,7 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        view.backgroundColor = .bumble1
+        view.backgroundColor = .white
     }
 
     override func viewDidLoad() {
@@ -354,6 +359,7 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
     }
 
     private func configureSubviews() {
+        view.addSubview(starFallView)
         view.addSubview(progressView)
         view.addSubview(titleLabel)
         view.addSubview(imageView)
@@ -365,6 +371,10 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
     private func configureConstraints() {
 
         let screenWidth = UIScreen.main.bounds.width
+
+        starFallView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
 
         progressView.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(RConfig.horizontalMargin)
@@ -403,17 +413,17 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
 
     private func subscribeViewModel() {
         registrationViewModel?.observe()
-                .observeOn(MainScheduler.instance)
-                .subscribe(onNext: { [unowned self] userDTO in
-                    user = userDTO
-                    DispatchQueue.main.async {
-                        update(userDTO)
-                    }
-                }, onError: { [unowned self] err in
-                    log.error(err)
-                    toast(message: "알 수 없는 에러가 발생 하였습니다.")
-                })
-                .disposed(by: disposeBag)
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [unowned self] userDTO in
+                user = userDTO
+                DispatchQueue.main.async {
+                    update(userDTO)
+                }
+            }, onError: { [unowned self] err in
+                log.error(err)
+                toast(message: "알 수 없는 에러가 발생 하였습니다.")
+            })
+            .disposed(by: disposeBag)
     }
 
     private func update(_ userDTO: UserDTO) {
@@ -545,18 +555,18 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
 
         spinner.visible(true)
         registrationViewModel?.updateUserStatusPending(
-                onSuccess: { [unowned self] in
-                    DispatchQueue.main.async {
-                        spinner.visible(false)
-                        presentPendingViewController()
-                    }
-                },
-                onError: { [unowned self] in
-                    DispatchQueue.main.async {
-                        spinner.visible(false)
-                        toast(message: "심사 요청에 실패 하였습니다.")
-                    }
+            onSuccess: { [unowned self] in
+                DispatchQueue.main.async {
+                    spinner.visible(false)
+                    presentPendingViewController()
                 }
+            },
+            onError: { [unowned self] in
+                DispatchQueue.main.async {
+                    spinner.visible(false)
+                    toast(message: "심사 요청에 실패 하였습니다.")
+                }
+            }
         )
     }
 
