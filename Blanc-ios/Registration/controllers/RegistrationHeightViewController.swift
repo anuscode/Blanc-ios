@@ -70,6 +70,9 @@ class RegistrationHeightViewController: UIViewController {
 
     lazy private var pickerView: UIPickerView = {
         let pickerView = UIPickerView()
+        pickerView.layer.cornerRadius = 15
+        pickerView.layer.masksToBounds = true
+        pickerView.backgroundColor = UIColor.white.withAlphaComponent(0.8)
         pickerView.delegate = self
         pickerView.dataSource = self
         pickerView.rx
