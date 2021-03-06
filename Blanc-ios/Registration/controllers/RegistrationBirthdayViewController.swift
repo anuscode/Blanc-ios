@@ -29,8 +29,8 @@ class RegistrationBirthdayViewController: UIViewController {
 
     private var birthDay = Cal(year: 1985, month: 6, day: 24)
 
-    lazy private var fallenStarBackgroundView: FallenStarBackgroundView = {
-        let view = FallenStarBackgroundView()
+    lazy private var starFallView: StarFallView = {
+        let view = StarFallView()
         return view
     }()
 
@@ -135,7 +135,7 @@ class RegistrationBirthdayViewController: UIViewController {
     }
 
     private func configureSubviews() {
-        view.addSubview(fallenStarBackgroundView)
+        view.addSubview(starFallView)
         view.addSubview(progressView)
         view.addSubview(titleLabel)
         view.addSubview(resultSubjectLabel)
@@ -148,7 +148,7 @@ class RegistrationBirthdayViewController: UIViewController {
 
     private func configureConstraints() {
 
-        fallenStarBackgroundView.snp.makeConstraints { make in
+        starFallView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
 

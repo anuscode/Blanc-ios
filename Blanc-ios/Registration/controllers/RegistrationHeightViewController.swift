@@ -20,8 +20,8 @@ class RegistrationHeightViewController: UIViewController {
 
     private var dataSource = Array(stride(from: 100, to: 220, by: 1))
 
-    lazy private var fallenStarBackgroundView: FallenStarBackgroundView = {
-        let view = FallenStarBackgroundView()
+    lazy private var starFallView: StarFallView = {
+        let view = StarFallView()
         return view
     }()
 
@@ -117,7 +117,7 @@ class RegistrationHeightViewController: UIViewController {
 
     private func configureConstraints() {
 
-        fallenStarBackgroundView.snp.makeConstraints { make in
+        starFallView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
 
@@ -182,7 +182,7 @@ class RegistrationHeightViewController: UIViewController {
     }
 
     private func configureSubviews() {
-        view.addSubview(fallenStarBackgroundView)
+        view.addSubview(starFallView)
         view.addSubview(progressView)
         view.addSubview(titleLabel)
         view.addSubview(resultSubjectLabel)

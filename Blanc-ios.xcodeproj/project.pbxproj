@@ -284,7 +284,7 @@
 		C47AA762523F50CBEE156306 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA8F623619E368CA03001 /* Extensions.swift */; };
 		C47AA76AB974811288A3C50C /* RxCLLocationManagerDelegateProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA02088BC4DE22EAD45D1 /* RxCLLocationManagerDelegateProxy.swift */; };
 		C47AA7C626C4C16AA8A06DA9 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AAB4E79358AC85B769BE6 /* UIView+Extension.swift */; };
-		C47AA7ECE96CB9A9BB7216F8 /* FallenStarBackgroundView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AAD87CBEFF0B42B8059B8 /* FallenStarBackgroundView.swift */; };
+		C47AA7ECE96CB9A9BB7216F8 /* StarFallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AAD87CBEFF0B42B8059B8 /* StarFallView.swift */; };
 		C47AA83E4F1FC818AC7EB61E /* InAppPurchaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AACA33B78F7DBDE4957FF /* InAppPurchaseViewController.swift */; };
 		C47AA94E16B75C679F0B7819 /* CLLocationManagerDelegateEvents+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA6DD792D18E8B9A36E7E /* CLLocationManagerDelegateEvents+Rx.swift */; };
 		C47AA9B1451CD90F013EFECF /* UINavigationController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA39FA440727C495C4A05 /* UINavigationController+Extension.swift */; };
@@ -611,7 +611,7 @@
 		C47AAB4E79358AC85B769BE6 /* UIView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
 		C47AAC81B4B9E7A00D3EA155 /* InAppPurchaseTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppPurchaseTableViewCell.swift; sourceTree = "<group>"; };
 		C47AACA33B78F7DBDE4957FF /* InAppPurchaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppPurchaseViewController.swift; sourceTree = "<group>"; };
-		C47AAD87CBEFF0B42B8059B8 /* FallenStarBackgroundView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FallenStarBackgroundView.swift; sourceTree = "<group>"; };
+		C47AAD87CBEFF0B42B8059B8 /* StarFallView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StarFallView.swift; sourceTree = "<group>"; };
 		C47AADDF123DA705D0D31C70 /* InAppPurchaseModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppPurchaseModel.swift; sourceTree = "<group>"; };
 		C47AAF64311FE6466E824F0D /* Int+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Int+Extension.swift"; sourceTree = "<group>"; };
 		DBBEBAFA0CF30E6D3B2AB0F7 /* Pods-Blanc-ios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Blanc-ios.release.xcconfig"; path = "Target Support Files/Pods-Blanc-ios/Pods-Blanc-ios.release.xcconfig"; sourceTree = "<group>"; };
@@ -1255,7 +1255,7 @@
 				104EEBB025E372830069B2CF /* BottomTextField.swift */,
 				104EEBB125E372830069B2CF /* LinkedList.swift */,
 				C47AA1210DF0D858645ADADD /* IAPHelper.swift */,
-				C47AAD87CBEFF0B42B8059B8 /* FallenStarBackgroundView.swift */,
+				C47AAD87CBEFF0B42B8059B8 /* StarFallView.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -2153,7 +2153,7 @@
 				C47AA3A121CD775C7D2916C5 /* RxEventTypealias.swift in Sources */,
 				C47AA62D296236750509B6F3 /* RxKeyPaths.swift in Sources */,
 				C47AAD13F25BD2CF0D330A59 /* RxSelectors.swift in Sources */,
-				C47AA7ECE96CB9A9BB7216F8 /* FallenStarBackgroundView.swift in Sources */,
+				C47AA7ECE96CB9A9BB7216F8 /* StarFallView.swift in Sources */,
 				C47AAEA7329508C8EC6BCF60 /* SelectionCollectionViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

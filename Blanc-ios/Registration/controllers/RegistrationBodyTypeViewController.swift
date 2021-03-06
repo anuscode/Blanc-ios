@@ -20,8 +20,8 @@ class RegistrationBodyTypeViewController: UIViewController {
         UserGlobal.bodyTypes
     }()
 
-    lazy private var fallenStarBackgroundView: FallenStarBackgroundView = {
-        let view = FallenStarBackgroundView()
+    lazy private var starFallView: StarFallView = {
+        let view = StarFallView()
         return view
     }()
 
@@ -142,7 +142,7 @@ class RegistrationBodyTypeViewController: UIViewController {
     }
 
     private func configureSubviews() {
-        view.addSubview(fallenStarBackgroundView)
+        view.addSubview(starFallView)
         view.addSubview(progressView)
         view.addSubview(titleLabel)
         view.addSubview(collectionView)
@@ -153,7 +153,7 @@ class RegistrationBodyTypeViewController: UIViewController {
 
     private func configureConstraints() {
 
-        fallenStarBackgroundView.snp.makeConstraints { make in
+        starFallView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
 

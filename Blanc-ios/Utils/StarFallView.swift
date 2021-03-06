@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 import Lottie
 
-class FallenStarBackgroundView: UIView {
+class StarFallView: UIView {
 
     private var ripple: Ripple = Ripple()
 

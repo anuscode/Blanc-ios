@@ -17,8 +17,8 @@ class RegistrationNicknameViewController: UIViewController {
 
     var user: UserDTO?
 
-    lazy private var fallenStarBackgroundView: FallenStarBackgroundView = {
-        let view = FallenStarBackgroundView()
+    lazy private var starFallView: StarFallView = {
+        let view = StarFallView()
         return view
     }()
 
@@ -90,7 +90,7 @@ class RegistrationNicknameViewController: UIViewController {
     }
 
     private func configureSubviews() {
-        view.addSubview(fallenStarBackgroundView)
+        view.addSubview(starFallView)
         view.addSubview(progressView)
         view.addSubview(titleLabel)
         view.addSubview(nicknameTextField)
@@ -100,7 +100,7 @@ class RegistrationNicknameViewController: UIViewController {
 
     private func configureConstraints() {
 
-        fallenStarBackgroundView.snp.makeConstraints { make in
+        starFallView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
 
