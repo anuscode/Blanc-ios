@@ -71,7 +71,7 @@ class RegistrationReligionViewController: UIViewController {
                 cellIdentifier: cellIdentifier,
                 cellType: cellType
             )) { (row, item, cell) in
-                let isSelectedRow = (row == self.user?.bodyId)
+                let isSelectedRow = (row == self.user?.religionId)
                 let text = item
 
                 cell.subject.text = text
@@ -91,7 +91,7 @@ class RegistrationReligionViewController: UIViewController {
             .zip(collectionView.rx.itemDeselected,
                 collectionView.rx.modelDeselected(String.self))
             .bind { (indexPath, model) in
-                self.user?.bodyId = nil
+                self.user?.religionId = nil
                 self.collectionView.reloadItems(at: [indexPath])
             }
             .disposed(by: disposeBag)
@@ -101,7 +101,7 @@ class RegistrationReligionViewController: UIViewController {
             .zip(collectionView.rx.itemSelected,
                 collectionView.rx.modelSelected(String.self))
             .bind { (indexPath, model) in
-                self.user?.bodyId = indexPath.row
+                self.user?.religionId = indexPath.row
                 self.collectionView.reloadItems(at: [indexPath])
             }
             .disposed(by: disposeBag)
@@ -144,7 +144,17 @@ class RegistrationReligionViewController: UIViewController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-
+        let top = titleLabel.frame.origin.y + titleLabel.height
+        let bottom = nextButton.frame.origin.y
+        let allowedHeight = CGFloat(bottom - top) - 40
+        let idealHeight = CGFloat(60 * dataSource.count + 40)
+        let height = allowedHeight > idealHeight ? idealHeight : allowedHeight
+        collectionView.snp.makeConstraints { make in
+            make.leading.equalToSuperview().inset(RConfig.horizontalMargin)
+            make.trailing.equalToSuperview().inset(RConfig.horizontalMargin)
+            make.top.equalTo(titleLabel.snp.bottom).offset(20)
+            make.height.equalTo(height)
+        }
     }
 
     private func configureSubviews() {
@@ -173,13 +183,6 @@ class RegistrationReligionViewController: UIViewController {
         titleLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(RConfig.horizontalMargin)
             make.top.equalTo(progressView.snp.bottom).offset(RConfig.titleTopMargin)
-        }
-
-        collectionView.snp.makeConstraints { make in
-            make.leading.equalToSuperview().inset(RConfig.horizontalMargin)
-            make.trailing.equalToSuperview().inset(RConfig.horizontalMargin)
-            make.top.equalTo(titleLabel.snp.bottom).offset(20)
-            make.height.equalTo(60 * dataSource.count + 20)
         }
 
         noticeLabel.snp.makeConstraints { make in
