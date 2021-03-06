@@ -3,11 +3,10 @@ import UIKit
 
 class RegistrationNavigationViewController: UINavigationController {
 
-    var registrationViewModel: RegistrationViewModel?
+    internal var registrationViewModel: RegistrationViewModel?
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        view.backgroundColor = .bumble1
         setNavigationBarHidden(true, animated: true)
     }
 
