@@ -169,6 +169,10 @@ class RegistrationBloodTypeViewController: UIViewController {
 
     private func configureConstraints() {
 
+        starFallView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+
         progressView.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(RConfig.horizontalMargin)
             make.trailing.equalToSuperview().inset(RConfig.horizontalMargin)
