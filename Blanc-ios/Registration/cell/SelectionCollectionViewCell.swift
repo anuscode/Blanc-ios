@@ -15,6 +15,14 @@ class SelectionCollectionViewCell: UICollectionViewCell {
         return label
     }()
 
+    private var checkmark: UIView = {
+        let view = UIImageView()
+        let image = UIImage(systemName: "checkmark")?.withTintColor(.bumble4, renderingMode: .alwaysOriginal)
+        view.image = image
+        view.visible(false)
+        return view
+    }()
+
     override func prepareForReuse() {
         super.prepareForReuse()
         select(false)
@@ -41,16 +49,22 @@ class SelectionCollectionViewCell: UICollectionViewCell {
 
     private func configureSubviews() {
         contentView.addSubview(subject)
+        contentView.addSubview(checkmark)
     }
 
     private func configureConstraints() {
         subject.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
+        checkmark.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().inset(20)
+            make.centerY.equalToSuperview()
+        }
     }
 
     func select(_ isSelected: Bool) {
         layer.borderWidth = isSelected ? 2 : 0
-        layer.borderColor = isSelected ? UIColor.tinderPink.cgColor : UIColor.clear.cgColor
+        layer.borderColor = isSelected ? UIColor.bumble4.cgColor : UIColor.clear.cgColor
+        checkmark.visible(isSelected)
     }
 }

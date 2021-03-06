@@ -12,7 +12,7 @@ class RegistrationSexViewController: UIViewController {
 
     private let ripple: Ripple = Ripple()
 
-    var registrationViewModel: RegistrationViewModel?
+    internal var registrationViewModel: RegistrationViewModel?
 
     private var user: UserDTO?
 
@@ -77,7 +77,7 @@ class RegistrationSexViewController: UIViewController {
 
     private lazy var maleCheckmark: UIImageView = {
         let view = UIImageView()
-        let image = UIImage(systemName: "checkmark")?.withTintColor(.systemBlue, renderingMode: .alwaysOriginal)
+        let image = UIImage(systemName: "checkmark")?.withTintColor(.bumble4, renderingMode: .alwaysOriginal)
         view.image = image
         view.visible(false)
         return view
@@ -122,7 +122,7 @@ class RegistrationSexViewController: UIViewController {
 
     private lazy var femaleCheckmark: UIImageView = {
         let view = UIImageView()
-        let image = UIImage(systemName: "checkmark")?.withTintColor(.tinderPink, renderingMode: .alwaysOriginal)
+        let image = UIImage(systemName: "checkmark")?.withTintColor(.bumble4, renderingMode: .alwaysOriginal)
         view.image = image
         view.visible(false)
         return view
@@ -230,11 +230,11 @@ class RegistrationSexViewController: UIViewController {
                 self.user = user
 
                 let isMale = user.sex == .MALE
-                self.male.layer.borderColor = isMale ? UIColor.systemBlue.cgColor : UIColor.white.cgColor
+                self.male.layer.borderColor = isMale ? UIColor.bumble4.cgColor : UIColor.white.cgColor
                 self.maleCheckmark.visible(isMale)
 
                 let isFemale = user.sex == .FEMALE
-                self.female.layer.borderColor = isFemale ? UIColor.tinderPink.cgColor : UIColor.white.cgColor
+                self.female.layer.borderColor = isFemale ? UIColor.bumble4.cgColor : UIColor.white.cgColor
                 self.femaleCheckmark.visible(isFemale)
             })
             .disposed(by: disposeBag)
