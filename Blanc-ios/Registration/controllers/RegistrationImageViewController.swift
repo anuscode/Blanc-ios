@@ -413,15 +413,14 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
 
     private func subscribeViewModel() {
         registrationViewModel?.observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: { [unowned self] userDTO in
-                user = userDTO
-                DispatchQueue.main.async {
-                    update(userDTO)
-                }
-            }, onError: { [unowned self] err in
+            .subscribe(onNext: { userDTO in
+                self.user = userDTO
+                self.update(userDTO)
+            }, onError: { err in
                 log.error(err)
-                toast(message: "알 수 없는 에러가 발생 하였습니다.")
+                self.toast(message: "알 수 없는 에러가 발생 하였습니다.")
             })
             .disposed(by: disposeBag)
     }
@@ -569,7 +568,7 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
 
     private func presentPendingViewController() {
         let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.stackAfterClear(identifier: "RegistrationPendingViewController", animated: true)
+        navigation.stackAfterClear(identifier: "PendingViewController", animated: true)
     }
 }
 
