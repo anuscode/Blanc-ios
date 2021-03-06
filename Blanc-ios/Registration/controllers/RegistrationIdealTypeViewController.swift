@@ -24,7 +24,7 @@ class RegistrationIdealTypeViewController: UIViewController {
 
     lazy private var progressView: UIProgressView = {
         let progress = UIProgressView(progressViewStyle: .bar)
-        progress.trackTintColor = .white
+        progress.trackTintColor = .secondarySystemBackground
         progress.progressTintColor = .black
         progress.progress = 13 / RConfig.progressCount
         return progress

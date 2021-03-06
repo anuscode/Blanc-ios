@@ -17,7 +17,7 @@ class SelectionCollectionViewCell: UICollectionViewCell {
 
     private var checkmark: UIView = {
         let view = UIImageView()
-        let image = UIImage(systemName: "checkmark")?.withTintColor(.bumble4, renderingMode: .alwaysOriginal)
+        let image = UIImage(systemName: "checkmark")?.withTintColor(.systemBlue, renderingMode: .alwaysOriginal)
         view.image = image
         view.visible(false)
         return view
@@ -64,7 +64,7 @@ class SelectionCollectionViewCell: UICollectionViewCell {
 
     func select(_ isSelected: Bool) {
         layer.borderWidth = isSelected ? 2 : 0
-        layer.borderColor = isSelected ? UIColor.bumble4.cgColor : UIColor.clear.cgColor
+        layer.borderColor = isSelected ? UIColor.systemBlue.cgColor : UIColor.clear.cgColor
         checkmark.visible(isSelected)
     }
 }

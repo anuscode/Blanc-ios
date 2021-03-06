@@ -27,7 +27,7 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
 
     lazy private var progressView: UIProgressView = {
         let progress = UIProgressView(progressViewStyle: .bar)
-        progress.trackTintColor = .white
+        progress.trackTintColor = .secondarySystemBackground
         progress.progressTintColor = .black
         progress.progress = 15 / RConfig.progressCount
         return progress
@@ -554,25 +554,22 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
         }
 
         spinner.visible(true)
-        registrationViewModel?.updateUserStatusPending(
-            onSuccess: { [unowned self] in
-                DispatchQueue.main.async {
-                    spinner.visible(false)
-                    presentPendingViewController()
+        registrationViewModel?
+            .updateUserStatusPending(
+                onSuccess: {
+                    self.spinner.visible(false)
+                    self.presentPendingViewController()
+                },
+                onError: {
+                    self.spinner.visible(false)
+                    self.toast(message: "심사 요청에 실패 하였습니다.")
                 }
-            },
-            onError: { [unowned self] in
-                DispatchQueue.main.async {
-                    spinner.visible(false)
-                    toast(message: "심사 요청에 실패 하였습니다.")
-                }
-            }
-        )
+            )
     }
 
     private func presentPendingViewController() {
         let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.stackAfterClear(identifier: "PendingViewController", animated: true)
+        navigation.stackAfterClear(identifier: "RegistrationPendingViewController", animated: true)
     }
 }
 

@@ -27,7 +27,7 @@ class RegistrationSmokingViewController: UIViewController {
 
     lazy private var progressView: UIProgressView = {
         let progress = UIProgressView(progressViewStyle: .bar)
-        progress.trackTintColor = .white
+        progress.trackTintColor = .secondarySystemBackground
         progress.progressTintColor = .black
         progress.progress = 10 / RConfig.progressCount
         return progress

@@ -23,7 +23,7 @@ class RegistrationSexViewController: UIViewController {
 
     lazy private var progressView: UIProgressView = {
         let progress = UIProgressView(progressViewStyle: .bar)
-        progress.trackTintColor = .white
+        progress.trackTintColor = .secondarySystemBackground
         progress.progressTintColor = .black
         progress.progress = 2 / RConfig.progressCount
         return progress
@@ -77,7 +77,7 @@ class RegistrationSexViewController: UIViewController {
 
     private lazy var maleCheckmark: UIImageView = {
         let view = UIImageView()
-        let image = UIImage(systemName: "checkmark")?.withTintColor(.bumble4, renderingMode: .alwaysOriginal)
+        let image = UIImage(systemName: "checkmark")?.withTintColor(.systemBlue, renderingMode: .alwaysOriginal)
         view.image = image
         view.visible(false)
         return view
@@ -122,7 +122,7 @@ class RegistrationSexViewController: UIViewController {
 
     private lazy var femaleCheckmark: UIImageView = {
         let view = UIImageView()
-        let image = UIImage(systemName: "checkmark")?.withTintColor(.bumble4, renderingMode: .alwaysOriginal)
+        let image = UIImage(systemName: "checkmark")?.withTintColor(.systemBlue, renderingMode: .alwaysOriginal)
         view.image = image
         view.visible(false)
         return view
@@ -230,11 +230,11 @@ class RegistrationSexViewController: UIViewController {
                 self.user = user
 
                 let isMale = user.sex == .MALE
-                self.male.layer.borderColor = isMale ? UIColor.bumble4.cgColor : UIColor.white.cgColor
+                self.male.layer.borderColor = isMale ? UIColor.systemBlue.cgColor : UIColor.white.cgColor
                 self.maleCheckmark.visible(isMale)
 
                 let isFemale = user.sex == .FEMALE
-                self.female.layer.borderColor = isFemale ? UIColor.bumble4.cgColor : UIColor.white.cgColor
+                self.female.layer.borderColor = isFemale ? UIColor.systemBlue.cgColor : UIColor.white.cgColor
                 self.femaleCheckmark.visible(isFemale)
             })
             .disposed(by: disposeBag)
