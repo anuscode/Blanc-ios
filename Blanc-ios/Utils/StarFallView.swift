@@ -4,6 +4,8 @@ import Lottie
 
 class StarFallView: UIView {
 
+    internal var transparency: CGFloat = 1.0
+
     private var ripple: Ripple = Ripple()
 
     lazy private var host: UIView = {
@@ -49,7 +51,8 @@ class StarFallView: UIView {
         cell.spinRange = 57.2 * (.pi / 180.0)
         cell.scale = 0.06
         cell.scaleRange = 0.3
-        cell.color = UIColor(red: 255.0 / 255.0, green: 255.0 / 255.0, blue: 255.0 / 255.0, alpha: 1.0).cgColor
+        let color = UIColor(red: 255.0 / 255.0, green: 255.0 / 255.0, blue: 255.0 / 255.0, alpha: transparency).cgColor
+        cell.color = color
         return cell
     }()
 
@@ -69,7 +72,7 @@ class StarFallView: UIView {
         cell.spinRange = 57.2 * (.pi / 180.0)
         cell.scale = 0.06
         cell.scaleRange = 0.3
-        cell.color = UIColor(red: 255.0 / 255.0, green: 196.0 / 255.0, blue: 3.7 / 255.0, alpha: 0.9).cgColor
+        cell.color = UIColor(red: 255.0 / 255.0, green: 196.0 / 255.0, blue: 3.7 / 255.0, alpha: transparency * 0.9).cgColor
         return cell
     }()
 
@@ -89,7 +92,7 @@ class StarFallView: UIView {
         cell.spinRange = 57.2 * (.pi / 180.0)
         cell.scale = 0.06
         cell.scaleRange = 0.3
-        cell.color = UIColor(red: 255.0 / 255.0, green: 197.5 / 255.0, blue: 59.9 / 255.0, alpha: 0.9).cgColor
+        cell.color = UIColor(red: 255.0 / 255.0, green: 197.5 / 255.0, blue: 59.9 / 255.0, alpha: transparency * 0.9).cgColor
         return cell
     }()
 
@@ -109,7 +112,7 @@ class StarFallView: UIView {
         cell.spinRange = 57.2 * (.pi / 180.0)
         cell.scale = 0.06
         cell.scaleRange = 0.3
-        cell.color = UIColor(red: 192.5 / 255.0, green: 255.0 / 255.0, blue: 119.1 / 255.0, alpha: 0.9).cgColor
+        cell.color = UIColor(red: 192.5 / 255.0, green: 255.0 / 255.0, blue: 119.1 / 255.0, alpha: transparency * 0.9).cgColor
         return cell
     }()
 
@@ -129,7 +132,7 @@ class StarFallView: UIView {
         cell.spinRange = 57.2 * (.pi / 180.0)
         cell.scale = 0.06
         cell.scaleRange = 0.3
-        cell.color = UIColor(red: 255.0 / 255.0, green: 10.8 / 255.0, blue: 163.4 / 255.0, alpha: 0.9).cgColor
+        cell.color = UIColor(red: 255.0 / 255.0, green: 10.8 / 255.0, blue: 163.4 / 255.0, alpha: transparency * 0.9).cgColor
         return cell
     }()
 
@@ -149,12 +152,13 @@ class StarFallView: UIView {
         cell.spinRange = 57.2 * (.pi / 180.0)
         cell.scale = 0.06
         cell.scaleRange = 0.3
-        cell.color = UIColor(red: 149.2 / 255.0, green: 162.4 / 255.0, blue: 255.0 / 255.0, alpha: 0.9).cgColor
+        cell.color = UIColor(red: 149.2 / 255.0, green: 162.4 / 255.0, blue: 255.0 / 255.0, alpha: transparency * 0.9).cgColor
         return cell
     }()
 
-    required init() {
+    required init(transparency: Float = 1.0) {
         super.init(frame: .zero)
+        self.transparency = CGFloat(transparency)
         configureSubviews()
         configureConstraints()
     }
@@ -172,5 +176,4 @@ class StarFallView: UIView {
             make.edges.equalToSuperview()
         }
     }
-
 }
