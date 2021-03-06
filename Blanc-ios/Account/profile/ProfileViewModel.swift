@@ -9,7 +9,7 @@ class ProfileViewModel {
 
     private let observable: ReplaySubject = ReplaySubject<UserDTO>.create(bufferSize: 1)
 
-    private var userDTO: UserDTO?
+    private var user: UserDTO?
 
     init(profileModel: ProfileModel) {
         self.profileModel = profileModel
@@ -18,20 +18,20 @@ class ProfileViewModel {
 
     private func observeViewModel() {
         profileModel.observe()
-                .subscribe(onNext: { [unowned self] userDTO in
-                    self.userDTO = userDTO
-                    publish()
-                    log.info(userDTO)
+                .subscribe(onNext: { user in
+                    self.user = user
+                    self.publish()
+                    log.info(user)
                 }, onError: { err in
                     log.error(err)
                 }).disposed(by: disposeBag)
     }
 
     func publish() {
-        guard (userDTO != nil) else {
+        guard (user != nil) else {
             return
         }
-        observable.onNext(userDTO!)
+        observable.onNext(user!)
     }
 
     func observe() -> Observable<UserDTO> {
