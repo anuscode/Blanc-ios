@@ -19,7 +19,9 @@ class NextButton: UIView {
         super.init(frame: .zero)
         layer.cornerRadius = 30
         layer.masksToBounds = true
-        backgroundColor = .white
+        backgroundColor = .secondarySystemBackground
+        layer.borderColor = UIColor.systemGray2.cgColor
+        layer.borderWidth = 2.5
         setup()
     }
 

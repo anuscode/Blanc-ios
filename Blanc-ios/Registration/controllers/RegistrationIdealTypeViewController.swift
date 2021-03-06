@@ -57,7 +57,7 @@ class RegistrationIdealTypeViewController: UIViewController {
         collectionView.verticalSpacing = 5
         collectionView.backgroundColor = .clear
         collectionView.delegate = self
-        collectionView.addTags(UserGlobal.charms, with: config)
+        collectionView.addTags(UserGlobal.idealTypes, with: config)
         return collectionView
     }()
 

@@ -57,7 +57,7 @@ class RegistrationInterestsViewController: UIViewController {
         collectionView.verticalSpacing = 5
         collectionView.backgroundColor = .clear
         collectionView.delegate = self
-        collectionView.addTags(UserGlobal.charms, with: config)
+        collectionView.addTags(UserGlobal.interests, with: config)
         return collectionView
     }()
 
@@ -178,9 +178,9 @@ class RegistrationInterestsViewController: UIViewController {
     private func subscribeViewModel() {
         registrationViewModel?.observe()
             .take(1)
-            .subscribe(onNext: { [unowned self] user in
+            .subscribe(onNext: { user in
                 self.user = user
-                update()
+                self.update()
             }, onError: { err in
                 log.error(err)
             })
@@ -203,9 +203,7 @@ class RegistrationInterestsViewController: UIViewController {
         }
 
         registrationViewModel?.updateUserProfile(onSuccess: {
-            DispatchQueue.main.async {
-                self.next()
-            }
+            self.next()
         }, onError: {
             self.toast(message: "유저 프로필 업데이트 중 에러가 발생 하였습니다.")
         })

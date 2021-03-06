@@ -61,7 +61,7 @@ class RegistrationModel {
         userService
             .updateUserProfile(currentUser: currentUser, uid: uid, userId: userId, user: user)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
             .subscribe(onSuccess: { _ in
                 onSuccess()
                 self.publish()
