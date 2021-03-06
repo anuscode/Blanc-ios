@@ -13,9 +13,14 @@ class RegistrationCharmViewController: UIViewController {
 
     private let ripple: Ripple = Ripple()
 
-    var registrationViewModel: RegistrationViewModel?
+    internal var registrationViewModel: RegistrationViewModel?
 
     private var user: UserDTO?
+
+    lazy private var starFallView: StarFallView = {
+        let view = StarFallView()
+        return view
+    }()
 
     lazy private var progressView: UIProgressView = {
         let progress = UIProgressView(progressViewStyle: .bar)
@@ -36,15 +41,13 @@ class RegistrationCharmViewController: UIViewController {
 
     lazy private var collectionBackgroundView: UIView = {
         let view = UIView()
-        view.backgroundColor = .white
+        view.backgroundColor = UIColor.secondarySystemBackground.withAlphaComponent(0.5)
         view.layer.cornerRadius = 15
         view.layer.masksToBounds = true
-
         view.addSubview(collectionView)
         collectionView.snp.makeConstraints { make in
             make.edges.equalToSuperview().inset(20)
         }
-
         return view
     }()
 
@@ -52,7 +55,7 @@ class RegistrationCharmViewController: UIViewController {
         let collectionView = TTGTextTagCollectionView()
         collectionView.horizontalSpacing = 5
         collectionView.verticalSpacing = 5
-        collectionView.backgroundColor = .white
+        collectionView.backgroundColor = .clear
         collectionView.delegate = self
         collectionView.addTags(UserGlobal.charms, with: config)
         return collectionView
@@ -60,13 +63,13 @@ class RegistrationCharmViewController: UIViewController {
 
     lazy private var config: TTGTextTagConfig = {
         let config = TTGTextTagConfig()
-        config.backgroundColor = .secondarySystemBackground
+        config.backgroundColor = .bumble0
         config.cornerRadius = 5
         config.textColor = .black
-        config.textFont = UIFont.systemFont(ofSize: 16)
-        config.borderColor = .secondarySystemBackground
+        config.textFont = .systemFont(ofSize: 16)
+        config.borderColor = .bumble0
         config.shadowOpacity = 0
-        config.selectedBackgroundColor = .bumble0
+        config.selectedBackgroundColor = .bumble1
         config.selectedCornerRadius = 5
         config.selectedTextColor = .black
         config.exactHeight = 36
@@ -97,7 +100,6 @@ class RegistrationCharmViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        view.backgroundColor = .bumble1
     }
 
     override func viewDidLoad() {
@@ -107,7 +109,34 @@ class RegistrationCharmViewController: UIViewController {
         subscribeViewModel()
     }
 
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        let top = titleLabel.frame.origin.y + titleLabel.height
+        let bottom = nextButton.frame.origin.y
+        let height = CGFloat(bottom - top) - 70
+        collectionBackgroundView.snp.remakeConstraints { make in
+            make.leading.equalToSuperview().inset(RConfig.horizontalMargin)
+            make.trailing.equalToSuperview().inset(RConfig.horizontalMargin)
+            make.top.equalTo(titleLabel.snp.bottom).offset(20)
+            make.height.equalTo(height)
+        }
+    }
+
+    private func configureSubviews() {
+        view.addSubview(starFallView)
+        view.addSubview(progressView)
+        view.addSubview(titleLabel)
+        view.addSubview(collectionBackgroundView)
+        view.addSubview(noticeLabel)
+        view.addSubview(nextButton)
+        view.addSubview(backButton)
+    }
+
     private func configureConstraints() {
+
+        starFallView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
 
         progressView.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(RConfig.horizontalMargin)
@@ -147,23 +176,14 @@ class RegistrationCharmViewController: UIViewController {
 
     private func subscribeViewModel() {
         registrationViewModel?.observe()
-                .take(1)
-                .subscribe(onNext: { [unowned self] user in
-                    self.user = user
-                    update()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
-    }
-
-    private func configureSubviews() {
-        view.addSubview(progressView)
-        view.addSubview(titleLabel)
-        view.addSubview(collectionBackgroundView)
-        view.addSubview(noticeLabel)
-        view.addSubview(nextButton)
-        view.addSubview(backButton)
+            .take(1)
+            .subscribe(onNext: { [unowned self] user in
+                self.user = user
+                update()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     private func update() {
