@@ -168,16 +168,11 @@ class RegistrationNicknameViewController: UIViewController {
     }
 
     @objc func keyboardWillShow(notification: NSNotification) {
-        DispatchQueue.main.async { [unowned self] in
-            let screenHeight = UIScreen.main.bounds.height
-            if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-                let keyboardHeight = keyboardSize.height
-                if (nextButton.frame.origin.y > screenHeight - keyboardHeight) {
-                    nextButton.snp.makeConstraints { make in
-                        make.trailing.equalToSuperview().inset(RConfig.nextTrailingMargin)
-                        make.bottom.equalTo(view.safeAreaLayoutGuide).inset(15 + keyboardHeight)
-                    }
-                }
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            let keyboardHeight = keyboardSize.height
+            nextButton.snp.remakeConstraints { make in
+                make.trailing.equalToSuperview().inset(RConfig.nextTrailingMargin)
+                make.bottom.equalTo(view.safeAreaLayoutGuide).inset(15 + keyboardHeight)
             }
         }
     }
