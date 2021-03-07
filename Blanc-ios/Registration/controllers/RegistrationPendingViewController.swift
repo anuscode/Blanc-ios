@@ -177,7 +177,7 @@ class RegistrationPendingViewController: UIViewController {
         secondaryTextLabel.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).inset(-5)
             make.centerX.equalToSuperview()
-            make.width.equalToSuperview().multipliedBy(0.80)
+            make.leading.equalTo(titleLabel.snp.leading)
         }
 
         imageView.snp.makeConstraints { make in
@@ -192,16 +192,16 @@ class RegistrationPendingViewController: UIViewController {
 
         imageButton.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.leading.equalToSuperview().inset(20)
-            make.trailing.equalToSuperview().inset(20)
+            make.leading.equalToSuperview().inset(30)
+            make.trailing.equalToSuperview().inset(30)
             make.height.equalTo(50)
             make.bottom.equalTo(goBackFirstButton.snp.top).inset(-10)
         }
 
         goBackFirstButton.snp.makeConstraints { make in
             make.bottom.equalTo(view.safeAreaLayoutGuide).inset(10)
-            make.leading.equalToSuperview().inset(20)
-            make.trailing.equalToSuperview().inset(20)
+            make.leading.equalToSuperview().inset(30)
+            make.trailing.equalToSuperview().inset(30)
             make.height.equalTo(50)
         }
     }
