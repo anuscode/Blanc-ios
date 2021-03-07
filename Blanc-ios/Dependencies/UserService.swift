@@ -322,4 +322,14 @@ class UserService {
             .filterSuccessfulStatusAndRedirectCodes()
             .map(UserDTO.self, using: decoder)
     }
+
+    func unregister(uid: String?, userId: String?) -> Single<Void> {
+        provider.rx
+            .request(.unregister(uid: uid, userId: userId))
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .debug()
+            .filterSuccessfulStatusAndRedirectCodes()
+            .map({ _ in Void() })
+    }
 }
