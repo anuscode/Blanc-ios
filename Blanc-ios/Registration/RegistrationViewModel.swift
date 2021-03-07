@@ -50,4 +50,8 @@ class RegistrationViewModel {
     func updateUserStatusPending(onSuccess: @escaping () -> Void, onError: @escaping () -> Void) {
         registrationModel.updateUserStatusPending(onSuccess: onSuccess, onError: onError)
     }
+
+    func unregister(onSuccess: @escaping () -> Void, onError: @escaping () -> Void) {
+        registrationModel.unregister(onSuccess: onSuccess, onError: onError)
+    }
 }

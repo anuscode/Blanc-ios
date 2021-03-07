@@ -38,6 +38,7 @@ enum UserProvider {
 
     // DELETE
     case deleteUserImage(uid: String?, userId: String?, index: Int)
+    case unregister(uid: String?, userId: String?)
 }
 
 extension UserProvider: TargetType {
@@ -99,6 +100,8 @@ extension UserProvider: TargetType {
             return "users/\(userId ?? "")/setting/push"
         case .deleteUserImage(uid: _, userId: let userId, index: let index):
             return "users/\(userId ?? "")/user_images/\(index)"
+        case .unregister(uid: _, userId: let userId):
+            return "users/\(userId ?? "")/unregister"
         }
     }
 
@@ -132,6 +135,8 @@ extension UserProvider: TargetType {
              .updateUserPushSetting(uid: _, userId: _, pushSetting: _):
             return .put
         case .deleteUserImage(uid: _, userId: _, index: _):
+            return .delete
+        case .unregister(uid: _, userId: let _):
             return .delete
         }
     }
@@ -168,9 +173,9 @@ extension UserProvider: TargetType {
             /** POST **/
         case .createUser(idToken: _, uid: _, phone: let phone, smsCode: let smsCode, smsToken: let smsToken):
             return .requestCompositeParameters(
-                    bodyParameters: ["phone": phone!, "sms_code": smsCode!, "sms_token": smsToken!],
-                    bodyEncoding: URLEncoding.httpBody,
-                    urlParameters: [:]
+                bodyParameters: ["phone": phone!, "sms_code": smsCode!, "sms_token": smsToken!],
+                bodyEncoding: URLEncoding.httpBody,
+                urlParameters: [:]
             )
         case .signInWithKakaoToken(idToken: _):
             return .requestPlain
@@ -190,17 +195,10 @@ extension UserProvider: TargetType {
             return .requestPlain
         case .updateUserStatusPending(uid: _, userId: _):
             return .requestPlain
-        case .updateUserLocation(uid: _, userId: _, latitude: var latitude, longitude: var longitude, area: var area):
-            latitude = latitude ?? 0
-            longitude = longitude ?? 0
-            area = area ?? "알 수 없음"
+        case .updateUserLocation(uid: _, userId: _, latitude: let latitude, longitude: let longitude, area: let area):
             return .requestParameters(
-                    parameters: [
-                        "latitude": latitude,
-                        "longitude": longitude,
-                        "area": area
-                    ],
-                    encoding: URLEncoding.queryString
+                parameters: ["latitude": latitude, "longitude": longitude, "area": area],
+                encoding: URLEncoding.queryString
             )
         case .updateUserStarRatingScore(uid: _, userId: _, score: _):
             return .requestPlain
@@ -221,6 +219,8 @@ extension UserProvider: TargetType {
 
             /** DELETE **/
         case .deleteUserImage(uid: _, userId: _, index: _):
+            return .requestPlain
+        case .unregister(uid: _, userId: _):
             return .requestPlain
         }
     }
@@ -309,6 +309,9 @@ extension UserProvider: TargetType {
             headers["uid"] = uid
             return headers
         case .deleteUserImage(uid: let uid, userId: _, index: _):
+            headers["uid"] = uid
+            return headers
+        case .unregister(uid: let uid, userId: _):
             headers["uid"] = uid
             return headers
         }

@@ -34,6 +34,19 @@ class RegistrationPendingViewController: UIViewController {
         return dot
     }()
 
+    lazy private var unregisterLabel: UILabel = {
+        let label = UILabel()
+        label.text = "가입 취소"
+        label.underline()
+        label.font = .systemFont(ofSize: 12)
+        label.textColor = .darkSilverBlue
+        label.isUserInteractionEnabled = true
+        label.visible(true)
+        let tapRecognizer = UITapGestureRecognizer.init(target: self, action: #selector(unregister))
+        label.addGestureRecognizer(tapRecognizer)
+        return label
+    }()
+
     lazy private var secondaryTextLabel: UILabel = {
         let label = UILabel()
         label.text = "승인 시 메인 화면으로 자동 전환 됩니다."
@@ -79,10 +92,12 @@ class RegistrationPendingViewController: UIViewController {
         let button = UIButton()
         button.titleLabel?.font = .boldSystemFont(ofSize: 18)
         button.setTitle("이미지 변경 하기", for: .normal)
+        button.setTitleColor(.black, for: .normal)
         button.layer.masksToBounds = true
         button.layer.cornerRadius = Constants.radius
-        button.backgroundColor = .systemBlue
-        button.setTitleColor(.white, for: .normal)
+        button.layer.borderWidth = 2
+        button.layer.borderColor = UIColor.black.cgColor
+        button.backgroundColor = .white
         button.addTarget(self, action: #selector(didTapImageButton), for: .touchUpInside)
         button.visible(false)
         ripple.activate(to: button)
@@ -94,17 +109,14 @@ class RegistrationPendingViewController: UIViewController {
         view.backgroundColor = .systemBlue
         view.layer.cornerRadius = 5
         view.layer.masksToBounds = true
-
         let label = UILabel()
         label.text = "프로필 처음부터 다시 작성"
         label.textColor = .white
         label.font = .boldSystemFont(ofSize: 18)
-
         view.addSubview(label)
         label.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
-
         view.rx
             .tapGesture()
             .when(.recognized)
@@ -113,7 +125,6 @@ class RegistrationPendingViewController: UIViewController {
                 navigation.stackAfterClear(identifier: "RegistrationNicknameViewController", animated: true)
             })
             .disposed(by: disposeBag)
-
         ripple.activate(to: view)
         return view
     }()
@@ -134,6 +145,7 @@ class RegistrationPendingViewController: UIViewController {
         view.addSubview(starFallView)
         view.addSubview(titleLabel)
         view.addSubview(dot)
+        view.addSubview(unregisterLabel)
         view.addSubview(secondaryTextLabel)
         view.addSubview(imageView)
         view.addSubview(noticeView)
@@ -157,6 +169,11 @@ class RegistrationPendingViewController: UIViewController {
             make.bottom.equalTo(titleLabel.snp.bottom)
         }
 
+        unregisterLabel.snp.makeConstraints { make in
+            make.centerY.equalTo(titleLabel.snp.centerY)
+            make.trailing.equalToSuperview().inset(20)
+        }
+
         secondaryTextLabel.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).inset(-5)
             make.centerX.equalToSuperview()
@@ -165,7 +182,7 @@ class RegistrationPendingViewController: UIViewController {
 
         imageView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.centerY.equalToSuperview().multipliedBy(0.9)
+            make.centerY.equalToSuperview().multipliedBy(0.8)
         }
 
         noticeView.snp.makeConstraints { make in
@@ -175,13 +192,14 @@ class RegistrationPendingViewController: UIViewController {
 
         imageButton.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.width.equalToSuperview().multipliedBy(0.8)
+            make.leading.equalToSuperview().inset(20)
+            make.trailing.equalToSuperview().inset(20)
             make.height.equalTo(50)
-            make.bottom.equalTo(goBackFirstButton.snp.top).offset(10)
+            make.bottom.equalTo(goBackFirstButton.snp.top).inset(-10)
         }
 
         goBackFirstButton.snp.makeConstraints { make in
-            make.bottom.equalTo(view.safeAreaLayoutGuide).inset(20)
+            make.bottom.equalTo(view.safeAreaLayoutGuide).inset(10)
             make.leading.equalToSuperview().inset(20)
             make.trailing.equalToSuperview().inset(20)
             make.height.equalTo(50)
@@ -221,28 +239,51 @@ class RegistrationPendingViewController: UIViewController {
 
         imageView.url(userDTO.getTempImageUrl(index: 0))
 
-        if (userDTO.status == Status.BLOCKED) {
+        if (userDTO.status == .BLOCKED) {
             secondaryTextLabel.text = "고객센터로 연락 바랍니다."
             progressTextLabel.text = "해당 계정은 이용 정지 되었습니다."
             progressTextLabel.textColor = .systemRed
             return
         }
 
-        if (userDTO.status == Status.REJECTED) {
+        if (userDTO.status == .REJECTED) {
             progressTextLabel.text = "사진이 반려 되었습니다.\n수정 후 다시 이용 바랍니다."
             progressTextLabel.textColor = .systemRed
             imageButton.visible(true)
             return
         }
 
-        if (userDTO.status == Status.PENDING) {
+        if (userDTO.status == .PENDING) {
             progressTextLabel.text = "관리자의 프로필 검수 후\n가입이 완료 됩니다."
+            progressTextLabel.textColor = .black
             return
         }
     }
 
-    @objc private func didTapImageButton() {
+    @objc private func didTapImageButton(sender: UITapGestureRecognizer) {
         let navigation = navigationController as! RegistrationNavigationViewController
         navigation.stackAfterClear(identifier: "RegistrationImageViewController", animated: true)
+    }
+
+    @objc private func unregister(sender: UITapGestureRecognizer) {
+        let unregisterAction = UIAlertAction(title: "가입 취소", style: .default) { (action) in
+            self.registrationViewModel?.unregister(onSuccess: {
+                self.parent?.replace(storyboard: "Main", withIdentifier: "InitPagerViewController")
+            }, onError: {
+                self.toast(message: "가입 취소가 정상적으로 완료되지 않았습니다..")
+            })
+        }
+
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        cancelAction.setValue(UIColor.red, forKey: "titleTextColor")
+
+        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        alertController.addAction(cancelAction)
+        alertController.addAction(unregisterAction)
+        alertController.modalPresentationStyle = .popover
+
+        let presentationController = alertController.popoverPresentationController
+        presentationController?.barButtonItem = (sender as! UIBarButtonItem)
+        present(alertController, animated: true, completion: nil)
     }
 }

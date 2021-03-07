@@ -129,4 +129,28 @@ class RegistrationModel {
             })
             .disposed(by: disposeBag)
     }
+
+    func unregister(onSuccess: @escaping () -> Void, onError: @escaping () -> Void) {
+        guard let user = session.user else {
+            return
+        }
+        if user.available != false {
+            return
+        }
+        if user.status != .PENDING {
+            return
+        }
+        userService
+            .unregister(uid: user.uid, userId: user.id)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
+            .subscribe(onSuccess: { _ in
+                self.session.signOut()
+                onSuccess()
+            }, onError: { err in
+                log.error(err)
+                onError()
+            })
+            .disposed(by: disposeBag)
+    }
 }
