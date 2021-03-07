@@ -174,16 +174,17 @@ class HomeViewController: UIViewController {
     }
 
     private func subscribeHomeViewModel() {
-        homeViewModel?.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [unowned self] data in
-                    self.data = data
-                    update()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        homeViewModel?
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onNext: { data in
+                self.data = data
+                self.update()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     private func update() {
@@ -295,19 +296,19 @@ extension HomeViewController: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         if (section == 0) {
             return data.recommendedUsers.count == 0 ? generateFooterView(
-                    mainText: "해당 되는 유저를 찾을 수 없습니다.",
-                    secondaryText: "최선을 다해 유저를 모집 중입니다.\n양해 부탁 드립니다.") : UIView()
+                mainText: "해당 되는 유저를 찾을 수 없습니다.",
+                secondaryText: "최선을 다해 유저를 모집 중입니다.\n양해 부탁 드립니다.") : UIView()
         }
         if (section == 1) {
             return data.closeUsers.count == 0 ? generateFooterView(
-                    mainText: "해당 되는 유저를 찾을 수 없습니다.",
-                    secondaryText: "최선을 다해 유저를 모집 중입니다.\n양해 부탁 드립니다.") : UIView()
+                mainText: "해당 되는 유저를 찾을 수 없습니다.",
+                secondaryText: "최선을 다해 유저를 모집 중입니다.\n양해 부탁 드립니다.") : UIView()
         }
 
         if (section == 2) {
             return data.realTimeUsers.count == 0 ? generateFooterView(
-                    mainText: "해당 되는 유저를 찾을 수 없습니다.",
-                    secondaryText: "최선을 다해 유저를 모집 중입니다.\n양해 부탁 드립니다.") : UIView()
+                mainText: "해당 되는 유저를 찾을 수 없습니다.",
+                secondaryText: "최선을 다해 유저를 모집 중입니다.\n양해 부탁 드립니다.") : UIView()
         }
 
         return nil

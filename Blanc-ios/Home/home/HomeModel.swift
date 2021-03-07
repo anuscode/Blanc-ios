@@ -47,32 +47,32 @@ class HomeModel {
         updateUserLocation()
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-            .flatMap { [unowned self] it -> Single<[UserDTO]> in
-                listRecommendedUsers()
+            .flatMap { it -> Single<[UserDTO]> in
+                self.listRecommendedUsers()
             }
-            .do(afterSuccess: { [unowned self] users in
+            .do(afterSuccess: { users in
                 // loop to calculate and set a distance from current user.
-                users.distance(session)
-                data.recommendedUsers = users
+                users.distance(self.session)
+                self.data.recommendedUsers = users
             })
-            .flatMap { [unowned self] it -> Single<[UserDTO]> in
-                listCloseUsers()
+            .flatMap { it -> Single<[UserDTO]> in
+                self.listCloseUsers()
             }
-            .do(afterSuccess: { [unowned self] users in
+            .do(afterSuccess: { users in
                 // loop to calculate and set a distance from current user.
-                users.distance(session)
-                data.closeUsers = users
+                users.distance(self.session)
+                self.data.closeUsers = users
             })
-            .flatMap { [unowned self] it -> Single<[UserDTO]> in
-                listRealTimeAccessUsers()
+            .flatMap { it -> Single<[UserDTO]> in
+                self.listRealTimeAccessUsers()
             }
-            .do(afterSuccess: { [unowned self] users in
+            .do(afterSuccess: { users in
                 // loop to calculate and set a distance from current user.
-                users.distance(session)
-                data.realTimeUsers = users
+                users.distance(self.session)
+                self.data.realTimeUsers = users
             })
-            .subscribe(onSuccess: { [unowned self] _ in
-                publish()
+            .subscribe(onSuccess: { _ in
+                self.publish()
             }, onError: { err in
                 log.error(err)
             })
@@ -115,11 +115,9 @@ class HomeModel {
             .flatMap({ _ -> Observable<String> in
                 if (self.manager.authorizationStatus.rawValue <= 2) {
                     return Observable.of("알 수 없음")
-                } else {
-                    return self.manager.rx.placemark.map({ placemark in
-                        (placemark.locality ?? "알 수 없음")
-                    })
                 }
+                return self.manager.rx.placemark
+                    .map({ placemark in placemark.locality ?? "알 수 없음" })
             })
             .do(onNext: { locality in
                 addr = locality
