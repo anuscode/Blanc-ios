@@ -89,6 +89,35 @@ class RegistrationPendingViewController: UIViewController {
         return button
     }()
 
+    lazy private var goBackFirstButton: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemBlue
+        view.layer.cornerRadius = 5
+        view.layer.masksToBounds = true
+
+        let label = UILabel()
+        label.text = "프로필 처음부터 다시 작성"
+        label.textColor = .white
+        label.font = .boldSystemFont(ofSize: 18)
+
+        view.addSubview(label)
+        label.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+
+        view.rx
+            .tapGesture()
+            .when(.recognized)
+            .subscribe(onNext: { _ in
+                let navigation = self.navigationController as! RegistrationNavigationViewController
+                navigation.stackAfterClear(identifier: "RegistrationNicknameViewController", animated: true)
+            })
+            .disposed(by: disposeBag)
+
+        ripple.activate(to: view)
+        return view
+    }()
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
@@ -109,6 +138,7 @@ class RegistrationPendingViewController: UIViewController {
         view.addSubview(imageView)
         view.addSubview(noticeView)
         view.addSubview(imageButton)
+        view.addSubview(goBackFirstButton)
     }
 
     private func configureConstraints() {
@@ -147,7 +177,14 @@ class RegistrationPendingViewController: UIViewController {
             make.centerX.equalToSuperview()
             make.width.equalToSuperview().multipliedBy(0.8)
             make.height.equalTo(50)
-            make.bottom.equalTo(view.safeAreaLayoutGuide).inset(30)
+            make.bottom.equalTo(goBackFirstButton.snp.top).offset(10)
+        }
+
+        goBackFirstButton.snp.makeConstraints { make in
+            make.bottom.equalTo(view.safeAreaLayoutGuide).inset(20)
+            make.leading.equalToSuperview().inset(20)
+            make.trailing.equalToSuperview().inset(20)
+            make.height.equalTo(50)
         }
     }
 
