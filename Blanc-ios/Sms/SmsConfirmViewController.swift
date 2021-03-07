@@ -12,23 +12,21 @@ class SmsConfirmViewController: UIViewController {
 
     private let auth: Auth = Auth.auth()
 
-    private let disposeBag: DisposeBag = DisposeBag()
+    private var disposeBag: DisposeBag? = DisposeBag()
 
     private let ripple: Ripple = Ripple()
 
-    var interval: Disposable?
+    internal weak var session: Session?
 
-    var session: Session?
+    internal weak var verificationService: VerificationService?
 
-    var verificationService: VerificationService?
+    internal weak var userService: UserService?
 
-    var userService: UserService?
-
-    var verificationDTO: VerificationDTO?
+    internal var verification: VerificationDTO?
 
     lazy private var smsLabel: UILabel = {
         let label = UILabel()
-        label.text = "SMS 휴대폰 전화 인증"
+        label.text = "SMS 모바일 인증"
         label.font = .systemFont(ofSize: 28)
         label.numberOfLines = 1;
         label.textColor = .black
@@ -37,7 +35,7 @@ class SmsConfirmViewController: UIViewController {
 
     lazy private var smsLabel2: UILabel = {
         let label = UILabel()
-        label.text = "전달 받은 숫자 코드를 입력 하세요."
+        label.text = "전달 받은 코드를 입력 하세요."
         label.font = .systemFont(ofSize: 13)
         label.numberOfLines = 2;
         label.textColor = .customGray4
@@ -45,27 +43,33 @@ class SmsConfirmViewController: UIViewController {
     }()
 
     lazy private var smsCodeTextField: MDCOutlinedTextField = {
-        let textField = MDCOutlinedTextField()
-
         let rightImage = UIImageView(image: UIImage(systemName: "number.circle"))
         rightImage.image = rightImage.image?.withRenderingMode(.alwaysTemplate)
-
+        let textField = MDCOutlinedTextField()
         textField.trailingView = rightImage
         textField.trailingViewMode = .always
         textField.placeholder = "전달받은 코드를 입력 하세요."
         textField.label.text = "전달받은 코드를 입력 하세요."
-
         textField.keyboardType = .numberPad
         textField.backgroundColor = .secondarySystemBackground
         textField.containerRadius = Constants.radius
         textField.sizeToFit()
         textField.setColor(primary: .black, secondary: .secondaryLabel)
-
         textField.leadingAssistiveLabel.text = "6자리의 숫자 코드."
         textField.setLeadingAssistiveLabelColor(.black, for: .normal)
         textField.setLeadingAssistiveLabelColor(.black, for: .editing)
-
-        textField.addTarget(self, action: #selector(textFieldDidChange), for: .editingChanged)
+        textField.rx
+            .text
+            .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
+            .map({ [unowned self] text -> String in text ?? "" })
+            .map({ [unowned self] text -> Bool in
+                let value = text
+                let range = NSRange(location: 0, length: value.utf16.count)
+                let result = self.regex.firstMatch(in: value, range: range)
+                return (result != nil)
+            })
+            .subscribe(onNext: self.activateConfirmButton)
+            .disposed(by: disposeBag!)
         return textField
     }()
 
@@ -80,7 +84,14 @@ class SmsConfirmViewController: UIViewController {
         let button = UIButton()
         button.setTitle("초기화", for: .normal)
         button.setTitleColor(.systemBlue, for: .normal)
-        button.addTarget(self, action: #selector(didTapResetButton), for: .touchUpInside)
+        button.rx
+            .tapGesture()
+            .when(.recognized)
+            .take(1)
+            .subscribe(onNext: { _ in
+                self.dismiss(animated: true)
+            })
+            .disposed(by: disposeBag!)
         return button
     }()
 
@@ -111,11 +122,20 @@ class SmsConfirmViewController: UIViewController {
         super.viewDidLoad()
         configureSubviews()
         configureConstraints()
-        showRemainingTime()
+        initInterval()
     }
 
     override func viewDidLayoutSubviews() {
         smsCodeTextField.becomeFirstResponder()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        disposeBag = nil
+    }
+
+    deinit {
+        log.info("deinit SmsConfirmViewController..")
     }
 
     private func configureSubviews() {
@@ -174,19 +194,6 @@ class SmsConfirmViewController: UIViewController {
         }
     }
 
-    @objc private func textFieldDidChange() {
-        let value = smsCodeTextField.text ?? ""
-        let range = NSRange(location: 0, length: value.utf16.count)
-        let result = regex.firstMatch(in: value, range: range)
-        activateConfirmButton(result != nil)
-    }
-
-    @objc private func didTapResetButton() {
-        dismiss(animated: true) { [unowned self] in
-            interval?.dispose()
-        }
-    }
-
     @objc private func didTapConfirmButton() {
         let smsCode = smsCodeTextField.text ?? ""
         let range = NSRange(location: 0, length: smsCode.utf16.count)
@@ -196,48 +203,50 @@ class SmsConfirmViewController: UIViewController {
         }
         spinnerView.visible(true)
         activateConfirmButton(false)
-        verificationService?.verifySmsCode(
-                        currentUser: auth.currentUser!,
-                        uid: auth.uid,
-                        phone: verificationDTO?.phone,
-                        smsCode: smsCode,
-                        expiredAt: verificationDTO?.expiredAt
+        verificationService?
+            .verifySmsCode(
+                currentUser: auth.currentUser!,
+                uid: auth.uid,
+                phone: verification?.phone,
+                smsCode: smsCode,
+                expiredAt: verification?.expiredAt
+            )
+            .do(onSuccess: { it in
+                if (it.verified != true) {
+                    let message = "문자 인증에 실패 하였습니다."
+                    self.toast(message: it.reason ?? message)
+                    throw NSError(domain: message, code: 42, userInfo: nil)
+                }
+            })
+            .do(onError: { err in
+                log.error(err)
+                self.activateConfirmButton(true)
+            })
+            .flatMap { it -> Single<UserDTO> in
+                let currentUser = self.auth.currentUser!
+                let uid = self.auth.uid
+                return self.userService!.createUser(
+                    currentUser: currentUser,
+                    uid: uid,
+                    phone: it.phone,
+                    smsCode: it.smsCode,
+                    smsToken: it.smsToken
                 )
-                .do(onSuccess: { [unowned self] it in
-                    if (it.verified != true) {
-                        let message = "문자 인증에 실패 하였습니다."
-                        toast(message: it.reason ?? message)
-                        throw NSError(domain: message, code: 42, userInfo: ["uid": auth.uid as String? as Any])
-                    }
-                })
-                .do(onError: { err in
-                    log.error(err)
-                    self.activateConfirmButton(true)
-                })
-                .flatMap { [unowned self] it -> Single<UserDTO> in
-                    userService!.createUser(
-                            currentUser: auth.currentUser!,
-                            uid: auth.uid,
-                            phone: it.phone,
-                            smsCode: it.smsCode,
-                            smsToken: it.smsToken
-                    )
-                }
-                .flatMap { it -> Single<Void> in
-                    self.session!.generate()
-                }
-                .observeOn(MainScheduler.instance)
-                .subscribe(onSuccess: { _ in
-                    self.spinnerView.visible(false)
-                    self.interval?.dispose()
-                    self.presentPendingViewController()
-                }, onError: { err in
-                    log.error(err)
-                    self.spinnerView.visible(false)
-                    self.activateConfirmButton(true)
-                    self.toast(message: "문자 요청에 실패 하였습니다.")
-                })
-                .disposed(by: disposeBag)
+            }
+            .flatMap { it -> Single<Void> in
+                self.session!.generate()
+            }
+            .observeOn(MainScheduler.instance)
+            .subscribe(onSuccess: { _ in
+                self.spinnerView.visible(false)
+                self.moveToRegistration()
+            }, onError: { err in
+                log.error(err)
+                self.spinnerView.visible(false)
+                self.activateConfirmButton(true)
+                self.toast(message: "문자 요청에 실패 하였습니다.")
+            })
+            .disposed(by: disposeBag!)
     }
 
     private func activateConfirmButton(_ isActivate: Bool) {
@@ -250,34 +259,32 @@ class SmsConfirmViewController: UIViewController {
         }
     }
 
-    private func formatRemainingTime(expiredAt: Int) -> String {
+    private func formatRemainingTime(_ expiredAt: Int) -> String {
         let current = Int(NSDate().timeIntervalSince1970)
         let seconds = expiredAt - current
         if (seconds <= 0) {
-            dismiss(animated: true) { [unowned self] in
-                interval?.dispose()
-            }
+            dismiss(animated: true)
             return "시간 만료"
         }
         return String(format: "남은 시간: %02d:%02d", ((seconds % 3600) / 60), (seconds % 60))
     }
 
-    private func showRemainingTime() {
-        interval = Observable<Int>.interval(1.0, scheduler: MainScheduler.instance)
-                .subscribe(onNext: { [unowned self] _ in
-                    let expiredAt = verificationDTO?.expiredAt ?? 0
-                    let formatted = formatRemainingTime(expiredAt: expiredAt)
-                    timeLeftLabel.text = formatted
-                })
+    private func initInterval() {
+        Observable<Int>
+            .interval(.seconds(1), scheduler: MainScheduler.instance)
+            .subscribe(onNext: { _ in
+                let expiredAt = self.verification?.expiredAt ?? 0
+                let formatted = self.formatRemainingTime(expiredAt)
+                self.timeLeftLabel.text = formatted
+            })
+            .disposed(by: disposeBag!)
     }
 
-
-    func setVerificationDTO(verificationDTO: VerificationDTO) {
-        self.verificationDTO = verificationDTO
+    func setVerification(_ verification: VerificationDTO) {
+        self.verification = verification
     }
 
-    private func presentPendingViewController() {
-        log.info("presenting pending..")
+    private func moveToRegistration() {
         let storyboard = UIStoryboard(name: "Registration", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "RegistrationNavigationViewController")
         vc.modalPresentationStyle = .fullScreen

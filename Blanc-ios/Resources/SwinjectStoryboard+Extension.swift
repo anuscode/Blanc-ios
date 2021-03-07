@@ -6,68 +6,68 @@ import SwinjectAutoregistration
 
 extension ObjectScope {
     static let mainScope = ObjectScope(
-            storageFactory: PermanentStorage.init, description: "main scope."
+        storageFactory: PermanentStorage.init, description: "main scope."
     )
 }
 
 extension ObjectScope {
     static let pendingScope = ObjectScope(
-            storageFactory: PermanentStorage.init, description: "pending scope."
+        storageFactory: PermanentStorage.init, description: "pending scope."
     )
 }
 
 extension ObjectScope {
     static let registrationScope = ObjectScope(
-            storageFactory: PermanentStorage.init, description: "registration scope."
+        storageFactory: PermanentStorage.init, description: "registration scope."
     )
 }
 
 extension ObjectScope {
     static let userSingleScope = ObjectScope(
-            storageFactory: PermanentStorage.init, description: "user single scope."
+        storageFactory: PermanentStorage.init, description: "user single scope."
     )
 }
 
 extension ObjectScope {
     static let postCreateScope = ObjectScope(
-            storageFactory: PermanentStorage.init, description: "post create scope."
+        storageFactory: PermanentStorage.init, description: "post create scope."
     )
     static let postSingleScope = ObjectScope(
-            storageFactory: PermanentStorage.init, description: "post single scope."
+        storageFactory: PermanentStorage.init, description: "post single scope."
     )
     static let postManagementScope = ObjectScope(
-            storageFactory: PermanentStorage.init, description: "post management scope."
+        storageFactory: PermanentStorage.init, description: "post management scope."
     )
     static let favoriteUserListScope = ObjectScope(
-            storageFactory: PermanentStorage.init, description: "favorite user list scope."
+        storageFactory: PermanentStorage.init, description: "favorite user list scope."
     )
 }
 
 extension ObjectScope {
     static let conversationSingleScope = ObjectScope(
-            storageFactory: PermanentStorage.init, description: "conversation single scope."
+        storageFactory: PermanentStorage.init, description: "conversation single scope."
     )
 }
 
 extension ObjectScope {
     static let pushSettingScope = ObjectScope(
-            storageFactory: PermanentStorage.init, description: "push setting scope."
+        storageFactory: PermanentStorage.init, description: "push setting scope."
     )
 
     static let myRatedScoreScope = ObjectScope(
-            storageFactory: PermanentStorage.init, description: "my rated score scope."
+        storageFactory: PermanentStorage.init, description: "my rated score scope."
     )
 
     static let avoidScope = ObjectScope(
-            storageFactory: PermanentStorage.init, description: "avoid scope."
+        storageFactory: PermanentStorage.init, description: "avoid scope."
     )
 
     static let profileScope = ObjectScope(
-            storageFactory: PermanentStorage.init, description: "profile scope."
+        storageFactory: PermanentStorage.init, description: "profile scope."
     )
 
     static let paymentScope = ObjectScope(
-            storageFactory: PermanentStorage.init, description: "payment scope"
+        storageFactory: PermanentStorage.init, description: "payment scope"
     )
 }
 
@@ -123,7 +123,7 @@ extension SwinjectStoryboard {
             let userService = resolver ~> UserService.self
             let requestService = resolver ~> RequestService.self
             let homeModel = HomeModel(
-                    session: session, userService: userService, requestService: requestService)
+                session: session, userService: userService, requestService: requestService)
             return homeModel
         }.inObjectScope(.mainScope)
         defaultContainer.register(HomeViewModel.self) { resolver in
@@ -134,9 +134,9 @@ extension SwinjectStoryboard {
             let requestsModel = resolver ~> RequestsModel.self
             let conversationModel = resolver ~> ConversationModel.self
             let homeViewModel = HomeViewModel(
-                    session: session, channel: channel,
-                    homeModel: homeModel, sendingModel: sendingModel,
-                    requestsModel: requestsModel, conversationModel: conversationModel)
+                session: session, channel: channel,
+                homeModel: homeModel, sendingModel: sendingModel,
+                requestsModel: requestsModel, conversationModel: conversationModel)
             return homeViewModel
         }.inObjectScope(.mainScope)
 
@@ -147,7 +147,7 @@ extension SwinjectStoryboard {
             let postService = resolver ~> PostService.self
             let alarmService = resolver ~> AlarmService.self
             let alarmModel = AlarmModel(
-                    session: session, userService: userService, postService: postService, alarmService: alarmService)
+                session: session, userService: userService, postService: postService, alarmService: alarmService)
             return alarmModel
         }.inObjectScope(.mainScope)
         defaultContainer.register(AlarmViewModel.self) { resolver in
@@ -172,7 +172,7 @@ extension SwinjectStoryboard {
             let userService = resolver ~> UserService.self
             let requestService = resolver ~> RequestService.self
             let userSingleModel = UserSingleModel(
-                    session: session, channel: channel, userService: userService, requestService: requestService)
+                session: session, channel: channel, userService: userService, requestService: requestService)
             return userSingleModel
         }.inObjectScope(.userSingleScope)
         defaultContainer.register(UserSingleViewModel.self) { resolver in
@@ -183,8 +183,8 @@ extension SwinjectStoryboard {
             let requestsModel = resolver ~> RequestsModel.self
             let conversationModel = resolver ~> ConversationModel.self
             let userSingleViewModel = UserSingleViewModel(
-                    session: session, homeModel: homeModel, userSingleModel: userSingleModel,
-                    sendingModel: sendingModel, requestsModel: requestsModel, conversationModel: conversationModel)
+                session: session, homeModel: homeModel, userSingleModel: userSingleModel,
+                sendingModel: sendingModel, requestsModel: requestsModel, conversationModel: conversationModel)
             return userSingleViewModel
         }.inObjectScope(.userSingleScope)
 
@@ -228,7 +228,7 @@ extension SwinjectStoryboard {
             let postSingleModel = resolver ~> PostSingleModel.self
             let postModel = resolver ~> PostModel.self
             let postSingleViewModel = PostSingleViewModel(
-                    session: session, postSingleModel: postSingleModel, postModel: postModel)
+                session: session, postSingleModel: postSingleModel, postModel: postModel)
             return postSingleViewModel
         }.inObjectScope(.postSingleScope)
 
@@ -238,14 +238,14 @@ extension SwinjectStoryboard {
             let userService = resolver ~> UserService.self
             let postService = resolver ~> PostService.self
             let postSingleModel = PostManagementModel(
-                    session: session, userService: userService, postService: postService)
+                session: session, userService: userService, postService: postService)
             return postSingleModel
         }.inObjectScope(.postManagementScope)
         defaultContainer.register(PostManagementViewModel.self) { resolver in
             let session = resolver ~> Session.self
             let postManagementModel = resolver ~> PostManagementModel.self
             let postSingleModel = PostManagementViewModel(
-                    session: session, postManagementModel: postManagementModel)
+                session: session, postManagementModel: postManagementModel)
             return postSingleModel
         }.inObjectScope(.postManagementScope)
 
@@ -256,7 +256,7 @@ extension SwinjectStoryboard {
             let userService: UserService = resolver ~> UserService.self
             let postService: PostService = resolver ~> PostService.self
             let favoriteUserListModel = FavoriteUserListModel(
-                    session: session, channel: channel, userService: userService, postService: postService)
+                session: session, channel: channel, userService: userService, postService: postService)
             return favoriteUserListModel
         }.inObjectScope(.favoriteUserListScope)
         defaultContainer.register(FavoriteUserListViewModel.self) { resolver in
@@ -286,8 +286,8 @@ extension SwinjectStoryboard {
             let ratedModel = resolver ~> RatedModel.self
             let conversationModel = resolver ~> ConversationModel.self
             let receivedViewModel = ReceivedViewModel(
-                    session: session, channel: channel, requestsModel: requestsModel,
-                    ratedModel: ratedModel, conversationModel: conversationModel
+                session: session, channel: channel, requestsModel: requestsModel,
+                ratedModel: ratedModel, conversationModel: conversationModel
             )
             return receivedViewModel
         }.inObjectScope(.mainScope)
@@ -326,14 +326,14 @@ extension SwinjectStoryboard {
             let channel = resolver ~> Channel.self
             let conversationService = resolver ~> ConversationService.self
             let conversationSingleModel = ConversationSingleModel(
-                    session: session, channel: channel, conversationService: conversationService)
+                session: session, channel: channel, conversationService: conversationService)
             return conversationSingleModel
         }.inObjectScope(.conversationSingleScope)
         defaultContainer.register(ConversationSingleViewModel.self) { resolver in
             let conversationSingleModel = resolver ~> ConversationSingleModel.self
             let conversationModel = resolver ~> ConversationModel.self
             let conversationSingleViewModel = ConversationSingleViewModel(
-                    conversationSingleModel: conversationSingleModel, conversationModel: conversationModel)
+                conversationSingleModel: conversationSingleModel, conversationModel: conversationModel)
             return conversationSingleViewModel
         }.inObjectScope(.conversationSingleScope)
 
@@ -555,6 +555,12 @@ extension SwinjectStoryboard {
     class func configSmsView() {
         defaultContainer.storyboardInitCompleted(SmsViewController.self) { resolver, controller in
             log.info("Injecting dependencies into SmsViewController")
+            controller.verificationService = resolver ~> VerificationService.self
+        }
+        defaultContainer.storyboardInitCompleted(SmsConfirmViewController.self) { resolver, controller in
+            log.info("Injecting dependencies into SmsConfirmViewController")
+            controller.session = resolver ~> Session.self
+            controller.userService = resolver ~> UserService.self
             controller.verificationService = resolver ~> VerificationService.self
         }
     }

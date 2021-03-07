@@ -20,11 +20,11 @@ class SmsViewController: UIViewController {
 
     private let ripple: Ripple = Ripple()
 
-    var verificationService: VerificationService?
+    internal var verificationService: VerificationService?
 
     lazy private var smsLabel: UILabel = {
         let label = UILabel()
-        label.text = "SMS 휴대폰 전화 인증"
+        label.text = "SMS 모바일 인증"
         label.font = .systemFont(ofSize: 28)
         label.numberOfLines = 1;
         label.textColor = .black
@@ -34,7 +34,7 @@ class SmsViewController: UIViewController {
     lazy private var smsLabel2: UILabel = {
         let label = UILabel()
         label.text = "전화번호는 개인 식별 용으로만 사용 되고\n절대 공개 되지 않습니다."
-        label.font = .systemFont(ofSize: 13)
+        label.font = .systemFont(ofSize: 14)
         label.numberOfLines = 2;
         label.textColor = .customGray4
         return label
@@ -42,26 +42,36 @@ class SmsViewController: UIViewController {
 
     lazy private var phoneTextField: MDCOutlinedTextField = {
         let textField = MDCOutlinedTextField()
-
-        let rightImage = UIImageView(image: UIImage(systemName: "number.circle"))
+        let rightImage = UIImageView(image: UIImage(systemName: "iphone"))
         rightImage.image = rightImage.image?.withRenderingMode(.alwaysTemplate)
-
-        textField.label.text = "휴대폰 번호를 입력 하세요"
-        textField.text = "+82"
+        textField.label.text = "휴대폰 번호를 입력하세요"
         textField.trailingView = rightImage
         textField.trailingViewMode = .always
-        textField.placeholder = "+82 10 5555 5555"
-
+        textField.placeholder = "휴대폰 번호를 입력하세요."
         textField.keyboardType = .numberPad
         textField.backgroundColor = .secondarySystemBackground
         textField.containerRadius = Constants.radius2
         textField.setColor(primary: .black, secondary: .secondaryLabel)
-
-        textField.leadingAssistiveLabel.text = "옳바른 형식: +82 10 5555 5555 (하이픈 공백 없이)"
+        textField.leadingAssistiveLabel.text = "옳바른 형식: 010 5555 5555 (하이픈 공백 없이)"
         textField.setLeadingAssistiveLabelColor(.black, for: .normal)
         textField.setLeadingAssistiveLabelColor(.black, for: .editing)
-
-        textField.addTarget(self, action: #selector(didChangeTextField), for: .editingChanged)
+        textField.rx
+            .text
+            .debounce(.milliseconds(300), scheduler: MainScheduler.instance)
+            .map({ text -> String in
+                let countryCode = "+82"
+                let text = text ?? ""
+                let phone = "\(countryCode)\(text)"
+                return phone
+            })
+            .map({ text -> Bool in
+                let value = text
+                let range = NSRange(location: 0, length: value.utf16.count)
+                let result = self.regex.firstMatch(in: value, range: range)
+                return (result != nil)
+            })
+            .subscribe(onNext: self.activateConfirmButton)
+            .disposed(by: disposeBag)
         return textField
     }()
 
@@ -135,50 +145,41 @@ class SmsViewController: UIViewController {
         }
     }
 
-    @objc private func didChangeTextField() {
-        let value = phoneTextField.text ?? ""
-        let range = NSRange(location: 0, length: value.utf16.count)
-        let result = regex.firstMatch(in: value, range: range)
-        activateConfirmButton(result != nil)
-        if (value == "") {
-            phoneTextField.text = "+"
-        }
-    }
-
     @objc private func didTapConfirmButton() {
-        let phone = phoneTextField.text ?? ""
+        let text = phoneTextField.text ?? ""
+        let countryCode = "+82"
+        let phone = "\(countryCode)\(text)"
         let range = NSRange(location: 0, length: phone.utf16.count)
         let result = regex.firstMatch(in: phone, range: range)
+
         if (result == nil) {
             return
         }
 
         spinnerView.visible(true)
-        verificationService?.issueSmsCode(currentUser: auth.currentUser!, uid: auth.uid, phone: phone)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(MainScheduler.instance)
-                .do(onDispose: { [unowned self] in
-                    spinnerView.visible(false)
-                })
-                .subscribe(onSuccess: { [unowned self] verificationDTO in
-                    if (verificationDTO.issued == true) {
-                        let smsConfirmViewController = SmsConfirmViewController()
-                        let session = SwinjectStoryboard.defaultContainer.resolve(Session.self)
-                        let userService = SwinjectStoryboard.defaultContainer.resolve(UserService.self)
-                        let verificationService = SwinjectStoryboard.defaultContainer.resolve(VerificationService.self)
-                        smsConfirmViewController.session = session
-                        smsConfirmViewController.userService = userService
-                        smsConfirmViewController.verificationService = verificationService
-                        smsConfirmViewController.setVerificationDTO(verificationDTO: verificationDTO)
-                        smsConfirmViewController.modalPresentationStyle = .fullScreen
-                        present(smsConfirmViewController, animated: false)
-                    } else {
-                        toast(message: verificationDTO.reason)
-                    }
-                }, onError: { [unowned self]err in
-                    log.error(err)
-                    toast(message: "문자 요청에 실패 하였습니다.")
-                }).disposed(by: disposeBag)
+        verificationService?
+            .issueSmsCode(currentUser: auth.currentUser!, uid: auth.uid, phone: phone)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
+            .do(onDispose: {
+                self.spinnerView.visible(false)
+            })
+            .subscribe(onSuccess: { verification in
+                if (verification.issued == true) {
+                    let storyboard = UIStoryboard(name: "Sms", bundle: nil)
+                    let vc = storyboard.instantiateViewController(
+                        withIdentifier: "SmsConfirmViewController") as! SmsConfirmViewController
+                    vc.modalPresentationStyle = .fullScreen
+                    vc.setVerification(verification)
+                    self.present(vc, animated: false)
+                } else {
+                    self.toast(message: verification.reason)
+                }
+            }, onError: { err in
+                log.error(err)
+                self.toast(message: "문자 요청에 실패 하였습니다.")
+            })
+            .disposed(by: disposeBag)
     }
 
     private func activateConfirmButton(_ isActivate: Bool) {
