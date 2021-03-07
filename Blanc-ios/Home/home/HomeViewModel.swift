@@ -44,9 +44,9 @@ class HomeViewModel {
         homeModel.observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .subscribe(onNext: { [unowned self] data in
+            .subscribe(onNext: { data in
                 self.data = data
-                publish()
+                self.publish()
             }, onError: { err in
                 log.error(err)
             })
@@ -55,13 +55,13 @@ class HomeViewModel {
 
     func request(_ user: UserDTO?, animationDone: Observable<Void>, onError: @escaping (_ message: String) -> Void) {
 
-        let onComplete: (_ request: RequestDTO) -> Void = { [unowned self] request in
+        let onComplete: (_ request: RequestDTO) -> Void = { request in
             // 일반적으로 친구 요청을 날리게 되면 새로운 리퀘스트를
             // 생성 해야 하지만 아주 간헐적으로 상대방이 아주 근소한
             // 차이로 요청을 먼저 보내면 자동으로 응답 처리가 된다.
             if (request.response == Response.ACCEPTED) {
-                conversationModel.populate()
-                requestsModel.populate()
+                self.conversationModel.populate()
+                self.requestsModel.populate()
             }
         }
 
