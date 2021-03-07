@@ -97,17 +97,17 @@ extension UIImageView {
         }
 
         let processor = DownsamplingImageProcessor(size: sizeTo!)
-                |> RoundCornerImageProcessor(cornerRadius: cornerRadius)
+            |> RoundCornerImageProcessor(cornerRadius: cornerRadius)
         self.kf.indicatorType = .activity
 
         self.kf.setImage(
-                with: url,
-                options: [
-                    .processor(processor),
-                    .scaleFactor(UIScreen.main.scale),
-                    .transition(.fade(1)),
-                    .cacheOriginalImage
-                ], completionHandler: {
+            with: url,
+            options: [
+                .processor(processor),
+                .scaleFactor(UIScreen.main.scale),
+                .transition(.fade(1)),
+                .cacheOriginalImage
+            ], completionHandler: {
             result in
             switch result {
             case .success(let value):
@@ -296,4 +296,12 @@ extension UIBarButtonItem {
         item.tintColor = .black
         return item
     }()
+}
+
+extension UILabel {
+    func underline() {
+        let underlineAttribute = [NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue]
+        let underlineAttributedString = NSAttributedString(string: text ?? "", attributes: underlineAttribute)
+        attributedText = underlineAttributedString
+    }
 }
