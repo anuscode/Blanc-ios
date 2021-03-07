@@ -42,15 +42,15 @@ class HomeViewModel {
 
     private func subscribeHomeModel() {
         homeModel.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [unowned self] data in
-                    self.data = data
-                    publish()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onNext: { [unowned self] data in
+                self.data = data
+                publish()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     func request(_ user: UserDTO?, animationDone: Observable<Void>, onError: @escaping (_ message: String) -> Void) {
@@ -93,9 +93,8 @@ class HomeViewModel {
     }
 
     func channel(user: UserDTO?) {
-        if (user == nil) {
-            return
+        if let user = user {
+            channel.next(value: user)
         }
-        channel.next(value: user!)
     }
 }
