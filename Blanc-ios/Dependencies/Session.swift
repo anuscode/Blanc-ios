@@ -36,10 +36,10 @@ class Session {
     }
 
     func publish() {
-        guard (user != nil) else {
+        guard let user = user else {
             return
         }
-        observable.onNext(user!)
+        observable.onNext(user)
     }
 
     func generate() -> Single<Void> {
@@ -47,10 +47,10 @@ class Session {
         let uid = auth.uid
         return userService
             .getSession(currentUser: user!, uid: uid)
-            .do(onSuccess: { [unowned self] user in
+            .do(onSuccess: { user in
                 self.user = user
                 self.user?.uid = uid
-                publish()
+                self.publish()
             })
             .flatMap({ user -> Single<UserDTO> in
                 let token = self.preferences.getDeviceToken()
@@ -68,9 +68,7 @@ class Session {
         userService
             .getSession(currentUser: auth.currentUser!, uid: auth.uid)
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .do(afterSuccess: { [unowned self] user in
-                update(user)
-            })
+            .do(afterSuccess: update)
     }
 
     func update(_ userDTO: UserDTO) {
@@ -87,7 +85,8 @@ class Session {
     }
 
     private func subscribeBroadcast() {
-        Broadcast.observe()
+        Broadcast
+            .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .subscribe(onNext: { push in
