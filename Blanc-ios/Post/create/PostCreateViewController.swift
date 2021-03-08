@@ -50,9 +50,12 @@ class PostCreateViewController: UIViewController {
         textView.layer.cornerRadius = 10
         textView.delegate = self
         textView.textContainerInset = UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20)
-        textView.rx.text.subscribe(onNext: { text in
-            self.placeholder.visible(text.isEmpty())
-        }).disposed(by: disposeBag)
+        textView.rx
+            .text
+            .observeOn(MainScheduler.asyncInstance)
+            .map({ text in text.isEmpty() })
+            .subscribe(onNext: placeholder.visible)
+            .disposed(by: disposeBag)
         return textView
     }()
 
