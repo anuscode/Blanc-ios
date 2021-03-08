@@ -88,7 +88,10 @@ class AlarmViewController: UIViewController {
         }
 
         emptyView.snp.makeConstraints { make in
-            make.edges.equalTo(tableView.snp.edges)
+            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.bottom.equalTo(view.safeAreaLayoutGuide)
         }
 
         loadingView.snp.makeConstraints { make in
