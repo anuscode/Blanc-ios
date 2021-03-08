@@ -10,9 +10,9 @@ class AlarmViewController: UIViewController {
 
     private var pushes: [PushDTO] = []
 
-    var alarmViewModel: AlarmViewModel?
+    internal weak var alarmViewModel: AlarmViewModel?
 
-    var channel: Channel?
+    internal weak var channel: Channel?
 
     lazy private var leftBarButtonItem: UIBarButtonItem = {
         UIBarButtonItem(customView: LeftSideBarView(title: "알림 내역"))
