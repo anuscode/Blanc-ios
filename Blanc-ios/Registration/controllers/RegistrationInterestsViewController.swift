@@ -26,7 +26,7 @@ class RegistrationInterestsViewController: UIViewController {
         let progress = UIProgressView(progressViewStyle: .bar)
         progress.trackTintColor = .secondarySystemBackground
         progress.progressTintColor = .black
-        progress.progress = 14 / RConfig.progressCount
+        progress.progress = 15 / RConfig.progressCount
         return progress
     }()
 

@@ -12,7 +12,7 @@ class RegistrationBloodTypeViewController: UIViewController {
 
     private let ripple: Ripple = Ripple()
 
-    var registrationViewModel: RegistrationViewModel?
+    internal weak var registrationViewModel: RegistrationViewModel?
 
     private var user: UserDTO?
 
@@ -228,7 +228,7 @@ class RegistrationBloodTypeViewController: UIViewController {
 
     private func next() {
         let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.stackAfterClear(identifier: "RegistrationCharmViewController")
+        navigation.stackAfterClear(identifier: "RegistrationIntroductionViewController")
     }
 
     private func back() {

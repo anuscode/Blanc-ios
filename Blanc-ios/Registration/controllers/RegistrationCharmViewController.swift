@@ -26,7 +26,7 @@ class RegistrationCharmViewController: UIViewController {
         let progress = UIProgressView(progressViewStyle: .bar)
         progress.trackTintColor = .secondarySystemBackground
         progress.progressTintColor = .black
-        progress.progress = 12 / RConfig.progressCount
+        progress.progress = 13 / RConfig.progressCount
         return progress
     }()
 
@@ -214,7 +214,7 @@ class RegistrationCharmViewController: UIViewController {
 
     private func back() {
         let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.stackAfterClear(identifier: "RegistrationBloodTypeViewController", animated: false)
+        navigation.stackAfterClear(identifier: "RegistrationIntroductionViewController", animated: false)
     }
 }
 

@@ -289,6 +289,7 @@
 		C47AA94E16B75C679F0B7819 /* CLLocationManagerDelegateEvents+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA6DD792D18E8B9A36E7E /* CLLocationManagerDelegateEvents+Rx.swift */; };
 		C47AA9B1451CD90F013EFECF /* UINavigationController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA39FA440727C495C4A05 /* UINavigationController+Extension.swift */; };
 		C47AAA1BC448AEA0E6315C5B /* PaymentDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA7CE2AEB97BACCEA02C2 /* PaymentDTO.swift */; };
+		C47AACEDFFF2220C6D2984F4 /* RegistrationIntroductionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA65EC5EB8834242CA34C /* RegistrationIntroductionViewController.swift */; };
 		C47AAD13F25BD2CF0D330A59 /* RxSelectors.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA3BE2666086EF0BDDA39 /* RxSelectors.swift */; };
 		C47AAD85E43E692FE7FE3D32 /* PaymentProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA6B42E110C411BA90F59 /* PaymentProvider.swift */; };
 		C47AAE486B285D2EC2F3C8E0 /* IAPHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA1210DF0D858645ADADD /* IAPHelper.swift */; };
@@ -598,6 +599,7 @@
 		C47AA39FA440727C495C4A05 /* UINavigationController+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UINavigationController+Extension.swift"; sourceTree = "<group>"; };
 		C47AA3BE2666086EF0BDDA39 /* RxSelectors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxSelectors.swift; sourceTree = "<group>"; };
 		C47AA3E64CCA2CB2598F30E6 /* Helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
+		C47AA65EC5EB8834242CA34C /* RegistrationIntroductionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegistrationIntroductionViewController.swift; sourceTree = "<group>"; };
 		C47AA6A4C0FC210FE7589BD8 /* CLLocationManagerEvents+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CLLocationManagerEvents+Rx.swift"; sourceTree = "<group>"; };
 		C47AA6B42E110C411BA90F59 /* PaymentProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PaymentProvider.swift; sourceTree = "<group>"; };
 		C47AA6DD792D18E8B9A36E7E /* CLLocationManagerDelegateEvents+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CLLocationManagerDelegateEvents+Rx.swift"; sourceTree = "<group>"; };
@@ -839,6 +841,7 @@
 				104EEA3325E372050069B2CF /* RegistrationReligionViewController.swift */,
 				104EEA3425E372050069B2CF /* RegistrationNicknameViewController.swift */,
 				104EEA3525E372050069B2CF /* RegistrationIdealTypeViewController.swift */,
+				C47AA65EC5EB8834242CA34C /* RegistrationIntroductionViewController.swift */,
 			);
 			path = controllers;
 			sourceTree = "<group>";
@@ -2155,6 +2158,7 @@
 				C47AAD13F25BD2CF0D330A59 /* RxSelectors.swift in Sources */,
 				C47AA7ECE96CB9A9BB7216F8 /* StarFallView.swift in Sources */,
 				C47AAEA7329508C8EC6BCF60 /* SelectionCollectionViewCell.swift in Sources */,
+				C47AACEDFFF2220C6D2984F4 /* RegistrationIntroductionViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
