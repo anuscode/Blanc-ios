@@ -96,20 +96,19 @@ class AlarmViewController: UIViewController {
     }
 
     private func subscribeAlarmViewModel() {
-        alarmViewModel?.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [unowned self] pushes in
-                    self.pushes = pushes
-                    DispatchQueue.main.async { [unowned self] in
-                        loadingView.visible(false)
-                        emptyView.visible(pushes.count == 0)
-                        update()
-                    }
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        alarmViewModel?
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { pushes in
+                self.pushes = pushes
+                self.loadingView.visible(false)
+                self.emptyView.visible(pushes.count == 0)
+                self.update()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 }
 
@@ -145,6 +144,7 @@ extension AlarmViewController: UITableViewDelegate {
     }
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+
         guard let push = dataSource.itemIdentifier(for: indexPath) else {
             return
         }
@@ -152,11 +152,13 @@ extension AlarmViewController: UITableViewDelegate {
             guard let postId = push.postId else {
                 return
             }
-            alarmViewModel?.getPost(postId: postId, onSuccess: { [unowned self] post in
-                channel?.next(value: post)
-                navigationController?.pushViewController(.postSingle, current: self)
-            }, onError: { [unowned self] in
-                toast(message: "게시물 정보를 가져오지 못했습니다.")
+            alarmViewModel?.getPost(postId: postId, onSuccess: { post in
+                DispatchQueue.main.async {
+                    self.channel?.next(value: post)
+                    self.navigationController?.pushViewController(.postSingle, current: self)
+                }
+            }, onError: {
+                self.toast(message: "게시물 정보를 가져오지 못했습니다.")
             })
             return
         }
@@ -164,12 +166,13 @@ extension AlarmViewController: UITableViewDelegate {
         guard let userId = push.userId else {
             return
         }
-
-        alarmViewModel?.getUser(userId: userId, onSuccess: { [unowned self] user in
-            channel?.next(value: user)
-            navigationController?.pushViewController(.userSingle, current: self)
-        }, onError: { [unowned self] in
-            toast(message: "유저 정보를 가져오지 못했습니다.")
+        alarmViewModel?.getUser(userId: userId, onSuccess: { user in
+            DispatchQueue.main.async {
+                self.channel?.next(value: user)
+                self.navigationController?.pushViewController(.userSingle, current: self)
+            }
+        }, onError: {
+            self.toast(message: "유저 정보를 가져오지 못했습니다.")
         })
     }
 }
