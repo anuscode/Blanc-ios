@@ -104,6 +104,7 @@ class PostManagementViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationItem.backBarButtonItem = UIBarButtonItem.back
         navigationItem.leftBarButtonItem = leftBarButtonItem
         navigationItem.leftItemsSupplementBackButton = true
         navigationController?.navigationBar.barTintColor = .white
@@ -161,10 +162,10 @@ class PostManagementViewController: UIViewController {
             .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
-            .subscribe(onNext: { posts in
-                self.data = PostDTO.flatten(posts: posts).toArray()
-                self.update()
-                self.emptyView.visible(data.count == 0)
+            .subscribe(onNext: { [unowned self] posts in
+                data = PostDTO.flatten(posts: posts).toArray()
+                update()
+                emptyView.visible(data.count == 0)
             }, onError: { err in
                 log.error(err)
             })
@@ -261,15 +262,7 @@ extension PostManagementViewController: PostManagementTableViewCellDelegate {
             return
         }
         channel?.next(value: post)
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let vc = storyboard.instantiateViewController(
-            withIdentifier: "FavoriteUserListViewController") as! FavoriteUserListViewController
-        hidesBottomBarWhenPushed = true
-        let backBarButtonItem = UIBarButtonItem()
-        backBarButtonItem.title = ""
-        backBarButtonItem.tintColor = .black
-        navigationItem.backBarButtonItem = backBarButtonItem
-        navigationController?.pushViewController(vc, animated: true)
+        navigationController?.pushViewController(.favoriteUsers, current: self)
     }
 
     func deletePost(postId: String?) {

@@ -8,7 +8,8 @@ enum Identifier: String {
          postManagement = "PostManagementViewController",
          postCreate = "PostCreateViewController",
          alarms = "AlarmViewController",
-         inAppPurchase = "InAppPurchaseViewController"
+         inAppPurchase = "InAppPurchaseViewController",
+         favoriteUsers = "FavoriteUserListViewController"
 }
 
 extension UINavigationController {
