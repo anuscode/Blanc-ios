@@ -61,9 +61,9 @@ class UserSingleViewModel {
     func createRequest(_ user: UserDTO?, onError: @escaping () -> Void) {
         let onSuccess: (_ request: RequestDTO) -> Void = { [unowned self] request in
             // 1. 일반적으로 친구 요청을 날리게 되면 새로운 리퀘스트를
-            // 생성 해야 하지만 아주 간헐적으로 상대방이 아주 근소한
-            // 차이로 요청을 먼저 보내면 자동으로 응답 처리가 된다.
-            if (request.response == Response.ACCEPTED) {
+            //    생성 해야 하지만 아주 간헐적으로 상대방이 아주 근소한
+            //    차이로 요청을 먼저 보내면 자동으로 응답 처리가 된다.
+            if (request.response == .ACCEPTED) {
                 conversationModel.populate()
                 requestsModel.populate()
             }
@@ -88,16 +88,5 @@ class UserSingleViewModel {
             self.sendingModel.append(user: user)
         }
         userSingleModel.rate(user, score, onSuccess: onSuccess, onError: onError)
-    }
-
-    func getStarRatingIRated(_ user: UserDTO?) -> StarRating? {
-        userSingleModel.getStarRatingIRated(user)
-    }
-
-    func relationship() -> Relationship? {
-        guard let user = data?.user else {
-            return nil
-        }
-        return session.relationship(with: user)
     }
 }

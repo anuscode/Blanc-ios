@@ -84,10 +84,6 @@ class HomeViewModel {
         homeModel.rate(user, score, onSuccess: onSuccess, onError: onError)
     }
 
-    func getStarRatingIRated(_ user: UserDTO?) -> StarRating? {
-        homeModel.getStarRatingIRated(user?.id)
-    }
-
     func updateUserLastLoginAt() {
         homeModel.updateUserLastLoginAt()
     }

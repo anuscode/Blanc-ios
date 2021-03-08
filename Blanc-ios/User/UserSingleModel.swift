@@ -47,6 +47,9 @@ class UserSingleModel {
             .observe(UserDTO.self)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
+            .do(onNext: { user in
+                user.relationship = self.session.relationship(with: user)
+            })
             .subscribe(onNext: { user in
                 self.data.user = user
                 self.publish()
@@ -135,21 +138,19 @@ class UserSingleModel {
             .updateUserStarRatingScore(uid: uid, userId: userId, score: score)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
-            .subscribe(onSuccess: { _ in
+            .subscribe(onSuccess: { [unowned self] _ in
                 log.info("Successfully rated score \(score) at user: \(userId)")
-                self.session.user?.starRatingsIRated?.append(StarRating(userId: userId, score: score))
-                self.session.publish()
-                self.publish()
+                let starRating = StarRating(userId: userId, score: score)
+                session.user?.starRatingsIRated?.append(starRating)
+                user?.relationship?.starRating = starRating
+                session.publish()
+                publish()
                 onSuccess()
             }, onError: { err in
                 onError("평가 도중 에러가 발생 하였습니다.")
                 log.error(err)
             })
             .disposed(by: disposeBag)
-    }
-
-    func getStarRatingIRated(_ user: UserDTO?) -> StarRating? {
-        session.user?.starRatingsIRated?.first(where: { $0.userId == user?.id })
     }
 
     func pushLookup(user: UserDTO?) {

@@ -53,6 +53,9 @@ class HomeModel {
             .do(afterSuccess: { users in
                 // loop to calculate and set a distance from current user.
                 users.distance(self.session)
+                users.forEach({
+                    $0.relationship = self.session.relationship(with: $0)
+                })
                 self.data.recommendedUsers = users
             })
             .flatMap { it -> Single<[UserDTO]> in
@@ -61,6 +64,9 @@ class HomeModel {
             .do(afterSuccess: { users in
                 // loop to calculate and set a distance from current user.
                 users.distance(self.session)
+                users.forEach({
+                    $0.relationship = self.session.relationship(with: $0)
+                })
                 self.data.closeUsers = users
             })
             .flatMap { it -> Single<[UserDTO]> in
@@ -69,6 +75,9 @@ class HomeModel {
             .do(afterSuccess: { users in
                 // loop to calculate and set a distance from current user.
                 users.distance(self.session)
+                users.forEach({
+                    $0.relationship = self.session.relationship(with: $0)
+                })
                 self.data.realTimeUsers = users
             })
             .subscribe(onSuccess: { _ in
@@ -228,7 +237,8 @@ class HomeModel {
               onError: @escaping (_ message: String) -> Void) {
 
         guard let uid = auth.uid,
-              let userId = user?.id else {
+              let user = user,
+              let userId = user.id else {
             return
         }
 
@@ -237,20 +247,18 @@ class HomeModel {
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
             .subscribe(onSuccess: { _ in
-                self.session.user?.starRatingsIRated?.append(StarRating(userId: user!.id!, score: score))
+                let starRating = StarRating(userId: userId, score: score)
+                self.session.user?.starRatingsIRated?.append(starRating)
+                user.relationship?.starRating = starRating
                 self.session.publish()
                 self.publish()
                 onSuccess()
-                log.info("Successfully rated score \(score) at user: \(user!.id ?? "??")")
+                log.info("Successfully rated score \(score) with user: \(userId)")
             }, onError: { err in
                 log.error(err)
                 onError("평가 도중 에러가 발생 하였습니다.")
             })
             .disposed(by: disposeBag)
-    }
-
-    func getStarRatingIRated(_ userId: String?) -> StarRating? {
-        session.user?.starRatingsIRated?.first(where: { $0.userId == userId })
     }
 
     func remove(_ user: UserDTO?) {

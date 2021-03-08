@@ -682,7 +682,8 @@ class ProfileTableViewCell: UITableViewCell {
     }
 
     private func configureStarRatingValues(starRating: StarRating?) {
-        rate(score: starRating?.score)
+        let score = user?.relationship?.starRating?.score
+        rate(score: score)
         if (starRating?.score != nil && starRating!.score! > 0) {
             log.info("removing star tap listener..")
             stars.forEach { star in
@@ -691,9 +692,9 @@ class ProfileTableViewCell: UITableViewCell {
         }
     }
 
-    // starRating: 내가 준 별점.
-    func bind(user: UserDTO?, starRating: StarRating?) {
+    func bind(user: UserDTO?) {
         self.user = user
+        let starRating = user?.relationship?.starRating
         configureLabelValues()
         configureStarRatingValues(starRating: starRating)
     }

@@ -19,7 +19,6 @@ protocol UserCardCellDelegate: class {
     func poke(_ user: UserDTO?, onBegin: () -> Void)
     func rate(_ user: UserDTO?, score: Int)
     func purchase()
-    func getStarRatingIRated(_ user: UserDTO?) -> StarRating?
 }
 
 class UserCardTableViewCell: UITableViewCell {
@@ -513,7 +512,7 @@ class UserCardTableViewCell: UITableViewCell {
         if (label1.isHidden) {
             switchCardBodyMode(to: .label)
         } else {
-            let starRating = delegate?.getStarRatingIRated(user)
+            let starRating = user?.relationship?.starRating
             configureStarsAndTapListener(starRating)
             switchCardBodyMode(to: .star)
         }
@@ -530,24 +529,24 @@ class UserCardTableViewCell: UITableViewCell {
 
         fireworkController.addFireworks(count: 2, around: button2)
         delegate?.confirm(user)
-                .subscribe(onNext: { [unowned self] result in
-                    switch (result) {
-                    case .accept:
-                        let done = heartLottie.begin(with: contentView, constraint: {
-                            heartLottie.snp.makeConstraints { make in
-                                make.edges.equalTo(carousel.snp.edges)
-                            }
-                        })
-                        delegate?.request(user, animationDone: done)
-                    case .purchase:
-                        delegate?.purchase()
-                    case .decline:
-                        log.info("declined request user..")
-                    }
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+            .subscribe(onNext: { [unowned self] result in
+                switch (result) {
+                case .accept:
+                    let done = heartLottie.begin(with: contentView, constraint: {
+                        heartLottie.snp.makeConstraints { make in
+                            make.edges.equalTo(carousel.snp.edges)
+                        }
+                    })
+                    delegate?.request(user, animationDone: done)
+                case .purchase:
+                    delegate?.purchase()
+                case .decline:
+                    log.info("declined request user..")
+                }
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     @objc func didTapPokeButton(sender: UITapGestureRecognizer) {
@@ -708,10 +707,11 @@ extension UserCardTableViewCell {
         case .star:
             hideLabels()
             showStars()
-            if (delegate?.getStarRatingIRated(user) != nil) {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    self.switchCardBodyMode(to: .label)
-                }
+            guard let _ = user?.relationship?.starRating else {
+                return
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.switchCardBodyMode(to: .label)
             }
         }
     }

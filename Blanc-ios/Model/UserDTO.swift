@@ -92,11 +92,12 @@ enum Status: String, Codable {
          BLOCKED = "BLOCKED"
 }
 
-class Relationship {
+class Relationship: Codable {
     var isMatched: Bool = false
     var isUnmatched: Bool = false
-    var isIReceived: Bool = false
-    var isISent: Bool = false
+    var isWhoSentMe: Bool = false
+    var isWhoISent: Bool = false
+    var starRating: StarRating? = nil
 }
 
 class UserDTO: NSObject, Codable {
@@ -221,6 +222,9 @@ class UserDTO: NSObject, Codable {
             birthedAt.asAge()
         }
     }
+
+    /** relationship with current user. **/
+    var relationship: Relationship?
 
     static func ==(lhs: UserDTO, rhs: UserDTO) -> Bool {
         lhs.id == rhs.id

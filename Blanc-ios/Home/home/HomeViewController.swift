@@ -361,10 +361,6 @@ extension HomeViewController: UserCardCellDelegate {
         }
     }
 
-    func getStarRatingIRated(_ user: UserDTO?) -> StarRating? {
-        homeViewModel?.getStarRatingIRated(user)
-    }
-
     func purchase() {
         navigationController?.pushViewController(.inAppPurchase, current: self)
     }
