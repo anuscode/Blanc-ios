@@ -34,16 +34,17 @@ class PostManagementModel {
     }
 
     private func populate() {
-        userService.listAllUserPosts(uid: session.uid, userId: session.id)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [unowned self] posts in
-                    self.posts = posts
-                    publish()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        userService
+            .listAllUserPosts(uid: session.uid, userId: session.id)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onSuccess: { [unowned self] posts in
+                self.posts = posts
+                publish()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     func favorite(post: PostDTO?, onError: (() -> Void)?) {
@@ -55,43 +56,49 @@ class PostManagementModel {
     }
 
     private func createFavorite(_ post: PostDTO?, onError: (() -> Void)?) {
-        postService.createFavorite(uid: session.uid, postId: post?.id)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [unowned self] _ in
-                    if (session.id == nil) {
-                        return
-                    }
-                    if (post?.favoriteUserIds?.firstIndex(of: session.id!) == nil) {
-                        post?.favoriteUserIds?.append(session.id!)
-                    }
-                    publish()
-                }, onError: { [unowned self] err in
-                    log.info(err)
-                    onError?()
-                    publish()
-                })
-                .disposed(by: disposeBag)
+        postService
+            .createFavorite(uid: session.uid, postId: post?.id)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onSuccess: { [unowned self] _ in
+                guard let userId = session.id else {
+                    return
+                }
+                if (post?.favoriteUserIds?.firstIndex(of: userId) == nil) {
+                    post?.favoriteUserIds?.append(userId)
+                }
+                publish()
+            }, onError: { err in
+                log.info(err)
+                onError?()
+                self.publish()
+            })
+            .disposed(by: disposeBag)
     }
 
     private func deleteFavorite(_ post: PostDTO?, onError: (() -> Void)?) {
-        postService.deleteFavorite(uid: session.uid, postId: post?.id)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [unowned self] _ in
-                    if (session.id == nil) {
-                        return
-                    }
-                    if let index = post?.favoriteUserIds?.firstIndex(of: session.id!) {
-                        post?.favoriteUserIds?.remove(at: index)
-                    }
-                    publish()
-                }, onError: { [unowned self] err in
-                    log.info(err)
-                    onError?()
-                    publish()
-                })
-                .disposed(by: disposeBag)
+        guard let uid = session.uid,
+              let postId = post?.id else {
+            return
+        }
+        postService
+            .deleteFavorite(uid: uid, postId: postId)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onSuccess: { [unowned self] _ in
+                guard let userId = session.id else {
+                    return
+                }
+                if let index = post?.favoriteUserIds?.firstIndex(of: userId) {
+                    post?.favoriteUserIds?.remove(at: index)
+                }
+                publish()
+            }, onError: { err in
+                log.info(err)
+                onError?()
+                self.publish()
+            })
+            .disposed(by: disposeBag)
     }
 
     func isCurrentUserFavoritePost(_ post: PostDTO?) -> Bool {
@@ -125,27 +132,39 @@ class PostManagementModel {
     }
 
     private func createThumbUp(post: PostDTO?, comment: CommentDTO?, onError: @escaping (_ message: String) -> Void) {
-        postService.createThumbUp(uid: session.uid, postId: post?.id, commentId: comment?.id)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [unowned self] _ in
-                    log.info("Successfully created thumb up..")
-                }, onError: { err in
-                    onError("댓글 좋아요 생성에 실패 하였습니다.")
-                })
-                .disposed(by: disposeBag)
+        guard let uid = session.uid,
+              let postId = post?.id,
+              let commentId = comment?.id else {
+            return
+        }
+        postService
+            .createThumbUp(uid: uid, postId: postId, commentId: commentId)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onSuccess: { _ in
+                log.info("Successfully created thumb up..")
+            }, onError: { err in
+                onError("댓글 좋아요 생성에 실패 하였습니다.")
+            })
+            .disposed(by: disposeBag)
     }
 
     private func deleteThumbUp(post: PostDTO?, comment: CommentDTO?, onError: @escaping (_ message: String) -> Void) {
-        postService.deleteThumbUp(uid: session.uid, postId: post?.id, commentId: comment?.id)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [unowned self] _ in
-                    log.info("Successfully deleted thumb up..")
-                }, onError: { err in
-                    onError("댓글 좋아요 삭제에 실패 하였습니다.")
-                })
-                .disposed(by: disposeBag)
+        guard let uid = session.uid,
+              let postId = post?.id,
+              let commentId = comment?.id else {
+            return
+        }
+        postService
+            .deleteThumbUp(uid: uid, postId: postId, commentId: commentId)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onSuccess: { _ in
+                log.info("Successfully deleted thumb up..")
+            }, onError: { err in
+                onError("댓글 좋아요 삭제에 실패 하였습니다.")
+            })
+            .disposed(by: disposeBag)
     }
 
     func thumbDown(post: PostDTO?, comment: CommentDTO?, onError: @escaping (_ message: String) -> Void) {
@@ -172,87 +191,106 @@ class PostManagementModel {
     }
 
     private func createThumbDown(post: PostDTO?, comment: CommentDTO?, onError: @escaping (_ message: String) -> Void) {
-        postService.createThumbDown(uid: session.uid, postId: post?.id, commentId: comment?.id)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [unowned self] _ in
-                    log.info("Successfully created thumb down..")
-                }, onError: { err in
-                    onError("댓글 싫어요 생성에 실패 하였습니다.")
-                })
-                .disposed(by: disposeBag)
+        guard let uid = session.uid,
+              let postId = post?.id,
+              let commentId = comment?.id else {
+            return
+        }
+        postService
+            .createThumbDown(uid: uid, postId: postId, commentId: commentId)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onSuccess: { _ in
+                log.info("Successfully created thumb down..")
+            }, onError: { err in
+                onError("댓글 싫어요 생성에 실패 하였습니다.")
+            })
+            .disposed(by: disposeBag)
     }
 
     private func deleteThumbDown(post: PostDTO?, comment: CommentDTO?, onError: @escaping (_ message: String) -> Void) {
-        postService.deleteThumbDown(uid: session.uid, postId: post?.id, commentId: comment?.id)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [unowned self] _ in
-                    log.info("Successfully deleted thumb down..")
-                }, onError: { err in
-                    onError("댓글 싫어요 삭제에 실패 하였습니다.")
-                })
-                .disposed(by: disposeBag)
+        guard let uid = session.uid,
+              let postId = post?.id,
+              let commentId = comment?.id else {
+            return
+        }
+        postService
+            .deleteThumbDown(uid: uid, postId: postId, commentId: commentId)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onSuccess: { _ in
+                log.info("Successfully deleted thumb down..")
+            }, onError: { err in
+                onError("댓글 싫어요 삭제에 실패 하였습니다.")
+            })
+            .disposed(by: disposeBag)
     }
 
     func isThumbedUp(comment: CommentDTO?) -> Bool {
-        if (comment == nil) {
+        guard let comment = comment else {
             return false
         }
-        return comment!.thumbUpUserIds?.firstIndex(where: { $0 == session.id }) != nil
+        return comment.thumbUpUserIds?.firstIndex(where: { $0 == session.id }) != nil
     }
 
     func isThumbedDown(comment: CommentDTO?) -> Bool {
-        if (comment == nil) {
+        guard let comment = comment else {
             return false
         }
-        return comment!.thumbDownUserIds?.firstIndex(where: { $0 == session.id }) != nil
+        return comment.thumbDownUserIds?.firstIndex(where: { $0 == session.id }) != nil
     }
 
     func isAuthorFavoriteComment(post: PostDTO?, comment: CommentDTO?) -> Bool {
-        if (post == nil || comment == nil) {
+        guard let post = post,
+              let comment = comment else {
             return false
         }
-        return comment!.thumbUpUserIds?.firstIndex(where: { $0 == post?.author?.id }) != nil
+        return comment.thumbUpUserIds?.firstIndex(where: { $0 == post.author?.id }) != nil
     }
 
-    func createComment(postId: String?, commentId: String?, comment: String, onError: @escaping (_ message: String?) -> Void) {
-        guard let post = posts.first(where: { $0.id == postId }) else {
+    func createComment(postId: String?,
+                       commentId: String?,
+                       comment: String,
+                       onError: @escaping (_ message: String?) -> Void) {
+        guard let uid = auth.uid,
+              let post = posts.first(where: { $0.id == postId }) else {
             onError("코멘트 생성에 실패 하였습니다.")
             return
         }
-        postService.createComment(uid: auth.uid, postId: postId, commentId: commentId, comment: comment)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [unowned self] createdComment in
-                    log.info("Successfully created comment..")
-                    if let commentId = commentId {
-                        if let index = post.comments?.firstIndex(where: { $0.id == commentId }) {
-                            post.comments?[index].comments?.insert(createdComment, at: 0)
-                        }
-                    } else {
-                        post.comments?.insert(createdComment, at: 0)
+        postService
+            .createComment(uid: uid, postId: postId, commentId: commentId, comment: comment)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onSuccess: { [unowned self] createdComment in
+                if let commentId = commentId {
+                    if let index = post.comments?.firstIndex(where: { $0.id == commentId }) {
+                        post.comments?[index].comments?.insert(createdComment, at: 0)
                     }
-                    publish()
-                }, onError: { err in
-                    onError("댓글 생성에 실패 하였습니다.")
-                })
-                .disposed(by: disposeBag)
+                } else {
+                    post.comments?.insert(createdComment, at: 0)
+                }
+                publish()
+                log.info("Successfully created comment..")
+            }, onError: { err in
+                onError("댓글 생성에 실패 하였습니다.")
+            })
+            .disposed(by: disposeBag)
     }
 
     func deletePost(postId: String?, onError: @escaping () -> Void) {
-        postService.deletePost(uid: session.uid, postId: postId)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { _ in
-                    if let index = self.posts.firstIndex(where: { $0.id == postId }) {
-                        self.posts.remove(at: index)
-                        self.publish()
-                    }
-                }, onError: { err in
-                    log.error(err)
-                    onError()
-                })
-                .disposed(by: disposeBag)
+        postService
+            .deletePost(uid: session.uid, postId: postId)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onSuccess: { _ in
+                if let index = self.posts.firstIndex(where: { $0.id == postId }) {
+                    self.posts.remove(at: index)
+                    self.publish()
+                }
+            }, onError: { err in
+                log.error(err)
+                onError()
+            })
+            .disposed(by: disposeBag)
     }
 }

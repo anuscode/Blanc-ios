@@ -248,8 +248,8 @@ extension PostManagementViewController: UITableViewDelegate {
 extension PostManagementViewController: PostManagementTableViewCellDelegate {
 
     func favorite(_ post: PostDTO?) {
-        postManagementViewModel?.favorite(post: post) { [unowned self] in
-            toast(message: "좋아요 도중 에러가 발생 하였습니다.")
+        postManagementViewModel?.favorite(post: post) {
+            self.toast(message: "좋아요 도중 에러가 발생 하였습니다.")
         }
     }
 
@@ -329,13 +329,14 @@ extension PostManagementViewController: CommentTableViewCellDelegate {
 extension PostManagementViewController: BottomTextFieldDelegate {
     func trigger(message: String) {
         let post = data.findApplicablePost(comment: replyTo)
-        postManagementViewModel?.createComment(
-            postId: post?.id,
-            commentId: replyTo?.id,
-            comment: message,
-            onError: { [unowned self] message in
-                toast(message: message)
-            })
+        postManagementViewModel?
+            .createComment(
+                postId: post?.id,
+                commentId: replyTo?.id,
+                comment: message,
+                onError: { message in
+                    self.toast(message: message)
+                })
         dismissTextField()
     }
 
