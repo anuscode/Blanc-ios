@@ -43,89 +43,109 @@ class UserSingleModel {
     }
 
     func subscribeChannel() {
-        channel.observe(UserDTO.self)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [unowned self] user in
-                    data.user = user
-                    publish()
-                    populateUserPosts(user: user)
-                    pushLookup(user: user)
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        channel
+            .observe(UserDTO.self)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { user in
+                self.data.user = user
+                self.publish()
+                self.populateUserPosts(user: user)
+                self.pushLookup(user: user)
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     func populateUserPosts(user: UserDTO?) {
-        userService.listAllUserPosts(uid: auth.uid, userId: user?.id)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [unowned self] posts in
-                    data.posts = posts
-                    publish()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        guard let uid = session.uid,
+              let userId = user?.id else {
+            return
+        }
+        userService
+            .listAllUserPosts(uid: uid, userId: userId)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onSuccess: { posts in
+                self.data.posts = posts
+                self.publish()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     func createRequest(_ user: UserDTO?,
                        onSuccess: @escaping (_ request: RequestDTO) -> Void,
                        onError: @escaping () -> Void
     ) {
-        requestService.createRequest(
-                        currentUser: auth.currentUser!,
-                        uid: auth.uid,
-                        userId: user?.id,
-                        requestType: RequestType.FRIEND)
-                .do(onSuccess: { request in
-                    onSuccess(request)
-                })
-                .flatMap { [unowned self] _ in
-                    session.refresh()
-                }
-                .subscribe(onSuccess: { [unowned self] _ in
-                    publish()
-                }, onError: { err in
-                    log.error(err)
-                    onError()
-                })
-                .disposed(by: disposeBag)
+        guard let uid = session.uid,
+              let userId = user?.id,
+              let currentUser = auth.currentUser else {
+            return
+        }
+        requestService
+            .createRequest(
+                currentUser: currentUser,
+                uid: uid,
+                userId: userId,
+                requestType: .FRIEND)
+            .do(onSuccess: { request in
+                onSuccess(request)
+            })
+            .flatMap { _ in
+                self.session.refresh()
+            }
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onSuccess: { _ in
+                self.publish()
+            }, onError: { err in
+                log.error(err)
+                onError()
+            })
+            .disposed(by: disposeBag)
     }
 
     func poke(_ user: UserDTO?, completion: @escaping (_ message: String) -> Void) {
-        userService.pushPoke(uid: auth.uid, userId: user?.id)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [unowned self] data in
-                    RealmService.setPokeHistory(uid: session.uid, userId: user?.id)
-                    completion("상대방 옆구리를 찔렀습니다.")
-                }, onError: { err in
-                    log.error(err)
-                    completion("찔러보기 도중 에러가 발생 하였습니다.")
-                })
-                .disposed(by: disposeBag)
+        guard let uid = session.uid,
+              let userId = user?.id else {
+            return
+        }
+        userService
+            .pushPoke(uid: uid, userId: userId)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onSuccess: { data in
+                RealmService.setPokeHistory(uid: uid, userId: userId)
+                completion("상대방 옆구리를 찔렀습니다.")
+            }, onError: { err in
+                log.error(err)
+                completion("찔러보기 도중 에러가 발생 하였습니다.")
+            })
+            .disposed(by: disposeBag)
     }
 
     func rate(_ user: UserDTO?, _ score: Int, onSuccess: @escaping () -> Void, onError: @escaping (_ message: String) -> Void) {
-        if (user == nil || user?.id == nil) {
+        guard let uid = session.uid,
+              let userId = user?.id else {
             return
         }
-        userService.updateUserStarRatingScore(uid: auth.uid, userId: user!.id, score: score)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [unowned self] _ in
-                    session.user?.starRatingsIRated?.append(StarRating(userId: user!.id!, score: score))
-                    session.publish()
-                    publish()
-                    onSuccess()
-                    log.info("Successfully rated score \(score) at user: \(user!.id ?? "??")")
-                }, onError: { err in
-                    onError("평가 도중 에러가 발생 하였습니다.")
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        userService
+            .updateUserStarRatingScore(uid: uid, userId: userId, score: score)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onSuccess: { _ in
+                log.info("Successfully rated score \(score) at user: \(userId)")
+                self.session.user?.starRatingsIRated?.append(StarRating(userId: userId, score: score))
+                self.session.publish()
+                self.publish()
+                onSuccess()
+            }, onError: { err in
+                onError("평가 도중 에러가 발생 하였습니다.")
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     func getStarRatingIRated(_ user: UserDTO?) -> StarRating? {
@@ -133,14 +153,19 @@ class UserSingleModel {
     }
 
     func pushLookup(user: UserDTO?) {
-        userService.pushLookUp(uid: session.uid, userId: user?.id)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: {
-                    log.info("Successfully requested to push lookup..")
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        guard let uid = session.uid,
+              let userId = user?.id else {
+            return
+        }
+        userService
+            .pushLookUp(uid: uid, userId: userId)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onSuccess: {
+                log.info("Successfully requested to push lookup..")
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 }

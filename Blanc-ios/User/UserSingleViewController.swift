@@ -238,17 +238,17 @@ class UserSingleViewController: UIViewController {
 
     private func subscribeUserSingleViewModel() {
         userSingleViewModel?.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(MainScheduler.instance)
-                .subscribe(onNext: { [unowned self] data in
-                    self.data = data
-                    tableView.reloadData()
-                    calculateRequestButtonActivation()
-                    updateNavigation()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { data in
+                self.data = data
+                self.tableView.reloadData()
+                self.calculateRequestButtonActivation()
+                self.updateNavigation()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     private func updateNavigation() {
@@ -291,45 +291,45 @@ class UserSingleViewController: UIViewController {
         }
 
         RequestConfirmViewController
-                .present(target: self, user: user)
-                .subscribe(onNext: { [unowned self] result in
-                    switch (result) {
-                    case .accept:
-                        heartLottie.begin(with: view, constraint: {
-                            heartLottie.snp.makeConstraints { make in
-                                make.edges.equalToSuperview().multipliedBy(0.8)
-                                make.center.equalToSuperview()
-                            }
-                        })
-                        userSingleViewModel?.createRequest(user, onError: {
-                            toast(message: "친구신청 도중 에러가 발생 하였습니다.")
-                        })
-                    case .purchase:
-                        navigationController?.pushViewController(.inAppPurchase, current: self)
-                    case .decline:
-                        log.info("declined request user..")
-                    }
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+            .present(target: self, user: user)
+            .subscribe(onNext: { [unowned self] result in
+                switch (result) {
+                case .accept:
+                    heartLottie.begin(with: view, constraint: {
+                        heartLottie.snp.makeConstraints { make in
+                            make.edges.equalToSuperview().multipliedBy(0.8)
+                            make.center.equalToSuperview()
+                        }
+                    })
+                    userSingleViewModel?.createRequest(user, onError: {
+                        toast(message: "친구신청 도중 에러가 발생 하였습니다.")
+                    })
+                case .purchase:
+                    navigationController?.pushViewController(.inAppPurchase, current: self)
+                case .decline:
+                    log.info("declined request user..")
+                }
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     @objc private func poke() {
         userSingleViewModel?.poke(
-                data?.user,
-                onBegin: {
-                    pokeLottie.begin(with: view) {
-                        pokeLottie.snp.makeConstraints { make in
-                            make.center.equalToSuperview()
-                            make.width.equalToSuperview().multipliedBy(0.5)
-                            make.height.equalToSuperview().multipliedBy(0.5)
-                        }
+            data?.user,
+            onBegin: {
+                pokeLottie.begin(with: view) {
+                    pokeLottie.snp.makeConstraints { make in
+                        make.center.equalToSuperview()
+                        make.width.equalToSuperview().multipliedBy(0.5)
+                        make.height.equalToSuperview().multipliedBy(0.5)
                     }
-                },
-                completion: { message in
-                    self.toast(message: message)
                 }
+            },
+            completion: { message in
+                self.toast(message: message)
+            }
         )
     }
 }
@@ -415,7 +415,7 @@ extension UserSingleViewController: UITableViewDelegate, UITableViewDataSource {
             return cell
         } else {
             let cell = tableView.dequeueReusableCell(withIdentifier: PostListResourceTableViewCell.identifier, for: indexPath) as! PostListResourceTableViewCell
-            cell.bind(post: data?.posts?[indexPath.row])
+            cell.bind(post: data?.posts?[indexPath.row], bodyDelegate: self)
             return cell
         }
     }
@@ -446,6 +446,20 @@ extension UserSingleViewController: ProfileCellDelegate {
         userSingleViewModel?.rate(user, score) { [unowned self] message in
             toast(message: message)
         }
+    }
+}
+
+extension UserSingleViewController: PostBodyDelegate {
+    func favorite(post: PostDTO?) {
+        toast(message: "유저 프로필 열람 중엔 지원하지 않습니다.")
+    }
+
+    func presentSinglePostView(post: PostDTO?) {
+        toast(message: "유저 프로필 열람 중엔 지원하지 않습니다.")
+    }
+
+    func isCurrentUserFavoritePost(_ post: PostDTO?) -> Bool {
+        false
     }
 }
 
