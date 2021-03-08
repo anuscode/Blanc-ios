@@ -28,7 +28,7 @@ private extension Array where Element: Postable {
             $0 < commentIndex
         }.max()
 
-        return postIndex != nil ? self[postIndex!] as! PostDTO : nil
+        return postIndex != nil ? (self[postIndex!] as! PostDTO) : nil
     }
 }
 
@@ -68,10 +68,10 @@ class PostManagementViewController: UIViewController {
 
     lazy private var emptyView: EmptyView = {
         let emptyView = EmptyView(animationName: "girl_with_phone", animationSpeed: 1)
-        emptyView.primaryText = "앗!? 관리 가능한 게시물이\n존재하지 않습니다."
-        emptyView.secondaryText = "나의 게시물은 이곳에서 관리 할 수 있습니다."
+        emptyView.primaryText = "게시물이\n존재하지 않습니다."
+        emptyView.secondaryText = "첫번째 게시물을 작성해 보세요.."
         emptyView.buttonText = "메인 화면으로.."
-        emptyView.didTapButtonDelegate = { [unowned self] in
+        emptyView.didTapButtonDelegate = {
             self.navigationController?.popToRootViewController(animated: true)
         };
         emptyView.visible(false)
@@ -112,9 +112,9 @@ class PostManagementViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow),
-                name: UIResponder.keyboardWillShowNotification, object: nil)
+            name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide),
-                name: UIResponder.keyboardWillHideNotification, object: nil)
+            name: UIResponder.keyboardWillHideNotification, object: nil)
         configureSubviews()
         configureConstraints()
     }
@@ -149,25 +149,26 @@ class PostManagementViewController: UIViewController {
             make.edges.equalToSuperview()
         }
         emptyView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-            make.center.equalToSuperview()
+            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.bottom.equalTo(view.safeAreaLayoutGuide)
         }
     }
 
     private func subscribePostViewModel() {
-        postManagementViewModel?.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [unowned self] posts in
-                    data = PostDTO.flatten(posts: posts).toArray()
-                    DispatchQueue.main.async {
-                        update()
-                        emptyView.visible(data.count == 0)
-                    }
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        postManagementViewModel?
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { posts in
+                self.data = PostDTO.flatten(posts: posts).toArray()
+                self.update()
+                self.emptyView.visible(data.count == 0)
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     @objc private func keyboardWillShow(notification: NSNotification) {
@@ -189,9 +190,9 @@ class PostManagementViewController: UIViewController {
     @objc private func dismissTextField() {
         closeTapBackground.visible(false)
         bottomTextField.dismiss()
+        bottomTextField.visible(false)
         view.endEditing(true)
         replyTo = nil
-        bottomTextField.visible(false)
     }
 }
 
@@ -262,7 +263,7 @@ extension PostManagementViewController: PostManagementTableViewCellDelegate {
         channel?.next(value: post)
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyboard.instantiateViewController(
-                withIdentifier: "FavoriteUserListViewController") as! FavoriteUserListViewController
+            withIdentifier: "FavoriteUserListViewController") as! FavoriteUserListViewController
         hidesBottomBarWhenPushed = true
         let backBarButtonItem = UIBarButtonItem()
         backBarButtonItem.title = ""
@@ -286,7 +287,6 @@ extension PostManagementViewController: PostManagementTableViewCellDelegate {
         alertController.addAction(deleteAction)
         alertController.modalPresentationStyle = .popover
 
-        let presentationController = alertController.popoverPresentationController
         present(alertController, animated: true, completion: nil)
     }
 
@@ -337,12 +337,12 @@ extension PostManagementViewController: BottomTextFieldDelegate {
     func trigger(message: String) {
         let post = data.findApplicablePost(comment: replyTo)
         postManagementViewModel?.createComment(
-                postId: post?.id,
-                commentId: replyTo?.id,
-                comment: message,
-                onError: { [unowned self] message in
-                    toast(message: message)
-                })
+            postId: post?.id,
+            commentId: replyTo?.id,
+            comment: message,
+            onError: { [unowned self] message in
+                toast(message: message)
+            })
         dismissTextField()
     }
 
