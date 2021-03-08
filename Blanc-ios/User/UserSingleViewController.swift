@@ -258,28 +258,30 @@ class UserSingleViewController: UIViewController {
 
     private func calculateRequestButtonActivation() {
 
-        if (userSingleViewModel?.isWhoMatched() ?? false) {
+        let relationship = userSingleViewModel?.relationship()
+
+        if (relationship?.isMatched ?? false) {
             requestButton.setTitle("이미 매칭 된 유저 입니다.", for: .normal)
             requestButton.isUserInteractionEnabled = false
             requestButton.backgroundColor = UIColor.bumble3.withAlphaComponent(0.6)
             return
         }
 
-        if (userSingleViewModel?.isWhoUnmatched() ?? false) {
+        if (relationship?.isUnmatched ?? false) {
             requestButton.setTitle("성사 되지 않은 유저 입니다.", for: .normal)
             requestButton.isUserInteractionEnabled = false
             requestButton.backgroundColor = UIColor.bumble3.withAlphaComponent(0.6)
             return
         }
 
-        if (userSingleViewModel?.isWhoISent() ?? false) {
+        if (relationship?.isISent ?? false) {
             requestButton.setTitle("이미 친구신청을 보냈습니다.", for: .normal)
             requestButton.isUserInteractionEnabled = false
             requestButton.backgroundColor = UIColor.bumble3.withAlphaComponent(0.6)
             return
         }
 
-        if (userSingleViewModel?.isWhoSentMe() ?? false) {
+        if (relationship?.isIReceived ?? false) {
             requestButton.setTitle("친구신청 수락", for: .normal)
             requestButton.isUserInteractionEnabled = true
             requestButton.backgroundColor = .bumble3

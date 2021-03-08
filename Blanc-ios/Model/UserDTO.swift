@@ -92,6 +92,13 @@ enum Status: String, Codable {
          BLOCKED = "BLOCKED"
 }
 
+class Relationship {
+    var isMatched: Bool = false
+    var isUnmatched: Bool = false
+    var isIReceived: Bool = false
+    var isISent: Bool = false
+}
+
 class UserDTO: NSObject, Codable {
     var _id: String?
     var id: String? {

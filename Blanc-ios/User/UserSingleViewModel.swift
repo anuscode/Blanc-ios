@@ -94,31 +94,10 @@ class UserSingleViewModel {
         userSingleModel.getStarRatingIRated(user)
     }
 
-    func isWhoSentMe() -> Bool {
-        if (data == nil || data?.user == nil || data?.user?.id == nil) {
-            return false
+    func relationship() -> Relationship? {
+        guard let user = data?.user else {
+            return nil
         }
-        return session.user?.userIdsSentMeRequest?.contains(data!.user!.id!) ?? false
-    }
-
-    func isWhoISent() -> Bool {
-        if (data == nil || data?.user == nil || data?.user?.id == nil) {
-            return false
-        }
-        return session.user?.userIdsISentRequest?.contains(data!.user!.id!) ?? false
-    }
-
-    func isWhoMatched() -> Bool {
-        if (data == nil || data?.user == nil || data?.user?.id == nil) {
-            return false
-        }
-        return session.user?.userIdsMatched?.contains(data!.user!.id!) ?? false
-    }
-
-    func isWhoUnmatched() -> Bool {
-        if (data == nil || data?.user == nil || data?.user?.id == nil) {
-            return false
-        }
-        return session.user?.userIdsUnmatched?.contains(data!.user!.id!) ?? false
+        return session.relationship(with: user)
     }
 }
