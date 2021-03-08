@@ -37,9 +37,9 @@ class HomeViewController: UIViewController {
 
     private var animations: [AnimationView] = []
 
-    var homeViewModel: HomeViewModel?
+    internal weak var homeViewModel: HomeViewModel?
 
-    var rightSideBarView: RightSideBarView?
+    internal weak var rightSideBarView: RightSideBarView?
 
     lazy private var shimmer1: FBShimmeringView = {
         let shimmer = FBShimmeringView()
@@ -177,7 +177,7 @@ class HomeViewController: UIViewController {
         homeViewModel?
             .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { data in
                 self.data = data
                 self.update()
@@ -193,8 +193,8 @@ class HomeViewController: UIViewController {
         snapshot.appendItems(data.recommendedUsers, toSection: .Recommendation)
         snapshot.appendItems(data.closeUsers, toSection: .Close)
         snapshot.appendItems(data.realTimeUsers, toSection: .RealTime)
-        dataSource.apply(snapshot, animatingDifferences: true) { [unowned self] in
-            isLoading = false
+        dataSource.apply(snapshot, animatingDifferences: true) {
+            self.isLoading = false
         }
     }
 
@@ -333,8 +333,10 @@ extension HomeViewController: UITableViewDelegate {
 extension HomeViewController: UserCardCellDelegate {
 
     func didTapSearchView(_ user: UserDTO?) {
-        homeViewModel?.channel(user: user)
-        navigationController?.pushViewController(.userSingle, current: self)
+        if let homeViewModel = homeViewModel {
+            homeViewModel.channel(user: user)
+            navigationController?.pushViewController(.userSingle, current: self)
+        }
     }
 
     func confirm(_ user: UserDTO?) -> Observable<ConfirmResult> {
@@ -342,20 +344,20 @@ extension HomeViewController: UserCardCellDelegate {
     }
 
     func request(_ user: UserDTO?, animationDone: Observable<Void>) {
-        homeViewModel?.request(user, animationDone: animationDone) { [unowned self] message in
-            toast(message: message)
+        homeViewModel?.request(user, animationDone: animationDone) { message in
+            self.toast(message: message)
         }
     }
 
     func poke(_ user: UserDTO?, onBegin: () -> Void) {
-        homeViewModel?.poke(user, onBegin: onBegin, completion: { [unowned self] message in
-            toast(message: message)
+        homeViewModel?.poke(user, onBegin: onBegin, completion: { message in
+            self.toast(message: message)
         })
     }
 
     func rate(_ user: UserDTO?, score: Int) {
-        homeViewModel?.rate(user, score: score) { [unowned self] message in
-            toast(message: message)
+        homeViewModel?.rate(user, score: score) { message in
+            self.toast(message: message)
         }
     }
 
