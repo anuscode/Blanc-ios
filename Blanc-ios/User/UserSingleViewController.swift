@@ -261,19 +261,29 @@ class UserSingleViewController: UIViewController {
         if (userSingleViewModel?.isWhoMatched() ?? false) {
             requestButton.setTitle("이미 매칭 된 유저 입니다.", for: .normal)
             requestButton.isUserInteractionEnabled = false
-            requestButton.backgroundColor = UIColor.bumble3.withAlphaComponent(0.5)
+            requestButton.backgroundColor = UIColor.bumble3.withAlphaComponent(0.6)
+            return
+        }
+
+        if (userSingleViewModel?.isWhoUnmatched() ?? false) {
+            requestButton.setTitle("성사 되지 않은 유저 입니다.", for: .normal)
+            requestButton.isUserInteractionEnabled = false
+            requestButton.backgroundColor = UIColor.bumble3.withAlphaComponent(0.6)
+            return
         }
 
         if (userSingleViewModel?.isWhoISent() ?? false) {
             requestButton.setTitle("이미 친구신청을 보냈습니다.", for: .normal)
             requestButton.isUserInteractionEnabled = false
-            requestButton.backgroundColor = UIColor.bumble3.withAlphaComponent(0.5)
+            requestButton.backgroundColor = UIColor.bumble3.withAlphaComponent(0.6)
+            return
         }
 
         if (userSingleViewModel?.isWhoSentMe() ?? false) {
             requestButton.setTitle("친구신청 수락", for: .normal)
             requestButton.isUserInteractionEnabled = true
             requestButton.backgroundColor = .bumble3
+            return
         }
     }
 
@@ -375,13 +385,16 @@ extension UserSingleViewController: UITableViewDelegate, UITableViewDataSource {
         if section == 0 {
             return 1
         } else if section == 1 {
+            if (userSingleViewModel?.isWhoMatched() == true) {
+                return 1
+            }
+            if (userSingleViewModel?.isWhoUnmatched() == true) {
+                return 1
+            }
             if (userSingleViewModel?.isWhoSentMe() == true) {
                 return 1
             }
             if (userSingleViewModel?.isWhoISent() == true) {
-                return 1
-            }
-            if (userSingleViewModel?.isWhoMatched() == true) {
                 return 1
             }
             return 0

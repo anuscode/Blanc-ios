@@ -183,6 +183,7 @@ class UserDTO: NSObject, Codable {
     var userIdsSentMeRequest: [String]?
     var userIdsISentRequest: [String]?
     var userIdsMatched: [String]?
+    var userIdsUnmatched: [String]?
     var userIdsBlocked: [String]?
     var starRatingsIRated: [StarRating]?
 

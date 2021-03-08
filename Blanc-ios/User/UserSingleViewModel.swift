@@ -45,16 +45,17 @@ class UserSingleViewModel {
     }
 
     func subscribeUserModel() {
-        userSingleModel.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [unowned self] data in
-                    self.data = data
-                    publish()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        userSingleModel
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onNext: { data in
+                self.data = data
+                self.publish()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     func createRequest(_ user: UserDTO?, onError: @escaping () -> Void) {
@@ -112,5 +113,12 @@ class UserSingleViewModel {
             return false
         }
         return session.user?.userIdsMatched?.contains(data!.user!.id!) ?? false
+    }
+
+    func isWhoUnmatched() -> Bool {
+        if (data == nil || data?.user == nil || data?.user?.id == nil) {
+            return false
+        }
+        return session.user?.userIdsUnmatched?.contains(data!.user!.id!) ?? false
     }
 }
