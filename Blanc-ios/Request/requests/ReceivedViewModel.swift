@@ -47,31 +47,35 @@ class ReceivedViewModel {
     }
 
     private func subscribeRequestsModel() {
-        requestsModel.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [unowned self] requests in
-                    data.requests = requests
-                    publish()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        requestsModel
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onNext: { requests in
+                self.data.requests = requests
+                self.publish()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     private func subscribeRatedModel() {
-        ratedModel.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [unowned self] users in
-                    // loop to calculate and set a distance from current user.
-                    users.distance(session)
-                    data.users = users
-                    publish()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        ratedModel
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .do(onNext: { users in
+                // loop to calculate and set a distance from current user.
+                users.distance(self.session)
+            })
+            .subscribe(onNext: { users in
+                self.data.users = users
+                self.publish()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     func channel(user: UserDTO?) {
