@@ -24,9 +24,9 @@ class ReceivedViewController: UIViewController {
     lazy private var tableView: UITableView = {
         let tableView = UITableView()
         tableView.register(SmallUserProfileWithButtonTableViewCell.self,
-                forCellReuseIdentifier: "SmallUserProfileWithButtonTableViewCell")
+            forCellReuseIdentifier: "SmallUserProfileWithButtonTableViewCell")
         tableView.register(SmallUserProfileTableViewCell.self,
-                forCellReuseIdentifier: "SmallUserProfileTableViewCell")
+            forCellReuseIdentifier: "SmallUserProfileTableViewCell")
         tableView.allowsSelection = false
         tableView.separatorColor = .clear
         tableView.delegate = self
@@ -64,21 +64,24 @@ class ReceivedViewController: UIViewController {
     }
 
     private func subscribeRequestsViewModel() {
-        receivedViewModel?.observe()
-                .skip(1)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(MainScheduler.instance)
-                .subscribe(onNext: { data in
-                    // no initial animation but yes afterward.
-                    let animatingDifferences: Bool = !(self.data.requests.count == 0 && self.data.users.count == 0)
-
-                    self.data.requests = data.requests
-                    self.data.users = data.users
-                    self.update(animatingDifferences: animatingDifferences)
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        receivedViewModel?
+            .observe()
+            .skip(1)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .map({ data in
+                // no initial animation but yes afterward.
+                let animatingDifferences: Bool = !(self.data.requests.count == 0 && self.data.users.count == 0)
+                self.data.requests = data.requests
+                self.data.users = data.users
+                return animatingDifferences
+            })
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(
+                onNext: update(animatingDifferences:),
+                onError: { err in log.error(err) }
+            )
+            .disposed(by: disposeBag)
     }
 }
 
@@ -92,8 +95,8 @@ extension ReceivedViewController {
         dataSource = UITableViewDiffableDataSource<Section, AnyHashable>(tableView: tableView) { (tableView, indexPath, data) -> UITableViewCell? in
             if let request = data as? RequestDTO {
                 guard let cell = tableView.dequeueReusableCell(
-                        withIdentifier: "SmallUserProfileWithButtonTableViewCell",
-                        for: indexPath) as? SmallUserProfileWithButtonTableViewCell else {
+                    withIdentifier: "SmallUserProfileWithButtonTableViewCell",
+                    for: indexPath) as? SmallUserProfileWithButtonTableViewCell else {
                     return UITableViewCell()
                 }
                 cell.bind(request: request, delegate: self)
@@ -101,8 +104,8 @@ extension ReceivedViewController {
             }
             if let user = data as? UserDTO {
                 guard let cell = tableView.dequeueReusableCell(
-                        withIdentifier: "SmallUserProfileTableViewCell",
-                        for: indexPath) as? SmallUserProfileTableViewCell else {
+                    withIdentifier: "SmallUserProfileTableViewCell",
+                    for: indexPath) as? SmallUserProfileTableViewCell else {
                     return UITableViewCell()
                 }
                 cell.bind(user: user, delegate: self)
@@ -202,13 +205,13 @@ extension ReceivedViewController: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         if (section == 0) {
             return data.requests.count == 0 ? generateFooterView(
-                    mainText: "아직 받은 친구신청이 없습니다.",
-                    secondaryText: "먼저 친구신청을 걸어 보세요.") : UIView()
+                mainText: "아직 받은 친구신청이 없습니다.",
+                secondaryText: "먼저 친구신청을 걸어 보세요.") : UIView()
         }
         if (section == 1) {
             return data.users.count == 0 ? generateFooterView(
-                    mainText: "아직 관심을 받지 못했습니다.",
-                    secondaryText: "상대방이 내게 4점이상 평가를 하면\n이곳에 표시 됩니다..") : UIView()
+                mainText: "아직 관심을 받지 못했습니다.",
+                secondaryText: "상대방이 내게 4점이상 평가를 하면\n이곳에 표시 됩니다..") : UIView()
         }
         return nil
     }
