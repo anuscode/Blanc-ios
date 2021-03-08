@@ -46,6 +46,7 @@ class AlarmViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationItem.backBarButtonItem = UIBarButtonItem.back
         navigationItem.leftBarButtonItem = leftBarButtonItem
         navigationItem.leftItemsSupplementBackButton = true
         if (!emptyView.isHidden) {
