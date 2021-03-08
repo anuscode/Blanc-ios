@@ -12,8 +12,6 @@ class RegistrationIntroductionViewController: UIViewController {
 
     private let ripple: Ripple = Ripple()
 
-    private var dataSource = UserGlobal.educations
-
     private var user: UserDTO?
 
     internal weak var registrationViewModel: RegistrationViewModel?
@@ -211,7 +209,7 @@ class RegistrationIntroductionViewController: UIViewController {
     }
 
     private func update() {
-        textView.text = user?.education
+        textView.text = user?.introduction
     }
 
     @objc private func didTapNextButton() {
@@ -220,17 +218,16 @@ class RegistrationIntroductionViewController: UIViewController {
     }
 
     @objc private func didTapBackButton() {
+        user?.introduction = textView.text
         back()
     }
 
     private func next() {
-        update()
         let navigation = navigationController as! RegistrationNavigationViewController
         navigation.stackAfterClear(identifier: "RegistrationCharmViewController")
     }
 
     private func back() {
-        update()
         let navigation = navigationController as! RegistrationNavigationViewController
         navigation.stackAfterClear(identifier: "RegistrationBloodTypeViewController", animated: false)
     }

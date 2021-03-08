@@ -527,6 +527,11 @@ extension SwinjectStoryboard {
             controller.registrationViewModel = resolver ~> RegistrationViewModel.self
         }
 
+        defaultContainer.storyboardInitCompleted(RegistrationIntroductionViewController.self) { resolver, controller in
+            log.info("Injecting dependencies into RegistrationIntroductionViewController")
+            controller.registrationViewModel = resolver ~> RegistrationViewModel.self
+        }
+
         defaultContainer.storyboardInitCompleted(RegistrationCharmViewController.self) { resolver, controller in
             log.info("Injecting dependencies into RegistrationCharmViewController")
             controller.registrationViewModel = resolver ~> RegistrationViewModel.self
