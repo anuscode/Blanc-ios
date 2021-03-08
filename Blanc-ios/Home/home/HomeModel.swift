@@ -45,8 +45,8 @@ class HomeModel {
 
     private func populate() {
         updateUserLocation()
-            .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .flatMap { it -> Single<[UserDTO]> in
                 self.listRecommendedUsers()
             }
@@ -83,21 +83,18 @@ class HomeModel {
         userService
             .listRecommendedUsers(uid: auth.uid, userId: session.id)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-            .observeOn(MainScheduler.instance)
     }
 
     private func listCloseUsers() -> Single<[UserDTO]> {
         userService
             .listCloseUsers(uid: auth.uid, userId: session.id)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-            .observeOn(MainScheduler.instance)
     }
 
     private func listRealTimeAccessUsers() -> Single<[UserDTO]> {
         userService
             .listRealTimeAccessUsers(uid: auth.uid, userId: session.id)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-            .observeOn(MainScheduler.instance)
     }
 
     private func updateUserLocation() -> Single<Location> {
@@ -185,7 +182,6 @@ class HomeModel {
                 userId: userId,
                 requestType: .FRIEND)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-            .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .do(onSuccess: { request in
                 onComplete(request)
             })
@@ -195,6 +191,7 @@ class HomeModel {
             .flatMap({ _ in
                 animationDone.asSingle()
             })
+            .observeOn(MainScheduler.asyncInstance)
             .subscribe(onSuccess: { _ in
                 self.remove(user)
             }, onError: { err in
