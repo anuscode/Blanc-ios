@@ -113,9 +113,10 @@ extension SwinjectStoryboard {
 
         /** MainTabBar dependencies **/
         defaultContainer.register(MainTabBarViewModel.self) { resolver in
+            log.info("Creating MainTabBarViewModel..")
             let conversationModel = resolver ~> ConversationModel.self
             return MainTabBarViewModel(conversationModel: conversationModel)
-        }
+        }.inObjectScope(.mainScope)
 
         /** Home dependencies **/
         defaultContainer.register(HomeModel.self) { resolver in

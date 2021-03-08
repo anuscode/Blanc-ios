@@ -1,19 +1,5 @@
 import Foundation
 
-var foregroundNotifications: [PushFor] = [
-    .POKE,
-    .REQUEST,
-    .COMMENT,
-    .FAVORITE,
-    .MATCHED,
-    .THUMB_UP,
-    .OPENED,
-    .LOG_OUT,
-    .APPROVAL,
-    .LOOK_UP,
-    .STAR_RATING
-]
-
 enum PushFor: String, Codable {
     case LOG_OUT = "LOG_OUT",
          APPROVAL = "APPROVAL",

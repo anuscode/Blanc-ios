@@ -5,12 +5,11 @@ class MainTabBarController: UITabBarController {
 
     weak var mainTabBarViewModel: MainTabBarViewModel?
 
-    private let disposeBag: DisposeBag = DisposeBag()
+    private var disposeBag: DisposeBag? = DisposeBag()
 
     // Foreground Notification Candidates..
-    private let foreground: [PushFor?] = [
-        .POKE, .REQUEST, .COMMENT, .FAVORITE, .MATCHED, .THUMB_UP,
-        .OPENED, .LOG_OUT, .APPROVAL, .LOOK_UP, .STAR_RATING
+    private let candidates: [PushFor?] = [
+        .POKE, .REQUEST, .COMMENT, .FAVORITE, .MATCHED, .THUMB_UP, .OPENED, .LOG_OUT, .LOOK_UP, .STAR_RATING
     ]
 
     override func viewWillAppear(_ animated: Bool) {
@@ -25,59 +24,47 @@ class MainTabBarController: UITabBarController {
         subscribeMainTabBarViewModel()
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        disposeBag = nil
+    }
+
     private func subscribeBroadcast() {
-        Broadcast.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { push in
-                    if (self.isForegroundNotifiable(push)) {
-                        self.notify(push)
-                    }
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        Broadcast
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: notify)
+            .disposed(by: disposeBag!)
     }
 
     private func subscribeMainTabBarViewModel() {
-        mainTabBarViewModel?.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { hasUnread in
-                    self.setBadgeOnConversationTab(hasUnread)
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        mainTabBarViewModel?
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: setBadgeOnConversationTab)
+            .disposed(by: disposeBag!)
     }
 
     private func notify(_ push: PushDTO) {
-        DispatchQueue.main.async {
-            let window = UIApplication.shared.keyWindow!
-            let notification = NotificationView(imageUrl: push.imageUrl, message: push.message)
-            notification.insert(into: window)
-            notification.show { _ in
-                DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
-                    notification.hide()
-                }
-            }
+        if (!candidates.contains(push.pushFor)) {
+            return
         }
+        let window = UIApplication.shared.keyWindow!
+        let notification = NotificationView(imageUrl: push.imageUrl, message: push.message)
+        notification.insert(into: window)
+        notification.show()
     }
 
     private func setBadgeOnConversationTab(_ hasUnread: Bool) {
-        DispatchQueue.main.async {
-            if let tabBarItems = self.tabBar.items {
-                let tabBarItem = tabBarItems[3]
-                tabBarItem.badgeValue = hasUnread ? "●" : ""
-                tabBarItem.badgeColor = .clear
-                tabBarItem.setBadgeTextAttributes([
-                    NSAttributedString.Key.foregroundColor: UIColor.systemPink
-                ], for: .normal)
-            }
+        if let tabBarItems = tabBar.items {
+            let tabBarItem = tabBarItems[3]
+            tabBarItem.badgeValue = hasUnread ? "●" : ""
+            tabBarItem.badgeColor = .clear
+            tabBarItem.setBadgeTextAttributes([
+                NSAttributedString.Key.foregroundColor: UIColor.systemPink
+            ], for: .normal)
         }
-    }
-
-    private func isForegroundNotifiable(_ push: PushDTO) -> Bool {
-        foreground.contains(push.pushFor)
     }
 }

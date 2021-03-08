@@ -171,11 +171,15 @@ class NotificationView: UIView {
         }
     }
 
-    func show(_ completion: ((Bool) -> Void)? = nil) {
+    func show(hideAfter: Int = 4) {
         UIView.animate(withDuration: 0.4, animations: {
             self.visible(true)
             self.transform = self.rightTransform
-        }, completion: completion)
+        }, completion: { _ in
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(hideAfter)) {
+                self.hide()
+            }
+        })
     }
 
     @objc func hide() {
