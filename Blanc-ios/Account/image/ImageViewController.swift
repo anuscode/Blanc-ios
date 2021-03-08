@@ -18,9 +18,9 @@ class ImageViewController: UIViewController, CropViewControllerDelegate, UIImage
 
     private var selectedImageView: UIImageView?
 
-    var pendingViewModel: PendingViewModel?
+    internal weak var pendingViewModel: PendingViewModel?
 
-    var userDTO: UserDTO?
+    internal weak var user: UserDTO?
 
     lazy private var scrollView: UIScrollView = {
         let view = UIScrollView()
@@ -404,15 +404,16 @@ class ImageViewController: UIViewController, CropViewControllerDelegate, UIImage
         configureImagesClickable(false)
         spinner.visible(true)
         updateImageViewWithImage(image, cropViewController: cropViewController)
-        pendingViewModel?.uploadUserImage(index: selectedImageView?.tag, file: image)
-                .observeOn(MainScheduler.instance)
-                .subscribe(onSuccess: { _ in
-                    self.spinner.visible(false)
-                    self.configureImagesClickable(true)
-                }, onError: { err in
-                    self.toast(message: "이미지 업로드에 실패 하였습니다.")
-                    log.error(err)
-                }).disposed(by: disposeBag)
+        pendingViewModel?
+            .uploadUserImage(index: selectedImageView?.tag, file: image)
+            .observeOn(MainScheduler.instance)
+            .subscribe(onSuccess: { _ in
+                self.spinner.visible(false)
+                self.configureImagesClickable(true)
+            }, onError: { err in
+                self.toast(message: "이미지 업로드에 실패 하였습니다.")
+                log.error(err)
+            }).disposed(by: disposeBag)
     }
 
     public func updateImageViewWithImage(_ image: UIImage, cropViewController: CropViewController) {
@@ -453,9 +454,8 @@ class ImageViewController: UIViewController, CropViewControllerDelegate, UIImage
         }
 
         let deleteAction = UIAlertAction(title: "이미지 삭제", style: .default) { [unowned self] (action) in
-
             let imageView = sender.view as! UIImageView
-            if ((userDTO?.getTempImageUrl(index: imageView.tag).isEmpty ?? true)) {
+            if ((user?.getTempImageUrl(index: imageView.tag).isEmpty ?? true)) {
                 toast(message: "등록 된 이미지가 없습니다.")
                 return
             }
@@ -606,55 +606,57 @@ class ImageViewController: UIViewController, CropViewControllerDelegate, UIImage
     }
 
     private func subscribeViewModel() {
-        pendingViewModel?.observe()
-                .observeOn(MainScheduler.instance)
-                .subscribe(onNext: { [unowned self] userDTO in
-                    self.userDTO = userDTO
-                    configureImageViews(userDTO)
-                }, onError: { [unowned self] err in
-                    log.error(err)
-                    toast(message: "알 수 없는 에러가 발생 하였습니다.")
-                })
-                .disposed(by: disposeBag)
+        pendingViewModel?
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { user in
+                self.user = user
+                self.update(user)
+            }, onError: { [unowned self] err in
+                log.error(err)
+                toast(message: "알 수 없는 에러가 발생 하였습니다.")
+            })
+            .disposed(by: disposeBag)
     }
 
-    private func configureImageViews(_ userDTO: UserDTO) {
-        let url1 = userDTO.getTempImageUrl(index: 0)
+    private func update(_ user: UserDTO) {
+        let url1 = user.getTempImageUrl(index: 0)
         if url1 != "" {
             imageView1.url(url1)
         } else {
             imageView1.image = UIImage(named: "ic_avatar")
         }
 
-        let url2 = userDTO.getTempImageUrl(index: 1)
+        let url2 = user.getTempImageUrl(index: 1)
         if url2 != "" {
             imageView2.url(url2)
         } else {
             imageView2.image = UIImage(named: "ic_avatar")
         }
 
-        let url3 = userDTO.getTempImageUrl(index: 2)
+        let url3 = user.getTempImageUrl(index: 2)
         if url3 != "" {
             imageView3.url(url3)
         } else {
             imageView3.image = UIImage(named: "ic_avatar")
         }
 
-        let url4 = userDTO.getTempImageUrl(index: 3)
+        let url4 = user.getTempImageUrl(index: 3)
         if url4 != "" {
             imageView4.url(url4)
         } else {
             imageView4.image = UIImage(named: "ic_avatar")
         }
 
-        let url5 = userDTO.getTempImageUrl(index: 4)
+        let url5 = user.getTempImageUrl(index: 4)
         if url5 != "" {
             imageView5.url(url5)
         } else {
             imageView5.image = UIImage(named: "ic_avatar")
         }
 
-        let url6 = userDTO.getTempImageUrl(index: 5)
+        let url6 = user.getTempImageUrl(index: 5)
         if url6 != "" {
             imageView6.url(url6)
         } else {
@@ -688,34 +690,36 @@ class ImageViewController: UIViewController, CropViewControllerDelegate, UIImage
     }
 
     @objc private func didTapSaveButton() {
-        if ((userDTO?.userImagesTemp?.count ?? 0) < 2) {
+        if ((user?.userImagesTemp?.count ?? 0) < 2) {
             toast(message: "사진은 2장 이상 필요합니다.")
             return
         }
 
-        let mainImageUrl = userDTO?.getTempImageUrl(index: 0)
+        let mainImageUrl = user?.getTempImageUrl(index: 0)
         if (mainImageUrl?.isEmpty ?? true) {
             toast(message: "메인 이미지는 필수 사항입니다.")
             return
         }
 
         spinner.visible(true)
-        pendingViewModel?.updateUserStatusPending()
-                .observeOn(MainScheduler.instance)
-                .do(onDispose: { [unowned self] in
-                    spinner.visible(false)
-                })
-                .do(onSuccess: { [unowned self] _ in
-                    toast(message: "심사 요청을 하였습니다.")
-                })
-                .delay(TimeInterval(1), scheduler: MainScheduler.instance)
-                .observeOn(MainScheduler.asyncInstance)
-                .subscribe(onSuccess: { [unowned self] userDTO in
-                    navigationController?.popToRootViewController(animated: true)
-                }, onError: { [unowned self] err in
-                    toast(message: "심사 요청에 실패 하였습니다.")
-                })
-                .disposed(by: disposeBag)
+        pendingViewModel?
+            .updateUserStatusPending()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
+            .do(onDispose: { [unowned self] in
+                spinner.visible(false)
+            })
+            .do(onSuccess: { [unowned self] _ in
+                toast(message: "심사 요청을 하였습니다.")
+            })
+            .delay(TimeInterval(1), scheduler: MainScheduler.instance)
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onSuccess: { [unowned self] userDTO in
+                navigationController?.popToRootViewController(animated: true)
+            }, onError: { [unowned self] err in
+                toast(message: "심사 요청에 실패 하였습니다.")
+            })
+            .disposed(by: disposeBag)
     }
 
 }
