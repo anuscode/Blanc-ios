@@ -162,26 +162,41 @@ class HomeModel {
                  animationDone: Observable<Void>,
                  onComplete: @escaping (_ request: RequestDTO) -> Void,
                  onError: @escaping (_ message: String) -> Void) {
-        guard (user != nil) else {
+
+        guard let user = user,
+              let currentUser = auth.currentUser,
+              let uid = auth.uid,
+              let userId = user.id else {
             return
         }
-        let index1 = data.recommendedUsers.firstIndex(of: user!)
-        let index2 = data.closeUsers.firstIndex(of: user!)
-        let index3 = data.realTimeUsers.firstIndex(of: user!)
+
+        let index1 = data.recommendedUsers.firstIndex(of: user)
+        let index2 = data.closeUsers.firstIndex(of: user)
+        let index3 = data.realTimeUsers.firstIndex(of: user)
         let set = Set<Int?>([index1, index2, index3])
+
         guard (set.count != 1) else {
             return
         }
 
         requestService.createRequest(
-                currentUser: auth.currentUser!, uid: auth.uid,
-                userId: user?.id, requestType: RequestType.FRIEND)
-            .do(onSuccess: { request in onComplete(request) })
-            .flatMap({ [unowned self] _ in session.refresh() })
-            .subscribe(onSuccess: { [unowned self] _ in
-                animationDone.subscribe({ _ in
-                    remove(user)
-                }).disposed(by: disposeBag)
+                currentUser: currentUser,
+                uid: uid,
+                userId: userId,
+                requestType: .FRIEND)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .do(onSuccess: { request in
+                onComplete(request)
+            })
+            .flatMap({ _ in
+                self.session.refresh()
+            })
+            .flatMap({ _ in
+                animationDone.asSingle()
+            })
+            .subscribe(onSuccess: { _ in
+                self.remove(user)
             }, onError: { err in
                 log.error(err)
                 onError("친구신청 도중 에러가 발생 하였습니다.")
@@ -190,13 +205,18 @@ class HomeModel {
     }
 
     func poke(_ user: UserDTO?, completion: @escaping (_ message: String) -> Void) {
-        userService.pushPoke(uid: auth.uid, userId: user?.id)
+
+        guard let user = user,
+              let uid = auth.uid,
+              let userId = user.id else {
+            return
+        }
+
+        userService.pushPoke(uid: uid, userId: userId)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-            .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .subscribe(onSuccess: { [unowned self] data in
-                DispatchQueue.main.async {
-                    RealmService.setPokeHistory(uid: session.uid, userId: user?.id)
-                }
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onSuccess: { data in
+                RealmService.setPokeHistory(uid: uid, userId: userId)
                 completion("상대방 옆구리를 찔렀습니다.")
             }, onError: { err in
                 log.error(err)
@@ -205,11 +225,18 @@ class HomeModel {
             .disposed(by: disposeBag)
     }
 
-    func rate(_ user: UserDTO?, _ score: Int, onSuccess: @escaping () -> Void, onError: @escaping (_ message: String) -> Void) {
-        if (user == nil || user?.id == nil) {
+    func rate(_ user: UserDTO?,
+              _ score: Int,
+              onSuccess: @escaping () -> Void,
+              onError: @escaping (_ message: String) -> Void) {
+
+        guard let uid = auth.uid,
+              let userId = user?.id else {
             return
         }
-        userService.updateUserStarRatingScore(uid: auth.uid, userId: user!.id, score: score)
+
+        userService
+            .updateUserStarRatingScore(uid: uid, userId: userId, score: score)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
             .subscribe(onSuccess: { _ in
@@ -230,16 +257,17 @@ class HomeModel {
     }
 
     func remove(_ user: UserDTO?) {
-        if (user == nil || user?.id == nil) {
+        guard let user = user,
+              let userId = user.id else {
             return
         }
-        if let index = data.recommendedUsers.firstIndex(where: { $0.id == user!.id! }) {
+        if let index = data.recommendedUsers.firstIndex(where: { $0.id == userId }) {
             data.recommendedUsers.remove(at: index)
         }
-        if let index = data.closeUsers.firstIndex(where: { $0.id == user!.id! }) {
+        if let index = data.closeUsers.firstIndex(where: { $0.id == userId }) {
             data.closeUsers.remove(at: index)
         }
-        if let index = data.realTimeUsers.firstIndex(where: { $0.id == user!.id! }) {
+        if let index = data.realTimeUsers.firstIndex(where: { $0.id == userId }) {
             data.realTimeUsers.remove(at: index)
         }
         publish()
