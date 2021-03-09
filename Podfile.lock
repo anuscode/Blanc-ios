@@ -10,6 +10,7 @@ PODS:
     - CollectionKit/Core (= 2.4.0)
   - CollectionKit/Core (2.4.0)
   - CropViewController (2.6.0)
+  - Differentiator (4.0.1)
   - FBSDKCoreKit (9.0.1):
     - FBSDKCoreKit/Basics (= 9.0.1)
     - FBSDKCoreKit/Core (= 9.0.1)
@@ -225,6 +226,10 @@ PODS:
   - RxCocoa (5.1.1):
     - RxRelay (~> 5)
     - RxSwift (~> 5)
+  - RxDataSources (4.0.1):
+    - Differentiator (~> 4.0)
+    - RxCocoa (~> 5.0)
+    - RxSwift (~> 5.0)
   - RxFirebase/Auth (0.3.8):
     - RxFirebaseAuthentication (~> 0.3)
   - RxFirebaseAuthentication (0.3.8):
@@ -294,6 +299,7 @@ DEPENDENCIES:
   - Moya/RxSwift (~> 14.0)
   - Parchment (~> 3.0)
   - RealmSwift
+  - RxDataSources (~> 4.0)
   - RxFirebase/Auth
   - RxGesture
   - RxKakaoSDKAuth
@@ -315,6 +321,7 @@ SPEC REPOS:
     - AppAuth
     - CollectionKit
     - CropViewController
+    - Differentiator
     - FBSDKCoreKit
     - FBSDKLoginKit
     - FBSDKShareKit
@@ -350,6 +357,7 @@ SPEC REPOS:
     - RealmSwift
     - RxAlamofire
     - RxCocoa
+    - RxDataSources
     - RxFirebase
     - RxFirebaseAuthentication
     - RxGesture
@@ -373,6 +381,7 @@ SPEC CHECKSUMS:
   AppAuth: 31bcec809a638d7bd2f86ea8a52bd45f6e81e7c7
   CollectionKit: 8f01e7629185bb81072c4aa734d105df5c2d1c8b
   CropViewController: 7093b39ec3cb508531b22d35773e06cecd7378d8
+  Differentiator: 886080237d9f87f322641dedbc5be257061b0602
   FBSDKCoreKit: fada1a6a0076724678993ff05a633848765ff18c
   FBSDKLoginKit: d5ffe6d808897019ccf16feb6f0a7ab260bc5cd6
   FBSDKShareKit: 6a85acb92eaf43a0b6dfa2ba6106eb74c7f10d30
@@ -408,6 +417,7 @@ SPEC CHECKSUMS:
   RealmSwift: 5e7abc842276d7fabd386e67afbf3efde54eb1c6
   RxAlamofire: 8e144c62dcc01d68dcb366bfc542eb6dd46bab78
   RxCocoa: 32065309a38d29b5b0db858819b5bf9ef038b601
+  RxDataSources: efee07fa4de48477eca0a4611e6d11e2da9c1114
   RxFirebase: 45e6448c69c7212e21f8ba89144443f916437861
   RxFirebaseAuthentication: 5d0573fd641947ed857346624d1c849bbd86bdff
   RxGesture: d6bd7447ca3a596c7a9702a6a2b6a2bb5d8bae54
@@ -425,6 +435,6 @@ SPEC CHECKSUMS:
   SwinjectStoryboard: 32512ef16c2b0ff5b8f823b23539c4a50f6d3383
   TTGTagCollectionView: 86fcbfa6a7493c9e860b01c2e693cffc8acf6de1
 
-PODFILE CHECKSUM: d722d8855e7893bc112d22b245ce552390faa73b
+PODFILE CHECKSUM: 0170b3df05b1fd5e99288aa0fe6a304c6fc4424d
 
 COCOAPODS: 1.10.0

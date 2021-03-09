@@ -11,6 +11,7 @@ target 'Blanc-ios' do
 
   pod 'Moya/RxSwift', '~> 14.0'
   pod "RxGesture"
+  pod 'RxDataSources', '~> 4.0'
 
   pod 'MaterialComponents/Ripple'
   pod 'MaterialComponents/TextControls+FilledTextAreas'
