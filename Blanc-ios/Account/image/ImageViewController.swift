@@ -18,7 +18,7 @@ class ImageViewController: UIViewController, CropViewControllerDelegate, UIImage
 
     private var selectedImageView: UIImageView?
 
-    internal weak var pendingViewModel: PendingViewModel?
+    internal weak var pendingViewModel: ImageViewViewModel?
 
     internal weak var user: UserDTO?
 
@@ -384,45 +384,6 @@ class ImageViewController: UIViewController, CropViewControllerDelegate, UIImage
         Spinner()
     }()
 
-    func imagePickerController(_ picker: UIImagePickerController,
-                               didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
-        guard let image = (info[UIImagePickerController.InfoKey.originalImage] as? UIImage) else {
-            return
-        }
-
-        let controller = getCropViewController(image: image)
-        self.image = image
-        picker.dismiss(animated: true, completion: {
-            self.present(controller, animated: true, completion: nil)
-        })
-    }
-
-    public func cropViewController(_ cropViewController: CropViewController,
-                                   didCropToImage image: UIImage,
-                                   withRect cropRect: CGRect,
-                                   angle: Int) {
-        configureImagesClickable(false)
-        spinner.visible(true)
-        updateImageViewWithImage(image, cropViewController: cropViewController)
-        pendingViewModel?
-            .uploadUserImage(index: selectedImageView?.tag, file: image)
-            .observeOn(MainScheduler.instance)
-            .subscribe(onSuccess: { _ in
-                self.spinner.visible(false)
-                self.configureImagesClickable(true)
-            }, onError: { err in
-                self.toast(message: "이미지 업로드에 실패 하였습니다.")
-                log.error(err)
-            }).disposed(by: disposeBag)
-    }
-
-    public func updateImageViewWithImage(_ image: UIImage, cropViewController: CropViewController) {
-        selectedImageView?.image = image
-        selectedImageView?.contentMode = .scaleAspectFill
-        selectedImageView?.clipsToBounds = true
-        cropViewController.dismiss(animated: true, completion: nil)
-    }
-
     lazy private var leftBarButtonItem: UIBarButtonItem = {
         UIBarButtonItem(customView: LeftSideBarView(title: "이미지 변경"))
     }()
@@ -442,38 +403,17 @@ class ImageViewController: UIViewController, CropViewControllerDelegate, UIImage
         subscribeViewModel()
     }
 
-    @objc public func didTapImage(sender: UITapGestureRecognizer) {
-        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        let imagePickerAction = UIAlertAction(title: "이미지 지정", style: .default) { (action) in
-            self.selectedImageView = (sender.view as! UIImageView)
-            let imagePicker = UIImagePickerController()
-            imagePicker.sourceType = .photoLibrary
-            imagePicker.allowsEditing = false
-            imagePicker.delegate = self
-            self.present(imagePicker, animated: true, completion: nil)
+    func imagePickerController(_ picker: UIImagePickerController,
+                               didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+        guard let image = (info[UIImagePickerController.InfoKey.originalImage] as? UIImage) else {
+            return
         }
 
-        let deleteAction = UIAlertAction(title: "이미지 삭제", style: .default) { [unowned self] (action) in
-            let imageView = sender.view as! UIImageView
-            if ((user?.getTempImageUrl(index: imageView.tag).isEmpty ?? true)) {
-                toast(message: "등록 된 이미지가 없습니다.")
-                return
-            }
-            imageView.image = UIImage(named: "ic_avatar")
-            pendingViewModel?.deleteUserImage(index: imageView.tag)
-        }
-
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-        cancelAction.setValue(UIColor.red, forKey: "titleTextColor")
-
-        alertController.addAction(cancelAction)
-        alertController.addAction(imagePickerAction)
-        alertController.addAction(deleteAction)
-        alertController.modalPresentationStyle = .popover
-
-        let presentationController = alertController.popoverPresentationController
-        presentationController?.barButtonItem = (sender as! UIBarButtonItem)
-        present(alertController, animated: true, completion: nil)
+        let controller = getCropViewController(image: image)
+        self.image = image
+        picker.dismiss(animated: true, completion: {
+            self.present(controller, animated: true, completion: nil)
+        })
     }
 
     private func configureSubviews() {
@@ -607,16 +547,38 @@ class ImageViewController: UIViewController, CropViewControllerDelegate, UIImage
 
     private func subscribeViewModel() {
         pendingViewModel?
-            .observe()
+            .user
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: { user in
-                self.user = user
-                self.update(user)
-            }, onError: { [unowned self] err in
-                log.error(err)
-                toast(message: "알 수 없는 에러가 발생 하였습니다.")
-            })
+            .subscribe(onNext: update)
+            .disposed(by: disposeBag)
+
+        pendingViewModel?
+            .loading
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: loading)
+            .disposed(by: disposeBag)
+
+        pendingViewModel?
+            .toast
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: toast)
+            .disposed(by: disposeBag)
+
+        pendingViewModel?
+            .imagesClickable
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: imagesClickable)
+            .disposed(by: disposeBag)
+
+        pendingViewModel?
+            .user
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: submitButtonClickable)
             .disposed(by: disposeBag)
     }
 
@@ -664,6 +626,33 @@ class ImageViewController: UIViewController, CropViewControllerDelegate, UIImage
         }
     }
 
+    private func loading(_ value: Bool) {
+        spinner.visible(value)
+    }
+
+    private func toast(_ message: String) {
+        self.toast(message: message)
+    }
+
+    private func imagesClickable(_ clickable: Bool) {
+        imageView1.isUserInteractionEnabled = clickable
+        imageView2.isUserInteractionEnabled = clickable
+        imageView3.isUserInteractionEnabled = clickable
+        imageView4.isUserInteractionEnabled = clickable
+        imageView5.isUserInteractionEnabled = clickable
+        imageView6.isUserInteractionEnabled = clickable
+    }
+
+    private func submitButtonClickable(_ user: UserDTO) {
+        if user.status == .OPENED {
+            saveButton.isUserInteractionEnabled = true
+            saveButton.backgroundColor = UIColor.bumble3.withAlphaComponent(1)
+        } else {
+            saveButton.isUserInteractionEnabled = false
+            saveButton.backgroundColor = UIColor.bumble3.withAlphaComponent(0.6)
+        }
+    }
+
     private func getCropViewController(image: UIImage) -> CropViewController {
         let cropViewController = CropViewController(croppingStyle: croppingStyle, image: image)
         cropViewController.modalPresentationStyle = .fullScreen
@@ -680,47 +669,66 @@ class ImageViewController: UIViewController, CropViewControllerDelegate, UIImage
         return cropViewController
     }
 
-    private func configureImagesClickable(_ clickable: Bool) {
-        imageView1.isUserInteractionEnabled = clickable
-        imageView2.isUserInteractionEnabled = clickable
-        imageView3.isUserInteractionEnabled = clickable
-        imageView4.isUserInteractionEnabled = clickable
-        imageView5.isUserInteractionEnabled = clickable
-        imageView6.isUserInteractionEnabled = clickable
+    public func cropViewController(_ cropViewController: CropViewController,
+                                   didCropToImage image: UIImage,
+                                   withRect cropRect: CGRect,
+                                   angle: Int) {
+        imagesClickable(false)
+        spinner.visible(true)
+
+        UIImage.resize(image: image, maxKb: 800) { [unowned self] resizedImage in
+            guard let resizedImage = resizedImage else {
+                toast(message: "이미지 리사이즈 도중 에러가 발생 하였습니다.")
+                return
+            }
+            DispatchQueue.main.async {
+                updateImageViewWithImage(resizedImage, cropViewController: cropViewController)
+            }
+            pendingViewModel?.uploadUserImage(index: selectedImageView?.tag, file: resizedImage)
+        }
+    }
+
+    public func updateImageViewWithImage(_ image: UIImage, cropViewController: CropViewController) {
+        selectedImageView?.image = image
+        selectedImageView?.contentMode = .scaleAspectFill
+        selectedImageView?.clipsToBounds = true
+        cropViewController.dismiss(animated: true, completion: nil)
     }
 
     @objc private func didTapSaveButton() {
-        if ((user?.userImagesTemp?.count ?? 0) < 2) {
-            toast(message: "사진은 2장 이상 필요합니다.")
-            return
-        }
-
-        let mainImageUrl = user?.getTempImageUrl(index: 0)
-        if (mainImageUrl?.isEmpty ?? true) {
-            toast(message: "메인 이미지는 필수 사항입니다.")
-            return
-        }
-
-        spinner.visible(true)
-        pendingViewModel?
-            .updateUserStatusPending()
-            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-            .observeOn(MainScheduler.instance)
-            .do(onDispose: { [unowned self] in
-                spinner.visible(false)
-            })
-            .do(onSuccess: { [unowned self] _ in
-                toast(message: "심사 요청을 하였습니다.")
-            })
-            .delay(TimeInterval(1), scheduler: MainScheduler.instance)
-            .observeOn(MainScheduler.asyncInstance)
-            .subscribe(onSuccess: { [unowned self] userDTO in
-                navigationController?.popToRootViewController(animated: true)
-            }, onError: { [unowned self] err in
-                toast(message: "심사 요청에 실패 하였습니다.")
-            })
-            .disposed(by: disposeBag)
+        pendingViewModel?.updateUserStatusPending(onSuccess: {
+            self.navigationController?.popToRootViewController(animated: true)
+        })
     }
 
+    @objc public func didTapImage(sender: UITapGestureRecognizer) {
+        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let imagePickerAction = UIAlertAction(title: "이미지 지정", style: .default) { (action) in
+            self.selectedImageView = (sender.view as! UIImageView)
+            let imagePicker = UIImagePickerController()
+            imagePicker.sourceType = .photoLibrary
+            imagePicker.allowsEditing = false
+            imagePicker.delegate = self
+            self.present(imagePicker, animated: true, completion: nil)
+        }
+
+        let deleteAction = UIAlertAction(title: "이미지 삭제", style: .default) { [unowned self] (action) in
+            let imageView = sender.view as! UIImageView
+            imageView.image = UIImage(named: "ic_avatar")
+            pendingViewModel?.deleteUserImage(index: imageView.tag)
+        }
+
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        cancelAction.setValue(UIColor.red, forKey: "titleTextColor")
+
+        alertController.addAction(cancelAction)
+        alertController.addAction(imagePickerAction)
+        alertController.addAction(deleteAction)
+        alertController.modalPresentationStyle = .popover
+
+        let presentationController = alertController.popoverPresentationController
+        presentationController?.barButtonItem = (sender as! UIBarButtonItem)
+        present(alertController, animated: true, completion: nil)
+    }
 }
 

@@ -391,15 +391,15 @@ extension SwinjectStoryboard {
         }.inObjectScope(.avoidScope)
 
         /** Pending dependencies **/
-        defaultContainer.register(PendingModel.self) { resolver in
+        defaultContainer.register(ImageViewModel.self) { resolver in
             let session = resolver ~> Session.self
             let userService = resolver ~> UserService.self
-            let pendingModel = PendingModel(session: session, userService: userService)
+            let pendingModel = ImageViewModel(session: session, userService: userService)
             return pendingModel
         }.inObjectScope(.pendingScope)
-        defaultContainer.register(PendingViewModel.self) { resolver in
-            let pendingModel = resolver ~> PendingModel.self
-            let pendingViewModel = PendingViewModel(pendingModel: pendingModel)
+        defaultContainer.register(ImageViewViewModel.self) { resolver in
+            let pendingModel = resolver ~> ImageViewModel.self
+            let pendingViewModel = ImageViewViewModel(pendingModel: pendingModel)
             return pendingViewModel
         }.inObjectScope(.pendingScope)
 
@@ -705,7 +705,7 @@ extension SwinjectStoryboard {
 
         defaultContainer.storyboardInitCompleted(ImageViewController.self) { resolver, controller in
             log.info("Injecting dependencies into ImageViewController")
-            controller.pendingViewModel = resolver ~> PendingViewModel.self
+            controller.pendingViewModel = resolver ~> ImageViewViewModel.self
         }
 
         defaultContainer.storyboardInitCompleted(NicknameViewController.self) { resolver, controller in
