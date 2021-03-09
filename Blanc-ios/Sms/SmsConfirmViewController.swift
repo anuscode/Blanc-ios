@@ -239,7 +239,7 @@ class SmsConfirmViewController: UIViewController {
             .observeOn(MainScheduler.instance)
             .subscribe(onSuccess: { _ in
                 self.spinnerView.visible(false)
-                self.moveToRegistration()
+                self.replace(storyboard: "Registration", withIdentifier: "RegistrationNavigationViewController")
             }, onError: { err in
                 log.error(err)
                 self.spinnerView.visible(false)
@@ -282,12 +282,5 @@ class SmsConfirmViewController: UIViewController {
 
     func setVerification(_ verification: VerificationDTO) {
         self.verification = verification
-    }
-
-    private func moveToRegistration() {
-        let storyboard = UIStoryboard(name: "Registration", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "RegistrationNavigationViewController")
-        vc.modalPresentationStyle = .fullScreen
-        present(vc, animated: true)
     }
 }
