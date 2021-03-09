@@ -28,11 +28,11 @@ extension UIViewController {
     ) {
         log.info("presenting \(withIdentifier)..")
         let storyboard = UIStoryboard(name: storyboard, bundle: bundle)
-        let nextViewController = storyboard.instantiateViewController(withIdentifier: withIdentifier)
-        nextViewController.modalPresentationStyle = modalPresentationStyle
-        dismiss(animated: false) {
+        let vc = storyboard.instantiateViewController(withIdentifier: withIdentifier)
+        vc.modalPresentationStyle = modalPresentationStyle
+        view.window?.rootViewController?.dismiss(animated: false, completion: {
             let window = UIApplication.shared.windows.first
-            window?.rootViewController?.present(nextViewController, animated: animated, completion: completion)
-        }
+            window?.rootViewController?.present(vc, animated: animated, completion: completion)
+        })
     }
 }
