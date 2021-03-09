@@ -82,15 +82,20 @@ class RequestsModel {
     }
 
     private func insertRequest(requestId: String?) {
+        guard let requestId = requestId else {
+            log.error("requestId is required value but not found..")
+            return
+        }
         requestService
             .getRequest(uid: session.uid, requestId: requestId)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .subscribe(onSuccess: { request in
-                self.requests.insert(request, at: 0)
                 if let userId = request.userFrom?.id {
                     self.session.user?.userIdsSentMeRequest?.append(userId)
+                    self.session.publish()
                 }
+                self.requests.insert(request, at: 0)
                 self.publish()
             }, onError: { err in
                 log.error(err)
@@ -99,12 +104,10 @@ class RequestsModel {
     }
 
     func accept(request: RequestDTO?, onSuccess: @escaping () -> Void, onError: @escaping () -> Void) {
-
         guard let uid = session.uid,
               let requestId = request?.id else {
             return
         }
-
         requestService
             .updateRequest(uid: uid, requestId: requestId, response: .ACCEPTED)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
@@ -128,12 +131,10 @@ class RequestsModel {
     }
 
     func decline(request: RequestDTO?, onError: @escaping () -> Void) {
-
         guard let uid = session.uid,
               let requestId = request?.id else {
             return
         }
-
         requestService
             .updateRequest(uid: uid, requestId: requestId, response: .DECLINED)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))

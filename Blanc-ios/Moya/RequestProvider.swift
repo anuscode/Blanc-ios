@@ -3,7 +3,6 @@ import Moya
 
 
 enum RequestProvider {
-
     // GET
     case listRequests(uid: String?)
     case getRequest(uid: String?, requestId: String?)
@@ -11,7 +10,6 @@ enum RequestProvider {
     case createRequest(idToken: String?, uid: String?, userId: String?, requestType: RequestType)
     // PUT
     case updateRequest(uid: String?, requestId: String?, response: Response)
-
 }
 
 
