@@ -17,9 +17,9 @@ class PostService {
     }
 
     // GET
-    func listPosts(lastId: String?) -> Single<[PostDTO]> {
+    func listPosts(uid: String?, lastId: String?) -> Single<[PostDTO]> {
         provider.rx
-            .request(.listPosts(lastId: lastId))
+            .request(.listPosts(uid: uid, lastId: lastId))
             .debug()
             .filterSuccessfulStatusAndRedirectCodes()
             .map([PostDTO].self, using: decoder)

@@ -5,7 +5,7 @@ import Moya
 enum PostProvider {
 
     // GET
-    case listPosts(lastId: String?)
+    case listPosts(uid: String?, lastId: String?)
     case getPost(postId: String?)
     case listAllFavoriteUsers(uid: String?, postId: String?)
 
@@ -33,7 +33,7 @@ extension PostProvider: TargetType {
 
     var path: String {
         switch self {
-        case .listPosts(lastId: _):
+        case .listPosts(uid: _, lastId: _):
             return "posts"
         case .getPost(postId: let postId):
             return "posts/\(postId ?? "")"
@@ -64,7 +64,7 @@ extension PostProvider: TargetType {
 
     var method: Moya.Method {
         switch self {
-        case .listPosts(lastId: _):
+        case .listPosts(uid: _, lastId: _):
             return .get
         case .getPost(postId: _):
             return .get
@@ -100,7 +100,7 @@ extension PostProvider: TargetType {
     var task: Task {
         switch self {
 
-        case .listPosts(lastId: let lastId):
+        case .listPosts(uid:_, lastId: let lastId):
             return .requestParameters(parameters: ["last_id": lastId ?? ""], encoding: URLEncoding.queryString)
         case .getPost(postId: _):
             return .requestPlain
@@ -119,10 +119,10 @@ extension PostProvider: TargetType {
                 let imageData = file.jpegData(compressionQuality: 1)
                 if (imageData != nil) {
                     formData.append(
-                            Moya.MultipartFormData(
-                                    provider: .data(imageData!), name: "post_image_\(index)",
-                                    fileName: "post_image_\(index).jpeg", mimeType: "image/jpeg"
-                            )
+                        Moya.MultipartFormData(
+                            provider: .data(imageData!), name: "post_image_\(index)",
+                            fileName: "post_image_\(index).jpeg", mimeType: "image/jpeg"
+                        )
                     )
                 }
             }
@@ -156,7 +156,8 @@ extension PostProvider: TargetType {
         var headers = ["Content-type": "application/json"]
         switch self {
 
-        case .listPosts(lastId: _):
+        case .listPosts(uid: let uid, lastId: _):
+            headers["uid"] = uid
             return headers
         case .getPost(postId: _):
             return headers
