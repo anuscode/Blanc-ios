@@ -195,6 +195,22 @@ class HomeViewController: UIViewController {
         snapshot.appendItems(data.realTimeUsers, toSection: .RealTime)
         dataSource.apply(snapshot, animatingDifferences: true) {
             self.isLoading = false
+            self.reloadIfRequired()
+        }
+    }
+
+    private func reloadIfRequired() {
+        if data.recommendedUsers.isEmpty {
+            tableView.reloadData()
+            return
+        }
+        if data.closeUsers.isEmpty {
+            tableView.reloadData()
+            return
+        }
+        if data.realTimeUsers.isEmpty {
+            tableView.reloadData()
+            return
         }
     }
 

@@ -168,14 +168,12 @@ class HomeModel {
                  animationDone: Observable<Void>,
                  onComplete: @escaping (_ request: RequestDTO) -> Void,
                  onError: @escaping (_ message: String) -> Void) {
-
         guard let user = user,
               let currentUser = auth.currentUser,
               let uid = auth.uid,
               let userId = user.id else {
             return
         }
-
         let index1 = data.recommendedUsers.firstIndex(of: user)
         let index2 = data.closeUsers.firstIndex(of: user)
         let index3 = data.realTimeUsers.firstIndex(of: user)
@@ -184,7 +182,6 @@ class HomeModel {
         guard (set.count != 1) else {
             return
         }
-
         requestService.createRequest(
                 currentUser: currentUser,
                 uid: uid,
@@ -211,13 +208,11 @@ class HomeModel {
     }
 
     func poke(_ user: UserDTO?, completion: @escaping (_ message: String) -> Void) {
-
         guard let user = user,
               let uid = auth.uid,
               let userId = user.id else {
             return
         }
-
         userService.pushPoke(uid: uid, userId: userId)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
@@ -235,13 +230,11 @@ class HomeModel {
               _ score: Int,
               onSuccess: @escaping () -> Void,
               onError: @escaping (_ message: String) -> Void) {
-
         guard let uid = auth.uid,
               let user = user,
               let userId = user.id else {
             return
         }
-
         userService
             .updateUserStarRatingScore(uid: uid, userId: userId, score: score)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
