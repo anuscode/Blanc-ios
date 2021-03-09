@@ -54,7 +54,7 @@ class UserSingleModel {
                 self.data.user = user
                 self.publish()
                 self.populateUserPosts(user: user)
-                self.pushLookup(user: user)
+                self.pushLookup()
             }, onError: { err in
                 log.error(err)
             })
@@ -79,13 +79,14 @@ class UserSingleModel {
             .disposed(by: disposeBag)
     }
 
-    func createRequest(_ user: UserDTO?,
-                       onSuccess: @escaping (_ request: RequestDTO) -> Void,
+    func createRequest(onSuccess: @escaping (_ request: RequestDTO) -> Void,
                        onError: @escaping () -> Void
     ) {
         guard let uid = session.uid,
-              let userId = user?.id,
+              let user = data.user,
+              let userId = user.id,
               let currentUser = auth.currentUser else {
+            onError()
             return
         }
         requestService
@@ -94,14 +95,12 @@ class UserSingleModel {
                 uid: uid,
                 userId: userId,
                 requestType: .FRIEND)
-            .do(onSuccess: { request in
-                onSuccess(request)
-            })
-            .flatMap { _ in
-                self.session.refresh()
-            }
+            .do(onSuccess: onSuccess)
+            .flatMap({ _ in self.session.refresh() })
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onSuccess: { _ in
+                let relationship = self.session.relationship(with: user)
+                user.relationship = relationship
                 self.publish()
             }, onError: { err in
                 log.error(err)
@@ -110,9 +109,10 @@ class UserSingleModel {
             .disposed(by: disposeBag)
     }
 
-    func poke(_ user: UserDTO?, completion: @escaping (_ message: String) -> Void) {
+    func poke(completion: @escaping (_ message: String) -> Void) {
         guard let uid = session.uid,
-              let userId = user?.id else {
+              let user = data.user,
+              let userId = user.id else {
             return
         }
         userService
@@ -129,9 +129,11 @@ class UserSingleModel {
             .disposed(by: disposeBag)
     }
 
-    func rate(_ user: UserDTO?, _ score: Int, onSuccess: @escaping () -> Void, onError: @escaping (_ message: String) -> Void) {
+    func rate(_ score: Int, onSuccess: @escaping () -> Void, onError: @escaping () -> Void) {
         guard let uid = session.uid,
-              let userId = user?.id else {
+              let user = data.user,
+              let userId = user.id else {
+            onError()
             return
         }
         userService
@@ -140,22 +142,27 @@ class UserSingleModel {
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onSuccess: { [unowned self] _ in
                 log.info("Successfully rated score \(score) at user: \(userId)")
+
                 let starRating = StarRating(userId: userId, score: score)
                 session.user?.starRatingsIRated?.append(starRating)
-                user?.relationship?.starRating = starRating
                 session.publish()
+
+                let relationship = session.relationship(with: user)
+                user.relationship = relationship
                 publish()
+
                 onSuccess()
             }, onError: { err in
-                onError("평가 도중 에러가 발생 하였습니다.")
+                onError()
                 log.error(err)
             })
             .disposed(by: disposeBag)
     }
 
-    func pushLookup(user: UserDTO?) {
+    func pushLookup() {
         guard let uid = session.uid,
-              let userId = user?.id else {
+              let user = data.user,
+              let userId = user.id else {
             return
         }
         userService

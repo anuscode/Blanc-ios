@@ -237,7 +237,8 @@ class UserSingleViewController: UIViewController {
     }
 
     private func subscribeUserSingleViewModel() {
-        userSingleViewModel?.observe()
+        userSingleViewModel?
+            .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { data in
@@ -274,17 +275,17 @@ class UserSingleViewController: UIViewController {
             return
         }
 
-        if (relationship?.isWhoISent ?? false) {
-            requestButton.setTitle("이미 친구신청을 보냈습니다.", for: .normal)
-            requestButton.isUserInteractionEnabled = false
-            requestButton.backgroundColor = UIColor.bumble3.withAlphaComponent(0.6)
-            return
-        }
-
         if (relationship?.isWhoSentMe ?? false) {
             requestButton.setTitle("친구신청 수락", for: .normal)
             requestButton.isUserInteractionEnabled = true
             requestButton.backgroundColor = .bumble3
+            return
+        }
+
+        if (relationship?.isWhoISent ?? false) {
+            requestButton.setTitle("이미 친구신청을 보냈습니다.", for: .normal)
+            requestButton.isUserInteractionEnabled = false
+            requestButton.backgroundColor = UIColor.bumble3.withAlphaComponent(0.6)
             return
         }
     }
@@ -296,7 +297,7 @@ class UserSingleViewController: UIViewController {
 
         if (user.relationship?.isWhoSentMe ?? false) {
             // do not ask when it's a request already sent.
-            userSingleViewModel?.createRequest(data!.user, onError: {
+            userSingleViewModel?.createRequest(onError: {
                 self.toast(message: "친구신청 도중 에러가 발생 하였습니다.")
             })
             return
@@ -313,7 +314,7 @@ class UserSingleViewController: UIViewController {
                             make.center.equalToSuperview()
                         }
                     })
-                    userSingleViewModel?.createRequest(user, onError: {
+                    userSingleViewModel?.createRequest(onError: {
                         toast(message: "친구신청 도중 에러가 발생 하였습니다.")
                     })
                 case .purchase:
@@ -329,7 +330,6 @@ class UserSingleViewController: UIViewController {
 
     @objc private func poke() {
         userSingleViewModel?.poke(
-            data?.user,
             onBegin: {
                 pokeLottie.begin(with: view) {
                     pokeLottie.snp.makeConstraints { make in
@@ -421,21 +421,24 @@ extension UserSingleViewController: UITableViewDelegate, UITableViewDataSource {
             let relationship = data?.user?.relationship
             if (relationship?.isMatched == true) {
                 cell.bind(message: "이미 매칭 된 유저입니다.")
+                return cell
             }
             if (relationship?.isUnmatched ?? false) {
                 cell.bind(message: "성사되지 않은 관계입니다.")
+                return cell
             }
             if (relationship?.isWhoSentMe ?? false) {
                 cell.bind(message: "내게 친구신청을 보낸 상대입니다.")
+                return cell
             }
             if (relationship?.isWhoISent ?? false) {
                 cell.bind(message: "이미 친구신청을 보낸 상대입니다.")
+                return cell
             }
             return cell
         } else if indexPath.section == 2 {
             let cell = tableView.dequeueReusableCell(
                 withIdentifier: ProfileTableViewCell.identifier, for: indexPath) as! ProfileTableViewCell
-            let relationship = data?.user?.relationship
             cell.delegate = self
             cell.bind(user: data?.user)
             return cell
@@ -470,9 +473,9 @@ extension UserSingleViewController: ProfileCellDelegate {
                 make.height.equalToSuperview().multipliedBy(0.5)
             }
         }
-        userSingleViewModel?.rate(user, score) { [unowned self] message in
-            toast(message: message)
-        }
+        userSingleViewModel?.rate(score, onError: {
+            self.toast(message: "평가를 완료하지 못했습니다.")
+        })
     }
 }
 

@@ -34,10 +34,9 @@ class UserSingleViewModel {
     }
 
     private func publish() {
-        if (data == nil) {
-            return
+        if let data = data {
+            observable.onNext(data)
         }
-        observable.onNext(data!)
     }
 
     func observe() -> Observable<UserSingleData> {
@@ -58,35 +57,33 @@ class UserSingleViewModel {
             .disposed(by: disposeBag)
     }
 
-    func createRequest(_ user: UserDTO?, onError: @escaping () -> Void) {
-        let onSuccess: (_ request: RequestDTO) -> Void = { [unowned self] request in
-            // 1. 일반적으로 친구 요청을 날리게 되면 새로운 리퀘스트를
-            //    생성 해야 하지만 아주 간헐적으로 상대방이 아주 근소한
-            //    차이로 요청을 먼저 보내면 자동으로 응답 처리가 된다.
+    func createRequest(onError: @escaping () -> Void) {
+        let onSuccess: (_ request: RequestDTO) -> Void = { request in
+            // 아주 근소한 차이로 상대방이 먼저 요청을 보낸 경우 자동 수락 처리 됨.
             if (request.response == .ACCEPTED) {
-                conversationModel.populate()
-                requestsModel.populate()
+                self.conversationModel.populate()
+                self.requestsModel.populate()
             }
-            // 2. 홈 화면 유저 리스트 삭제.
-            homeModel.remove(user)
+            // 홈 화면 유저 리스트 삭제.
+            let user = self.data?.user
+            self.homeModel.remove(user)
         }
-
-        userSingleModel.createRequest(user, onSuccess: onSuccess, onError: onError)
+        userSingleModel.createRequest(onSuccess: onSuccess, onError: onError)
     }
 
-    func poke(_ user: UserDTO?, onBegin: () -> Void, completion: @escaping (_ message: String) -> Void) {
-        if (!RealmService.isPokeAvailable(uid: session.uid, userId: user?.id)) {
+    func poke(onBegin: () -> Void, completion: @escaping (_ message: String) -> Void) {
+        if (!RealmService.isPokeAvailable(uid: session.uid, userId: data?.user?.id)) {
             completion("5분 이내에 같은 유저를 찌를 수 없습니다.")
             return
         }
         onBegin()
-        userSingleModel.poke(user, completion: completion)
+        userSingleModel.poke(completion: completion)
     }
 
-    func rate(_ user: UserDTO?, _ score: Int, onError: @escaping (_ message: String) -> Void) {
+    func rate(_ score: Int, onError: @escaping () -> Void) {
         let onSuccess = {
-            self.sendingModel.append(user: user)
+            self.sendingModel.append(user: self.data?.user)
         }
-        userSingleModel.rate(user, score, onSuccess: onSuccess, onError: onError)
+        userSingleModel.rate(score, onSuccess: onSuccess, onError: onError)
     }
 }
