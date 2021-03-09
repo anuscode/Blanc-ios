@@ -17,7 +17,7 @@ class ReceivedViewController: UIViewController {
 
     private var animations: [AnimationView] = []
 
-    var receivedViewModel: ReceivedViewModel?
+    internal weak var receivedViewModel: ReceivedViewModel?
 
     var pushUserSingleViewController: (() -> Void)?
 
@@ -71,16 +71,15 @@ class ReceivedViewController: UIViewController {
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .map({ data in
                 // no initial animation but yes afterward.
-                let animatingDifferences: Bool = !(self.data.requests.count == 0 && self.data.users.count == 0)
+                let isRequestsEmpty = self.data.requests.isEmpty
+                let isUsersEmpty = self.data.users.isEmpty
+                let animatingDifferences: Bool = !(isRequestsEmpty && isUsersEmpty)
                 self.data.requests = data.requests
                 self.data.users = data.users
                 return animatingDifferences
             })
             .observeOn(MainScheduler.asyncInstance)
-            .subscribe(
-                onNext: update(animatingDifferences:),
-                onError: { err in log.error(err) }
-            )
+            .subscribe(onNext: update(animatingDifferences:))
             .disposed(by: disposeBag)
     }
 }
@@ -121,7 +120,20 @@ extension ReceivedViewController {
         snapshot.appendSections([.Request, .HighRating])
         snapshot.appendItems(data.requests, toSection: .Request)
         snapshot.appendItems(data.users, toSection: .HighRating)
-        dataSource.apply(snapshot, animatingDifferences: animatingDifferences, completion: nil)
+        dataSource.apply(snapshot, animatingDifferences: animatingDifferences) {
+            self.reloadIfRequired()
+        }
+    }
+
+    private func reloadIfRequired() {
+        if data.requests.isEmpty {
+            tableView.reloadData()
+            return
+        }
+        if data.users.isEmpty {
+            tableView.reloadData()
+            return
+        }
     }
 }
 
@@ -235,6 +247,15 @@ extension ReceivedViewController: UserProfileCellDelegate {
     }
 
     func accept(request: RequestDTO?) {
+        guard let request = request else {
+            toast(message: "요청 수락에 실패 하였습니다.")
+            return
+        }
+        var snapshot = dataSource.snapshot()
+        snapshot.deleteItems([request])
+        dataSource.apply(snapshot, animatingDifferences: true) {
+            self.reloadIfRequired()
+        }
         receivedViewModel?.accept(request: request, onError: { [unowned self] in
             toast(message: "요청 수락에 실패 하였습니다.")
         })

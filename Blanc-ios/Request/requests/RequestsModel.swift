@@ -108,18 +108,19 @@ class RequestsModel {
               let requestId = request?.id else {
             return
         }
+
         requestService
             .updateRequest(uid: uid, requestId: requestId, response: .ACCEPTED)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-            .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .flatMap({ _ -> Single<UserDTO> in
-                self.session.refresh()
+            .do(onNext: { _ in
+                if let userId = request?.userFrom?.id {
+                    self.session.user?.userIdsMatched?.append(userId)
+                    self.session.publish()
+                }
             })
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onSuccess: { _ in
-                if let index = self.requests.firstIndex(where: {
-                    $0.id == requestId
-                }) {
+                if let index = self.requests.firstIndex(where: { $0.id == requestId }) {
                     self.requests.remove(at: index)
                 }
                 self.publish()
@@ -139,10 +140,14 @@ class RequestsModel {
             .updateRequest(uid: uid, requestId: requestId, response: .DECLINED)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .do(onNext: { _ in
+                if let userId = request?.userFrom?.id {
+                    self.session.user?.userIdsUnmatched?.append(userId)
+                    self.session.publish()
+                }
+            })
             .subscribe(onSuccess: { _ in
-                if let index = self.requests.firstIndex(where: {
-                    $0.id == requestId
-                }) {
+                if let index = self.requests.firstIndex(where: { $0.id == requestId }) {
                     self.requests.remove(at: index)
                 }
                 self.publish()
