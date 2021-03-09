@@ -59,7 +59,12 @@ class RegistrationModel {
             return
         }
         userService
-            .updateUserProfile(currentUser: currentUser, uid: uid, userId: userId, user: user)
+            .updateUserProfile(
+                currentUser: currentUser,
+                uid: uid,
+                userId: userId,
+                user: user
+            )
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
             .subscribe(onSuccess: { _ in
@@ -73,7 +78,13 @@ class RegistrationModel {
     }
 
     func uploadUserImage(index: Int?, file: UIImage, onSuccess: @escaping () -> Void, onError: @escaping () -> Void) {
-        userService.uploadUserImage(uid: auth.uid, userId: user?.id, index: index, file: file)
+        userService
+            .uploadUserImage(
+                uid: auth.uid,
+                userId: user?.id,
+                index: index,
+                file: file
+            )
             .do(onSuccess: { imageDTO in
                 if let index = self.user?.userImagesTemp?.firstIndex(where: {
                     $0.index == imageDTO.index
@@ -84,15 +95,17 @@ class RegistrationModel {
                 self.user?.userImagesTemp?.sort {
                     $0.index ?? 0 < $1.index ?? 0
                 }
-                self.user?.status = Status.OPENED
+                self.user?.status = .OPENED
                 self.publish()
             })
+            .observeOn(MainScheduler.instance)
             .subscribe(onSuccess: { _ in
                 onSuccess()
             }, onError: { err in
                 onError()
                 log.error(err)
-            }).disposed(by: disposeBag)
+            })
+            .disposed(by: disposeBag)
     }
 
     func deleteUserImage(index: Int) {
@@ -114,7 +127,8 @@ class RegistrationModel {
     }
 
     func updateUserStatusPending(onSuccess: @escaping () -> Void, onError: @escaping () -> Void) {
-        userService.updateUserStatusPending(uid: auth.uid, userId: session.user?.id)
+        userService
+            .updateUserStatusPending(uid: auth.uid, userId: session.user?.id)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
             .subscribe(onSuccess: { _ in
