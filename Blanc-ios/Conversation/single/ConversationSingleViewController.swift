@@ -161,6 +161,7 @@ class ConversationSingleViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         view.backgroundColor = .white
+        navigationItem.backBarButtonItem = UIBarButtonItem.back
         navigationItem.titleView = navigationBarContent
         navigationController?.navigationBar.barTintColor = .secondarySystemBackground
         navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
@@ -171,11 +172,11 @@ class ConversationSingleViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow),
-                name: UIResponder.keyboardWillShowNotification, object: nil)
+            name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidShow),
-                name: UIResponder.keyboardDidShowNotification, object: nil)
+            name: UIResponder.keyboardDidShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide),
-                name: UIResponder.keyboardWillHideNotification, object: nil)
+            name: UIResponder.keyboardWillHideNotification, object: nil)
         configureSubviews()
         configureConstraints()
         configureTableViewDataSource()
@@ -224,20 +225,21 @@ class ConversationSingleViewController: UIViewController {
     }
 
     private func subscribeConversationSingleViewModel() {
-        conversationSingleViewModel?.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [unowned self] conversation in
-                    self.conversation = conversation
-                    DispatchQueue.main.async { [unowned self] in
-                        update()
-                        updateNavigation()
-                        showInactiveViewIfRequired()
-                    }
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        conversationSingleViewModel?
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onNext: { conversation in
+                self.conversation = conversation
+                DispatchQueue.main.async {
+                    self.update()
+                    self.updateNavigation()
+                    self.showInactiveViewIfRequired()
+                }
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     private func updateNavigation() {
@@ -284,9 +286,9 @@ class ConversationSingleViewController: UIViewController {
             if (conversation?.messages?.count ?? 0 > 0) {
                 print(conversation?.messages?.count ?? 0)
                 tableView.scrollToRow(
-                        at: IndexPath(row: conversation!.messages!.count - 1, section: 0),
-                        at: .bottom,
-                        animated: true)
+                    at: IndexPath(row: conversation!.messages!.count - 1, section: 0),
+                    at: .bottom,
+                    animated: true)
             }
         }
     }
@@ -320,24 +322,21 @@ class ConversationSingleViewController: UIViewController {
             return
         }
         OpenConversationConfirmViewController
-                .present(target: self, user: partner)
-                .subscribe(onNext: { [unowned self] result in
-                    if (result == .accept) {
-                        updateConversationAvailable()
-                        return
-                    }
-
-                    if (result == .purchase) {
-
-                    }
-
-                    if (result == .decline) {
-                        log.info("declined open conversation confirm.")
-                    }
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+            .present(target: self, user: partner)
+            .subscribe(onNext: { result in
+                if (result == .accept) {
+                    self.updateConversationAvailable()
+                }
+                if (result == .purchase) {
+                    self.navigationController?.pushViewController(.inAppPurchase, current: self)
+                }
+                if (result == .decline) {
+                    log.info("declined open conversation confirm.")
+                }
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     private func updateConversationAvailable() {
@@ -359,8 +358,8 @@ extension ConversationSingleViewController {
         dataSource = UITableViewDiffableDataSource<Section, MessageDTO>(tableView: tableView) { [unowned self] (tableView, indexPath, message) -> UITableViewCell? in
             if (message.category == Category.system) {
                 guard let cell = tableView.dequeueReusableCell(
-                        withIdentifier: SystemMessageTableViewCell.identifier,
-                        for: indexPath) as? SystemMessageTableViewCell else {
+                    withIdentifier: SystemMessageTableViewCell.identifier,
+                    for: indexPath) as? SystemMessageTableViewCell else {
                     return UITableViewCell()
                 }
                 cell.bind(message: message)
@@ -368,16 +367,16 @@ extension ConversationSingleViewController {
             }
             if (message.isCurrentUserMessage == true) {
                 guard let cell = tableView.dequeueReusableCell(
-                        withIdentifier: RightMessageTableViewCell.identifier,
-                        for: indexPath) as? RightMessageTableViewCell else {
+                    withIdentifier: RightMessageTableViewCell.identifier,
+                    for: indexPath) as? RightMessageTableViewCell else {
                     return UITableViewCell()
                 }
                 cell.bind(message: message)
                 return cell
             } else {
                 guard let cell = tableView.dequeueReusableCell(
-                        withIdentifier: LeftMessageTableViewCell.identifier,
-                        for: indexPath) as? LeftMessageTableViewCell else {
+                    withIdentifier: LeftMessageTableViewCell.identifier,
+                    for: indexPath) as? LeftMessageTableViewCell else {
                     return UITableViewCell()
                 }
                 let partner = conversation?.partner
@@ -395,7 +394,7 @@ extension ConversationSingleViewController {
         dataSource?.apply(snapshot, animatingDifferences: animatingDifferences) { [unowned self] in
             if (conversation?.messages?.count ?? 0 > 0) {
                 tableView.scrollToRow(at: IndexPath(row: ((conversation?.messages?.count ?? 1) - 1), section: 0),
-                        at: .bottom, animated: true)
+                    at: .bottom, animated: true)
             }
         }
     }
