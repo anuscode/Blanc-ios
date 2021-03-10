@@ -3,9 +3,9 @@ import RxSwift
 
 class MainTabBarController: UITabBarController {
 
-    weak var mainTabBarViewModel: MainTabBarViewModel?
-
     private var disposeBag: DisposeBag? = DisposeBag()
+
+    internal weak var mainTabBarViewModel: MainTabBarViewModel?
 
     // Foreground Notification Candidates..
     private let candidates: [PushFor?] = [
@@ -43,7 +43,7 @@ class MainTabBarController: UITabBarController {
             .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: setBadgeOnConversationTab)
+            .subscribe(onNext: setBadgeOnTab)
             .disposed(by: disposeBag!)
     }
 
@@ -57,7 +57,7 @@ class MainTabBarController: UITabBarController {
         notification.show()
     }
 
-    private func setBadgeOnConversationTab(_ hasUnread: Bool) {
+    private func setBadgeOnTab(_ hasUnread: Bool) {
         if let tabBarItems = tabBar.items {
             let tabBarItem = tabBarItems[3]
             tabBarItem.badgeValue = hasUnread ? "●" : ""

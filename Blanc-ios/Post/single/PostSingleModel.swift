@@ -30,10 +30,9 @@ class PostSingleModel {
     }
 
     func publish() {
-        if (post == nil) {
-            return
+        if let post = post {
+            observable.onNext(post)
         }
-        observable.onNext(post!)
     }
 
     func observe() -> Observable<PostDTO> {
@@ -55,22 +54,20 @@ class PostSingleModel {
     }
 
     func thumbUp(post: PostDTO?, comment: CommentDTO?, onError: @escaping (_ message: String) -> Void) {
-        if (comment == nil) {
+        guard let comment = comment else {
             return
         }
-
-        if let index = comment!.thumbDownUserIds?.firstIndex(where: { $0 == session.id }) {
-            comment!.thumbDownUserIds?.remove(at: index)
+        if let index = comment.thumbDownUserIds?.firstIndex(where: { $0 == session.id }) {
+            comment.thumbDownUserIds?.remove(at: index)
         }
-
-        if (comment!.thumbUpUserIds?.contains(session.id ?? "") == true) {
-            if let index = comment!.thumbUpUserIds?.firstIndex(where: { $0 == session.id }) {
-                comment!.thumbUpUserIds?.remove(at: index)
+        if (comment.thumbUpUserIds?.contains(session.id ?? "") == true) {
+            if let index = comment.thumbUpUserIds?.firstIndex(where: { $0 == session.id }) {
+                comment.thumbUpUserIds?.remove(at: index)
                 deleteThumbUp(post: post, comment: comment, onError: onError)
             }
         } else {
-            if comment!.thumbUpUserIds?.firstIndex(where: { $0 == session.id }) == nil {
-                comment!.thumbUpUserIds?.append(session.id ?? "")
+            if comment.thumbUpUserIds?.firstIndex(where: { $0 == session.id }) == nil {
+                comment.thumbUpUserIds?.append(session.id ?? "")
                 createThumbUp(post: post, comment: comment, onError: onError)
             }
         }
@@ -112,22 +109,20 @@ class PostSingleModel {
     }
 
     func thumbDown(post: PostDTO?, comment: CommentDTO?, onError: @escaping (_ message: String) -> Void) {
-        if (comment == nil) {
+        guard let comment = comment else {
             return
         }
-
-        if let index = comment!.thumbUpUserIds?.firstIndex(where: { $0 == session.id }) {
-            comment!.thumbUpUserIds?.remove(at: index)
+        if let index = comment.thumbUpUserIds?.firstIndex(where: { $0 == session.id }) {
+            comment.thumbUpUserIds?.remove(at: index)
         }
-
-        if (comment!.thumbDownUserIds?.contains(session.id ?? "") == true) {
-            if let index = comment!.thumbDownUserIds?.firstIndex(where: { $0 == session.id }) {
-                comment!.thumbDownUserIds?.remove(at: index)
+        if (comment.thumbDownUserIds?.contains(session.id ?? "") == true) {
+            if let index = comment.thumbDownUserIds?.firstIndex(where: { $0 == session.id }) {
+                comment.thumbDownUserIds?.remove(at: index)
                 deleteThumbDown(post: post, comment: comment, onError: onError)
             }
         } else {
-            if comment!.thumbDownUserIds?.firstIndex(where: { $0 == session.id }) == nil {
-                comment!.thumbDownUserIds?.append(session.id ?? "")
+            if comment.thumbDownUserIds?.firstIndex(where: { $0 == session.id }) == nil {
+                comment.thumbDownUserIds?.append(session.id ?? "")
                 createThumbDown(post: post, comment: comment, onError: onError)
             }
         }
@@ -169,24 +164,25 @@ class PostSingleModel {
     }
 
     func isThumbedUp(comment: CommentDTO?) -> Bool {
-        if (comment == nil) {
+        guard let comment = comment else {
             return false
         }
-        return comment!.thumbUpUserIds?.firstIndex(where: { $0 == session.id }) != nil
+        return comment.thumbUpUserIds?.firstIndex(where: { $0 == session.id }) != nil
     }
 
     func isThumbedDown(comment: CommentDTO?) -> Bool {
-        if (comment == nil) {
+        guard let comment = comment else {
             return false
         }
-        return comment!.thumbDownUserIds?.firstIndex(where: { $0 == session.id }) != nil
+        return comment.thumbDownUserIds?.firstIndex(where: { $0 == session.id }) != nil
     }
 
     func isAuthorFavoriteComment(post: PostDTO?, comment: CommentDTO?) -> Bool {
-        if (post == nil || comment == nil) {
+        guard let post = post,
+              let comment = comment else {
             return false
         }
-        return comment!.thumbUpUserIds?.firstIndex(where: { $0 == post?.author?.id }) != nil
+        return comment.thumbUpUserIds?.firstIndex(where: { $0 == post.author?.id }) != nil
     }
 
     func createComment(postId: String?, commentId: String?, comment: String, onError: @escaping (_ message: String?) -> Void) {
