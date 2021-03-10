@@ -37,6 +37,10 @@ class UserSingleViewModel {
         subscribeUserModel()
     }
 
+    deinit {
+        log.info("deinit UserSingleViewModel..")
+    }
+
     private func publish() {
         if let data = data {
             observable.onNext(data)

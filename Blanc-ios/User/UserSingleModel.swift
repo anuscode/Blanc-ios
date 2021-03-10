@@ -34,6 +34,10 @@ class UserSingleModel {
         subscribeChannel()
     }
 
+    deinit {
+        log.info("deinit UserSingleModel..")
+    }
+
     func publish() {
         observable.onNext(data)
     }
@@ -47,15 +51,15 @@ class UserSingleModel {
             .observe(UserDTO.self)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
-            .do(onNext: { user in
-                user.distance = self.session.user?.distance(from: user, type: String.self)
-                user.relationship = self.session.relationship(with: user)
+            .do(onNext: { [unowned self]  user in
+                user.distance = session.user?.distance(from: user, type: String.self)
+                user.relationship = session.relationship(with: user)
             })
             .subscribe(onNext: { [unowned self] user in
-                self.data.user = user
-                self.publish()
-                self.populateUserPosts(user: user)
-                self.pushLookup()
+                data.user = user
+                publish()
+                populateUserPosts(user: user)
+                pushLookup()
             }, onError: { err in
                 log.error(err)
             })
@@ -71,9 +75,9 @@ class UserSingleModel {
             .listAllUserPosts(uid: uid, userId: userId)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
-            .subscribe(onSuccess: { posts in
-                self.data.posts = posts
-                self.publish()
+            .subscribe(onSuccess: { [unowned self]  posts in
+                data.posts = posts
+                publish()
             }, onError: { err in
                 log.error(err)
             })
@@ -99,10 +103,10 @@ class UserSingleModel {
             .do(onSuccess: onSuccess)
             .flatMap({ _ in self.session.refresh() })
             .observeOn(MainScheduler.asyncInstance)
-            .subscribe(onSuccess: { _ in
+            .subscribe(onSuccess: { [unowned self]  _ in
                 let relationship = self.session.relationship(with: user)
                 user.relationship = relationship
-                self.publish()
+                publish()
             }, onError: { err in
                 log.error(err)
                 onError()
@@ -120,7 +124,7 @@ class UserSingleModel {
             .pushPoke(uid: uid, userId: userId)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
-            .subscribe(onSuccess: { data in
+            .subscribe(onSuccess: { [unowned self]  data in
                 RealmService.setPokeHistory(uid: uid, userId: userId)
                 completion("상대방 옆구리를 찔렀습니다.")
             }, onError: { err in
@@ -170,7 +174,7 @@ class UserSingleModel {
             .pushLookUp(uid: uid, userId: userId)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
-            .subscribe(onSuccess: {
+            .subscribe(onSuccess: { [unowned self] in
                 log.info("Successfully requested to push lookup..")
             }, onError: { err in
                 log.error(err)

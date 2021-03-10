@@ -25,7 +25,7 @@ class UserSingleViewController: UIViewController {
 
     private var data: UserSingleData?
 
-    var userSingleViewModel: UserSingleViewModel?
+    weak var userSingleViewModel: UserSingleViewModel?
 
     lazy private var navigationBarContent: UIView = {
         let view = UIView()
@@ -243,7 +243,8 @@ class UserSingleViewController: UIViewController {
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [unowned self] data in
                 self.data = data
-                self.tableView.reloadData()
+                tableView.reloadData()
+                navigation(data)
             })
             .disposed(by: disposeBag)
 
@@ -251,21 +252,18 @@ class UserSingleViewController: UIViewController {
             .toast
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: toast)
+            .subscribe(onNext: { [unowned self] message in
+                toast(message: message)
+            })
             .disposed(by: disposeBag)
 
         userSingleViewModel?
             .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: enableRequestButton)
-            .disposed(by: disposeBag)
-
-        userSingleViewModel?
-            .observe()
-            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-            .observeOn(MainScheduler.instance)
-            .subscribe(onNext: navigation)
+            .subscribe(onNext: { [unowned self] boolean in
+                enableRequestButton(boolean)
+            })
             .disposed(by: disposeBag)
     }
 
@@ -305,10 +303,6 @@ class UserSingleViewController: UIViewController {
             requestButton.backgroundColor = UIColor.bumble3.withAlphaComponent(0.6)
             return
         }
-    }
-
-    private func toast(_ message: String) {
-        self.toast(message: message)
     }
 
     @objc private func request(user: UserDTO?) {
