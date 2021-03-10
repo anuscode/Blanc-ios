@@ -114,6 +114,10 @@ class HomeViewController: UIViewController {
         navigationController?.setNavigationBarHidden(false, animated: animated)
     }
 
+    deinit {
+        log.info("deinit home view controller..")
+    }
+
     private func configureTableView() {
         dataSource = UITableViewDiffableDataSource<Section, UserDTO>(tableView: tableView) { [unowned self] (tableView, indexPath, user) -> UITableViewCell? in
             if (indexPath.section == 0) {
@@ -175,14 +179,21 @@ class HomeViewController: UIViewController {
 
     private func subscribeHomeViewModel() {
         homeViewModel?
-            .observe()
+            .data
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [unowned self] data in
                 self.data = data
-                self.update()
-            }, onError: { err in
-                log.error(err)
+                update()
+            })
+            .disposed(by: disposeBag)
+
+        homeViewModel?
+            .toast
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] message in
+                toast(message: message)
             })
             .disposed(by: disposeBag)
     }
@@ -193,9 +204,9 @@ class HomeViewController: UIViewController {
         snapshot.appendItems(data.recommendedUsers, toSection: .Recommendation)
         snapshot.appendItems(data.closeUsers, toSection: .Close)
         snapshot.appendItems(data.realTimeUsers, toSection: .RealTime)
-        dataSource.apply(snapshot, animatingDifferences: true) {
-            self.isLoading = false
-            self.reloadIfRequired()
+        dataSource.apply(snapshot, animatingDifferences: true) { [unowned self] in
+            isLoading = false
+            reloadIfRequired()
         }
     }
 
@@ -360,21 +371,15 @@ extension HomeViewController: UserCardCellDelegate {
     }
 
     func request(_ user: UserDTO?, animationDone: Observable<Void>) {
-        homeViewModel?.request(user, animationDone: animationDone) { message in
-            self.toast(message: message)
-        }
+        homeViewModel?.request(user, animationDone: animationDone)
     }
 
     func poke(_ user: UserDTO?, onBegin: () -> Void) {
-        homeViewModel?.poke(user, onBegin: onBegin, completion: { message in
-            self.toast(message: message)
-        })
+        homeViewModel?.poke(user, onBegin: onBegin)
     }
 
     func rate(_ user: UserDTO?, score: Int) {
-        homeViewModel?.rate(user, score: score) { message in
-            self.toast(message: message)
-        }
+        homeViewModel?.rate(user, score: score)
     }
 
     func purchase() {

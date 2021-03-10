@@ -47,41 +47,41 @@ class HomeModel {
         updateUserLocation()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .flatMap { it -> Single<[UserDTO]> in
-                self.listRecommendedUsers()
+            .flatMap { [unowned self] it -> Single<[UserDTO]> in
+                listRecommendedUsers()
             }
-            .do(afterSuccess: { users in
+            .do(afterSuccess: { [unowned self] users in
                 // loop to calculate and set a distance from current user.
-                users.distance(self.session)
+                users.distance(session)
                 users.forEach({
-                    $0.relationship = self.session.relationship(with: $0)
+                    $0.relationship = session.relationship(with: $0)
                 })
-                self.data.recommendedUsers = users
+                data.recommendedUsers = users
             })
-            .flatMap { it -> Single<[UserDTO]> in
-                self.listCloseUsers()
+            .flatMap { [unowned self] it -> Single<[UserDTO]> in
+                listCloseUsers()
             }
-            .do(afterSuccess: { users in
+            .do(afterSuccess: { [unowned self]  users in
                 // loop to calculate and set a distance from current user.
-                users.distance(self.session)
+                users.distance(session)
                 users.forEach({
-                    $0.relationship = self.session.relationship(with: $0)
+                    $0.relationship = session.relationship(with: $0)
                 })
-                self.data.closeUsers = users
+                data.closeUsers = users
             })
-            .flatMap { it -> Single<[UserDTO]> in
-                self.listRealTimeAccessUsers()
+            .flatMap { [unowned self] it -> Single<[UserDTO]> in
+                listRealTimeAccessUsers()
             }
-            .do(afterSuccess: { users in
+            .do(afterSuccess: { [unowned self]  users in
                 // loop to calculate and set a distance from current user.
-                users.distance(self.session)
+                users.distance(session)
                 users.forEach({
-                    $0.relationship = self.session.relationship(with: $0)
+                    $0.relationship = session.relationship(with: $0)
                 })
-                self.data.realTimeUsers = users
+                data.realTimeUsers = users
             })
-            .subscribe(onSuccess: { _ in
-                self.publish()
+            .subscribe(onSuccess: { [unowned self] _ in
+                publish()
             }, onError: { err in
                 log.error(err)
             })
@@ -118,19 +118,19 @@ class HomeModel {
                 coord = Coordinate(location)
             })
             .observeOn(MainScheduler.instance)
-            .flatMap({ _ -> Observable<String> in
-                if (self.manager.authorizationStatus.rawValue <= 2) {
+            .flatMap({ [unowned self] _ -> Observable<String> in
+                if (manager.authorizationStatus.rawValue <= 2) {
                     return Observable.of("알 수 없음")
                 }
-                return self.manager.rx.placemark
+                return manager.rx.placemark
                     .map({ placemark in placemark.locality ?? "알 수 없음" })
             })
             .do(onNext: { locality in
                 addr = locality
             })
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .flatMap({ _ -> Single<Location> in
-                self.userService.updateUserLocation(
+            .flatMap({ [unowned self]  _ -> Single<Location> in
+                userService.updateUserLocation(
                     uid: uid,
                     userId: userId,
                     latitude: coord?.latitude ?? 0,
@@ -138,8 +138,8 @@ class HomeModel {
                     area: addr ?? "알 수 없음"
                 )
             })
-            .do(onNext: { location in
-                self.session.user?.location = location
+            .do(onNext: { [unowned self] location in
+                session.user?.location = location
             })
             .take(1)
             .asSingle()
@@ -153,11 +153,11 @@ class HomeModel {
             .subscribe(onNext: { [unowned self] _, status in
                 switch status {
                 case .denied, .notDetermined, .restricted:
-                    self.manager.requestAlwaysAuthorization()
+                    manager.requestAlwaysAuthorization()
                 default:
                     log.info("Currently the location authorization is well granted..")
                 }
-                self.populate()
+                populate()
             }, onError: { err in
                 log.error(err)
             })
@@ -167,7 +167,7 @@ class HomeModel {
     func request(_ user: UserDTO?,
                  animationDone: Observable<Void>,
                  onComplete: @escaping (_ request: RequestDTO) -> Void,
-                 onError: @escaping (_ message: String) -> Void) {
+                 onError: @escaping () -> Void) {
         guard let user = user,
               let currentUser = auth.currentUser,
               let uid = auth.uid,
@@ -188,40 +188,41 @@ class HomeModel {
                 userId: userId,
                 requestType: .FRIEND)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .do(onSuccess: { request in
                 onComplete(request)
             })
-            .flatMap({ _ in
-                self.session.refresh()
+            .flatMap({ [unowned self]  _ in
+                session.refresh()
             })
             .flatMap({ _ in
                 animationDone.asSingle()
             })
-            .observeOn(MainScheduler.asyncInstance)
-            .subscribe(onSuccess: { _ in
-                self.remove(user)
+            .subscribe(onSuccess: { [unowned self]  _ in
+                remove(user)
             }, onError: { err in
                 log.error(err)
-                onError("친구신청 도중 에러가 발생 하였습니다.")
+                onError()
             })
             .disposed(by: disposeBag)
     }
 
-    func poke(_ user: UserDTO?, completion: @escaping (_ message: String) -> Void) {
+    func poke(_ user: UserDTO?, onComplete: @escaping () -> Void, onError: @escaping () -> Void) {
         guard let user = user,
               let uid = auth.uid,
               let userId = user.id else {
             return
         }
-        userService.pushPoke(uid: uid, userId: userId)
+        userService
+            .pushPoke(uid: uid, userId: userId)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onSuccess: { data in
                 RealmService.setPokeHistory(uid: uid, userId: userId)
-                completion("상대방 옆구리를 찔렀습니다.")
+                onComplete()
             }, onError: { err in
                 log.error(err)
-                completion("찔러보기 도중 에러가 발생 하였습니다.")
+                onError()
             })
             .disposed(by: disposeBag)
     }
@@ -229,7 +230,7 @@ class HomeModel {
     func rate(_ user: UserDTO?,
               _ score: Int,
               onSuccess: @escaping () -> Void,
-              onError: @escaping (_ message: String) -> Void) {
+              onError: @escaping () -> Void) {
         guard let uid = auth.uid,
               let user = user,
               let userId = user.id else {
@@ -239,17 +240,17 @@ class HomeModel {
             .updateUserStarRatingScore(uid: uid, userId: userId, score: score)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
-            .subscribe(onSuccess: { _ in
+            .subscribe(onSuccess: { [unowned self] _ in
                 let starRating = StarRating(userId: userId, score: score)
-                self.session.user?.starRatingsIRated?.append(starRating)
+                session.user?.starRatingsIRated?.append(starRating)
                 user.relationship?.starRating = starRating
-                self.session.publish()
-                self.publish()
+                session.publish()
+                publish()
                 onSuccess()
                 log.info("Successfully rated score \(score) with user: \(userId)")
             }, onError: { err in
                 log.error(err)
-                onError("평가 도중 에러가 발생 하였습니다.")
+                onError()
             })
             .disposed(by: disposeBag)
     }
@@ -282,8 +283,8 @@ class HomeModel {
             .updateUserLastLoginAt(uid: auth.uid, userId: session.id)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .subscribe(onSuccess: { _ in
-                self.session.user?.lastLoginAt = Int(NSDate().timeIntervalSince1970)
+            .subscribe(onSuccess: { [unowned self] _ in
+                session.user?.lastLoginAt = Int(NSDate().timeIntervalSince1970)
             }, onError: { err in
                 log.error(err)
             })

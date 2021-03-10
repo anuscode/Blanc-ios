@@ -523,12 +523,12 @@ class UserCardTableViewCell: UITableViewCell {
     }
 
     @objc func didTapRequestButton() {
-        guard (user != nil) else {
+        guard let user = user else {
             return
         }
-
         fireworkController.addFireworks(count: 2, around: button2)
-        delegate?.confirm(user)
+        delegate?
+            .confirm(user)
             .subscribe(onNext: { [unowned self] result in
                 switch (result) {
                 case .accept:
