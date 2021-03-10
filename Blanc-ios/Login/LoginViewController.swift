@@ -317,7 +317,6 @@ class LoginViewController: UIViewController {
         view.backgroundColor = .white
         GIDSignIn.sharedInstance().presentingViewController = self
         GIDSignIn.sharedInstance().delegate = self
-
         manager.requestAlwaysAuthorization()
     }
 
@@ -452,35 +451,36 @@ class LoginViewController: UIViewController {
         progressView.visible(true)
         progressLabel.text = "토큰 발급중.."
 
-        auth.rx.signInAndRetrieveData(with: credential)
-                .observeOn(MainScheduler.instance)
-                .do(onNext: { [unowned self] authResult in
-                    progressLabel.text = "회원 정보 조회 중.."
-                })
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .flatMap({ [unowned self] authDataResult -> Single<Bool> in
-                    let uid = authDataResult.user.uid
-                    return userService!.isRegistered(uid: uid)
-                })
-                .observeOn(MainScheduler.instance)
-                .do(onNext: { [unowned self] authResult in
-                    progressLabel.text = "세션 정보 수립 중.."
-                })
-                .subscribe(onNext: { [unowned self] isExists in
-                    if (isExists) {
-                        log.info("Sign in with credential done. beginning login progress..")
-                        login()
-                    } else {
-                        log.info("Sign in with credential done. beginning registration progress..")
-                        replace(storyboard: "Sms", withIdentifier: "SmsViewController")
-                    }
-                }, onError: { err in
-                    log.error(err)
-                    self.progressView.visible(false)
-                    self.enableLoginButtons(true)
-                    self.toast(message: "해당 계정이 이미 존재 하거나 다른 이유로 로그인 할 수 없습니다.")
-                })
-                .disposed(by: disposeBag)
+        auth.rx
+            .signInAndRetrieveData(with: credential)
+            .observeOn(MainScheduler.instance)
+            .do(onNext: { [unowned self] authResult in
+                progressLabel.text = "회원 정보 조회 중.."
+            })
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .flatMap({ [unowned self] authDataResult -> Single<Bool> in
+                let uid = authDataResult.user.uid
+                return userService!.isRegistered(uid: uid)
+            })
+            .observeOn(MainScheduler.instance)
+            .do(onNext: { [unowned self] authResult in
+                progressLabel.text = "세션 정보 수립 중.."
+            })
+            .subscribe(onNext: { [unowned self] isExists in
+                if (isExists) {
+                    log.info("Sign in with credential done. beginning login progress..")
+                    login()
+                } else {
+                    log.info("Sign in with credential done. beginning registration progress..")
+                    replace(storyboard: "Sms", withIdentifier: "SmsViewController")
+                }
+            }, onError: { err in
+                log.error(err)
+                self.progressView.visible(false)
+                self.enableLoginButtons(true)
+                self.toast(message: "해당 계정이 이미 존재 하거나 다른 이유로 로그인 할 수 없습니다.")
+            })
+            .disposed(by: disposeBag)
     }
 
     private func signInWithFacebookCredential() {
@@ -514,70 +514,70 @@ class LoginViewController: UIViewController {
         }
 
         UserApi.shared.rx.loginWithKakaoTalk()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(MainScheduler.instance)
-                .do(onNext: { [unowned self] authResult in
-                    enableLoginButtons(false)
-                    progressView.visible(true)
-                    progressLabel.text = "카카오 토큰 검증 중.."
-                })
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .flatMap { (oauthToken) -> Single<CustomTokenDTO> in
-                    let idToken = oauthToken.accessToken
-                    return self.userService!.signInWithKakaoToken(idToken: idToken)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
+            .do(onNext: { [unowned self] authResult in
+                enableLoginButtons(false)
+                progressView.visible(true)
+                progressLabel.text = "카카오 토큰 검증 중.."
+            })
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .flatMap { [unowned self] (oauthToken) -> Single<CustomTokenDTO> in
+                let idToken = oauthToken.accessToken
+                return userService!.signInWithKakaoToken(idToken: idToken)
+            }
+            .observeOn(MainScheduler.instance)
+            .do(onNext: { [unowned self] authResult in
+                progressLabel.text = "카카오 토큰으로 로그인 중.."
+            })
+            .flatMap { [unowned self] verifiedToken in
+                auth.rx.signIn(withCustomToken: verifiedToken.customToken)
+            }
+            .observeOn(MainScheduler.instance)
+            .do(onNext: { [unowned self] authResult in
+                progressLabel.text = "회원 정보 조회 중.."
+            })
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .flatMap({ [unowned self] authDataResult -> Single<Bool> in
+                let uid = authDataResult.user.uid
+                return userService!.isRegistered(uid: uid)
+            })
+            .observeOn(MainScheduler.instance)
+            .do(onNext: { [unowned self] authResult in
+                progressLabel.text = "세션 정보 수립 중.."
+            })
+            .subscribe(onNext: { [unowned self] isExists in
+                if (isExists) {
+                    log.info("Sign in with kakao credential done. beginning login progress..")
+                    login()
+                } else {
+                    log.info("Sign in with kakao credential done. beginning registration progress..")
+                    replace(storyboard: "Sms", withIdentifier: "SmsViewController")
                 }
-                .observeOn(MainScheduler.instance)
-                .do(onNext: { [unowned self] authResult in
-                    progressLabel.text = "카카오 토큰으로 로그인 중.."
-                })
-                .flatMap { verifiedToken in
-                    self.auth.rx.signIn(withCustomToken: verifiedToken.customToken)
-                }
-                .observeOn(MainScheduler.instance)
-                .do(onNext: { [unowned self] authResult in
-                    progressLabel.text = "회원 정보 조회 중.."
-                })
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .flatMap({ [unowned self] authDataResult -> Single<Bool> in
-                    let uid = authDataResult.user.uid
-                    return userService!.isRegistered(uid: uid)
-                })
-                .observeOn(MainScheduler.instance)
-                .do(onNext: { [unowned self] authResult in
-                    progressLabel.text = "세션 정보 수립 중.."
-                })
-                .subscribe(onNext: { [unowned self] isExists in
-                    if (isExists) {
-                        log.info("Sign in with kakao credential done. beginning login progress..")
-                        self.login()
-                    } else {
-                        log.info("Sign in with kakao credential done. beginning registration progress..")
-                        self.replace(storyboard: "Sms", withIdentifier: "SmsViewController")
-                    }
-                }, onError: { error in
-                    log.error(error)
-                    self.enableLoginButtons(true)
-                    self.progressView.visible(false)
-                })
-                .disposed(by: disposeBag)
+            }, onError: { error in
+                log.error(error)
+                self.enableLoginButtons(true)
+                self.progressView.visible(false)
+            })
+            .disposed(by: disposeBag)
     }
 
     private func login() {
         session?.generate()
-                .observeOn(MainScheduler.instance)
-                .subscribe(onSuccess: { [unowned self]_ in
-                    if (session?.user?.available == true) {
-                        replace(storyboard: "Main", withIdentifier: "MainTabBarController")
-                    } else {
-                        replace(storyboard: "Registration", withIdentifier: "RegistrationNavigationViewController")
-                    }
-                }, onError: { err in
-                    log.error(err)
-                    self.progressView.visible(false)
-                    self.enableLoginButtons(true)
-                    self.session?.signOut()
-                })
-                .disposed(by: disposeBag)
+            .observeOn(MainScheduler.instance)
+            .subscribe(onSuccess: { [unowned self]_ in
+                if (session?.user?.available == true) {
+                    replace(storyboard: "Main", withIdentifier: "MainTabBarController")
+                } else {
+                    replace(storyboard: "Registration", withIdentifier: "RegistrationNavigationViewController")
+                }
+            }, onError: { [unowned self] err in
+                log.error(err)
+                progressView.visible(false)
+                enableLoginButtons(true)
+                session?.signOut()
+            })
+            .disposed(by: disposeBag)
     }
 
     private func enableLoginButtons(_ isEnable: Bool) {
@@ -588,16 +588,16 @@ class LoginViewController: UIViewController {
 extension LoginViewController: GIDSignInDelegate {
 
     func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error?) {
-        if error != nil {
-            log.error(error!)
+        guard let error = error else {
+            log.error(error)
             return
         }
         guard let authentication = user.authentication else {
             return
         }
         let credential = GoogleAuthProvider.credential(
-                withIDToken: authentication.idToken,
-                accessToken: authentication.accessToken)
+            withIDToken: authentication.idToken,
+            accessToken: authentication.accessToken)
         signInWithCredential(credential)
     }
 
@@ -607,7 +607,7 @@ extension LoginViewController: GIDSignInDelegate {
 }
 
 extension LoginViewController: ASAuthorizationControllerDelegate,
-        ASAuthorizationControllerPresentationContextProviding {
+    ASAuthorizationControllerPresentationContextProviding {
 
     func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
         view.window!
@@ -628,8 +628,8 @@ extension LoginViewController: ASAuthorizationControllerDelegate,
             }
             // Initialize a Firebase credential.
             let credential = OAuthProvider.credential(withProviderID: "apple.com",
-                    idToken: idTokenString,
-                    rawNonce: nonce)
+                idToken: idTokenString,
+                rawNonce: nonce)
             // Sign in with Firebase.
             self.signInWithCredential(credential)
         }
