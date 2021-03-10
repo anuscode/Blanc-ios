@@ -8,9 +8,22 @@ class ReceivedViewData {
 
 class ReceivedViewModel {
 
+    private class LastCounts {
+        var requests: Int = 0
+        var users: Int = 0
+    }
+
     private let disposeBag: DisposeBag = DisposeBag()
 
     private let observable: ReplaySubject = ReplaySubject<ReceivedViewData>.create(bufferSize: 1)
+
+    internal let toast: PublishSubject = PublishSubject<String>()
+
+    internal let reload: PublishSubject = PublishSubject<Void>()
+
+    private var data: ReceivedViewData = ReceivedViewData()
+
+    private var lastCounts: LastCounts = LastCounts()
 
     private let session: Session
 
@@ -22,11 +35,14 @@ class ReceivedViewModel {
 
     private let conversationModel: ConversationModel
 
-    private var data: ReceivedViewData = ReceivedViewData()
-
     private let nsLock: NSLock = NSLock()
 
-    init(session: Session, channel: Channel, requestsModel: RequestsModel, ratedModel: RatedModel, conversationModel: ConversationModel) {
+    init(session: Session,
+         channel: Channel,
+         requestsModel: RequestsModel,
+         ratedModel: RatedModel,
+         conversationModel: ConversationModel
+    ) {
         self.session = session
         self.channel = channel
         self.requestsModel = requestsModel
@@ -51,9 +67,15 @@ class ReceivedViewModel {
             .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .do(onNext: { [unowned self] requests in
+                data.requests = requests
+                publish()
+            })
             .subscribe(onNext: { [unowned self] requests in
-                self.data.requests = requests
-                self.publish()
+                if (lastCounts.requests > 0 && requests.count == 0) {
+                    reload.onNext(Void())
+                }
+                lastCounts.requests = requests.count
             }, onError: { err in
                 log.error(err)
             })
@@ -65,13 +87,15 @@ class ReceivedViewModel {
             .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .do(onNext: { users in
-                // loop to calculate and set a distance from current user.
-                users.distance(self.session)
+            .do(onNext: { [unowned self] users in
+                data.users = users
+                publish()
             })
             .subscribe(onNext: { [unowned self] users in
-                self.data.users = users
-                self.publish()
+                if (lastCounts.users > 0 && users.count == 0) {
+                    reload.onNext(Void())
+                }
+                lastCounts.users = users.count
             }, onError: { err in
                 log.error(err)
             })
@@ -79,21 +103,27 @@ class ReceivedViewModel {
     }
 
     func channel(user: UserDTO?) {
-        guard (user != nil) else {
+        guard let user = user else {
             return
         }
-        channel.next(value: user!)
+        channel.next(value: user)
     }
 
-    func accept(request: RequestDTO?, onError: @escaping () -> Void) {
+    func accept(request: RequestDTO?) {
         // refresh conversation list if successfully done.
-        let onSuccess = {
-            self.conversationModel.populate()
+        let onSuccess = { [unowned self] in
+            conversationModel.populate()
+        }
+        let onError = { [unowned self] in
+            toast.onNext("친구신청 수락 도중 에러가 발생 하였습니다.")
         }
         requestsModel.accept(request: request, onSuccess: onSuccess, onError: onError)
     }
 
-    func decline(request: RequestDTO?, onError: @escaping () -> Void) {
+    func decline(request: RequestDTO?) {
+        let onError = { [unowned self] in
+            toast.onNext("친구신청 거절 도중 에러가 발생 하였습니다.")
+        }
         requestsModel.decline(request: request, onError: onError)
     }
 }

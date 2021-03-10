@@ -30,54 +30,62 @@ class RatedModel {
     }
 
     private func populate() {
-        userService.listUsersRatedMeHigh(uid: session.uid, userId: session.id)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [unowned self] users in
-                    self.users = users
-                    publish()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        userService
+            .listUsersRatedMeHigh(uid: session.uid, userId: session.id)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .do(onNext: { [unowned self] users in
+                // loop to calculate and set a distance from current user.
+                users.distance(session)
+            })
+            .subscribe(onSuccess: { [unowned self] users in
+                self.users = users
+                publish()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     private func subscribeBroadcast() {
-        Broadcast.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [unowned self] push in
-                    if (push.isStarRating()) {
-                        self.appendUser(userId: push.userId)
-                    }
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        Broadcast
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onNext: { [unowned self] push in
+                if (push.isStarRating()) {
+                    appendUser(userId: push.userId)
+                }
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     private func subscribeBackground() {
-        Background.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [unowned self] push in
-                    self.populate()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        Background
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onNext: { [unowned self] push in
+                populate()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     private func appendUser(userId: String?) {
-        userService.getUser(userId: userId)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { user in
-                    self.users.insert(user, at: 0)
-                    self.publish()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        userService
+            .getUser(userId: userId)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onSuccess: { user in
+                self.users.insert(user, at: 0)
+                self.publish()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 }

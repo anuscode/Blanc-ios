@@ -34,6 +34,11 @@ class RequestsModel {
             .listRequests(uid: session.uid)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .do(onNext: { [unowned self] requests in
+                // loop to calculate and set a distance from current user.
+                let users = requests.map({ $0.userFrom }).filter({ $0 != nil }) as! [UserDTO]
+                users.distance(session)
+            })
             .subscribe(onSuccess: { [unowned self] requests in
                 self.requests = requests
                 publish()
@@ -50,16 +55,15 @@ class RequestsModel {
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .subscribe(onNext: { [unowned self] push in
                 if (push.isRequest()) {
-                    self.insertRequest(requestId: push.requestId)
+                    insertRequest(requestId: push.requestId)
                 }
                 if (push.isMatched()) {
-                    if let request = self.requests.first(where: { $0.id == push.requestId }) {
-                        let index = self.requests.firstIndex(of: request)
-                        self.requests.remove(at: index!)
+                    if let request = requests.first(where: { $0.id == push.requestId }) {
+                        let index = requests.firstIndex(of: request)
+                        requests.remove(at: index!)
                     }
-
                     if let requestId = push.requestId {
-                        self.session.user?.userIdsMatched?.append(requestId)
+                        session.user?.userIdsMatched?.append(requestId)
                     }
                 }
             }, onError: { err in
@@ -74,7 +78,7 @@ class RequestsModel {
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .subscribe(onNext: { [unowned self] push in
-                self.populate()
+                populate()
             }, onError: { err in
                 log.error(err)
             })
@@ -90,13 +94,13 @@ class RequestsModel {
             .getRequest(uid: session.uid, requestId: requestId)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .subscribe(onSuccess: { request in
+            .subscribe(onSuccess: { [unowned self] request in
                 if let userId = request.userFrom?.id {
-                    self.session.user?.userIdsSentMeRequest?.append(userId)
-                    self.session.publish()
+                    session.user?.userIdsSentMeRequest?.append(userId)
+                    session.publish()
                 }
-                self.requests.insert(request, at: 0)
-                self.publish()
+                requests.insert(request, at: 0)
+                publish()
             }, onError: { err in
                 log.error(err)
             })
@@ -108,22 +112,21 @@ class RequestsModel {
               let requestId = request?.id else {
             return
         }
-
         requestService
             .updateRequest(uid: uid, requestId: requestId, response: .ACCEPTED)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-            .do(onNext: { _ in
+            .do(onNext: { [unowned self] _ in
                 if let userId = request?.userFrom?.id {
-                    self.session.user?.userIdsMatched?.append(userId)
-                    self.session.publish()
+                    session.user?.userIdsMatched?.append(userId)
+                    session.publish()
                 }
             })
-            .observeOn(MainScheduler.asyncInstance)
-            .subscribe(onSuccess: { _ in
-                if let index = self.requests.firstIndex(where: { $0.id == requestId }) {
-                    self.requests.remove(at: index)
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onSuccess: { [unowned self] _ in
+                if let index = requests.firstIndex(where: { $0.id == requestId }) {
+                    requests.remove(at: index)
                 }
-                self.publish()
+                publish()
                 onSuccess()
             }, onError: { err in
                 onError()
@@ -140,17 +143,17 @@ class RequestsModel {
             .updateRequest(uid: uid, requestId: requestId, response: .DECLINED)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .do(onNext: { _ in
+            .do(onNext: { [unowned self] _ in
                 if let userId = request?.userFrom?.id {
-                    self.session.user?.userIdsUnmatched?.append(userId)
-                    self.session.publish()
+                    session.user?.userIdsUnmatched?.append(userId)
+                    session.publish()
                 }
             })
-            .subscribe(onSuccess: { _ in
-                if let index = self.requests.firstIndex(where: { $0.id == requestId }) {
-                    self.requests.remove(at: index)
+            .subscribe(onSuccess: { [unowned self] _ in
+                if let index = requests.firstIndex(where: { $0.id == requestId }) {
+                    requests.remove(at: index)
                 }
-                self.publish()
+                publish()
             }, onError: { err in
                 onError()
             })

@@ -10,16 +10,14 @@ class SendingViewController: UIViewController {
 
     private var dataSource: UITableViewDiffableDataSource<Section, UserDTO>!
 
-    private var users: [UserDTO] = []
-
-    var sendingViewModel: SendingViewModel?
+    internal weak var sendingViewModel: SendingViewModel?
 
     var pushUserSingleViewController: (() -> Void)?
 
     lazy private var tableView: UITableView = {
         let tableView = UITableView()
         tableView.register(SmallUserProfileTableViewCell.self,
-                forCellReuseIdentifier: SmallUserProfileTableViewCell.identifier)
+            forCellReuseIdentifier: SmallUserProfileTableViewCell.identifier)
         tableView.allowsSelection = false
         tableView.separatorColor = .clear
         tableView.delegate = self
@@ -77,19 +75,24 @@ class SendingViewController: UIViewController {
     }
 
     private func subscribeRatingViewModel() {
-        sendingViewModel?.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { users in
-                    self.users = users
-                    DispatchQueue.main.async { [unowned self] in
-                        update()
-                        emptyView.visible(users.count == 0)
-                    }
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        sendingViewModel?
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] users in
+                update(users)
+            })
+            .disposed(by: disposeBag)
+
+        sendingViewModel?
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .map({ users in users.count == 0 })
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] boolean in
+                emptyView.visible(boolean)
+            })
+            .disposed(by: disposeBag)
     }
 }
 
@@ -102,7 +105,7 @@ extension SendingViewController {
     private func configureTableViewDataSource() {
         dataSource = UITableViewDiffableDataSource<Section, UserDTO>(tableView: tableView) { (tableView, indexPath, user) -> UITableViewCell? in
             guard let cell = tableView.dequeueReusableCell(
-                    withIdentifier: SmallUserProfileTableViewCell.identifier, for: indexPath) as? SmallUserProfileTableViewCell else {
+                withIdentifier: SmallUserProfileTableViewCell.identifier, for: indexPath) as? SmallUserProfileTableViewCell else {
                 return UITableViewCell()
             }
             cell.bind(user: user, delegate: self)
@@ -111,7 +114,7 @@ extension SendingViewController {
         tableView.dataSource = dataSource
     }
 
-    private func update(animatingDifferences: Bool = false) {
+    private func update(_ users: [UserDTO], animatingDifferences: Bool = false) {
         var snapshot = NSDiffableDataSourceSnapshot<Section, UserDTO>()
         snapshot.appendSections([.Main])
         snapshot.appendItems(users)
@@ -161,6 +164,5 @@ extension SendingViewController: SmallUserProfileTableViewCellDelegate {
     func presentUserSingleView(user: UserDTO?) {
         sendingViewModel?.channel(user: user)
         pushUserSingleViewController?()
-        //navigationController?.pushUserSingleViewController(current: self)
     }
 }

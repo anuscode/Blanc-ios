@@ -19,7 +19,7 @@ class ReceivedViewController: UIViewController {
 
     internal weak var receivedViewModel: ReceivedViewModel?
 
-    var pushUserSingleViewController: (() -> Void)?
+    internal var pushUserSingleViewController: (() -> Void)?
 
     lazy private var tableView: UITableView = {
         let tableView = UITableView()
@@ -50,6 +50,10 @@ class ReceivedViewController: UIViewController {
         super.viewDidDisappear(animated)
     }
 
+    deinit {
+        log.info("deinit received view controller..")
+    }
+
     private func configureSubviews() {
         view.addSubview(tableView)
     }
@@ -69,7 +73,7 @@ class ReceivedViewController: UIViewController {
             .skip(1)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .map({ data in
+            .map({ [unowned self] data in
                 // no initial animation but yes afterward.
                 let isRequestsEmpty = self.data.requests.isEmpty
                 let isUsersEmpty = self.data.users.isEmpty
@@ -79,7 +83,28 @@ class ReceivedViewController: UIViewController {
                 return animatingDifferences
             })
             .observeOn(MainScheduler.asyncInstance)
-            .subscribe(onNext: update(animatingDifferences:))
+            .subscribe(onNext: { [unowned self] animatingDifferences in
+                update(animatingDifferences: animatingDifferences)
+            })
+            .disposed(by: disposeBag)
+
+        receivedViewModel?
+            .reload
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .delay(.milliseconds(300), scheduler: MainScheduler.asyncInstance)
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] message in
+                tableView.reloadData()
+            })
+            .disposed(by: disposeBag)
+
+        receivedViewModel?
+            .toast
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] message in
+                toast(message: message)
+            })
             .disposed(by: disposeBag)
     }
 }
@@ -91,20 +116,22 @@ extension ReceivedViewController {
     }
 
     private func configureTableViewDataSource() {
-        dataSource = UITableViewDiffableDataSource<Section, AnyHashable>(tableView: tableView) { (tableView, indexPath, data) -> UITableViewCell? in
+        dataSource = UITableViewDiffableDataSource<Section, AnyHashable>(tableView: tableView) {
+            (tableView, indexPath, data) -> UITableViewCell? in
+
             if let request = data as? RequestDTO {
+                let identifier = "SmallUserProfileWithButtonTableViewCell"
                 guard let cell = tableView.dequeueReusableCell(
-                    withIdentifier: "SmallUserProfileWithButtonTableViewCell",
-                    for: indexPath) as? SmallUserProfileWithButtonTableViewCell else {
+                    withIdentifier: identifier, for: indexPath) as? SmallUserProfileWithButtonTableViewCell else {
                     return UITableViewCell()
                 }
                 cell.bind(request: request, delegate: self)
                 return cell
             }
             if let user = data as? UserDTO {
+                let identifier = "SmallUserProfileTableViewCell"
                 guard let cell = tableView.dequeueReusableCell(
-                    withIdentifier: "SmallUserProfileTableViewCell",
-                    for: indexPath) as? SmallUserProfileTableViewCell else {
+                    withIdentifier: identifier, for: indexPath) as? SmallUserProfileTableViewCell else {
                     return UITableViewCell()
                 }
                 cell.bind(user: user, delegate: self)
@@ -112,6 +139,7 @@ extension ReceivedViewController {
             }
             return nil
         }
+        dataSource.defaultRowAnimation = .left
         tableView.dataSource = dataSource
     }
 
@@ -120,20 +148,7 @@ extension ReceivedViewController {
         snapshot.appendSections([.Request, .HighRating])
         snapshot.appendItems(data.requests, toSection: .Request)
         snapshot.appendItems(data.users, toSection: .HighRating)
-        dataSource.apply(snapshot, animatingDifferences: animatingDifferences) {
-            self.reloadIfRequired()
-        }
-    }
-
-    private func reloadIfRequired() {
-        if data.requests.isEmpty {
-            tableView.reloadData()
-            return
-        }
-        if data.users.isEmpty {
-            tableView.reloadData()
-            return
-        }
+        dataSource.apply(snapshot, animatingDifferences: animatingDifferences)
     }
 }
 
@@ -218,12 +233,14 @@ extension ReceivedViewController: UITableViewDelegate {
         if (section == 0) {
             return data.requests.count == 0 ? generateFooterView(
                 mainText: "아직 받은 친구신청이 없습니다.",
-                secondaryText: "먼저 친구신청을 걸어 보세요.") : UIView()
+                secondaryText: "먼저 친구신청을 걸어 보세요."
+            ) : UIView()
         }
         if (section == 1) {
             return data.users.count == 0 ? generateFooterView(
                 mainText: "아직 관심을 받지 못했습니다.",
-                secondaryText: "상대방이 내게 4점이상 평가를 하면\n이곳에 표시 됩니다..") : UIView()
+                secondaryText: "상대방이 내게 4점이상 평가를 하면\n이곳에 표시 됩니다.."
+            ) : UIView()
         }
         return nil
     }
@@ -253,17 +270,11 @@ extension ReceivedViewController: UserProfileCellDelegate {
         }
         var snapshot = dataSource.snapshot()
         snapshot.deleteItems([request])
-        dataSource.apply(snapshot, animatingDifferences: true) {
-            self.reloadIfRequired()
-        }
-        receivedViewModel?.accept(request: request, onError: { [unowned self] in
-            toast(message: "요청 수락에 실패 하였습니다.")
-        })
+        dataSource.apply(snapshot, animatingDifferences: true)
+        receivedViewModel?.accept(request: request)
     }
 
     func decline(request: RequestDTO?) {
-        receivedViewModel?.decline(request: request, onError: { [unowned self] in
-            toast(message: "요청 거절에 실패 하였습니다.")
-        })
+        receivedViewModel?.decline(request: request)
     }
 }

@@ -31,37 +31,35 @@ class SendingModel {
     }
 
     private func populate() {
-        userService.listUsersIRatedHigh(uid: session.uid, userId: session.id)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [unowned self] users in
-                    self.users = users
-                    publish()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        userService
+            .listUsersIRatedHigh(uid: session.uid, userId: session.id)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .do(onNext: { [unowned self] users in
+                users.distance(session)
+            })
+            .subscribe(onSuccess: { [unowned self] users in
+                self.users = users
+                publish()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     func channel(user: UserDTO?) {
-        guard(user != nil) else {
+        guard let user = user else {
             return
         }
-        channel.next(value: user!)
+        channel.next(value: user)
     }
 
     func append(user: UserDTO?) {
-
-        guard user != nil else {
+        guard let user = user else {
             return
         }
-
-        let isNotExist: Bool = users.firstIndex {
-            $0.id == user?.id
-        } == nil
-
-        if (isNotExist) {
-            users.insert(user!, at: 0)
+        if (users.firstIndex(where: { $0.id == user.id }) == nil) {
+            users.insert(user, at: 0)
             publish()
         }
     }

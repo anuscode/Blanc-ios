@@ -8,40 +8,40 @@ extension UIView {
         subview.translatesAutoresizingMaskIntoConstraints = false
 
         let topContraint = NSLayoutConstraint(
-                item: subview,
-                attribute: .top,
-                relatedBy: .equal,
-                toItem: self,
-                attribute: .top,
-                multiplier: 1.0,
-                constant: 0)
+            item: subview,
+            attribute: .top,
+            relatedBy: .equal,
+            toItem: self,
+            attribute: .top,
+            multiplier: 1.0,
+            constant: 0)
 
         let bottomConstraint = NSLayoutConstraint(
-                item: subview,
-                attribute: .bottom,
-                relatedBy: .equal,
-                toItem: self,
-                attribute: .bottom,
-                multiplier: 1.0,
-                constant: 0)
+            item: subview,
+            attribute: .bottom,
+            relatedBy: .equal,
+            toItem: self,
+            attribute: .bottom,
+            multiplier: 1.0,
+            constant: 0)
 
         let leadingContraint = NSLayoutConstraint(
-                item: subview,
-                attribute: .leading,
-                relatedBy: .equal,
-                toItem: self,
-                attribute: .leading,
-                multiplier: 1.0,
-                constant: 0)
+            item: subview,
+            attribute: .leading,
+            relatedBy: .equal,
+            toItem: self,
+            attribute: .leading,
+            multiplier: 1.0,
+            constant: 0)
 
         let trailingContraint = NSLayoutConstraint(
-                item: subview,
-                attribute: .trailing,
-                relatedBy: .equal,
-                toItem: self,
-                attribute: .trailing,
-                multiplier: 1.0,
-                constant: 0)
+            item: subview,
+            attribute: .trailing,
+            relatedBy: .equal,
+            toItem: self,
+            attribute: .trailing,
+            multiplier: 1.0,
+            constant: 0)
 
         addConstraints([
             topContraint,
@@ -57,7 +57,7 @@ class PagerViewController: UIViewController {
 
     private var titles: [String] = ["받은 요청", "받은 관심", "보낸 관심"]
 
-    var rightSideBarView: RightSideBarView?
+    internal weak var rightSideBarView: RightSideBarView?
 
     lazy private var leftBarButtonItem: UIBarButtonItem = {
         UIBarButtonItem(customView: LeftSideBarView(title: "요청"))
@@ -67,7 +67,7 @@ class PagerViewController: UIViewController {
         guard (rightSideBarView != nil) else {
             return UIBarButtonItem()
         }
-        rightSideBarView!.delegate {
+        rightSideBarView!.delegate { [unowned self] in
             self.navigationController?.pushViewController(.alarms, current: self)
         }
         return UIBarButtonItem(customView: rightSideBarView!)
@@ -130,8 +130,8 @@ class PagerViewController: UIViewController {
     lazy private var receivedViewController: ReceivedViewController = {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyboard.instantiateViewController(
-                withIdentifier: "ReceivedViewController") as! ReceivedViewController
-        vc.pushUserSingleViewController = {
+            withIdentifier: "ReceivedViewController") as! ReceivedViewController
+        vc.pushUserSingleViewController = { [unowned self] in
             self.navigationController?.pushViewController(.userSingle, current: self)
         }
         return vc
@@ -140,8 +140,8 @@ class PagerViewController: UIViewController {
     lazy private var sendingViewController: SendingViewController = {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyboard.instantiateViewController(
-                withIdentifier: "SendingViewController") as! SendingViewController
-        vc.pushUserSingleViewController = {
+            withIdentifier: "SendingViewController") as! SendingViewController
+        vc.pushUserSingleViewController = { [unowned self] in
             self.navigationController?.pushViewController(.userSingle, current: self)
         }
         return vc
@@ -164,6 +164,10 @@ class PagerViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
+
+    deinit {
+        log.info("deinit pager view controller..")
     }
 
     private func configureChildren() {
