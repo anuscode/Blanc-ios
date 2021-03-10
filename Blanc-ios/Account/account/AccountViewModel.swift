@@ -5,28 +5,25 @@ class AccountViewModel {
 
     private let disposeBag: DisposeBag = DisposeBag()
 
-    private let observable: ReplaySubject = ReplaySubject<UserDTO>.create(bufferSize: 1)
+    let currentUser: ReplaySubject = ReplaySubject<UserDTO>.create(bufferSize: 1)
 
-    private let accountModel: AccountModel
+    private weak var session: Session?
 
-    init(accountModel: AccountModel) {
-        self.accountModel = accountModel
-        subscribeAccountModel()
+    init(session: Session) {
+        self.session = session
+        populate()
     }
 
-    private func subscribeAccountModel() {
-        accountModel.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [unowned self] user in
-                    self.observable.onNext(user)
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
-    }
-
-    func observe() -> Observable<UserDTO> {
-        observable
+    private func populate() {
+        session?
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onNext: { [unowned self] user in
+                currentUser.onNext(user)
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 }

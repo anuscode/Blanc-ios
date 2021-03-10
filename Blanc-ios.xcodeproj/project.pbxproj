@@ -240,7 +240,6 @@
 		104EEC3C25E3728F0069B2CF /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEC0E25E3728F0069B2CF /* ProfileViewController.swift */; };
 		104EEC3D25E3728F0069B2CF /* ProfileViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEC0F25E3728F0069B2CF /* ProfileViewModel.swift */; };
 		104EEC3E25E3728F0069B2CF /* ProfileModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEC1025E3728F0069B2CF /* ProfileModel.swift */; };
-		104EEC3F25E3728F0069B2CF /* AccountModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEC1225E3728F0069B2CF /* AccountModel.swift */; };
 		104EEC4025E3728F0069B2CF /* AccountViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEC1325E3728F0069B2CF /* AccountViewModel.swift */; };
 		104EEC4125E3728F0069B2CF /* AccountProfileTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEC1525E3728F0069B2CF /* AccountProfileTableViewCell.swift */; };
 		104EEC4225E3728F0069B2CF /* AccountTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEC1625E3728F0069B2CF /* AccountTableViewCell.swift */; };
@@ -553,7 +552,6 @@
 		104EEC0E25E3728F0069B2CF /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		104EEC0F25E3728F0069B2CF /* ProfileViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewModel.swift; sourceTree = "<group>"; };
 		104EEC1025E3728F0069B2CF /* ProfileModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileModel.swift; sourceTree = "<group>"; };
-		104EEC1225E3728F0069B2CF /* AccountModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountModel.swift; sourceTree = "<group>"; };
 		104EEC1325E3728F0069B2CF /* AccountViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountViewModel.swift; sourceTree = "<group>"; };
 		104EEC1525E3728F0069B2CF /* AccountProfileTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountProfileTableViewCell.swift; sourceTree = "<group>"; };
 		104EEC1625E3728F0069B2CF /* AccountTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountTableViewCell.swift; sourceTree = "<group>"; };
@@ -1435,7 +1433,6 @@
 		104EEC1125E3728F0069B2CF /* account */ = {
 			isa = PBXGroup;
 			children = (
-				104EEC1225E3728F0069B2CF /* AccountModel.swift */,
 				104EEC1325E3728F0069B2CF /* AccountViewModel.swift */,
 				104EEC1425E3728F0069B2CF /* cell */,
 				104EEC1725E3728F0069B2CF /* AccountViewController.swift */,
@@ -1909,7 +1906,6 @@
 				104EEC3225E3728F0069B2CF /* CharmViewController.swift in Sources */,
 				104EEC4125E3728F0069B2CF /* AccountProfileTableViewCell.swift in Sources */,
 				104EEBB625E372830069B2CF /* HorizontalGradientView.swift in Sources */,
-				104EEC3F25E3728F0069B2CF /* AccountModel.swift in Sources */,
 				104EEC3925E3728F0069B2CF /* NicknameViewController.swift in Sources */,
 				104EEAE725E372420069B2CF /* LoginViewController.swift in Sources */,
 				104EEAA525E3722A0069B2CF /* SmsConfirmViewController.swift in Sources */,

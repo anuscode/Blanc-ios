@@ -339,15 +339,9 @@ extension SwinjectStoryboard {
         }.inObjectScope(.conversationSingleScope)
 
         /** Account dependencies **/
-        defaultContainer.register(AccountModel.self) { resolver in
-            let session = resolver ~> Session.self
-            let userService = resolver ~> UserService.self
-            let accountModel = AccountModel(session: session, userService: userService)
-            return accountModel
-        }.inObjectScope(.mainScope)
         defaultContainer.register(AccountViewModel.self) { resolver in
-            let accountModel = resolver ~> AccountModel.self
-            let accountViewModel = AccountViewModel(accountModel: accountModel)
+            let session = resolver ~> Session.self
+            let accountViewModel = AccountViewModel(session: session)
             return accountViewModel
         }.inObjectScope(.mainScope)
 

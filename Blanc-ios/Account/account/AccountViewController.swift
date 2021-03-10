@@ -2,6 +2,8 @@ import UIKit
 import FirebaseAuth
 import SwinjectStoryboard
 import RxSwift
+import RxDataSources
+
 
 class AccountData {
     var icon: String
@@ -13,37 +15,38 @@ class AccountData {
     }
 }
 
+typealias SectionedDataSource = TableViewSectionedDataSource
+typealias ReloadDataSource = RxTableViewSectionedReloadDataSource
+
 class AccountViewController: UIViewController {
 
     private let auth: Auth = Auth.auth()
 
-    private let disposeBag: DisposeBag = DisposeBag()
-
-    var accountViewModel: AccountViewModel?
+    private var disposeBag: DisposeBag = DisposeBag()
 
     private let fireworkController = ClassicFireworkController()
 
-    private var sections = ["결제", "설정", "고객센터"]
-
-    private var dataSource = [
-        [
+    private let sections = [
+        SectionModel<String, AccountData>(model: "결제", items: [
             AccountData(icon: "dollarsign.circle", title: "결제 하기")
-        ],
-        [
+        ]),
+        SectionModel<String, AccountData>(model: "설정", items: [
             AccountData(icon: "bell", title: "푸시 설정"),
             AccountData(icon: "power", title: "로그 아웃")
-        ],
-        [
+        ]),
+        SectionModel<String, AccountData>(model: "고객 센터", items: [
             AccountData(icon: "atom", title: "고객 센터"),
             AccountData(icon: "lightbulb", title: "블랑를 개선 시킬 의견을 주세요!")
-        ]
+        ])
     ]
+
+    internal weak var accountViewModel: AccountViewModel?
 
     lazy private var leftBarButtonItem: UIBarButtonItem = {
         UIBarButtonItem(customView: LeftSideBarView(title: "계정"))
     }()
 
-    lazy var semiProfileView: UIView = {
+    lazy private var semiProfileView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 10
         view.layer.masksToBounds = true
@@ -116,7 +119,7 @@ class AccountViewController: UIViewController {
         return view
     }()
 
-    lazy var currentUserImage: UIImageView = {
+    lazy private var currentUserImage: UIImageView = {
         let screenWidth = UIScreen.main.bounds.width
         let imageView = UIImageView()
         imageView.layer.cornerRadius = screenWidth / 10
@@ -126,26 +129,26 @@ class AccountViewController: UIViewController {
         return imageView
     }()
 
-    lazy var line1: UILabel = {
+    lazy private var line1: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 18)
         return label
     }()
 
-    lazy var line2: UILabel = {
+    lazy private var line2: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14)
         return label
     }()
 
-    lazy var line3: UILabel = {
+    lazy private var line3: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14)
         label.textColor = .systemBlue
         return label
     }()
 
-    lazy var tap1: UIView = {
+    lazy private var tap1: UIView = {
         let view = UIView()
 
         let imageView = UIImageView()
@@ -177,7 +180,7 @@ class AccountViewController: UIViewController {
         return view
     }()
 
-    lazy var tap2: UIView = {
+    lazy private var tap2: UIView = {
         let view = UIView()
 
         let imageView = UIImageView()
@@ -208,7 +211,7 @@ class AccountViewController: UIViewController {
         return view
     }()
 
-    lazy var tap3: UIView = {
+    lazy private var tap3: UIView = {
         let view = UIView()
 
         let imageView = UIImageView()
@@ -239,7 +242,7 @@ class AccountViewController: UIViewController {
         return view
     }()
 
-    lazy var tap4: UIView = {
+    lazy private var tap4: UIView = {
         let view = UIView()
 
         let imageView = UIImageView()
@@ -271,7 +274,7 @@ class AccountViewController: UIViewController {
         return view
     }()
 
-    lazy var tableViewContainer: UIView = {
+    lazy private var tableViewContainer: UIView = {
         let view = UIView()
         view.backgroundColor = .white
         view.layer.cornerRadius = 10
@@ -286,13 +289,28 @@ class AccountViewController: UIViewController {
         return view
     }()
 
-    lazy var tableView: UITableView = {
+    private let configureCell: (SectionedDataSource<SectionModel<String, AccountData>>, UITableView, IndexPath, AccountData) ->
+    UITableViewCell = { (datasource, tableView, indexPath, element) in
+        let identifier = AccountTableViewCell.identifier
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: identifier, for: indexPath) as? AccountTableViewCell else {
+            return UITableViewCell()
+        }
+        cell.bind(element)
+        return cell
+    }
+
+    lazy private var tableView: UITableView = {
         let tableView = UITableView()
         tableView.separatorStyle = .none
         tableView.delegate = self
-        tableView.dataSource = self
         tableView.register(AccountTableViewCell.self, forCellReuseIdentifier: AccountTableViewCell.identifier)
         tableView.isScrollEnabled = false
+        let datasource = ReloadDataSource<SectionModel<String, AccountData>>.init(configureCell: configureCell)
+        Observable
+            .just(sections)
+            .bind(to: tableView.rx.items(dataSource: datasource))
+            .disposed(by: disposeBag)
         return tableView
     }()
 
@@ -312,6 +330,14 @@ class AccountViewController: UIViewController {
         configureSubviews()
         configureConstraints()
         subscribeAccountViewModel()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+    }
+
+    deinit {
+        log.info("deinit account view controller..")
     }
 
     private func configureSubviews() {
@@ -335,26 +361,46 @@ class AccountViewController: UIViewController {
     }
 
     private func subscribeAccountViewModel() {
-        accountViewModel?.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(MainScheduler.instance)
-                .subscribe(onNext: {[unowned self]  user in
-                    self.update(user)
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
-    }
+        accountViewModel?
+            .currentUser
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [unowned self] user in
+                let url = user.avatar ?? ""
+                currentUserImage.url(url)
+            })
+            .disposed(by: disposeBag)
 
-    private func update(_ user: UserDTO) {
-        let nickname = user.nickname ?? "알 수 없음"
-        let area = user.area ?? "알 수 없음"
-        let age = user.age ?? 0
-        let point = user.point ?? 0
-        currentUserImage.url(user.avatar)
-        line1.text = nickname
-        line2.text = "\(area) · \(age)세"
-        line3.text = "내 잔여 포인트: \(point)"
+        accountViewModel?
+            .currentUser
+            .map({ user in user.nickname ?? "알 수 없음" })
+            .observeOn(MainScheduler.instance)
+            .bind(to: line1.rx.text)
+            .disposed(by: disposeBag)
+
+        accountViewModel?
+            .currentUser
+            .map({ user in user.area ?? "알 수 없음" })
+            .observeOn(MainScheduler.instance)
+            .bind(to: line1.rx.text)
+            .disposed(by: disposeBag)
+
+        accountViewModel?
+            .currentUser
+            .map({ user in
+                let area = user.area ?? "알 수 없음"
+                let age = user.age ?? 0
+                return "\(area) · \(age)세"
+            })
+            .observeOn(MainScheduler.instance)
+            .bind(to: line2.rx.text)
+            .disposed(by: disposeBag)
+
+        accountViewModel?
+            .currentUser
+            .map({ user in "내 잔여 포인트: \(user.point ?? 0)" })
+            .observeOn(MainScheduler.instance)
+            .bind(to: line3.rx.text)
+            .disposed(by: disposeBag)
     }
 }
 
@@ -362,29 +408,29 @@ extension AccountViewController {
 
     @objc private func didTapImageButton() {
         fireworkController.addFireworks(count: 1, around: tap1)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.pushViewController(identifier: "ImageViewController")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [unowned self] in
+            navigationController?.pushViewController(.imageView)
         }
     }
 
     @objc private func didTapProfileButton() {
         fireworkController.addFireworks(count: 1, around: tap2)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.pushViewController(identifier: "ProfileViewController")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [unowned self] in
+            navigationController?.pushViewController(.profileView)
         }
     }
 
     @objc private func didTapStarRatingButton() {
         fireworkController.addFireworks(count: 1, around: tap3)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.pushViewController(identifier: "MyRatedScoreViewController")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [unowned self] in
+            navigationController?.pushViewController(.myRatedScore)
         }
     }
 
     @objc private func didTapAvoidButton() {
         fireworkController.addFireworks(count: 1, around: tap4)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            self.pushViewController(identifier: "AvoidViewController")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [unowned self] in
+            navigationController?.pushViewController(.avoidView)
         }
     }
 
@@ -400,28 +446,16 @@ extension AccountViewController {
             toast(message: "로그아웃에 실패 하였습니다. 다시 시도해 주세요.")
         }
     }
-
-    private func pushViewController(storyboard: String = "Main", identifier: String) {
-        let storyboard = UIStoryboard(name: storyboard, bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: identifier)
-        let backBarButtonItem = UIBarButtonItem()
-        backBarButtonItem.title = ""
-        backBarButtonItem.tintColor = .black
-        navigationItem.backBarButtonItem = backBarButtonItem
-        hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(vc, animated: true)
-        hidesBottomBarWhenPushed = false
-    }
 }
 
-extension AccountViewController: UITableViewDelegate, UITableViewDataSource {
+extension AccountViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         let view = UIView()
         view.backgroundColor = .white
 
         let label = UILabel()
-        label.text = sections[section]
+        label.text = sections[section].model
         label.textColor = .systemGray
         label.font = .systemFont(ofSize: 12, weight: .light)
 
@@ -431,7 +465,6 @@ extension AccountViewController: UITableViewDelegate, UITableViewDataSource {
             make.top.equalToSuperview().inset(10)
             make.bottom.equalToSuperview().inset(10)
         }
-
         if (section != 0) {
             let border = UIView()
             border.backgroundColor = .systemGray4
@@ -443,7 +476,6 @@ extension AccountViewController: UITableViewDelegate, UITableViewDataSource {
                 make.height.equalTo(0.25)
             }
         }
-
         return view
     }
 
@@ -451,34 +483,24 @@ extension AccountViewController: UITableViewDelegate, UITableViewDataSource {
         sections.count
     }
 
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        dataSource[section].count
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(
-                withIdentifier: AccountTableViewCell.identifier, for: indexPath) as! AccountTableViewCell
-        let data = dataSource[indexPath.section][indexPath.row]
-        cell.bind(data)
-        return cell
-    }
-
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-
-        if (indexPath.section == 0) {
-            pushViewController(identifier: "InAppPurchaseViewController")
-        }
-
-        if (indexPath.section == 1) {
+        switch (indexPath.section) {
+        case 0:
+            navigationController?.pushViewController(.inAppPurchase)
+        case 1:
             if (indexPath.row == 0) {
-                pushViewController(identifier: "PushSettingViewController")
+                navigationController?.pushViewController(.pushSetting)
             } else {
                 logout()
             }
-        }
-
-        if (indexPath.section == 2) {
-
+        case 2:
+            if (indexPath.row == 0) {
+                toast(message: "곧 구현 하겠습니다.")
+            } else {
+                toast(message: "곧 구현 하겠습니다.")
+            }
+        default:
+            fatalError("Something wrong with menu clicks..")
         }
     }
 }

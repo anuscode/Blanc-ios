@@ -9,7 +9,14 @@ enum Identifier: String {
          postCreate = "PostCreateViewController",
          alarms = "AlarmViewController",
          inAppPurchase = "InAppPurchaseViewController",
-         favoriteUsers = "FavoriteUserListViewController"
+         favoriteUsers = "FavoriteUserListViewController",
+
+         pushSetting = "PushSettingViewController",
+         imageView = "ImageViewController",
+         profileView = "ProfileViewController",
+         myRatedScore = "MyRatedScoreViewController",
+         avoidView = "AvoidViewController"
+
 }
 
 extension UINavigationController {
