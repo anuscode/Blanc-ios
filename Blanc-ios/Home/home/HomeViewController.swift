@@ -121,18 +121,18 @@ class HomeViewController: UIViewController {
     private func configureTableView() {
         dataSource = UITableViewDiffableDataSource<Section, UserDTO>(tableView: tableView) { [unowned self] (tableView, indexPath, user) -> UITableViewCell? in
             if (indexPath.section == 0) {
-                let cell = tableView.dequeueReusableCell(withIdentifier: UserCardTableViewCell.identifier, for: indexPath) as! UserCardTableViewCell
-                let user = data.recommendedUsers[indexPath.row]
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: UserCardTableViewCell.identifier, for: indexPath) as! UserCardTableViewCell
                 cell.bind(user: user, delegate: self)
                 return cell
             } else if (indexPath.section == 1) {
-                let cell = tableView.dequeueReusableCell(withIdentifier: UserCardTableViewCell.identifier, for: indexPath) as! UserCardTableViewCell
-                let user = data.closeUsers[indexPath.row]
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: UserCardTableViewCell.identifier, for: indexPath) as! UserCardTableViewCell
                 cell.bind(user: user, delegate: self)
                 return cell
             } else if (indexPath.section == 2) {
-                let cell = tableView.dequeueReusableCell(withIdentifier: UserCardTableViewCell.identifier, for: indexPath) as! UserCardTableViewCell
-                let user = data.realTimeUsers[indexPath.row]
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: UserCardTableViewCell.identifier, for: indexPath) as! UserCardTableViewCell
                 cell.bind(user: user, delegate: self)
                 return cell
             } else {
@@ -185,7 +185,7 @@ class HomeViewController: UIViewController {
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [unowned self] data in
                 self.data = data
-                update()
+                update(data)
             })
             .disposed(by: disposeBag)
 
@@ -209,7 +209,7 @@ class HomeViewController: UIViewController {
             .disposed(by: disposeBag)
     }
 
-    private func update() {
+    private func update(_ data: HomeUserData) {
         var snapshot = NSDiffableDataSourceSnapshot<Section, UserDTO>()
         snapshot.appendSections([.Recommendation, .Close, .RealTime])
         snapshot.appendItems(data.recommendedUsers, toSection: .Recommendation)
@@ -319,20 +319,21 @@ extension HomeViewController: UITableViewDelegate {
         if (section == 0) {
             return data.recommendedUsers.count == 0 ? generateFooterView(
                 mainText: "해당 되는 유저를 찾을 수 없습니다.",
-                secondaryText: "최선을 다해 유저를 모집 중입니다.\n양해 부탁 드립니다.") : UIView()
+                secondaryText: "최선을 다해 유저를 모집 중입니다.\n양해 부탁 드립니다."
+            ) : UIView()
         }
         if (section == 1) {
             return data.closeUsers.count == 0 ? generateFooterView(
                 mainText: "해당 되는 유저를 찾을 수 없습니다.",
-                secondaryText: "최선을 다해 유저를 모집 중입니다.\n양해 부탁 드립니다.") : UIView()
+                secondaryText: "최선을 다해 유저를 모집 중입니다.\n양해 부탁 드립니다."
+            ) : UIView()
         }
-
         if (section == 2) {
             return data.realTimeUsers.count == 0 ? generateFooterView(
                 mainText: "해당 되는 유저를 찾을 수 없습니다.",
-                secondaryText: "최선을 다해 유저를 모집 중입니다.\n양해 부탁 드립니다.") : UIView()
+                secondaryText: "최선을 다해 유저를 모집 중입니다.\n양해 부탁 드립니다."
+            ) : UIView()
         }
-
         return nil
     }
 
