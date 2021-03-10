@@ -23,11 +23,15 @@ class PostSingleViewModel {
         subscribePostSingleModel()
     }
 
+    deinit {
+        log.info("deinit post single view model")
+    }
+
     func publish() {
-        if (post == nil) {
+        guard let post = post else {
             return
         }
-        observable.onNext(post!)
+        observable.onNext(post)
     }
 
     func observe() -> Observable<PostDTO> {
@@ -35,16 +39,17 @@ class PostSingleViewModel {
     }
 
     private func subscribePostSingleModel() {
-        postSingleModel.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [unowned self] post in
-                    self.post = post
-                    publish()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        postSingleModel
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onNext: { [unowned self] post in
+                self.post = post
+                publish()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     func thumbUp(post: PostDTO?, comment: CommentDTO?, onError: @escaping (_ message: String) -> Void) {

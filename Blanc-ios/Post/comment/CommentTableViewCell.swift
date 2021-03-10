@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 
 
-protocol CommentTableViewCellDelegate {
+protocol CommentTableViewCellDelegate: class {
     func thumbUp(comment: CommentDTO?) -> Void
     func thumbDown(comment: CommentDTO?) -> Void
 
@@ -18,15 +18,15 @@ class CommentTableViewCell: UITableViewCell {
 
     static let identifier: String = "CommentTableViewCell"
 
-    private var comment: CommentDTO?
-
     private let ripple: Ripple = Ripple()
 
     private class Const {
         static let imageDiameter: CGFloat = CGFloat(35)
     }
 
-    private var delegate: CommentTableViewCellDelegate?
+    private weak var comment: CommentDTO?
+
+    private weak var delegate: CommentTableViewCellDelegate?
 
     lazy private var thumbUpEmpty: UIImage? = {
         UIImage(named: "ic_thumb_up_empty")
@@ -175,7 +175,7 @@ class CommentTableViewCell: UITableViewCell {
         stackView.setCustomSpacing(8, after: authorFavoriteCommentLabel)
         stackView.isLayoutMarginsRelativeArrangement = true
         stackView.layoutMargins = UIEdgeInsets(
-                top: CGFloat(3), left: 0, bottom: 0, right: 0)
+            top: CGFloat(3), left: 0, bottom: 0, right: 0)
         return stackView
     }()
 
@@ -329,7 +329,7 @@ class CommentTableViewCell: UITableViewCell {
 
     private func showFavoriteCommentMessageStackView(_ flag: Bool) {
         authorFavoriteCommentStackView.layoutMargins = UIEdgeInsets(
-                top: CGFloat(flag ? 3 : 0), left: 0, bottom: 0, right: 0)
+            top: CGFloat(flag ? 3 : 0), left: 0, bottom: 0, right: 0)
         authorFavoriteCommentStackView.subviews.forEach { view in
             view.visible(flag)
         }

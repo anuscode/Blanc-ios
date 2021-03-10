@@ -8,7 +8,7 @@ class PostSingleBody: UIView {
 
     private let ripple = Ripple()
 
-    private var delegate: PostSingleTableViewCellDelegate?
+    private weak var delegate: PostSingleTableViewCellDelegate?
 
     lazy private var carousel: FSPagerView = {
         let pagerView = FSPagerView(frame: frame)

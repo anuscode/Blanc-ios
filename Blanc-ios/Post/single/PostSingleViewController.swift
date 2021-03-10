@@ -29,9 +29,9 @@ class PostSingleViewController: UIViewController {
 
     private var replyTo: CommentDTO?
 
-    var session: Session?
+    internal weak var session: Session?
 
-    var postSingleViewModel: PostSingleViewModel?
+    internal weak var postSingleViewModel: PostSingleViewModel?
 
     lazy private var leftBarButtonItem: UIBarButtonItem = {
         UIBarButtonItem(customView: LeftSideBarView(title: "그램"))
@@ -76,9 +76,9 @@ class PostSingleViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow),
-                name: UIResponder.keyboardWillShowNotification, object: nil)
+            name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide),
-                name: UIResponder.keyboardWillHideNotification, object: nil)
+            name: UIResponder.keyboardWillHideNotification, object: nil)
         configureSubviews()
         configureConstraints()
         configureTableViewDataSource()
@@ -88,9 +88,13 @@ class PostSingleViewController: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         // should remove view model and model otherwise it shows the previous one.
-        SwinjectStoryboard.defaultContainer.resetObjectScope(.postSingleScope)
-        navigationController?.setNavigationBarHidden(false, animated: animated)
         postSingleViewModel?.sync()
+        navigationController?.setNavigationBarHidden(false, animated: animated)
+        SwinjectStoryboard.defaultContainer.resetObjectScope(.postSingleScope)
+    }
+
+    deinit {
+        log.info("deinit post single view controller..")
     }
 
     private func configureSubviews() {
@@ -120,25 +124,26 @@ class PostSingleViewController: UIViewController {
     }
 
     private func subscribePostSingleViewModel() {
-        postSingleViewModel?.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(MainScheduler.instance)
-                .subscribe(onNext: { [unowned self] post in
-                    self.post = post
-                    self.comments = CommentDTO.flatten(comments: post.comments).toArray() as! [CommentDTO]
+        postSingleViewModel?
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [unowned self] post in
+                self.post = post
+                comments = CommentDTO.flatten(comments: post.comments).toArray() as! [CommentDTO]
 
-                    let isFirst = self.post == nil
-                    let isThumbUpdates = self.post?.comments?.count == post.comments?.count
-                    self.update(animatingDifferences: (!isFirst && !isThumbUpdates))
+                let isFirst = self.post == nil
+                let isThumbUpdates = self.post?.comments?.count == post.comments?.count
+                update(animatingDifferences: (!isFirst && !isThumbUpdates))
 
-                    if (self.post?.enableComment == false) {
-                        self.bottomTextField.placeHolder = "댓글이 금지 된 게시물 입니다."
-                        self.bottomTextField.isEnabled = false
-                    }
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+                if (self.post?.enableComment == false) {
+                    bottomTextField.placeHolder = "댓글이 금지 된 게시물 입니다."
+                    bottomTextField.isEnabled = false
+                }
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     @objc private func keyboardWillShow(notification: NSNotification) {
@@ -175,7 +180,7 @@ extension PostSingleViewController {
         dataSource = UITableViewDiffableDataSource<Section, AnyHashable>(tableView: tableView) { [unowned self] (tableView, indexPath, item) -> UITableViewCell? in
             if let post = item as? PostDTO {
                 guard let cell = tableView.dequeueReusableCell(
-                        withIdentifier: PostSingleBodyTableViewCell.identifier, for: indexPath) as? PostSingleBodyTableViewCell else {
+                    withIdentifier: PostSingleBodyTableViewCell.identifier, for: indexPath) as? PostSingleBodyTableViewCell else {
                     return UITableViewCell()
                 }
                 cell.bind(post: post, delegate: self)
@@ -183,7 +188,7 @@ extension PostSingleViewController {
             }
             if let comment = item as? CommentDTO {
                 guard let cell = tableView.dequeueReusableCell(
-                        withIdentifier: CommentTableViewCell.identifier, for: indexPath) as? CommentTableViewCell else {
+                    withIdentifier: CommentTableViewCell.identifier, for: indexPath) as? CommentTableViewCell else {
                     return UITableViewCell()
                 }
                 cell.bind(comment: comment, delegate: self)
@@ -195,13 +200,11 @@ extension PostSingleViewController {
     }
 
     private func update(animatingDifferences: Bool = false) {
-        DispatchQueue.main.async { [unowned self] in
-            var snapshot = NSDiffableDataSourceSnapshot<Section, AnyHashable>()
-            snapshot.appendSections([.Post, .Comments])
-            snapshot.appendItems([post], toSection: .Post)
-            snapshot.appendItems(comments ?? [], toSection: .Comments)
-            dataSource.apply(snapshot, animatingDifferences: animatingDifferences, completion: nil)
-        }
+        var snapshot = NSDiffableDataSourceSnapshot<Section, AnyHashable>()
+        snapshot.appendSections([.Post, .Comments])
+        snapshot.appendItems([post], toSection: .Post)
+        snapshot.appendItems(comments ?? [], toSection: .Comments)
+        dataSource.apply(snapshot, animatingDifferences: animatingDifferences, completion: nil)
     }
 }
 
@@ -223,15 +226,21 @@ extension PostSingleViewController: UITableViewDelegate {
 extension PostSingleViewController: CommentTableViewCellDelegate {
 
     func thumbUp(comment: CommentDTO?) {
-        postSingleViewModel?.thumbUp(post: post, comment: comment, onError: { [unowned self] message in
-            toast(message: message)
-        })
+        postSingleViewModel?.thumbUp(
+            post: post,
+            comment: comment,
+            onError: { [unowned self] message in
+                toast(message: message)
+            })
     }
 
     func thumbDown(comment: CommentDTO?) {
-        postSingleViewModel?.thumbDown(post: post, comment: comment, onError: { [unowned self] message in
-            toast(message: message)
-        })
+        postSingleViewModel?.thumbDown(
+            post: post,
+            comment: comment,
+            onError: { [unowned self] message in
+                toast(message: message)
+            })
     }
 
     func isThumbedUp(comment: CommentDTO?) -> Bool {
@@ -254,11 +263,15 @@ extension PostSingleViewController: CommentTableViewCellDelegate {
 
 extension PostSingleViewController: BottomTextFieldDelegate {
     func trigger(message: String) {
-        postSingleViewModel?.createComment(postId: post?.id, commentId: replyTo?.id, comment: message, onError: { message in
-            DispatchQueue.main.async {
-                self.toast(message: message)
-            }
-        })
+        postSingleViewModel?.createComment(
+            postId: post?.id,
+            commentId: replyTo?.id,
+            comment: message,
+            onError: { [unowned self] message in
+                DispatchQueue.main.async {
+                    toast(message: message)
+                }
+            })
         dismissTextField()
     }
 
@@ -269,9 +282,9 @@ extension PostSingleViewController: BottomTextFieldDelegate {
 
 extension PostSingleViewController: PostSingleTableViewCellDelegate {
     func favorite() {
-        postSingleViewModel?.favorite(onError: {
+        postSingleViewModel?.favorite(onError: { [unowned self] in
             DispatchQueue.main.async {
-                self.toast(message: "좋아요 도중 에러가 발생 하였습니다.")
+                toast(message: "좋아요 도중 에러가 발생 하였습니다.")
             }
         })
     }

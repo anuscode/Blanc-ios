@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 import FSPagerView
 
-protocol PostSingleTableViewCellDelegate {
+protocol PostSingleTableViewCellDelegate: class {
     func favorite()
     func isCurrentUserFavoritePost() -> Bool
 }
@@ -12,7 +12,7 @@ class PostSingleBodyTableViewCell: UITableViewCell {
 
     static let identifier: String = "PostSingleBodyTableViewCell"
 
-    private var delegate: PostSingleTableViewCellDelegate?
+    private weak var delegate: PostSingleTableViewCellDelegate?
 
     private let header: PostSingleHeader = {
         let header = PostSingleHeader()
