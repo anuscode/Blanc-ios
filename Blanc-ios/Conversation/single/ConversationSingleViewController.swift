@@ -16,7 +16,7 @@ class ConversationSingleViewController: UIViewController {
 
     private let ripple: Ripple = Ripple()
 
-    private var disposeBag: DisposeBag? = DisposeBag()
+    private let disposeBag: DisposeBag = DisposeBag()
 
     private var dataSource: UITableViewDiffableDataSource<Section, MessageDTO>?
 
@@ -188,7 +188,6 @@ class ConversationSingleViewController: UIViewController {
         conversationSingleViewModel?.sync()
         SwinjectStoryboard.defaultContainer.resetObjectScope(.conversationSingleScope)
         NotificationCenter.default.removeObserver(self)
-        disposeBag = nil
     }
 
     deinit {
@@ -228,31 +227,26 @@ class ConversationSingleViewController: UIViewController {
     private func subscribeConversationSingleViewModel() {
         conversationSingleViewModel?
             .observe()
-            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [unowned self] conversation in
                 self.conversation = conversation
-                DispatchQueue.main.async {
-                    self.update()
-                    self.updateNavigation()
-                    self.showInactiveViewIfRequired()
-                }
-            }, onError: { err in
-                log.error(err)
+                navigation(conversation)
+                controlActivation(conversation)
+                update()
             })
-            .disposed(by: disposeBag!)
+            .disposed(by: disposeBag)
     }
 
-    private func updateNavigation() {
-        navigationUserImage.url(conversation?.partner?.avatar)
-        navigationUserLabel.text = "\(conversation?.partner?.nickname ?? "알 수 없음"), \(conversation?.partner?.age ?? -1)"
+    private func navigation(_ conversation: ConversationDTO) {
+        navigationUserImage.url(conversation.partner?.avatar)
+        navigationUserLabel.text = "\(conversation.partner?.nickname ?? "알 수 없음"), \(conversation.partner?.age ?? -1)"
     }
 
-    private func showInactiveViewIfRequired() {
-        inactiveConversationView.visible(conversation?.available != true)
-        inactiveUserImage.url(conversation?.partner?.avatar)
-        if (conversation?.references?.count ?? 0 > 1) {
-            inactiveLabel1.text = "\(conversation?.partner?.nickname ?? "알 수 없음") 님과 연결 되었습니다."
+    private func controlActivation(_ conversation: ConversationDTO) {
+        inactiveConversationView.visible(conversation.available != true)
+        inactiveUserImage.url(conversation.partner?.avatar)
+        if (conversation.references?.count ?? 0 > 1) {
+            inactiveLabel1.text = "\(conversation.partner?.nickname ?? "알 수 없음") 님과 연결 되었습니다."
         } else {
             inactiveLabel1.text = "해당 사용자가 대화방을 나갔습니다."
         }
@@ -326,10 +320,10 @@ class ConversationSingleViewController: UIViewController {
             .present(target: self, user: partner)
             .subscribe(onNext: { [unowned self] result in
                 if (result == .accept) {
-                    self.updateConversationAvailable()
+                    updateConversationAvailable()
                 }
                 if (result == .purchase) {
-                    self.navigationController?.pushViewController(.inAppPurchase, current: self)
+                    navigationController?.pushViewController(.inAppPurchase, current: self)
                 }
                 if (result == .decline) {
                     log.info("declined open conversation confirm.")
@@ -337,7 +331,7 @@ class ConversationSingleViewController: UIViewController {
             }, onError: { err in
                 log.error(err)
             })
-            .disposed(by: disposeBag!)
+            .disposed(by: disposeBag)
     }
 
     private func updateConversationAvailable() {
