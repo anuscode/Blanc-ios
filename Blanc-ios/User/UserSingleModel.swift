@@ -51,7 +51,7 @@ class UserSingleModel {
                 user.distance = self.session.user?.distance(from: user, type: String.self)
                 user.relationship = self.session.relationship(with: user)
             })
-            .subscribe(onNext: { user in
+            .subscribe(onNext: { [unowned self] user in
                 self.data.user = user
                 self.publish()
                 self.populateUserPosts(user: user)

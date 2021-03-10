@@ -546,7 +546,7 @@ class LoginViewController: UIViewController {
                 .do(onNext: { [unowned self] authResult in
                     progressLabel.text = "세션 정보 수립 중.."
                 })
-                .subscribe(onNext: { isExists in
+                .subscribe(onNext: { [unowned self] isExists in
                     if (isExists) {
                         log.info("Sign in with kakao credential done. beginning login progress..")
                         self.login()

@@ -29,7 +29,7 @@ class ImageViewViewModel {
     private func observeViewModel() {
         pendingModel
             .observe()
-            .subscribe(onNext: { user in
+            .subscribe(onNext: { [unowned self] user in
                 self.repository.user = user
                 self.publish()
             }, onError: { err in

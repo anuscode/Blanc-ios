@@ -88,7 +88,7 @@ class SmsConfirmViewController: UIViewController {
             .tapGesture()
             .when(.recognized)
             .take(1)
-            .subscribe(onNext: { _ in
+            .subscribe(onNext: { [unowned self] _ in
                 self.dismiss(animated: true)
             })
             .disposed(by: disposeBag!)
@@ -272,7 +272,7 @@ class SmsConfirmViewController: UIViewController {
     private func initInterval() {
         Observable<Int>
             .interval(.seconds(1), scheduler: MainScheduler.instance)
-            .subscribe(onNext: { _ in
+            .subscribe(onNext: { [unowned self] _ in
                 let expiredAt = self.verification?.expiredAt ?? 0
                 let formatted = self.formatRemainingTime(expiredAt)
                 self.timeLeftLabel.text = formatted

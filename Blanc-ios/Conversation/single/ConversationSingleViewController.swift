@@ -16,13 +16,13 @@ class ConversationSingleViewController: UIViewController {
 
     private let ripple: Ripple = Ripple()
 
-    private let disposeBag: DisposeBag = DisposeBag()
-
-    private weak var conversation: ConversationDTO?
+    private var disposeBag: DisposeBag? = DisposeBag()
 
     private var dataSource: UITableViewDiffableDataSource<Section, MessageDTO>?
 
-    var conversationSingleViewModel: ConversationSingleViewModel?
+    internal weak var conversationSingleViewModel: ConversationSingleViewModel?
+
+    private weak var conversation: ConversationDTO?
 
     lazy private var navigationBarContent: UIView = {
         let view = UIView()
@@ -188,6 +188,7 @@ class ConversationSingleViewController: UIViewController {
         conversationSingleViewModel?.sync()
         SwinjectStoryboard.defaultContainer.resetObjectScope(.conversationSingleScope)
         NotificationCenter.default.removeObserver(self)
+        disposeBag = nil
     }
 
     deinit {
@@ -229,7 +230,7 @@ class ConversationSingleViewController: UIViewController {
             .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .subscribe(onNext: { conversation in
+            .subscribe(onNext: { [unowned self] conversation in
                 self.conversation = conversation
                 DispatchQueue.main.async {
                     self.update()
@@ -239,7 +240,7 @@ class ConversationSingleViewController: UIViewController {
             }, onError: { err in
                 log.error(err)
             })
-            .disposed(by: disposeBag)
+            .disposed(by: disposeBag!)
     }
 
     private func updateNavigation() {
@@ -323,7 +324,7 @@ class ConversationSingleViewController: UIViewController {
         }
         OpenConversationConfirmViewController
             .present(target: self, user: partner)
-            .subscribe(onNext: { result in
+            .subscribe(onNext: { [unowned self] result in
                 if (result == .accept) {
                     self.updateConversationAvailable()
                 }
@@ -336,14 +337,14 @@ class ConversationSingleViewController: UIViewController {
             }, onError: { err in
                 log.error(err)
             })
-            .disposed(by: disposeBag)
+            .disposed(by: disposeBag!)
     }
 
     private func updateConversationAvailable() {
-        conversationSingleViewModel?.updateConversationAvailable(conversation: conversation, onCompleted: { [unowned self] in
-            toast(message: "대화방이 정상적으로 열렸습니다.")
-        }, onError: { [unowned self] in
-            toast(message: "대화방을 여는 도중 에러가 발생 하였습니다.")
+        conversationSingleViewModel?.updateConversationAvailable(conversation: conversation, onCompleted: {
+            self.toast(message: "대화방이 정상적으로 열렸습니다.")
+        }, onError: {
+            self.toast(message: "대화방을 여는 도중 에러가 발생 하였습니다.")
         })
     }
 }

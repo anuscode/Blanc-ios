@@ -338,7 +338,7 @@ class AccountViewController: UIViewController {
         accountViewModel?.observe()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(MainScheduler.instance)
-                .subscribe(onNext: { user in
+                .subscribe(onNext: {[unowned self]  user in
                     self.update(user)
                 }, onError: { err in
                     log.error(err)

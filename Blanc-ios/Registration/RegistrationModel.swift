@@ -42,7 +42,7 @@ class RegistrationModel {
             .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .subscribe(onNext: { user in
+            .subscribe(onNext: { [unowned self] user in
                 self.user = user
             }, onError: { err in
                 log.error(err)

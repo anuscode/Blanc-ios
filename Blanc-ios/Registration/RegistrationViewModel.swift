@@ -27,7 +27,7 @@ class RegistrationViewModel {
         registrationModel
             .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-            .subscribe(onNext: { user in
+            .subscribe(onNext: { [unowned self] user in
                 self.user.onNext(user)
             }, onError: { err in
                 log.error(err)

@@ -80,7 +80,7 @@ class RegistrationOccupationViewController: UIViewController {
         imageView.rx
             .tapGesture()
             .when(.recognized)
-            .subscribe(onNext: { _ in
+            .subscribe(onNext: { [unowned self]_ in
                 let lastIndex = self.dataSource.count - 1
                 self.selectPickerView(lastIndex)
                 self.textField.text = ""
@@ -100,7 +100,7 @@ class RegistrationOccupationViewController: UIViewController {
         view.rx
             .tapGesture()
             .when(.recognized)
-            .subscribe(onNext: { _ in
+            .subscribe(onNext: { [unowned self] _ in
                 self.closeKeyboard()
             })
             .disposed(by: disposeBag)

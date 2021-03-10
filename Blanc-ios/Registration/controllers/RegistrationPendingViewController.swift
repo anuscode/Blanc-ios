@@ -120,7 +120,7 @@ class RegistrationPendingViewController: UIViewController {
         view.rx
             .tapGesture()
             .when(.recognized)
-            .subscribe(onNext: { _ in
+            .subscribe(onNext: { [unowned self] _ in
                 let navigation = self.navigationController as! RegistrationNavigationViewController
                 navigation.stackAfterClear(identifier: "RegistrationNicknameViewController", animated: true)
             })
@@ -212,7 +212,7 @@ class RegistrationPendingViewController: UIViewController {
             .take(1)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: { user in
+            .subscribe(onNext: { [unowned self] user in
                 self.update(user)
             }, onError: { err in
                 self.toast(message: "알 수 없는 에러가 발생 하였습니다.")
@@ -225,7 +225,7 @@ class RegistrationPendingViewController: UIViewController {
             .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: { push in
+            .subscribe(onNext: { [unowned self] push in
                 if (push.isApproval()) {
                     self.parent?.replace(storyboard: "Main", withIdentifier: "InitPagerViewController")
                 }

@@ -162,7 +162,7 @@ class ConversationViewController: UIViewController {
         conversationViewModel?.observe()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(MainScheduler.instance)
-                .subscribe(onNext: { conversations in
+                .subscribe(onNext: { [unowned self] conversations in
                     self.conversations = conversations
                     self.update()
                     self.emptyView.visible(conversations.isEmpty)

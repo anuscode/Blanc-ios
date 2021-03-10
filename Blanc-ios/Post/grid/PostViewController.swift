@@ -249,7 +249,7 @@ class PostViewController: UIViewController {
             .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: { posts in
+            .subscribe(onNext: { [unowned self] posts in
                 self.posts = posts
                 self.update()
             }, onError: { err in

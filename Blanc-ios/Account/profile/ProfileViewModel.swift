@@ -18,7 +18,7 @@ class ProfileViewModel {
 
     private func observeViewModel() {
         profileModel.observe()
-                .subscribe(onNext: { user in
+                .subscribe(onNext: { [unowned self] user in
                     self.user = user
                     self.publish()
                     log.info(user)

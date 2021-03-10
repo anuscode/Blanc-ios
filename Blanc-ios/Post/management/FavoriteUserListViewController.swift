@@ -66,7 +66,7 @@ class FavoriteUserListViewController: UIViewController {
         favoriteUserListViewModel?.observe()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { users in
+                .subscribe(onNext: { [unowned self] users in
                     self.users = users
                     DispatchQueue.main.async { [unowned self] in
                         update()

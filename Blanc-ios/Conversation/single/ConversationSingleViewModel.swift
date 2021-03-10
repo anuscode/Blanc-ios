@@ -35,22 +35,23 @@ class ConversationSingleViewModel {
     }
 
     private func subscribeConversationModel() {
-        conversationSingleModel.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [unowned self] conversation in
-                    self.conversation = conversation
-                    publish()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        conversationSingleModel
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onNext: { [unowned self] conversation in
+                self.conversation = conversation
+                publish()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     func updateConversationAvailable(
-            conversation: ConversationDTO?, onCompleted: @escaping () -> Void, onError: @escaping () -> Void) {
+        conversation: ConversationDTO?, onCompleted: @escaping () -> Void, onError: @escaping () -> Void) {
         conversationSingleModel.updateConversationAvailable(
-                conversation: conversation, onCompleted: onCompleted, onError: onError)
+            conversation: conversation, onCompleted: onCompleted, onError: onError)
     }
 
     func sendMessage(message: String, onError: @escaping () -> Void) {

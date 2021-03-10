@@ -178,7 +178,7 @@ class HomeViewController: UIViewController {
             .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
-            .subscribe(onNext: { data in
+            .subscribe(onNext: { [unowned self] data in
                 self.data = data
                 self.update()
             }, onError: { err in

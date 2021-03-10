@@ -241,7 +241,7 @@ class UserSingleViewController: UIViewController {
             .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: { data in
+            .subscribe(onNext: { [unowned self] data in
                 self.data = data
                 self.tableView.reloadData()
             })

@@ -123,7 +123,7 @@ class PostSingleViewController: UIViewController {
         postSingleViewModel?.observe()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(MainScheduler.instance)
-                .subscribe(onNext: { post in
+                .subscribe(onNext: { [unowned self] post in
                     self.post = post
                     self.comments = CommentDTO.flatten(comments: post.comments).toArray() as! [CommentDTO]
 

@@ -48,7 +48,7 @@ class RequestsModel {
             .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .subscribe(onNext: { push in
+            .subscribe(onNext: { [unowned self] push in
                 if (push.isRequest()) {
                     self.insertRequest(requestId: push.requestId)
                 }
@@ -73,7 +73,7 @@ class RequestsModel {
             .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .subscribe(onNext: { push in
+            .subscribe(onNext: { [unowned self] push in
                 self.populate()
             }, onError: { err in
                 log.error(err)

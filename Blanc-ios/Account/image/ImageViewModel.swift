@@ -70,7 +70,7 @@ class ImageViewModel {
             .take(1)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .subscribe(onNext: { user in
+            .subscribe(onNext: { [unowned self] user in
                 self.user = user
                 self.publish()
             }, onError: { err in

@@ -139,7 +139,7 @@ class RegistrationNicknameViewController: UIViewController {
         registrationViewModel?
             .observe()
             .take(1)
-            .subscribe(onNext: { user in
+            .subscribe(onNext: { [unowned self] user in
                 self.user = user
                 self.update()
             }, onError: { err in

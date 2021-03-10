@@ -24,7 +24,7 @@ class RightSideBarView: UIView {
         imageView.rx
                 .tapGesture()
                 .when(.recognized)
-                .subscribe(onNext: { _ in
+                .subscribe(onNext: { [unowned self] _ in
                     self.delegate?()
                 })
                 .disposed(by: disposeBag)

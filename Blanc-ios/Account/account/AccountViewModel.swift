@@ -18,7 +18,7 @@ class AccountViewModel {
         accountModel.observe()
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { user in
+                .subscribe(onNext: { [unowned self] user in
                     self.observable.onNext(user)
                 }, onError: { err in
                     log.error(err)

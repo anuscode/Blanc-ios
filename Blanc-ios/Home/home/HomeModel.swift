@@ -150,7 +150,7 @@ class HomeModel {
             .didChangeAuthorization
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: { _, status in
+            .subscribe(onNext: { [unowned self] _, status in
                 switch status {
                 case .denied, .notDetermined, .restricted:
                     self.manager.requestAlwaysAuthorization()

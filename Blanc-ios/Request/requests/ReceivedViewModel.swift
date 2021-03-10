@@ -51,7 +51,7 @@ class ReceivedViewModel {
             .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .subscribe(onNext: { requests in
+            .subscribe(onNext: { [unowned self] requests in
                 self.data.requests = requests
                 self.publish()
             }, onError: { err in
@@ -69,7 +69,7 @@ class ReceivedViewModel {
                 // loop to calculate and set a distance from current user.
                 users.distance(self.session)
             })
-            .subscribe(onNext: { users in
+            .subscribe(onNext: { [unowned self] users in
                 self.data.users = users
                 self.publish()
             }, onError: { err in

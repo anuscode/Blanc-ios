@@ -65,7 +65,7 @@ class RegistrationSexViewController: UIViewController {
         view.rx
             .tapGesture()
             .when(.recognized)
-            .subscribe(onNext: { _ in
+            .subscribe(onNext: { [unowned self] _ in
                 self.user?.sex = .MALE
                 self.registrationViewModel?.update()
             })
@@ -110,7 +110,7 @@ class RegistrationSexViewController: UIViewController {
         view.rx
             .tapGesture()
             .when(.recognized)
-            .subscribe(onNext: { _ in
+            .subscribe(onNext: { [unowned self] _ in
                 self.user?.sex = .FEMALE
                 self.registrationViewModel?.update()
             })
@@ -226,7 +226,7 @@ class RegistrationSexViewController: UIViewController {
             .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
-            .subscribe(onNext: { user in
+            .subscribe(onNext: { [unowned self] user in
                 self.user = user
 
                 let isMale = user.sex == .MALE

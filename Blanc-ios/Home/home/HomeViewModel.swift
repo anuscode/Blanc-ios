@@ -44,7 +44,7 @@ class HomeViewModel {
         homeModel.observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .subscribe(onNext: { data in
+            .subscribe(onNext: { [unowned self] data in
                 self.data = data
                 self.publish()
             }, onError: { err in

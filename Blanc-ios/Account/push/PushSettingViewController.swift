@@ -81,17 +81,17 @@ class PushSettingViewController: UIViewController {
 
     private func subscribePushSettingViewModel() {
         pushSettingViewModel?.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { pushSetting in
-                    self.pushSetting = pushSetting
-                    DispatchQueue.main.async { [unowned self] in
-                        tableView.reloadData()
-                    }
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onNext: { [unowned self] pushSetting in
+                self.pushSetting = pushSetting
+                DispatchQueue.main.async {
+                    tableView.reloadData()
+                }
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 }
 
@@ -107,7 +107,7 @@ extension PushSettingViewController: UITableViewDelegate, UITableViewDataSource 
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(
-                withIdentifier: PushSettingTableViewCell.identifier, for: indexPath) as! PushSettingTableViewCell
+            withIdentifier: PushSettingTableViewCell.identifier, for: indexPath) as! PushSettingTableViewCell
         if (indexPath.row == 0) {
             cell.bind(attribute: .all, isEnable: pushSetting?.all == true, isBoldTitle: true, delegate: self)
         } else if (indexPath.row == 1) {

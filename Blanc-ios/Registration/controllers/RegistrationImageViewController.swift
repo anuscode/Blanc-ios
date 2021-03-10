@@ -412,15 +412,16 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
     }
 
     private func subscribeViewModel() {
-        registrationViewModel?.observe()
+        registrationViewModel?
+            .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: { userDTO in
-                self.user = userDTO
-                self.update(userDTO)
-            }, onError: { err in
+            .subscribe(onNext: { [unowned self] user in
+                self.user = user
+                update(user)
+            }, onError: { [unowned self]  err in
                 log.error(err)
-                self.toast(message: "알 수 없는 에러가 발생 하였습니다.")
+                toast(message: "알 수 없는 에러가 발생 하였습니다.")
             })
             .disposed(by: disposeBag)
     }

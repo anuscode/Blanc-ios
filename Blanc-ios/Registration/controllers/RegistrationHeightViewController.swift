@@ -77,7 +77,7 @@ class RegistrationHeightViewController: UIViewController {
         pickerView.dataSource = self
         pickerView.rx
             .itemSelected
-            .subscribe(onNext: { (row, component) in
+            .subscribe(onNext: { [unowned self] (row, component) in
                 self.user?.height = self.dataSource[row]
                 self.resultLabel.text = self.labelSource[row]
             })

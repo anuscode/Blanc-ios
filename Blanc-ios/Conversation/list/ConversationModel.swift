@@ -44,78 +44,79 @@ class ConversationModel {
     private func publish() {
         DispatchQueue.main.async { [unowned self] in
             selectLastReadMessages()
-                    .do(onNext: { dictionary in
-                        conversations.forEach { conversation in
-                            let conversationId = conversation.id ?? ""
-                            let count = (conversation.messages?.count ?? 0)
-                            if let messageId = dictionary[conversationId] {
-                                let index = conversation.messages?.firstIndex {
-                                    $0.id == messageId
-                                } ?? -1
-                                conversation.unreadMessageCount = count - (index + 1)
-                            } else {
-                                conversation.unreadMessageCount = count
-                            }
+                .do(onNext: { dictionary in
+                    conversations.forEach { conversation in
+                        let conversationId = conversation.id ?? ""
+                        let count = (conversation.messages?.count ?? 0)
+                        if let messageId = dictionary[conversationId] {
+                            let index = conversation.messages?.firstIndex {
+                                $0.id == messageId
+                            } ?? -1
+                            conversation.unreadMessageCount = count - (index + 1)
+                        } else {
+                            conversation.unreadMessageCount = count
                         }
-                    })
-                    .subscribe(onSuccess: { _ in
-                        observable.onNext(conversations)
-                    })
-                    .disposed(by: disposeBag)
+                    }
+                })
+                .subscribe(onSuccess: { _ in
+                    observable.onNext(conversations)
+                })
+                .disposed(by: disposeBag)
         }
     }
 
     func populate() {
         conversationService.listUserConversations(uid: session.uid)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [unowned self] conversations in
-                    // ordered by desc
-                    self.conversations = conversations.sorted(by: {
-                        $0.createdAt ?? 0 > $1.createdAt ?? 0
-                    })
-                    publish()
-                }, onError: { err in
-                    log.error(err)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onSuccess: { [unowned self] conversations in
+                // ordered by desc
+                self.conversations = conversations.sorted(by: {
+                    $0.createdAt ?? 0 > $1.createdAt ?? 0
                 })
-                .disposed(by: disposeBag)
+                publish()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     private func subscribeBroadcast() {
         Broadcast.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [unowned self] push in
-                    if (push.isMatched()) {
-                        // insert a new conversation
-                        insertConversation(conversationId: push.conversationId)
-                    }
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onNext: { [unowned self] push in
+                if (push.isMatched()) {
+                    // insert a new conversation
+                    insertConversation(conversationId: push.conversationId)
+                }
 
-                    if (push.isOpened()) {
-                        // update a conversation.available to true
-                        openConversation(conversationId: push.conversationId)
-                    }
+                if (push.isOpened()) {
+                    // update a conversation.available to true
+                    openConversation(conversationId: push.conversationId)
+                }
 
-                    if (push.isMessage()) {
-                        appendMessage(push: push)
-                    }
+                if (push.isMessage()) {
+                    appendMessage(push: push)
+                }
 
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     private func subscribeBackground() {
-        Background.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { push in
-                    self.populate()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        Background
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onNext: { [unowned self]  push in
+                self.populate()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     /**
@@ -130,29 +131,29 @@ class ConversationModel {
     private func selectLastReadMessages() -> Single<[String: String]> {
         let messages = realm.objects(MessageEntity.self)
         return Observable.array(from: messages)
-                .take(1)
-                .map { collection -> [String: String] in
-                    let result = collection.reduce(into: [String: String]()) { dict, message in
-                        let conversationId = message.conversationId
-                        let messageId = message.messageId
-                        dict.updateValue(messageId, forKey: conversationId)
-                    }
-                    return result
+            .take(1)
+            .map { collection -> [String: String] in
+                let result = collection.reduce(into: [String: String]()) { dict, message in
+                    let conversationId = message.conversationId
+                    let messageId = message.messageId
+                    dict.updateValue(messageId, forKey: conversationId)
                 }
-                .asSingle()
+                return result
+            }
+            .asSingle()
     }
 
     private func insertConversation(conversationId: String?) {
         conversationService.getConversation(uid: session.uid, conversationId: conversationId)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { conversation in
-                    self.conversations.insert(conversation, at: 0)
-                    self.publish()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onSuccess: { conversation in
+                self.conversations.insert(conversation, at: 0)
+                self.publish()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     private func appendMessage(push: PushDTO) {
@@ -182,17 +183,17 @@ class ConversationModel {
 
     func leaveConversation(conversationId: String?) {
         conversationService.leaveConversation(uid: session.uid, conversationId: conversationId, userId: session.id)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: {
-                    if let index = self.conversations.firstIndex(where: { $0.id == conversationId }) {
-                        self.conversations.remove(at: index)
-                    }
-                    self.publish()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onSuccess: {
+                if let index = self.conversations.firstIndex(where: { $0.id == conversationId }) {
+                    self.conversations.remove(at: index)
+                }
+                self.publish()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     func channel(user: UserDTO?) {

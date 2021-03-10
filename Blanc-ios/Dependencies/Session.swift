@@ -89,7 +89,7 @@ class Session {
             .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .subscribe(onNext: { push in
+            .subscribe(onNext: { [unowned self] push in
                 if (push.isRequest()) {
                     self.user?.userIdsSentMeRequest?.append(push.userId!)
                 }
