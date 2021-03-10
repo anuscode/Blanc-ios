@@ -40,13 +40,13 @@ class PostModel {
         }
         self.lastId = lastId
         postService
-            .listPosts(uid:session.uid, lastId: self.lastId)
+            .listPosts(uid: session.uid, lastId: self.lastId)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .do(onNext: { posts in
                 posts.forEach({ post in
-                    post.author?.distance = (post as PostDTO).author?.distance(
-                        from: self.session.user, type: String.self)
+                    post.author?.distance = self.session.user?.distance(
+                        from: post.author, type: String.self)
                 })
             })
             .subscribe(onSuccess: { [unowned self] posts in
