@@ -23,7 +23,7 @@ class PostViewController: UIViewController {
 
     private var reminder: Int = 0
 
-    var postViewModel: PostViewModel?
+    internal weak var postViewModel: PostViewModel?
 
     lazy private var leftBarButtonItem: UIBarButtonItem = {
         UIBarButtonItem(customView: LeftSideBarView(title: "그램"))
@@ -216,6 +216,10 @@ class PostViewController: UIViewController {
         }
     }
 
+    deinit {
+        log.info("deinit post view controller..")
+    }
+
     private func configureSubviews() {
         view.addSubview(collectionView)
         view.addSubview(fab2)
@@ -248,10 +252,10 @@ class PostViewController: UIViewController {
         postViewModel?
             .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-            .observeOn(MainScheduler.instance)
+            .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [unowned self] posts in
                 self.posts = posts
-                self.update()
+                update()
             }, onError: { err in
                 log.error(err)
             })

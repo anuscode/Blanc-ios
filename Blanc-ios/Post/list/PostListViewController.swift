@@ -13,20 +13,15 @@ class PostListViewController: UIViewController {
 
     private var disposeBag: DisposeBag = DisposeBag()
 
-    lazy private var dataSource: DataSource<Section, PostDTO> = DataSource<Section, PostDTO>(tableView: tableView) { (tableView, indexPath, post) -> UITableViewCell? in
-        let cell = tableView.dequeueReusableCell(withIdentifier: ResourceTableViewCell.identifier,
-                for: indexPath) as! ResourceTableViewCell
-        cell.bind(post: post, headerDelegate: self, bodyDelegate: self)
-        return cell
-    }
+    private var dataSource: DataSource<Section, PostDTO>!
 
     private var posts: [PostDTO] = []
 
-    var channel: Channel?
+    internal var channel: Channel?
 
-    var postViewModel: PostViewModel?
+    internal var postViewModel: PostViewModel?
 
-    var scrollToRow: Int?
+    internal var scrollToRow: Int?
 
     lazy private var leftBarButtonItem: UIBarButtonItem = {
         UIBarButtonItem(customView: LeftSideBarView(title: "그램"))
@@ -38,6 +33,7 @@ class PostListViewController: UIViewController {
         tableView.register(ResourceTableViewCell.self, forCellReuseIdentifier: ResourceTableViewCell.identifier)
         tableView.allowsSelection = false
         tableView.separatorColor = .clear
+        tableView.delegate = self
         return tableView
     }()
 
@@ -53,6 +49,10 @@ class PostListViewController: UIViewController {
         super.viewDidLoad()
         configureSubviews()
         configureConstraints()
+    }
+
+    deinit {
+        log.info("deinit post list view controller..")
     }
 
     public func prepare() {
@@ -71,21 +71,33 @@ class PostListViewController: UIViewController {
     }
 
     private func subscribePostViewModel() {
-        postViewModel?.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(MainScheduler.instance)
-                .subscribe(onNext: { [unowned self] posts in
-                    self.posts = posts.enumerated()
-                            .filter { index, item in
-                                index >= scrollToRow ?? 0
-                            }.map {
-                                $1
-                            }
-                    update()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        postViewModel?
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] posts in
+                self.posts = posts.enumerated()
+                    .filter { index, item in
+                        index >= scrollToRow ?? 0
+                    }.map {
+                        $1
+                    }
+                update(posts)
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
+
+        postViewModel?
+            .toast
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] message in
+                toast(message: message)
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 }
 
@@ -96,11 +108,16 @@ extension PostListViewController {
     }
 
     private func configureTableView() {
-        tableView.delegate = self
+        dataSource = DataSource<Section, PostDTO>(tableView: tableView) { (tableView, indexPath, post) -> UITableViewCell? in
+            let cell = tableView.dequeueReusableCell(withIdentifier: ResourceTableViewCell.identifier,
+                for: indexPath) as! ResourceTableViewCell
+            cell.bind(post: post, headerDelegate: self, bodyDelegate: self)
+            return cell
+        }
         tableView.dataSource = dataSource
     }
 
-    private func update() {
+    private func update(_ posts: [PostDTO]) {
         var snapshot = NSDiffableDataSourceSnapshot<Section, PostDTO>()
         snapshot.appendSections([.main])
         snapshot.appendItems(posts)
@@ -127,22 +144,13 @@ extension PostListViewController: UITableViewDelegate {
 extension PostListViewController: PostBodyDelegate {
 
     func favorite(post: PostDTO?) {
-        postViewModel?.favorite(
-                post: post,
-                onError: {
-                    DispatchQueue.main.async {
-                        self.toast(message: "좋아요 도중 에러가 발생 하였습니다.")
-                    }
-                })
+        postViewModel?.favorite(post: post)
     }
 
     func presentSinglePostView(post: PostDTO?) {
         channel(post: post)
         navigationController?.pushViewController(
-                .postSingle,
-                current: self,
-                hideBottomWhenStart: true,
-                hideBottomWhenEnd: true
+            .postSingle, current: self, hideBottomWhenStart: true, hideBottomWhenEnd: true
         )
     }
 
@@ -151,10 +159,10 @@ extension PostListViewController: PostBodyDelegate {
     }
 
     private func channel(post: PostDTO?) {
-        guard post != nil else {
+        guard let post = post else {
             return
         }
-        channel?.next(value: post!)
+        channel?.next(value: post)
     }
 }
 
@@ -166,9 +174,9 @@ extension PostListViewController: PostHeaderDelegate {
     }
 
     private func channel(user: UserDTO?) {
-        guard user != nil else {
+        guard let user = user else {
             return
         }
-        channel?.next(value: user!)
+        channel?.next(value: user)
     }
 }

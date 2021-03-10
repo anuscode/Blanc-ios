@@ -24,6 +24,10 @@ class PostModel {
         populate()
     }
 
+    deinit {
+        log.info("deinit post model..")
+    }
+
     func publish() {
         observable.onNext(posts)
     }
@@ -43,9 +47,9 @@ class PostModel {
             .listPosts(uid: session.uid, lastId: self.lastId)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .do(onNext: { posts in
+            .do(onNext: { [unowned self] posts in
                 posts.forEach({ post in
-                    post.author?.distance = self.session.user?.distance(
+                    post.author?.distance = session.user?.distance(
                         from: post.author, type: String.self)
                 })
             })
@@ -79,10 +83,10 @@ class PostModel {
                     post?.favoriteUserIds?.append(session.id!)
                 }
                 publish()
-            }, onError: { err in
+            }, onError: { [unowned self] err in
                 log.error(err)
                 onError()
-                self.publish()
+                publish()
             })
             .disposed(by: disposeBag)
     }
@@ -100,10 +104,10 @@ class PostModel {
                     post?.favoriteUserIds?.remove(at: index)
                 }
                 publish()
-            }, onError: { err in
+            }, onError: { [unowned self] err in
                 log.info(err)
                 onError?()
-                self.publish()
+                publish()
             })
             .disposed(by: disposeBag)
     }

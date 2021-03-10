@@ -7,6 +7,8 @@ class PostViewModel {
 
     private let observable: ReplaySubject = ReplaySubject<[PostDTO]>.create(bufferSize: 1)
 
+    internal let toast: PublishSubject = PublishSubject<String>()
+
     private var posts: [PostDTO] = []
 
     private let postModel: PostModel
@@ -19,6 +21,10 @@ class PostViewModel {
         subscribePostModel()
     }
 
+    deinit {
+        log.info("deinit post view model..")
+    }
+
     func observe() -> Observable<[PostDTO]> {
         observable
     }
@@ -28,23 +34,27 @@ class PostViewModel {
     }
 
     private func subscribePostModel() {
-        postModel.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [unowned self] posts in
-                    self.posts = posts
-                    publish()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        postModel
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onNext: { [unowned self] posts in
+                self.posts = posts
+                publish()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     func populate() {
         postModel.populate()
     }
 
-    func favorite(post: PostDTO?, onError: @escaping () -> Void) {
+    func favorite(post: PostDTO?) {
+        let onError = { [unowned self] in
+            toast.onNext("좋아요 업데이트 도중 에러가 발생 하였습니다.")
+        }
         postModel.favorite(post: post, onError: onError)
     }
 
