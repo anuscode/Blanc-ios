@@ -363,6 +363,7 @@ class AccountViewController: UIViewController {
     private func subscribeAccountViewModel() {
         accountViewModel?
             .currentUser
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [unowned self] user in
                 let url = user.avatar ?? ""
@@ -373,14 +374,12 @@ class AccountViewController: UIViewController {
         accountViewModel?
             .currentUser
             .map({ user in user.nickname ?? "알 수 없음" })
-            .observeOn(MainScheduler.instance)
             .bind(to: line1.rx.text)
             .disposed(by: disposeBag)
 
         accountViewModel?
             .currentUser
             .map({ user in user.area ?? "알 수 없음" })
-            .observeOn(MainScheduler.instance)
             .bind(to: line1.rx.text)
             .disposed(by: disposeBag)
 
@@ -391,14 +390,12 @@ class AccountViewController: UIViewController {
                 let age = user.age ?? 0
                 return "\(area) · \(age)세"
             })
-            .observeOn(MainScheduler.instance)
             .bind(to: line2.rx.text)
             .disposed(by: disposeBag)
 
         accountViewModel?
             .currentUser
             .map({ user in "내 잔여 포인트: \(user.point ?? 0)" })
-            .observeOn(MainScheduler.instance)
             .bind(to: line3.rx.text)
             .disposed(by: disposeBag)
     }

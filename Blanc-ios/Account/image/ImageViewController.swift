@@ -6,7 +6,7 @@ import Kingfisher
 
 class ImageViewController: UIViewController, CropViewControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
-    private var disposeBag: DisposeBag? = DisposeBag()
+    private var disposeBag: DisposeBag = DisposeBag()
 
     private var ripple: Ripple = Ripple()
 
@@ -405,7 +405,10 @@ class ImageViewController: UIViewController, CropViewControllerDelegate, UIImage
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        disposeBag = nil
+    }
+
+    deinit {
+        log.info("deinit image view controller..")
     }
 
     func imagePickerController(_ picker: UIImagePickerController,
@@ -555,36 +558,46 @@ class ImageViewController: UIViewController, CropViewControllerDelegate, UIImage
             .user
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: update)
-            .disposed(by: disposeBag!)
+            .subscribe(onNext: { [unowned self] user in
+                update(user)
+            })
+            .disposed(by: disposeBag)
 
         pendingViewModel?
             .loading
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: loading)
-            .disposed(by: disposeBag!)
+            .subscribe(onNext: { [unowned self] boolean in
+                loading(boolean)
+            })
+            .disposed(by: disposeBag)
 
         pendingViewModel?
             .toast
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: toast)
-            .disposed(by: disposeBag!)
+            .subscribe(onNext: { [unowned self] message in
+                toast(message)
+            })
+            .disposed(by: disposeBag)
 
         pendingViewModel?
             .imagesClickable
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: imagesClickable)
-            .disposed(by: disposeBag!)
+            .subscribe(onNext: { [unowned self] boolean in
+                imagesClickable(boolean)
+            })
+            .disposed(by: disposeBag)
 
         pendingViewModel?
             .user
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: submitButtonClickable)
-            .disposed(by: disposeBag!)
+            .subscribe(onNext: { [unowned self] user in
+                submitButtonClickable(user)
+            })
+            .disposed(by: disposeBag)
     }
 
     private func update(_ user: UserDTO) {
