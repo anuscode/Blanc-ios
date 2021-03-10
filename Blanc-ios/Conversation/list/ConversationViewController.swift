@@ -47,22 +47,22 @@ class ConversationViewController: UIViewController {
 
     private var conversations: [ConversationDTO] = []
 
-    var conversationViewModel: ConversationViewModel?
+    internal weak var conversationViewModel: ConversationViewModel?
 
-    var rightSideBarView: RightSideBarView?
+    internal weak var rightSideBarView: RightSideBarView?
 
     lazy private var leftBarButtonItem: UIBarButtonItem = {
         UIBarButtonItem(customView: LeftSideBarView(title: "채팅"))
     }()
 
     lazy private var rightBarButtonItem: UIBarButtonItem = {
-        guard (rightSideBarView != nil) else {
+        guard let rightSideBarView = rightSideBarView else {
             return UIBarButtonItem()
         }
-        rightSideBarView!.delegate {
+        rightSideBarView.delegate {
             self.navigationController?.pushViewController(.alarms, current: self)
         }
-        return UIBarButtonItem(customView: rightSideBarView!)
+        return UIBarButtonItem(customView: rightSideBarView)
     }()
 
     lazy private var titleLabel: UILabel = {
@@ -81,7 +81,7 @@ class ConversationViewController: UIViewController {
     lazy private var tableView: UITableView = {
         let tableView = UITableView()
         tableView.register(ConversationTableViewCell.self,
-                forCellReuseIdentifier: ConversationTableViewCell.identifier)
+            forCellReuseIdentifier: ConversationTableViewCell.identifier)
         tableView.allowsSelection = false
         tableView.separatorColor = .clear
         tableView.delegate = self
@@ -159,17 +159,29 @@ class ConversationViewController: UIViewController {
     }
 
     private func subscribeConversationViewModel() {
-        conversationViewModel?.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(MainScheduler.instance)
-                .subscribe(onNext: { [unowned self] conversations in
-                    self.conversations = conversations
-                    self.update()
-                    self.emptyView.visible(conversations.isEmpty)
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+
+        conversationViewModel?
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [unowned self] conversations in
+                self.conversations = conversations
+                update()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
+
+        conversationViewModel?
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [unowned self] conversations in
+                emptyView.visible(conversations.isEmpty)
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 }
 
@@ -178,13 +190,13 @@ extension ConversationViewController {
     private func configureTableViewDataSource() {
         dataSource = ConversationDataSource(tableView: tableView) { (tableView, indexPath, conversation) -> UITableViewCell? in
             guard let cell = tableView.dequeueReusableCell(
-                    withIdentifier: ConversationTableViewCell.identifier, for: indexPath) as? ConversationTableViewCell else {
+                withIdentifier: ConversationTableViewCell.identifier, for: indexPath) as? ConversationTableViewCell else {
                 return UITableViewCell()
             }
             cell.bind(conversation: conversation, delegate: self)
             return cell
         }
-        // set viewmodel to leave conversation
+        // set view model to leave conversation
         dataSource.conversationViewModel = conversationViewModel
         tableView.dataSource = dataSource
     }
@@ -217,7 +229,7 @@ extension ConversationViewController: ConversationTableViewCellDelegate {
         conversationViewModel?.channel(user: user)
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyboard.instantiateViewController(
-                withIdentifier: "UserSingleViewController") as! UserSingleViewController
+            withIdentifier: "UserSingleViewController") as! UserSingleViewController
         vc.modalPresentationStyle = .fullScreen
         let backBarButtonItem = UIBarButtonItem()
         backBarButtonItem.title = ""

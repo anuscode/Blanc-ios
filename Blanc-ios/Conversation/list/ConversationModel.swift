@@ -66,7 +66,8 @@ class ConversationModel {
     }
 
     func populate() {
-        conversationService.listUserConversations(uid: session.uid)
+        conversationService
+            .listUserConversations(uid: session.uid)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .subscribe(onSuccess: { [unowned self] conversations in
@@ -82,7 +83,8 @@ class ConversationModel {
     }
 
     private func subscribeBroadcast() {
-        Broadcast.observe()
+        Broadcast
+            .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .subscribe(onNext: { [unowned self] push in
@@ -90,16 +92,13 @@ class ConversationModel {
                     // insert a new conversation
                     insertConversation(conversationId: push.conversationId)
                 }
-
                 if (push.isOpened()) {
                     // update a conversation.available to true
                     openConversation(conversationId: push.conversationId)
                 }
-
                 if (push.isMessage()) {
                     appendMessage(push: push)
                 }
-
             }, onError: { err in
                 log.error(err)
             })
@@ -111,8 +110,8 @@ class ConversationModel {
             .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .subscribe(onNext: { [unowned self]  push in
-                self.populate()
+            .subscribe(onNext: { [unowned self] push in
+                populate()
             }, onError: { err in
                 log.error(err)
             })
@@ -144,7 +143,8 @@ class ConversationModel {
     }
 
     private func insertConversation(conversationId: String?) {
-        conversationService.getConversation(uid: session.uid, conversationId: conversationId)
+        conversationService
+            .getConversation(uid: session.uid, conversationId: conversationId)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .subscribe(onSuccess: { conversation in
@@ -162,11 +162,9 @@ class ConversationModel {
         guard (message.id.isNotEmpty()) else {
             return
         }
-
         guard (message.conversationId.isNotEmpty()) else {
             return
         }
-
         let conversation = conversations.first(where: { $0.id == message.conversationId })
         conversation?.messages?.append(message)
         publish()
@@ -182,7 +180,8 @@ class ConversationModel {
     }
 
     func leaveConversation(conversationId: String?) {
-        conversationService.leaveConversation(uid: session.uid, conversationId: conversationId, userId: session.id)
+        conversationService
+            .leaveConversation(uid: session.uid, conversationId: conversationId, userId: session.id)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .subscribe(onSuccess: {
@@ -197,17 +196,17 @@ class ConversationModel {
     }
 
     func channel(user: UserDTO?) {
-        guard(user != nil) else {
+        guard let user = user else {
             return
         }
-        channel.next(value: user!)
+        channel.next(value: user)
     }
 
     func channel(conversation: ConversationDTO?) {
-        guard(conversation != nil) else {
+        guard let conversation = conversation else {
             return
         }
-        channel.next(value: conversation!)
+        channel.next(value: conversation)
     }
 
     func sync(conversation: ConversationDTO) {
