@@ -15,13 +15,13 @@ class Session {
 
     private let observable: ReplaySubject<UserDTO> = ReplaySubject.create(bufferSize: 1)
 
-    var user: UserDTO?
+    internal var user: UserDTO?
 
-    var id: String? {
+    internal var id: String? {
         user?._id ?? nil
     }
 
-    var uid: String? {
+    internal var uid: String? {
         user?.uid ?? nil
     }
 
@@ -71,8 +71,8 @@ class Session {
             .do(afterSuccess: update)
     }
 
-    func update(_ userDTO: UserDTO) {
-        user = userDTO
+    func update(_ user: UserDTO) {
+        self.user = user
         publish()
     }
 
@@ -91,16 +91,32 @@ class Session {
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .subscribe(onNext: { [unowned self] push in
                 if (push.isRequest()) {
-                    self.user?.userIdsSentMeRequest?.append(push.userId!)
+                    user?.userIdsSentMeRequest?.append(push.userId!)
                 }
                 if (push.isMatched()) {
-                    if let index = self.user?.userIdsISentRequest?.firstIndex(of: push.userId!) {
-                        self.user?.userIdsISentRequest?.remove(at: index)
+                    if let index = user?.userIdsISentRequest?.firstIndex(of: push.userId!) {
+                        user?.userIdsISentRequest?.remove(at: index)
                     }
-                    if let index = self.user?.userIdsSentMeRequest?.firstIndex(of: push.userId!) {
-                        self.user?.userIdsSentMeRequest?.remove(at: index)
+                    if let index = user?.userIdsSentMeRequest?.firstIndex(of: push.userId!) {
+                        user?.userIdsSentMeRequest?.remove(at: index)
                     }
-                    self.user?.userIdsMatched?.append(push.userId!)
+                    user?.userIdsMatched?.append(push.userId!)
+                }
+                if (push.isLogout()) {
+                    log.info("detected login in another device..")
+                    signOut()
+                    let window = UIApplication.shared.keyWindow
+                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                    let vc = storyboard.instantiateViewController(withIdentifier: "InitPagerViewController")
+                    vc.modalPresentationStyle = .fullScreen
+                    DispatchQueue.main.async {
+                        window?.rootViewController?.dismiss(animated: false, completion: {
+                            let window = UIApplication.shared.windows.first
+                            window?.rootViewController?.present(vc, animated: false, completion: {
+                                vc.toast(message: "다른 디바이스에서 로그인이 감지되어 로그아웃 되었습니다.")
+                            })
+                        })
+                    }
                 }
             }, onError: { err in
                 log.error(err)
