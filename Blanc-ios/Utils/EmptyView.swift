@@ -6,32 +6,33 @@ class EmptyView: UIView {
 
     private var ripple: Ripple = Ripple()
 
-    var animationSpeed: CGFloat = 1 {
+    internal var animationSpeed: CGFloat = 1 {
         didSet {
             animationView.animationSpeed = animationSpeed
         }
     }
 
-    var animationName: String = "girl_with_phone"
+    internal var animationName: String = "girl_with_phone"
 
-    var primaryText: String = "" {
+    internal var primaryText: String = "" {
         didSet {
             primaryLabel.text = primaryText
         }
     }
-    var secondaryText: String = "" {
+
+    internal var secondaryText: String = "" {
         didSet {
             secondaryLabel.text = secondaryText
         }
     }
 
-    var buttonText: String = "" {
+    internal var buttonText: String = "" {
         didSet {
             buttonLabel.text = buttonText
         }
     }
 
-    var didTapButtonDelegate: (() -> Void)?
+    internal var didTapButtonDelegate: (() -> Void)?
 
     lazy private var contentView: UIView = {
         let view = UIView()

@@ -54,7 +54,7 @@ class InitPagerViewController: UIPageViewController {
     }
 
     deinit {
-        log.info("deinit InitPagerViewController..")
+        log.info("deinit init pager view controller..")
     }
 
     private func configureSubviews() {

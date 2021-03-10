@@ -30,7 +30,7 @@ class ConversationSingleModel {
     }
 
     deinit {
-        log.info("deinit ConversationSingleModel..")
+        log.info("deinit conversation single model..")
     }
 
     func observe() -> Observable<ConversationDTO> {
@@ -50,7 +50,7 @@ class ConversationSingleModel {
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .subscribe(onNext: { [unowned self] conversation in
-                self.getConversation(conversationId: conversation.id)
+                getConversation(conversationId: conversation.id)
             }, onError: { err in
                 log.error(err)
             })
@@ -87,11 +87,13 @@ class ConversationSingleModel {
         Broadcast
             .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-            .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .subscribe(onNext: { [unowned self] push in
+            .do(onNext: { [unowned self] push in
                 if (push.isMessage()) {
                     appendMessage(push: push)
                 }
+            })
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] push in
                 setReadAll()
             }, onError: { err in
                 log.error(err)
@@ -117,7 +119,8 @@ class ConversationSingleModel {
             .updateConversationAvailable(
                 currentUser: auth.currentUser!,
                 uid: session.uid,
-                conversationId: conversation?.id)
+                conversationId: conversation?.id
+            )
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .flatMap({ _ in self.session.refresh() })

@@ -125,6 +125,10 @@ class ConversationViewController: UIViewController {
         navigationController?.setNavigationBarHidden(false, animated: animated)
     }
 
+    deinit {
+        log.info("deinit conversation view controller..")
+    }
+
     private func configureSubviews() {
         view.addSubview(titleLabel)
         view.addSubview(underLine)

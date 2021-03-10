@@ -227,12 +227,22 @@ class ConversationSingleViewController: UIViewController {
     private func subscribeConversationSingleViewModel() {
         conversationSingleViewModel?
             .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [unowned self] conversation in
                 self.conversation = conversation
                 navigation(conversation)
                 controlActivation(conversation)
                 update()
+            })
+            .disposed(by: disposeBag)
+
+        conversationSingleViewModel?
+            .toast
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] message in
+                toast(message: message)
             })
             .disposed(by: disposeBag)
     }
@@ -335,11 +345,7 @@ class ConversationSingleViewController: UIViewController {
     }
 
     private func updateConversationAvailable() {
-        conversationSingleViewModel?.updateConversationAvailable(conversation: conversation, onCompleted: {
-            self.toast(message: "대화방이 정상적으로 열렸습니다.")
-        }, onError: {
-            self.toast(message: "대화방을 여는 도중 에러가 발생 하였습니다.")
-        })
+        conversationSingleViewModel?.updateConversationAvailable(conversation: conversation)
     }
 }
 
@@ -414,9 +420,7 @@ extension ConversationSingleViewController: UITableViewDelegate {
 
 extension ConversationSingleViewController: BottomTextFieldDelegate {
     func trigger(message: String) {
-        conversationSingleViewModel?.sendMessage(message: message) { [unowned self] in
-            toast(message: "메시지 전송에 실패 하였습니다.")
-        }
+        conversationSingleViewModel?.sendMessage(message: message)
         dismissTextField()
     }
 

@@ -8,19 +8,17 @@ protocol ConversationTableViewCellDelegate: class {
 
 class ConversationTableViewCell: UITableViewCell {
 
-    static var identifier: String = "ConversationTableViewCell"
-
-    private var comment: CommentDTO?
-
-    private let ripple: Ripple = Ripple()
-
-    private var conversation: ConversationDTO?
-
     private class Const {
         static let imageDiameter: CGFloat = CGFloat(60)
     }
 
+    static var identifier: String = "ConversationTableViewCell"
+
+    private let ripple: Ripple = Ripple()
+
     private weak var delegate: ConversationTableViewCellDelegate?
+
+    private weak var conversation: ConversationDTO?
 
     lazy private var userImage: UIImageView = {
         let imageView = UIImageView()
