@@ -99,12 +99,13 @@ class UserSingleModel {
                 currentUser: currentUser,
                 uid: uid,
                 userId: userId,
-                requestType: .FRIEND)
+                requestType: .FRIEND
+            )
             .do(onSuccess: onSuccess)
             .flatMap({ _ in self.session.refresh() })
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onSuccess: { [unowned self]  _ in
-                let relationship = self.session.relationship(with: user)
+                let relationship = session.relationship(with: user)
                 user.relationship = relationship
                 publish()
             }, onError: { err in
@@ -114,7 +115,7 @@ class UserSingleModel {
             .disposed(by: disposeBag)
     }
 
-    func poke(completion: @escaping (_ message: String) -> Void) {
+    func poke(onSuccess: @escaping () -> Void, onError: @escaping () -> Void) {
         guard let uid = session.uid,
               let user = data.user,
               let userId = user.id else {
@@ -124,12 +125,12 @@ class UserSingleModel {
             .pushPoke(uid: uid, userId: userId)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
-            .subscribe(onSuccess: { [unowned self]  data in
+            .subscribe(onSuccess: { data in
                 RealmService.setPokeHistory(uid: uid, userId: userId)
-                completion("상대방 옆구리를 찔렀습니다.")
+                onSuccess()
             }, onError: { err in
                 log.error(err)
-                completion("찔러보기 도중 에러가 발생 하였습니다.")
+                onError()
             })
             .disposed(by: disposeBag)
     }
@@ -174,7 +175,7 @@ class UserSingleModel {
             .pushLookUp(uid: uid, userId: userId)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
-            .subscribe(onSuccess: { [unowned self] in
+            .subscribe(onSuccess: {
                 log.info("Successfully requested to push lookup..")
             }, onError: { err in
                 log.error(err)

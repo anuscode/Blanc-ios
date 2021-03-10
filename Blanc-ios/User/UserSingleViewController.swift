@@ -240,10 +240,18 @@ class UserSingleViewController: UIViewController {
         userSingleViewModel?
             .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-            .observeOn(MainScheduler.instance)
+            .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [unowned self] data in
                 self.data = data
                 tableView.reloadData()
+            })
+            .disposed(by: disposeBag)
+
+        userSingleViewModel?
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] data in
                 navigation(data)
             })
             .disposed(by: disposeBag)
@@ -251,7 +259,7 @@ class UserSingleViewController: UIViewController {
         userSingleViewModel?
             .toast
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-            .observeOn(MainScheduler.instance)
+            .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [unowned self] message in
                 toast(message: message)
             })
@@ -260,9 +268,9 @@ class UserSingleViewController: UIViewController {
         userSingleViewModel?
             .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-            .observeOn(MainScheduler.instance)
-            .subscribe(onNext: { [unowned self] boolean in
-                enableRequestButton(boolean)
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] data in
+                enableRequestButton(data)
             })
             .disposed(by: disposeBag)
     }
@@ -309,15 +317,11 @@ class UserSingleViewController: UIViewController {
         guard let user = data?.user else {
             return
         }
-
         if (user.relationship?.isWhoSentMe ?? false) {
             // do not ask when it's a request already sent.
-            userSingleViewModel?.createRequest(onError: {
-                self.toast(message: "친구신청 도중 에러가 발생 하였습니다.")
-            })
+            userSingleViewModel?.createRequest()
             return
         }
-
         RequestConfirmViewController
             .present(target: self, user: user)
             .subscribe(onNext: { [unowned self] result in
@@ -329,9 +333,7 @@ class UserSingleViewController: UIViewController {
                             make.center.equalToSuperview()
                         }
                     })
-                    userSingleViewModel?.createRequest(onError: {
-                        toast(message: "친구신청 도중 에러가 발생 하였습니다.")
-                    })
+                    userSingleViewModel?.createRequest()
                 case .purchase:
                     navigationController?.pushViewController(.inAppPurchase, current: self)
                 case .decline:
@@ -344,19 +346,15 @@ class UserSingleViewController: UIViewController {
     }
 
     @objc private func poke() {
-        userSingleViewModel?.poke(
-            onBegin: {
-                pokeLottie.begin(with: view) {
-                    pokeLottie.snp.makeConstraints { make in
-                        make.center.equalToSuperview()
-                        make.width.equalToSuperview().multipliedBy(0.5)
-                        make.height.equalToSuperview().multipliedBy(0.5)
-                    }
+        userSingleViewModel?.poke(onBegin: {
+            pokeLottie.begin(with: view) {
+                pokeLottie.snp.makeConstraints { make in
+                    make.center.equalToSuperview()
+                    make.width.equalToSuperview().multipliedBy(0.5)
+                    make.height.equalToSuperview().multipliedBy(0.5)
                 }
-            },
-            completion: { message in
-                self.toast(message: message)
-            })
+            }
+        })
     }
 }
 
@@ -488,9 +486,7 @@ extension UserSingleViewController: ProfileCellDelegate {
                 make.height.equalToSuperview().multipliedBy(0.5)
             }
         }
-        userSingleViewModel?.rate(score, onError: {
-            self.toast(message: "평가를 완료하지 못했습니다.")
-        })
+        userSingleViewModel?.rate(score)
     }
 }
 
