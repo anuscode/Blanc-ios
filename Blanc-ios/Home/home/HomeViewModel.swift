@@ -1,17 +1,31 @@
 import Foundation
 import RxSwift
 
+enum Reload {
+    case recommendedUsers, closeUsers, realtimeUsers
+}
+
 class HomeViewModel {
 
     private class Repository {
         var data: HomeUserData = HomeUserData()
     }
 
+    private class LastCounts {
+        var recommendedUsers: Int = 0
+        var closeUsers: Int = 0
+        var realtimeUsers: Int = 0
+    }
+
     private let disposeBag: DisposeBag = DisposeBag()
 
     internal let data: ReplaySubject = ReplaySubject<HomeUserData>.create(bufferSize: 1)
 
+    private let lastCounts: LastCounts = LastCounts()
+
     internal let toast: PublishSubject = PublishSubject<String>()
+
+    internal let reload: PublishSubject = PublishSubject<Void>()
 
     private var repository: Repository = Repository()
 
@@ -51,9 +65,12 @@ class HomeViewModel {
             .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .subscribe(onNext: { [unowned self] data in
+            .do(onNext: { [unowned self] data in
                 repository.data = data
                 publish()
+            })
+            .subscribe(onNext: { [unowned self] data in
+                processReload(data: data)
             }, onError: { err in
                 log.error(err)
             })
@@ -108,6 +125,28 @@ class HomeViewModel {
     func channel(user: UserDTO?) {
         if let user = user {
             channel.next(value: user)
+        }
+    }
+
+    private func processReload(data: HomeUserData) {
+        var isReloadRequired = false
+
+        if (lastCounts.recommendedUsers > 0 && data.recommendedUsers.count == 0) {
+            isReloadRequired = true
+        }
+        if (lastCounts.realtimeUsers > 0 && data.realTimeUsers.count == 0) {
+            isReloadRequired = true
+        }
+        if (lastCounts.closeUsers > 0 && data.closeUsers.count == 0) {
+            isReloadRequired = true
+        }
+
+        lastCounts.recommendedUsers = data.recommendedUsers.count
+        lastCounts.realtimeUsers = data.realTimeUsers.count
+        lastCounts.closeUsers = data.closeUsers.count
+
+        if (isReloadRequired) {
+            reload.onNext(Void())
         }
     }
 }

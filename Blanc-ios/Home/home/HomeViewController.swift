@@ -139,6 +139,7 @@ class HomeViewController: UIViewController {
                 return nil
             }
         }
+        dataSource.defaultRowAnimation = .left
         tableView.dataSource = dataSource
     }
 
@@ -196,6 +197,16 @@ class HomeViewController: UIViewController {
                 toast(message: message)
             })
             .disposed(by: disposeBag)
+
+        homeViewModel?
+            .reload
+            .delay(.milliseconds(700), scheduler: MainScheduler.asyncInstance)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] message in
+                tableView.reloadData()
+            })
+            .disposed(by: disposeBag)
     }
 
     private func update() {
@@ -206,22 +217,6 @@ class HomeViewController: UIViewController {
         snapshot.appendItems(data.realTimeUsers, toSection: .RealTime)
         dataSource.apply(snapshot, animatingDifferences: true) { [unowned self] in
             isLoading = false
-            reloadIfRequired()
-        }
-    }
-
-    private func reloadIfRequired() {
-        if data.recommendedUsers.isEmpty {
-            tableView.reloadData()
-            return
-        }
-        if data.closeUsers.isEmpty {
-            tableView.reloadData()
-            return
-        }
-        if data.realTimeUsers.isEmpty {
-            tableView.reloadData()
-            return
         }
     }
 
