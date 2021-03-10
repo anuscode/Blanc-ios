@@ -48,6 +48,7 @@ class UserSingleModel {
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
             .do(onNext: { user in
+                user.distance = self.session.user?.distance(from: user, type: String.self)
                 user.relationship = self.session.relationship(with: user)
             })
             .subscribe(onNext: { user in
