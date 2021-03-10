@@ -244,22 +244,39 @@ class UserSingleViewController: UIViewController {
             .subscribe(onNext: { data in
                 self.data = data
                 self.tableView.reloadData()
-                self.applyRelationshipWithRequestButton()
-                self.updateNavigation()
-            }, onError: { err in
-                log.error(err)
             })
+            .disposed(by: disposeBag)
+
+        userSingleViewModel?
+            .toast
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: toast)
+            .disposed(by: disposeBag)
+
+        userSingleViewModel?
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: enableRequestButton)
+            .disposed(by: disposeBag)
+
+        userSingleViewModel?
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: navigation)
             .disposed(by: disposeBag)
     }
 
-    private func updateNavigation() {
-        navigationUserImage.url(data?.user?.avatar)
-        navigationUserLabel.text = "\(data?.user?.nickname ?? "알 수 없음"), \(data?.user?.age ?? -1)"
+    private func navigation(_ data: UserSingleData) {
+        navigationUserImage.url(data.user?.avatar)
+        navigationUserLabel.text = "\(data.user?.nickname ?? "알 수 없음"), \(data.user?.age ?? -1)"
     }
 
-    private func applyRelationshipWithRequestButton() {
+    private func enableRequestButton(_ data: UserSingleData) {
 
-        let relationship = data?.user?.relationship
+        let relationship = data.user?.relationship
 
         if (relationship?.isMatched ?? false) {
             requestButton.setTitle("이미 매칭 된 유저 입니다.", for: .normal)
@@ -288,6 +305,10 @@ class UserSingleViewController: UIViewController {
             requestButton.backgroundColor = UIColor.bumble3.withAlphaComponent(0.6)
             return
         }
+    }
+
+    private func toast(_ message: String) {
+        self.toast(message: message)
     }
 
     @objc private func request(user: UserDTO?) {

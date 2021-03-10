@@ -22,6 +22,10 @@ class UserSingleViewModel {
 
     private var conversationModel: ConversationModel
 
+    let loading: PublishSubject = PublishSubject<Bool>()
+
+    let toast: PublishSubject = PublishSubject<String>()
+
     init(session: Session, homeModel: HomeModel, userSingleModel: UserSingleModel,
          sendingModel: SendingModel, requestsModel: RequestsModel, conversationModel: ConversationModel) {
         self.session = session
