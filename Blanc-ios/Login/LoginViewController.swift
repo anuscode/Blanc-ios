@@ -474,11 +474,11 @@ class LoginViewController: UIViewController {
                     log.info("Sign in with credential done. beginning registration progress..")
                     replace(storyboard: "Sms", withIdentifier: "SmsViewController")
                 }
-            }, onError: { err in
+            }, onError: { [unowned self] err in
                 log.error(err)
-                self.progressView.visible(false)
-                self.enableLoginButtons(true)
-                self.toast(message: "해당 계정이 이미 존재 하거나 다른 이유로 로그인 할 수 없습니다.")
+                progressView.visible(false)
+                enableLoginButtons(true)
+                toast(message: "해당 계정이 이미 존재 하거나 다른 이유로 로그인 할 수 없습니다.")
             })
             .disposed(by: disposeBag)
     }
@@ -486,17 +486,14 @@ class LoginViewController: UIViewController {
     private func signInWithFacebookCredential() {
         let loginManager = LoginManager()
         loginManager.logIn(permissions: ["email"], from: self) { [unowned self] (result, error) in
-
             guard error == nil else {
                 log.error(error!.localizedDescription)
                 return
             }
-
             guard let result = result, !result.isCancelled else {
                 log.info("User cancelled login")
                 return
             }
-
             let credential = FacebookAuthProvider.credential(withAccessToken: AccessToken.current!.tokenString)
             signInWithCredential(credential)
         }
@@ -508,7 +505,7 @@ class LoginViewController: UIViewController {
             return
         }
 
-        guard userService != nil else {
+        guard let userService = userService else {
             toast(message: "Dependencies absence..")
             return
         }
@@ -524,7 +521,7 @@ class LoginViewController: UIViewController {
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .flatMap { [unowned self] (oauthToken) -> Single<CustomTokenDTO> in
                 let idToken = oauthToken.accessToken
-                return userService!.signInWithKakaoToken(idToken: idToken)
+                return userService.signInWithKakaoToken(idToken: idToken)
             }
             .observeOn(MainScheduler.instance)
             .do(onNext: { [unowned self] authResult in
@@ -540,7 +537,7 @@ class LoginViewController: UIViewController {
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .flatMap({ [unowned self] authDataResult -> Single<Bool> in
                 let uid = authDataResult.user.uid
-                return userService!.isRegistered(uid: uid)
+                return userService.isRegistered(uid: uid)
             })
             .observeOn(MainScheduler.instance)
             .do(onNext: { [unowned self] authResult in
@@ -588,7 +585,7 @@ class LoginViewController: UIViewController {
 extension LoginViewController: GIDSignInDelegate {
 
     func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error?) {
-        guard let error = error else {
+        if let error = error {
             log.error(error)
             return
         }
