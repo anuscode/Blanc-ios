@@ -379,12 +379,6 @@ class AccountViewController: UIViewController {
 
         accountViewModel?
             .currentUser
-            .map({ user in user.area ?? "알 수 없음" })
-            .bind(to: line1.rx.text)
-            .disposed(by: disposeBag)
-
-        accountViewModel?
-            .currentUser
             .map({ user in
                 let area = user.area ?? "알 수 없음"
                 let age = user.age ?? 0
