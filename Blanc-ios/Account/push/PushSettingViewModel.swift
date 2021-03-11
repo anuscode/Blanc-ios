@@ -9,7 +9,7 @@ class PushSettingViewModel {
 
     private let observable: ReplaySubject = ReplaySubject<PushSetting>.create(bufferSize: 1)
 
-    private var pushSetting: PushSetting?
+    private weak var pushSetting: PushSetting?
 
     init(pushSettingModel: PushSettingModel) {
         self.pushSettingModel = pushSettingModel
@@ -17,10 +17,9 @@ class PushSettingViewModel {
     }
 
     private func publish() {
-        if (pushSetting == nil) {
-            return
+        if let pushSetting = pushSetting {
+            observable.onNext(pushSetting)
         }
-        observable.onNext(pushSetting!)
     }
 
     func observe() -> Observable<PushSetting> {
@@ -28,16 +27,17 @@ class PushSettingViewModel {
     }
 
     private func subscribePushSettingModel() {
-        pushSettingModel.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [unowned self] pushSetting in
-                    self.pushSetting = pushSetting
-                    publish()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        pushSettingModel
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onNext: { [unowned self] pushSetting in
+                self.pushSetting = pushSetting
+                publish()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     func update(_ attribute: PushSettingAttribute, onError: @escaping () -> Void) {

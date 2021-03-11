@@ -36,16 +36,17 @@ class PushSettingModel {
     }
 
     private func populate() {
-        userService.getPushSetting(uid: session.uid, userId: session.id)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { pushSetting in
-                    self.pushSetting = pushSetting
-                    self.publish()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        userService
+            .getPushSetting(uid: session.uid, userId: session.id)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onSuccess: { pushSetting in
+                self.pushSetting = pushSetting
+                self.publish()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     private func publish() {
@@ -88,14 +89,15 @@ class PushSettingModel {
     }
 
     private func updateUserPushSetting() {
-        userService.updateUserPushSetting(uid: session.uid, userId: session.id, pushSetting: pushSetting!)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { _ in
-                    log.info("Successfully push setting updated...")
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        userService
+            .updateUserPushSetting(uid: session.uid, userId: session.id, pushSetting: pushSetting!)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onSuccess: { _ in
+                log.info("Successfully push setting updated...")
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 }

@@ -46,7 +46,7 @@ extension UINavigationController {
 
 extension UINavigationController {
 
-    static private var progress: UIView = {
+    static private var progressView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
         view.isUserInteractionEnabled = true
@@ -59,16 +59,16 @@ extension UINavigationController {
         return view
     }()
 
-    func startProgress() {
-        view.addSubview(UINavigationController.progress)
-        view.bringSubviewToFront(UINavigationController.progress)
-        UINavigationController.progress.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+    func progress(_ boolean: Bool) {
+        if (boolean) {
+            view.addSubview(UINavigationController.progressView)
+            view.bringSubviewToFront(UINavigationController.progressView)
+            UINavigationController.progressView.snp.makeConstraints { make in
+                make.edges.equalToSuperview()
+            }
+        } else {
+            UINavigationController.progressView.removeFromSuperview()
         }
-    }
-
-    func stopProgress() {
-        UINavigationController.progress.removeFromSuperview()
     }
 }
 

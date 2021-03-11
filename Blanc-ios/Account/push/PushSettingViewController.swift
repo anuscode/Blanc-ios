@@ -7,15 +7,15 @@ class PushSettingViewController: UIViewController {
 
     private let disposeBag: DisposeBag = DisposeBag()
 
-    var pushSettingViewModel: PushSettingViewModel?
+    internal weak var pushSettingViewModel: PushSettingViewModel?
 
-    var pushSetting: PushSetting?
+    internal weak var pushSetting: PushSetting?
 
     lazy private var leftBarButtonItem: UIBarButtonItem = {
         UIBarButtonItem(customView: LeftSideBarView(title: "푸시 설정"))
     }()
 
-    lazy var tableView: UITableView = {
+    lazy private var tableView: UITableView = {
         let tableView = UITableView()
         tableView.separatorStyle = .none
         tableView.delegate = self
@@ -27,7 +27,7 @@ class PushSettingViewController: UIViewController {
         return tableView
     }()
 
-    lazy var alarmGuide: UILabel = {
+    lazy private var alarmGuide: UILabel = {
         let label = UILabel()
         label.text = "• 푸시 설정은 앱 외부의 알림에만 해당 됩니다.\n• 앱 사용 중 표시되는 알람에는 해당 되지 않습니다."
         label.numberOfLines = 3
@@ -58,6 +58,10 @@ class PushSettingViewController: UIViewController {
         SwinjectStoryboard.defaultContainer.resetObjectScope(.pushSettingScope)
     }
 
+    deinit {
+        log.info("deinit push setting view controller..")
+    }
+
     private func configureSubviews() {
         view.addSubview(tableView)
         view.addSubview(alarmGuide)
@@ -80,14 +84,13 @@ class PushSettingViewController: UIViewController {
     }
 
     private func subscribePushSettingViewModel() {
-        pushSettingViewModel?.observe()
+        pushSettingViewModel?
+            .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [unowned self] pushSetting in
                 self.pushSetting = pushSetting
-                DispatchQueue.main.async {
-                    tableView.reloadData()
-                }
+                tableView.reloadData()
             }, onError: { err in
                 log.error(err)
             })
@@ -129,7 +132,6 @@ extension PushSettingViewController: UITableViewDelegate, UITableViewDataSource 
         } else {
             fatalError("WATCH OUT YOUR ASS HOLE..")
         }
-
         return cell
     }
 
