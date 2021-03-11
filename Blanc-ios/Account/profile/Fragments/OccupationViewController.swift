@@ -28,9 +28,7 @@ class OccupationViewController: UIViewController {
 
     var profileViewModel: ProfileViewModel?
 
-    private var dataSource = [
-        "학생", "전문직", "의료직", "교육직", "공무원", "사업가", "금융직", "연구기술직", "군인", "백수", "기타", "직접입력"
-    ]
+    private var dataSource = UserGlobal.occupations
 
     lazy private var titleLabel: UILabel = {
         let label = UILabel()
