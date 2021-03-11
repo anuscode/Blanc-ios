@@ -40,6 +40,21 @@
             </objects>
             <point key="canvasLocation" x="-7951" y="356"/>
         </scene>
+        <!--Registration Image Guide View Controller-->
+        <scene sceneID="cul-tp-UjL">
+            <objects>
+                <viewController storyboardIdentifier="RegistrationImageGuideViewController" id="0LR-zm-xT5" customClass="RegistrationImageGuideViewController" customModule="Blanc_ios" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="LIk-CA-jHe">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="qLB-wX-bbf"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="mOt-Xn-QPs" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-7952" y="1130"/>
+        </scene>
         <!--Registration Sex View Controller-->
         <scene sceneID="TwK-BK-MpM">
             <objects>

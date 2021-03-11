@@ -260,6 +260,7 @@
 		104EEC8725E3736D0069B2CF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 104EEC8625E3736C0069B2CF /* GoogleService-Info.plist */; };
 		104EEC9225E3764B0069B2CF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 104EEC9125E3764B0069B2CF /* Assets.xcassets */; };
 		10C624B625EA71D70058D923 /* wink.json in Resources */ = {isa = PBXBuildFile; fileRef = 10C624B525EA71D70058D923 /* wink.json */; };
+		10E94E8C25FA56EF0084DB84 /* RegistrationImageGuideViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10E94E8B25FA56EF0084DB84 /* RegistrationImageGuideViewController.swift */; };
 		240D91B346CC87269CAF305D /* Pods_Blanc_ios_Blanc_iosUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61F4FB0474880E97BECB4B37 /* Pods_Blanc_ios_Blanc_iosUITests.framework */; };
 		69A10C304D3EE8E1BC424287 /* Pods_Blanc_ios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86136E85AB864A9141A83B37 /* Pods_Blanc_ios.framework */; };
 		7A481E8EFA2268096059CF76 /* Pods_Blanc_iosTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 89DD709C0040CF6E7F18A036 /* Pods_Blanc_iosTests.framework */; };
@@ -572,6 +573,7 @@
 		104EEC9125E3764B0069B2CF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = "../../../Blanc-ios/Blanc-ios/Assets.xcassets"; sourceTree = "<group>"; };
 		10584E6C25E3D036002B5F83 /* Blanc-ios.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Blanc-ios.entitlements"; sourceTree = "<group>"; };
 		10C624B525EA71D70058D923 /* wink.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = wink.json; sourceTree = "<group>"; };
+		10E94E8B25FA56EF0084DB84 /* RegistrationImageGuideViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationImageGuideViewController.swift; sourceTree = "<group>"; };
 		4406E03ED7B2F9B2374EBA3D /* Pods-Blanc-ios-Blanc-iosUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Blanc-ios-Blanc-iosUITests.release.xcconfig"; path = "Target Support Files/Pods-Blanc-ios-Blanc-iosUITests/Pods-Blanc-ios-Blanc-iosUITests.release.xcconfig"; sourceTree = "<group>"; };
 		61F4FB0474880E97BECB4B37 /* Pods_Blanc_ios_Blanc_iosUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Blanc_ios_Blanc_iosUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		86136E85AB864A9141A83B37 /* Pods_Blanc_ios.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Blanc_ios.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -664,7 +666,6 @@
 		104EE97D25E3703C0069B2CF /* Blanc-ios */ = {
 			isa = PBXGroup;
 			children = (
-				10584E6C25E3D036002B5F83 /* Blanc-ios.entitlements */,
 				104EEC7425E372CE0069B2CF /* Storyboards */,
 				104EEC6825E372AC0069B2CF /* Fonts */,
 				104EEC6225E372A60069B2CF /* Root */,
@@ -695,6 +696,7 @@
 				104EE9EF25E371FE0069B2CF /* Firework */,
 				104EEC9125E3764B0069B2CF /* Assets.xcassets */,
 				104EE98F25E3703D0069B2CF /* Info.plist */,
+				10584E6C25E3D036002B5F83 /* Blanc-ios.entitlements */,
 				104EEC8625E3736C0069B2CF /* GoogleService-Info.plist */,
 				104EE98725E3703C0069B2CF /* Blanc_ios.xcdatamodeld */,
 				C47AA431B605858F85D1FD9A /* Extensions */,
@@ -774,8 +776,8 @@
 		104EEA1A25E372050069B2CF /* Registration */ = {
 			isa = PBXGroup;
 			children = (
-				104EEA1B25E372050069B2CF /* RegistrationModel.swift */,
 				104EEA1C25E372050069B2CF /* config */,
+				104EEA1B25E372050069B2CF /* RegistrationModel.swift */,
 				104EEA1E25E372050069B2CF /* RegistrationViewModel.swift */,
 				104EEA1F25E372050069B2CF /* cell */,
 				104EEA2225E372050069B2CF /* root */,
@@ -831,6 +833,7 @@
 				104EEA3425E372050069B2CF /* RegistrationNicknameViewController.swift */,
 				104EEA3525E372050069B2CF /* RegistrationIdealTypeViewController.swift */,
 				C47AA65EC5EB8834242CA34C /* RegistrationIntroductionViewController.swift */,
+				10E94E8B25FA56EF0084DB84 /* RegistrationImageGuideViewController.swift */,
 			);
 			path = controllers;
 			sourceTree = "<group>";
@@ -1945,6 +1948,7 @@
 				104EEC3E25E3728F0069B2CF /* ProfileModel.swift in Sources */,
 				104EEC2225E3728F0069B2CF /* MyRatedProfileTableViewCell.swift in Sources */,
 				104EEC3425E3728F0069B2CF /* IntroductionViewController.swift in Sources */,
+				10E94E8C25FA56EF0084DB84 /* RegistrationImageGuideViewController.swift in Sources */,
 				104EEAD125E372360069B2CF /* HomeViewModel.swift in Sources */,
 				104EEB6825E3725D0069B2CF /* PostViewController.swift in Sources */,
 				104EEBBC25E372830069B2CF /* LinkedList.swift in Sources */,
