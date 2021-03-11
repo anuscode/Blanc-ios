@@ -261,6 +261,25 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
         return imageView
     }()
 
+    lazy private var guideButton: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        view.layer.cornerRadius = 5
+        view.layer.masksToBounds = true
+
+        let label = UILabel()
+        label.text = "사진 가이드라인 보러 가기"
+        label.textColor = .black
+        label.font = .boldSystemFont(ofSize: 18)
+        view.addSubview(label)
+        label.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+        }
+        view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapGuideButton))
+        ripple.activate(to: view)
+        return view
+    }()
+
     lazy private var saveButton: UIView = {
         let view = UIView()
         view.backgroundColor = .systemBlue
@@ -346,6 +365,7 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
         view.addSubview(imageView)
         view.addSubview(noticeLabel)
         view.addSubview(spinner)
+        view.addSubview(guideButton)
         view.addSubview(saveButton)
     }
 
@@ -382,6 +402,13 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
             make.leading.equalToSuperview().inset(RConfig.horizontalMargin)
             make.trailing.equalToSuperview().inset(RConfig.horizontalMargin)
             make.top.equalTo(imageView.snp.bottom).offset(RConfig.noticeTopMargin)
+        }
+
+        guideButton.snp.makeConstraints { make in
+            make.bottom.equalTo(saveButton.snp.top).inset(-10)
+            make.leading.equalToSuperview().inset(20)
+            make.trailing.equalToSuperview().inset(20)
+            make.height.equalTo(50)
         }
 
         saveButton.snp.makeConstraints { make in
@@ -593,6 +620,12 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
         }
         spinner.visible(true)
         registrationViewModel?.updateUserStatusPending()
+    }
+
+    @objc private func didTapGuideButton() {
+        let storyboard = UIStoryboard(name: "Registration", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "RegistrationImageGuideViewController")
+        navigationController?.pushViewController(vc, animated: true)
     }
 
     private func next() {
