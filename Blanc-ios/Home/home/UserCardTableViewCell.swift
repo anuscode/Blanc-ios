@@ -590,7 +590,7 @@ class UserCardTableViewCell: UITableViewCell {
             transform = transform.rotated(by: -1 * .pi / 2)
             transform = transform.scaledBy(x: 0.1, y: 0.1)
             searchView.transform = transform
-            UIView.animate(withDuration: 0.25, delay: 0.0, options: UIView.AnimationOptions.curveEaseIn) {
+            UIView.animate(withDuration: 0.25, delay: 0.0, options: .curveEaseIn) {
                 self.searchView.transform = CGAffineTransform.identity
             }
         } else {

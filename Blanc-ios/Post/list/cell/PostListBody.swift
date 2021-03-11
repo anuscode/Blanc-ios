@@ -40,8 +40,8 @@ class PostListBody: UIView {
         stackView.isLayoutMarginsRelativeArrangement = true
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.layoutMargins = UIEdgeInsets(
-                top: 0, left: CGFloat(PostConfig.textHorizontalMargin),
-                bottom: 0, right: CGFloat(PostConfig.textHorizontalMargin))
+            top: 0, left: CGFloat(PostConfig.textHorizontalMargin),
+            bottom: 0, right: CGFloat(PostConfig.textHorizontalMargin))
         return stackView
     }()
 
@@ -214,7 +214,8 @@ class PostListBody: UIView {
     }
 
     private func configureFavoriteUserCountLabel() {
-        favoriteUserCountLabel.text = "\(post?.favoriteUserIds?.count ?? 0) 명의 사람들이 이 게시물을 좋아합니다."
+        let text = "\(post?.favoriteUserIds?.count ?? 0) 명의 사람들이 이 게시물을 좋아합니다."
+        favoriteUserCountLabel.text = text
     }
 
     private func configureDescriptionLabel() {
@@ -227,27 +228,33 @@ class PostListBody: UIView {
     }
 
     private func configureLastCommentLabel() {
-        let lastComment = post?.comments?.first
-        if (lastComment != nil) {
-            lastCommentLabel.text = "\(lastComment?.commenter?.nickname ?? "알 수 없음"): \(lastComment?.comment ?? "알 수 없음.")"
+        if let lastComment = post?.comments?.first {
+            lastCommentLabel.text = "\(lastComment.commenter?.nickname ?? "알 수 없음"): \(lastComment.comment ?? "알 수 없음.")"
         } else {
             lastCommentLabel.text = "#: 등록 된 커멘트가 없습니다."
         }
     }
 
     private func configureCommentCountLabel() {
-        commentCountLabel.text = "\(post?.comments?.count ?? 0) 개 댓글 전체 보기.."
+        let text = "\(post?.comments?.count ?? 0) 개 댓글 전체 보기.."
+        commentCountLabel.text = text
     }
 
     private func configureHeartImage() {
-        heartImageView.image = (delegate?.isCurrentUserFavoritePost(post) == true) ? redHeartImage : emptyHeartImage
+        let image = (delegate?.isCurrentUserFavoritePost(post) == true) ? redHeartImage : emptyHeartImage
+        heartImageView.image = image
     }
 
     private func configureCarousel() {
-        if ((post?.resources?.count ?? 0) != 0) {
+        let resourceCount = post?.resources?.count ?? 0
+
+        if (resourceCount != 0) {
             carousel.visible(true)
             carousel.reloadData()
+            pageControl.visible(true)
+            pageControl.numberOfPages = resourceCount
         } else {
+            pageControl.visible(false)
             carousel.visible(false)
         }
     }
@@ -289,5 +296,9 @@ extension PostListBody: FSPagerViewDataSource, FSPagerViewDelegate {
 
     func pagerViewDidEndScrollAnimation(_ pagerView: FSPagerView) {
         pageControl.currentPage = pagerView.currentIndex
+    }
+
+    func pagerView(_ pagerView: FSPagerView, shouldHighlightItemAt index: Int) -> Bool {
+        return false
     }
 }

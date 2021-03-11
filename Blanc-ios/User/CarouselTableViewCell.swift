@@ -136,4 +136,8 @@ extension CarouselTableViewCell: FSPagerViewDataSource, FSPagerViewDelegate {
     func pagerViewDidEndScrollAnimation(_ pagerView: FSPagerView) {
         pageControl.currentPage = pagerView.currentIndex
     }
+
+    func pagerView(_ pagerView: FSPagerView, shouldHighlightItemAt index: Int) -> Bool {
+        return false
+    }
 }
