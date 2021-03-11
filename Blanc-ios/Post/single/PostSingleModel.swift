@@ -177,15 +177,7 @@ class PostSingleModel {
         return comment.thumbDownUserIds?.firstIndex(where: { $0 == session.id }) != nil
     }
 
-    func isAuthorFavoriteComment(post: PostDTO?, comment: CommentDTO?) -> Bool {
-        guard let post = post,
-              let comment = comment else {
-            return false
-        }
-        return comment.thumbUpUserIds?.firstIndex(where: { $0 == post.author?.id }) != nil
-    }
-
-    func createComment(postId: String?, commentId: String?, comment: String, onError: @escaping (_ message: String?) -> Void) {
+    func createComment(postId: String?, commentId: String?, comment: String, onError: @escaping (_ message: String) -> Void) {
         postService
             .createComment(
                 uid: auth.uid,
@@ -197,7 +189,7 @@ class PostSingleModel {
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .subscribe(onSuccess: { [unowned self] createdComment in
                 log.info("Successfully created comment..")
-                if (commentId != nil) {
+                if let commentId = commentId {
                     if let index = post?.comments?.firstIndex(where: { $0.id == commentId }) {
                         post?.comments?[index].comments?.insert(createdComment, at: 0)
                     }
@@ -211,7 +203,7 @@ class PostSingleModel {
             .disposed(by: disposeBag)
     }
 
-    func favorite(onError: @escaping () -> Void) {
+    func favorite(onError: @escaping (_ message: String) -> Void) {
         if ((post?.favoriteUserIds?.contains(session.id ?? "")) == true) {
             deleteFavorite(post, onError: onError)
         } else {
@@ -219,7 +211,7 @@ class PostSingleModel {
         }
     }
 
-    private func createFavorite(_ post: PostDTO?, onError: @escaping () -> Void) {
+    private func createFavorite(_ post: PostDTO?, onError: @escaping (_ message: String) -> Void) {
         postService
             .createFavorite(uid: session.uid, postId: post?.id)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
@@ -234,13 +226,13 @@ class PostSingleModel {
                 publish()
             }, onError: { [unowned self]  err in
                 log.error(err)
-                onError()
+                onError("게시물 좋아요 도중 에러가 발생 하였습니다.")
                 publish()
             })
             .disposed(by: disposeBag)
     }
 
-    private func deleteFavorite(_ post: PostDTO?, onError: (() -> Void)?) {
+    private func deleteFavorite(_ post: PostDTO?, onError: @escaping (_ message: String) -> Void) {
         postService
             .deleteFavorite(uid: session.uid, postId: post?.id)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
@@ -255,10 +247,18 @@ class PostSingleModel {
                 publish()
             }, onError: { [unowned self] err in
                 log.info(err)
-                onError?()
+                onError("게시물 좋아요 도중 에러가 발생 하였습니다.")
                 publish()
             })
             .disposed(by: disposeBag)
+    }
+
+    func isAuthorFavoriteComment(post: PostDTO?, comment: CommentDTO?) -> Bool {
+        guard let post = post,
+              let comment = comment else {
+            return false
+        }
+        return comment.thumbUpUserIds?.firstIndex(where: { $0 == post.author?.id }) != nil
     }
 
     func isCurrentUserFavoritePost() -> Bool {

@@ -4,11 +4,17 @@ import FirebaseAuth
 
 class PostSingleViewModel {
 
+    private class Repository {
+        var post: PostDTO?
+    }
+
     private let disposeBag: DisposeBag = DisposeBag()
 
-    private let observable: ReplaySubject = ReplaySubject<PostDTO>.create(bufferSize: 1)
+    let post: ReplaySubject = ReplaySubject<PostDTO>.create(bufferSize: 1)
 
-    private var post: PostDTO?
+    let toast: PublishSubject = PublishSubject<String>()
+
+    private let repository: Repository = Repository()
 
     private var session: Session
 
@@ -27,32 +33,24 @@ class PostSingleViewModel {
         log.info("deinit post single view model")
     }
 
-    func publish() {
-        guard let post = post else {
-            return
-        }
-        observable.onNext(post)
-    }
-
-    func observe() -> Observable<PostDTO> {
-        observable
-    }
-
     private func subscribePostSingleModel() {
         postSingleModel
             .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .subscribe(onNext: { [unowned self] post in
-                self.post = post
-                publish()
+                repository.post = post
+                self.post.onNext(post)
             }, onError: { err in
                 log.error(err)
             })
             .disposed(by: disposeBag)
     }
 
-    func thumbUp(post: PostDTO?, comment: CommentDTO?, onError: @escaping (_ message: String) -> Void) {
+    func thumbUp(post: PostDTO?, comment: CommentDTO?) {
+        let onError = { [unowned self] message in
+            toast.onNext(message)
+        }
         postSingleModel.thumbUp(post: post, comment: comment, onError: onError)
     }
 
@@ -60,7 +58,10 @@ class PostSingleViewModel {
         postSingleModel.isThumbedUp(comment: comment)
     }
 
-    func thumbDown(post: PostDTO?, comment: CommentDTO?, onError: @escaping (_ message: String) -> Void) {
+    func thumbDown(post: PostDTO?, comment: CommentDTO?) {
+        let onError = { [unowned self] message in
+            toast.onNext(message)
+        }
         postSingleModel.thumbDown(post: post, comment: comment, onError: onError)
     }
 
@@ -72,11 +73,17 @@ class PostSingleViewModel {
         postSingleModel.isAuthorFavoriteComment(post: post, comment: comment)
     }
 
-    func createComment(postId: String?, commentId: String?, comment: String, onError: @escaping (_ message: String?) -> Void) {
+    func createComment(postId: String?, commentId: String?, comment: String) {
+        let onError = { [unowned self] message in
+            toast.onNext(message)
+        }
         postSingleModel.createComment(postId: postId, commentId: commentId, comment: comment, onError: onError)
     }
 
-    func favorite(onError: @escaping () -> Void) {
+    func favorite() {
+        let onError = { [unowned self] message in
+            toast.onNext(message)
+        }
         postSingleModel.favorite(onError: onError)
     }
 
@@ -85,6 +92,9 @@ class PostSingleViewModel {
     }
 
     func sync() {
+        guard let post = repository.post else {
+            return
+        }
         postModel.sync(post: post)
     }
 }

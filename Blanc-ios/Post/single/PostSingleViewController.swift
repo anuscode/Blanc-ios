@@ -125,7 +125,7 @@ class PostSingleViewController: UIViewController {
 
     private func subscribePostSingleViewModel() {
         postSingleViewModel?
-            .observe()
+            .post
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [unowned self] post in
@@ -140,8 +140,15 @@ class PostSingleViewController: UIViewController {
                     bottomTextField.placeHolder = "댓글이 금지 된 게시물 입니다."
                     bottomTextField.isEnabled = false
                 }
-            }, onError: { err in
-                log.error(err)
+            })
+            .disposed(by: disposeBag)
+
+        postSingleViewModel?
+            .toast
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [unowned self] message in
+                toast(message: message)
             })
             .disposed(by: disposeBag)
     }
@@ -226,21 +233,11 @@ extension PostSingleViewController: UITableViewDelegate {
 extension PostSingleViewController: CommentTableViewCellDelegate {
 
     func thumbUp(comment: CommentDTO?) {
-        postSingleViewModel?.thumbUp(
-            post: post,
-            comment: comment,
-            onError: { [unowned self] message in
-                toast(message: message)
-            })
+        postSingleViewModel?.thumbUp(post: post, comment: comment)
     }
 
     func thumbDown(comment: CommentDTO?) {
-        postSingleViewModel?.thumbDown(
-            post: post,
-            comment: comment,
-            onError: { [unowned self] message in
-                toast(message: message)
-            })
+        postSingleViewModel?.thumbDown(post: post, comment: comment)
     }
 
     func isThumbedUp(comment: CommentDTO?) -> Bool {
@@ -263,15 +260,7 @@ extension PostSingleViewController: CommentTableViewCellDelegate {
 
 extension PostSingleViewController: BottomTextFieldDelegate {
     func trigger(message: String) {
-        postSingleViewModel?.createComment(
-            postId: post?.id,
-            commentId: replyTo?.id,
-            comment: message,
-            onError: { [unowned self] message in
-                DispatchQueue.main.async {
-                    toast(message: message)
-                }
-            })
+        postSingleViewModel?.createComment(postId: post?.id, commentId: replyTo?.id, comment: message)
         dismissTextField()
     }
 
@@ -282,11 +271,7 @@ extension PostSingleViewController: BottomTextFieldDelegate {
 
 extension PostSingleViewController: PostSingleTableViewCellDelegate {
     func favorite() {
-        postSingleViewModel?.favorite(onError: { [unowned self] in
-            DispatchQueue.main.async {
-                toast(message: "좋아요 도중 에러가 발생 하였습니다.")
-            }
-        })
+        postSingleViewModel?.favorite()
     }
 
     func isCurrentUserFavoritePost() -> Bool {
