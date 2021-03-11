@@ -25,7 +25,7 @@ class UserSingleViewController: UIViewController {
 
     private var data: UserSingleData?
 
-    weak var userSingleViewModel: UserSingleViewModel?
+    internal weak var userSingleViewModel: UserSingleViewModel?
 
     lazy private var navigationBarContent: UIView = {
         let view = UIView()
