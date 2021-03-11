@@ -400,28 +400,28 @@ extension AccountViewController {
     @objc private func didTapImageButton() {
         fireworkController.addFireworks(count: 1, around: tap1)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [unowned self] in
-            navigationController?.pushViewController(.imageView)
+            navigationController?.pushViewController(.imageView, current: self)
         }
     }
 
     @objc private func didTapProfileButton() {
         fireworkController.addFireworks(count: 1, around: tap2)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [unowned self] in
-            navigationController?.pushViewController(.profileView)
+            navigationController?.pushViewController(.profileView, current: self)
         }
     }
 
     @objc private func didTapStarRatingButton() {
         fireworkController.addFireworks(count: 1, around: tap3)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [unowned self] in
-            navigationController?.pushViewController(.myRatedScore)
+            navigationController?.pushViewController(.myRatedScore, current: self)
         }
     }
 
     @objc private func didTapAvoidButton() {
         fireworkController.addFireworks(count: 1, around: tap4)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [unowned self] in
-            navigationController?.pushViewController(.avoidView)
+            navigationController?.pushViewController(.avoidView, current: self)
         }
     }
 
@@ -477,10 +477,10 @@ extension AccountViewController: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         switch (indexPath.section) {
         case 0:
-            navigationController?.pushViewController(.inAppPurchase)
+            navigationController?.pushViewController(.inAppPurchase, current: self)
         case 1:
             if (indexPath.row == 0) {
-                navigationController?.pushViewController(.pushSetting)
+                navigationController?.pushViewController(.pushSetting, current: self)
             } else {
                 logout()
             }
