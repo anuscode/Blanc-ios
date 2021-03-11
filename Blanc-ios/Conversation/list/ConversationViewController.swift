@@ -49,7 +49,7 @@ class ConversationViewController: UIViewController {
 
     internal weak var conversationViewModel: ConversationViewModel?
 
-    internal weak var rightSideBarView: RightSideBarView?
+    internal var rightSideBarView: RightSideBarView?
 
     lazy private var leftBarButtonItem: UIBarButtonItem = {
         UIBarButtonItem(customView: LeftSideBarView(title: "채팅"))

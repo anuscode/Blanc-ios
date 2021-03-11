@@ -39,7 +39,7 @@ class HomeViewController: UIViewController {
 
     internal weak var homeViewModel: HomeViewModel?
 
-    internal weak var rightSideBarView: RightSideBarView?
+    internal var rightSideBarView: RightSideBarView?
 
     lazy private var shimmer1: FBShimmeringView = {
         let shimmer = FBShimmeringView()

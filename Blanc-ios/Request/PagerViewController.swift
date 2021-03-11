@@ -57,7 +57,7 @@ class PagerViewController: UIViewController {
 
     private var titles: [String] = ["받은 요청", "받은 관심", "보낸 관심"]
 
-    internal weak var rightSideBarView: RightSideBarView?
+    internal var rightSideBarView: RightSideBarView?
 
     lazy private var leftBarButtonItem: UIBarButtonItem = {
         UIBarButtonItem(customView: LeftSideBarView(title: "요청"))

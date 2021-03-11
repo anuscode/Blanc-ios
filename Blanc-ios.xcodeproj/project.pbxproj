@@ -207,7 +207,6 @@
 		104EEC1925E3728F0069B2CF /* AvoidTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEBE225E3728F0069B2CF /* AvoidTableViewCell.swift */; };
 		104EEC1A25E3728F0069B2CF /* AvoidViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEBE325E3728F0069B2CF /* AvoidViewModel.swift */; };
 		104EEC1B25E3728F0069B2CF /* AvoidViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEBE425E3728F0069B2CF /* AvoidViewController.swift */; };
-		104EEC1C25E3728F0069B2CF /* PaymentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEBE625E3728F0069B2CF /* PaymentViewController.swift */; };
 		104EEC1D25E3728F0069B2CF /* ImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEBE825E3728F0069B2CF /* ImageViewController.swift */; };
 		104EEC2025E3728F0069B2CF /* MyRatedScoreViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEBEC25E3728F0069B2CF /* MyRatedScoreViewModel.swift */; };
 		104EEC2125E3728F0069B2CF /* MyRatedScoreModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEBED25E3728F0069B2CF /* MyRatedScoreModel.swift */; };
@@ -519,7 +518,6 @@
 		104EEBE225E3728F0069B2CF /* AvoidTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AvoidTableViewCell.swift; sourceTree = "<group>"; };
 		104EEBE325E3728F0069B2CF /* AvoidViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AvoidViewModel.swift; sourceTree = "<group>"; };
 		104EEBE425E3728F0069B2CF /* AvoidViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AvoidViewController.swift; sourceTree = "<group>"; };
-		104EEBE625E3728F0069B2CF /* PaymentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PaymentViewController.swift; sourceTree = "<group>"; };
 		104EEBE825E3728F0069B2CF /* ImageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageViewController.swift; sourceTree = "<group>"; };
 		104EEBEC25E3728F0069B2CF /* MyRatedScoreViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyRatedScoreViewModel.swift; sourceTree = "<group>"; };
 		104EEBED25E3728F0069B2CF /* MyRatedScoreModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MyRatedScoreModel.swift; sourceTree = "<group>"; };
@@ -1298,7 +1296,6 @@
 			isa = PBXGroup;
 			children = (
 				104EEBDF25E3728F0069B2CF /* avoid */,
-				104EEBE525E3728F0069B2CF /* payment */,
 				104EEBE725E3728F0069B2CF /* image */,
 				104EEBEB25E3728F0069B2CF /* rated */,
 				104EEBF325E3728F0069B2CF /* push */,
@@ -1326,14 +1323,6 @@
 				104EEBE225E3728F0069B2CF /* AvoidTableViewCell.swift */,
 			);
 			path = cell;
-			sourceTree = "<group>";
-		};
-		104EEBE525E3728F0069B2CF /* payment */ = {
-			isa = PBXGroup;
-			children = (
-				104EEBE625E3728F0069B2CF /* PaymentViewController.swift */,
-			);
-			path = payment;
 			sourceTree = "<group>";
 		};
 		104EEBE725E3728F0069B2CF /* image */ = {
@@ -2018,7 +2007,6 @@
 				104EEC3825E3728F0069B2CF /* ReligionViewController.swift in Sources */,
 				104EEB9025E3726B0069B2CF /* Constants.swift in Sources */,
 				104EEB7D25E372650069B2CF /* SendingViewController.swift in Sources */,
-				104EEC1C25E3728F0069B2CF /* PaymentViewController.swift in Sources */,
 				104EEA4A25E372060069B2CF /* RegistrationReligionViewController.swift in Sources */,
 				104EEC2725E3728F0069B2CF /* PushSettingModel.swift in Sources */,
 				104EEB0D25E3724E0069B2CF /* UserProvider.swift in Sources */,
