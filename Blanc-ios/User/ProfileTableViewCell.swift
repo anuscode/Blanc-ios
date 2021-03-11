@@ -11,7 +11,7 @@ protocol ProfileCellDelegate: class {
 class ProfileTableViewCell: UITableViewCell {
     static let identifier: String = "ProfileCell"
 
-    let fontSize: CGFloat = 16
+    let fontSize: CGFloat = 14
 
     let itemMargin: Int = -15
 
