@@ -8,13 +8,13 @@ import SwinjectStoryboard
 
 class RegistrationEducationViewController: UIViewController {
 
-    private let disposeBag: DisposeBag = DisposeBag()
+    private var disposeBag: DisposeBag = DisposeBag()
 
     private let ripple: Ripple = Ripple()
 
-    internal var registrationViewModel: RegistrationViewModel?
+    internal weak var registrationViewModel: RegistrationViewModel?
 
-    private var user: UserDTO?
+    private weak var user: UserDTO?
 
     private var dataSource = UserGlobal.educations
 
@@ -164,10 +164,18 @@ class RegistrationEducationViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide),
             name: UIResponder.keyboardWillHideNotification, object: nil
         )
-
         configureSubviews()
         configureConstraints()
         subscribeViewModel()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        disposeBag = DisposeBag()
+    }
+
+    deinit {
+        log.info("deinit registration education view controller..")
     }
 
     private func configureSubviews() {
@@ -249,11 +257,12 @@ class RegistrationEducationViewController: UIViewController {
     }
 
     private func subscribeViewModel() {
-        registrationViewModel?.observe()
+        registrationViewModel?
+            .user
             .take(1)
             .subscribe(onNext: { [unowned self] user in
                 self.user = user
-                self.update()
+                update()
             }, onError: { err in
                 log.error(err)
             })
@@ -264,7 +273,6 @@ class RegistrationEducationViewController: UIViewController {
         if user?.education == nil {
             user?.education = dataSource.first
         }
-
         if let index = dataSource.firstIndex(where: { $0 == user?.education }) {
             selectPickerView(index)
         } else {

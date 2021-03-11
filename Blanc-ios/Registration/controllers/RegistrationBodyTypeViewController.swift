@@ -8,13 +8,13 @@ import SwinjectStoryboard
 
 class RegistrationBodyTypeViewController: UIViewController {
 
-    private let disposeBag: DisposeBag = DisposeBag()
+    private var disposeBag: DisposeBag = DisposeBag()
 
     private let ripple: Ripple = Ripple()
 
-    var registrationViewModel: RegistrationViewModel?
+    internal weak var registrationViewModel: RegistrationViewModel?
 
-    private var user: UserDTO?
+    private weak var user: UserDTO?
 
     private var dataSource: [String] = {
         UserGlobal.bodyTypes
@@ -69,11 +69,10 @@ class RegistrationBodyTypeViewController: UIViewController {
             .just(dataSource)
             .bind(to: collectionView.rx.items(
                 cellIdentifier: cellIdentifier,
-                cellType: cellType
-            )) { (row, item, cell) in
+                cellType: cellType)
+            ) { (row, item, cell) in
                 let isSelectedRow = (row == self.user?.bodyId)
                 let text = item
-
                 cell.subject.text = text
                 if (isSelectedRow) {
                     self.collectionView.selectItem(
@@ -141,6 +140,15 @@ class RegistrationBodyTypeViewController: UIViewController {
         subscribeViewModel()
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        disposeBag = DisposeBag()
+    }
+
+    deinit {
+        log.info("deinit registration body type view controller..")
+    }
+
     private func configureSubviews() {
         view.addSubview(starFallView)
         view.addSubview(progressView)
@@ -195,11 +203,11 @@ class RegistrationBodyTypeViewController: UIViewController {
 
     private func subscribeViewModel() {
         registrationViewModel?
-            .observe()
+            .user
             .take(1)
             .subscribe(onNext: { [unowned self] user in
                 self.user = user
-                self.collectionView.reloadData()
+                collectionView.reloadData()
             }, onError: { err in
                 log.error(err)
             })

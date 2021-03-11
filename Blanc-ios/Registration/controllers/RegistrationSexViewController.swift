@@ -12,7 +12,7 @@ class RegistrationSexViewController: UIViewController {
 
     private let ripple: Ripple = Ripple()
 
-    internal var registrationViewModel: RegistrationViewModel?
+    internal weak var registrationViewModel: RegistrationViewModel?
 
     private var user: UserDTO?
 
@@ -172,6 +172,10 @@ class RegistrationSexViewController: UIViewController {
         view.addSubview(backButton)
     }
 
+    deinit {
+        log.info("deinit registration sex view controller..")
+    }
+
     private func configureConstraints() {
 
         starFallView.snp.makeConstraints { make in
@@ -223,19 +227,19 @@ class RegistrationSexViewController: UIViewController {
 
     private func subscribeViewModel() {
         registrationViewModel?
-            .observe()
+            .user
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [unowned self] user in
                 self.user = user
 
                 let isMale = user.sex == .MALE
-                self.male.layer.borderColor = isMale ? UIColor.systemBlue.cgColor : UIColor.white.cgColor
-                self.maleCheckmark.visible(isMale)
+                male.layer.borderColor = isMale ? UIColor.systemBlue.cgColor : UIColor.white.cgColor
+                maleCheckmark.visible(isMale)
 
                 let isFemale = user.sex == .FEMALE
-                self.female.layer.borderColor = isFemale ? UIColor.systemBlue.cgColor : UIColor.white.cgColor
-                self.femaleCheckmark.visible(isFemale)
+                female.layer.borderColor = isFemale ? UIColor.systemBlue.cgColor : UIColor.white.cgColor
+                femaleCheckmark.visible(isFemale)
             })
             .disposed(by: disposeBag)
     }

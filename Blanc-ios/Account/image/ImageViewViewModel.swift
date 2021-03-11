@@ -30,8 +30,8 @@ class ImageViewViewModel {
         pendingModel
             .observe()
             .subscribe(onNext: { [unowned self] user in
-                self.repository.user = user
-                self.publish()
+                repository.user = user
+                publish()
             }, onError: { err in
                 log.error(err)
             })

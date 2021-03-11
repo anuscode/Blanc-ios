@@ -37,7 +37,8 @@ class RegistrationRootViewController: UIViewController {
     }
 
     private func subscribeViewModel() {
-        registrationViewModel?.observe()
+        registrationViewModel?
+            .user
             .take(1)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)

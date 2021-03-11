@@ -8,13 +8,13 @@ import SwinjectStoryboard
 
 class RegistrationOccupationViewController: UIViewController {
 
-    private let disposeBag: DisposeBag = DisposeBag()
+    private var disposeBag: DisposeBag = DisposeBag()
 
     private let ripple: Ripple = Ripple()
 
-    var registrationViewModel: RegistrationViewModel?
+    internal var registrationViewModel: RegistrationViewModel?
 
-    private var user: UserDTO?
+    private weak var user: UserDTO?
 
     private var dataSource = UserGlobal.occupations
 
@@ -170,6 +170,15 @@ class RegistrationOccupationViewController: UIViewController {
         subscribeViewModel()
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        disposeBag = DisposeBag()
+    }
+
+    deinit {
+        log.info("deinit registration occupation view controller..")
+    }
+
     private func configureSubviews() {
         view.addSubview(starFallView)
         view.addSubview(progressView)
@@ -249,11 +258,12 @@ class RegistrationOccupationViewController: UIViewController {
     }
 
     private func subscribeViewModel() {
-        registrationViewModel?.observe()
+        registrationViewModel?
+            .user
             .take(1)
-            .subscribe(onNext: { user in
+            .subscribe(onNext: { [unowned self] user in
                 self.user = user
-                self.update()
+                update()
             }, onError: { err in
                 log.error(err)
             })

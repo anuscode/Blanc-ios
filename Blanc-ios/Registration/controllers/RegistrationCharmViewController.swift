@@ -9,13 +9,13 @@ import SwinjectStoryboard
 
 class RegistrationCharmViewController: UIViewController {
 
-    private let disposeBag: DisposeBag = DisposeBag()
+    private var disposeBag: DisposeBag = DisposeBag()
 
     private let ripple: Ripple = Ripple()
 
-    internal var registrationViewModel: RegistrationViewModel?
+    internal weak var registrationViewModel: RegistrationViewModel?
 
-    private var user: UserDTO?
+    private weak var user: UserDTO?
 
     lazy private var starFallView: StarFallView = {
         let view = StarFallView()
@@ -122,6 +122,15 @@ class RegistrationCharmViewController: UIViewController {
         }
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        disposeBag = DisposeBag()
+    }
+
+    deinit {
+        log.info("deinit registration charm view controller..")
+    }
+
     private func configureSubviews() {
         view.addSubview(starFallView)
         view.addSubview(progressView)
@@ -175,7 +184,8 @@ class RegistrationCharmViewController: UIViewController {
     }
 
     private func subscribeViewModel() {
-        registrationViewModel?.observe()
+        registrationViewModel?
+            .user
             .take(1)
             .subscribe(onNext: { [unowned self] user in
                 self.user = user

@@ -203,7 +203,8 @@ class RegistrationReligionViewController: UIViewController {
     }
 
     private func subscribeViewModel() {
-        registrationViewModel?.observe()
+        registrationViewModel?
+            .user
             .take(1)
             .subscribe(onNext: { [unowned self] user in
                 self.user = user

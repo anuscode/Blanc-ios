@@ -13,9 +13,9 @@ class RegistrationNicknameViewController: UIViewController {
 
     private let ripple: Ripple = Ripple()
 
-    var registrationViewModel: RegistrationViewModel?
+    internal weak var registrationViewModel: RegistrationViewModel?
 
-    var user: UserDTO?
+    private weak var user: UserDTO?
 
     lazy private var starFallView: StarFallView = {
         let view = StarFallView()
@@ -89,6 +89,10 @@ class RegistrationNicknameViewController: UIViewController {
         subscribeViewModel()
     }
 
+    deinit {
+        log.info("deinit registration nickname view controller..")
+    }
+
     private func configureSubviews() {
         view.addSubview(starFallView)
         view.addSubview(progressView)
@@ -137,11 +141,11 @@ class RegistrationNicknameViewController: UIViewController {
 
     private func subscribeViewModel() {
         registrationViewModel?
-            .observe()
+            .user
             .take(1)
             .subscribe(onNext: { [unowned self] user in
                 self.user = user
-                self.update()
+                update()
             }, onError: { err in
                 log.error(err)
             })

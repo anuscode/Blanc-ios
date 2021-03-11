@@ -176,11 +176,24 @@ class RegistrationInterestsViewController: UIViewController {
     }
 
     private func subscribeViewModel() {
-        registrationViewModel?.observe()
+        registrationViewModel?
+            .user
             .take(1)
+            .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [unowned self] user in
                 self.user = user
-                self.update()
+                update()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
+
+        registrationViewModel?
+            .next
+            .take(1)
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] user in
+                next()
             }, onError: { err in
                 log.error(err)
             })
@@ -188,10 +201,10 @@ class RegistrationInterestsViewController: UIViewController {
     }
 
     private func update() {
-        guard user?.interestIds != nil else {
+        guard let interestIds = user?.interestIds else {
             return
         }
-        for index in user!.interestIds! {
+        for index in interestIds {
             collectionView.setTagAt(UInt(index), selected: true)
         }
     }
@@ -201,12 +214,7 @@ class RegistrationInterestsViewController: UIViewController {
             toast(message: "관심사는 최소 3개 이상 요구 됩니다.")
             return
         }
-
-        registrationViewModel?.updateUserProfile(onSuccess: {
-            self.next()
-        }, onError: {
-            self.toast(message: "유저 프로필 업데이트 중 에러가 발생 하였습니다.")
-        })
+        registrationViewModel?.updateUserProfile()
     }
 
     @objc private func didTapBackButton() {

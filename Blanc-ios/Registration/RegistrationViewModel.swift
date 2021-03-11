@@ -4,11 +4,25 @@ import RxSwift
 
 class RegistrationViewModel {
 
+    private class Repository {
+        var user: UserDTO?
+    }
+
     private let disposeBag: DisposeBag = DisposeBag()
 
     private let registrationModel: RegistrationModel
 
+    private var repository: Repository = Repository()
+
     let user: ReplaySubject = ReplaySubject<UserDTO>.create(bufferSize: 1)
+
+    let loading: PublishSubject = PublishSubject<Bool>()
+
+    let toast: PublishSubject = PublishSubject<String>()
+
+    let imagesClickable: PublishSubject = PublishSubject<Bool>()
+
+    let next: PublishSubject = PublishSubject<Void>()
 
     init(registrationModel: RegistrationModel) {
         self.registrationModel = registrationModel
@@ -17,10 +31,6 @@ class RegistrationViewModel {
 
     func update() {
         registrationModel.publish()
-    }
-
-    func observe() -> Observable<UserDTO> {
-        user
     }
 
     private func subscribeRegistrationModel() {
@@ -35,11 +45,26 @@ class RegistrationViewModel {
             .disposed(by: disposeBag)
     }
 
-    func updateUserProfile(onSuccess: @escaping () -> Void, onError: @escaping () -> Void) {
+    func updateUserProfile() {
+        let onSuccess = {
+            self.next.onNext(Void())
+        }
+        let onError = {
+            self.toast.onNext("유저 프로필 업데이트 중 에러가 발생 하였습니다.")
+        }
         registrationModel.updateUserProfile(onSuccess: onSuccess, onError: onError)
     }
 
-    func uploadUserImage(index: Int?, file: UIImage, onSuccess: @escaping () -> Void, onError: @escaping () -> Void) {
+    func uploadUserImage(index: Int?, file: UIImage) {
+        let onSuccess = { [unowned self] in
+            loading.onNext(false)
+            imagesClickable.onNext(true)
+        }
+        let onError = { [unowned self] in
+            loading.onNext(false)
+            imagesClickable.onNext(true)
+            toast.onNext("이미지 업로드에 실패 하였습니다.")
+        }
         registrationModel.uploadUserImage(index: index, file: file, onSuccess: onSuccess, onError: onError)
     }
 
@@ -47,7 +72,15 @@ class RegistrationViewModel {
         registrationModel.deleteUserImage(index: index)
     }
 
-    func updateUserStatusPending(onSuccess: @escaping () -> Void, onError: @escaping () -> Void) {
+    func updateUserStatusPending() {
+        let onSuccess = {
+            self.loading.onNext(false)
+            self.next.onNext(Void())
+        }
+        let onError = {
+            self.loading.onNext(false)
+            self.toast.onNext("심사 요청에 실패 하였습니다.")
+        }
         registrationModel.updateUserStatusPending(onSuccess: onSuccess, onError: onError)
     }
 

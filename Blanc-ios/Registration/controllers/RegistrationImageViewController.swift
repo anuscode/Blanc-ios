@@ -6,7 +6,7 @@ import Kingfisher
 
 class RegistrationImageViewController: UIViewController, CropViewControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
-    private let disposeBag = DisposeBag()
+    private var disposeBag = DisposeBag()
 
     private var ripple: Ripple = Ripple()
 
@@ -16,9 +16,9 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
 
     private var selectedImageView: UIImageView?
 
-    private var user: UserDTO?
+    private weak var user: UserDTO?
 
-    internal var registrationViewModel: RegistrationViewModel?
+    internal weak var registrationViewModel: RegistrationViewModel?
 
     lazy private var starFallView: StarFallView = {
         let view = StarFallView()
@@ -310,33 +310,14 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
             DispatchQueue.main.async {
                 updateImageViewWithImage(resizedImage!, cropViewController: cropViewController)
             }
-
-            guard resizedImage != nil else {
+            guard let resizedImage = resizedImage else {
                 spinner.visible(false)
                 configureImagesClickable(true)
                 toast(message: "이미지 업로드에 실패 하였습니다.")
                 selectedImageView?.image = UIImage(named: "ic_avatar")
                 return
             }
-
-            registrationViewModel?.uploadUserImage(
-                index: selectedImageView?.tag,
-                file: resizedImage!,
-                onSuccess: {
-                    DispatchQueue.main.async {
-                        spinner.visible(false)
-                        configureImagesClickable(true)
-                    }
-                },
-                onError: {
-                    DispatchQueue.main.async {
-                        spinner.visible(false)
-                        configureImagesClickable(true)
-                        toast(message: "이미지 업로드에 실패 하였습니다.")
-                        selectedImageView?.image = UIImage(named: "ic_avatar")
-                    }
-                }
-            )
+            registrationViewModel?.uploadUserImage(index: selectedImageView?.tag, file: resizedImage)
         }
     }
 
@@ -413,7 +394,7 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
 
     private func subscribeViewModel() {
         registrationViewModel?
-            .observe()
+            .user
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [unowned self] user in
@@ -422,6 +403,51 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
             }, onError: { [unowned self]  err in
                 log.error(err)
                 toast(message: "알 수 없는 에러가 발생 하였습니다.")
+            })
+            .disposed(by: disposeBag)
+
+        registrationViewModel?
+            .user
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [unowned self] user in
+                update(user)
+            })
+            .disposed(by: disposeBag)
+
+        registrationViewModel?
+            .loading
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [unowned self] boolean in
+                loading(boolean)
+            })
+            .disposed(by: disposeBag)
+
+        registrationViewModel?
+            .toast
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [unowned self] message in
+                toast(message)
+            })
+            .disposed(by: disposeBag)
+
+        registrationViewModel?
+            .imagesClickable
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [unowned self] boolean in
+                imagesClickable(boolean)
+            })
+            .disposed(by: disposeBag)
+
+        registrationViewModel?
+            .next
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [unowned self] _ in
+                next()
             })
             .disposed(by: disposeBag)
     }
@@ -472,6 +498,23 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
         } else {
             imageView6.image = UIImage(named: "ic_avatar")
         }
+    }
+
+    private func loading(_ value: Bool) {
+        spinner.visible(value)
+    }
+
+    private func toast(_ message: String) {
+        self.toast(message: message)
+    }
+
+    private func imagesClickable(_ clickable: Bool) {
+        imageView1.isUserInteractionEnabled = clickable
+        imageView2.isUserInteractionEnabled = clickable
+        imageView3.isUserInteractionEnabled = clickable
+        imageView4.isUserInteractionEnabled = clickable
+        imageView5.isUserInteractionEnabled = clickable
+        imageView6.isUserInteractionEnabled = clickable
     }
 
     private func getCropViewController(image: UIImage) -> CropViewController {
@@ -534,40 +577,25 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
     }
 
     @objc private func didTapSaveButton() {
-
         let isRequiredImage1Registered = user?.userImagesTemp?.first {
             $0.index == 0
         } != nil
-
         let isRequiredImage2Registered = user?.userImagesTemp?.first {
             $0.index == 1
         } != nil
-
         if (!isRequiredImage1Registered) {
             toast(message: "메인 이미지는 필수 사항입니다.")
             return
         }
-
         if (!isRequiredImage2Registered) {
             toast(message: "필수 이미지가 등록 되지 않았습니다.")
             return
         }
-
         spinner.visible(true)
-        registrationViewModel?
-            .updateUserStatusPending(
-                onSuccess: {
-                    self.spinner.visible(false)
-                    self.presentPendingViewController()
-                },
-                onError: {
-                    self.spinner.visible(false)
-                    self.toast(message: "심사 요청에 실패 하였습니다.")
-                }
-            )
+        registrationViewModel?.updateUserStatusPending()
     }
 
-    private func presentPendingViewController() {
+    private func next() {
         let navigation = navigationController as! RegistrationNavigationViewController
         navigation.stackAfterClear(identifier: "PendingViewController", animated: true)
     }

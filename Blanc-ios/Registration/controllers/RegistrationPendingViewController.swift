@@ -208,7 +208,7 @@ class RegistrationPendingViewController: UIViewController {
 
     private func subscribeViewModel() {
         registrationViewModel?
-            .observe()
+            .user
             .take(1)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)

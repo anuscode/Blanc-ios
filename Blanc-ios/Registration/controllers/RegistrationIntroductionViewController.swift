@@ -12,7 +12,7 @@ class RegistrationIntroductionViewController: UIViewController {
 
     private let ripple: Ripple = Ripple()
 
-    private var user: UserDTO?
+    private weak var user: UserDTO?
 
     internal weak var registrationViewModel: RegistrationViewModel?
 
@@ -129,7 +129,11 @@ class RegistrationIntroductionViewController: UIViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        disposeBag = nil
+        disposeBag = DisposeBag()
+    }
+
+    deinit {
+        log.info("deinit registration introduction view controller..")
     }
 
     private func configureSubviews() {
@@ -197,7 +201,7 @@ class RegistrationIntroductionViewController: UIViewController {
 
     private func subscribeViewModel() {
         registrationViewModel?
-            .observe()
+            .user
             .take(1)
             .subscribe(onNext: { user in
                 self.user = user

@@ -8,15 +8,15 @@ import SwinjectStoryboard
 
 class RegistrationDrinkViewController: UIViewController {
 
-    private let disposeBag: DisposeBag = DisposeBag()
+    private var disposeBag: DisposeBag = DisposeBag()
 
     private let ripple: Ripple = Ripple()
 
-    var registrationViewModel: RegistrationViewModel?
+    internal weak var registrationViewModel: RegistrationViewModel?
 
-    private var user: UserDTO?
+    private weak var user: UserDTO?
 
-    var dataSource: [String] = {
+    private var dataSource: [String] = {
         UserGlobal.drinks
     }()
 
@@ -157,6 +157,15 @@ class RegistrationDrinkViewController: UIViewController {
         }
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        disposeBag = DisposeBag()
+    }
+
+    deinit {
+        log.info("deinit registration drink view controller..")
+    }
+
     private func configureSubviews() {
         view.addSubview(starFallView)
         view.addSubview(progressView)
@@ -203,7 +212,8 @@ class RegistrationDrinkViewController: UIViewController {
     }
 
     private func subscribeViewModel() {
-        registrationViewModel?.observe()
+        registrationViewModel?
+            .user
             .take(1)
             .subscribe(onNext: { [unowned self] user in
                 self.user = user

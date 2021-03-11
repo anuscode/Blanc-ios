@@ -17,9 +17,9 @@ class RegistrationBirthdayViewController: UIViewController {
 
     private let ripple: Ripple = Ripple()
 
-    var registrationViewModel: RegistrationViewModel?
+    internal weak var registrationViewModel: RegistrationViewModel?
 
-    private var user: UserDTO?
+    private weak var user: UserDTO?
 
     private var years = Array(stride(from: 1971, to: 2021 + 1, by: 1))
 
@@ -86,7 +86,7 @@ class RegistrationBirthdayViewController: UIViewController {
         pickerView.dataSource = self
         pickerView.rx
             .itemSelected
-            .subscribe { (row, component) in
+            .subscribe(onNext: { (row, component) in
                 switch component {
                 case 0:
                     self.birthDay.year = self.years[row]
@@ -99,7 +99,7 @@ class RegistrationBirthdayViewController: UIViewController {
                 }
                 self.resultLabel.text =
                     "\(self.birthDay.year)년 \(self.birthDay.month)월 \(self.birthDay.day)일"
-            }
+            })
             .disposed(by: disposeBag)
         return pickerView
     }()
@@ -135,6 +135,10 @@ class RegistrationBirthdayViewController: UIViewController {
         configureSubviews()
         configureConstraints()
         subscribeViewModel()
+    }
+
+    deinit {
+        log.info("deinit registration birthday view controller..")
     }
 
     private func configureSubviews() {
@@ -206,11 +210,11 @@ class RegistrationBirthdayViewController: UIViewController {
 
     private func subscribeViewModel() {
         registrationViewModel?
-            .observe()
+            .user
             .take(1)
             .subscribe(onNext: { [unowned self] user in
                 self.user = user
-                self.update()
+                update()
             }, onError: { err in
                 log.error(err)
             })

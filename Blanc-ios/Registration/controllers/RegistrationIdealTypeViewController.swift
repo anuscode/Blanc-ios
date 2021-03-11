@@ -9,13 +9,13 @@ import SwinjectStoryboard
 
 class RegistrationIdealTypeViewController: UIViewController {
 
-    private let disposeBag: DisposeBag = DisposeBag()
+    private var disposeBag: DisposeBag = DisposeBag()
 
     private let ripple: Ripple = Ripple()
 
-    var registrationViewModel: RegistrationViewModel?
+    internal weak var registrationViewModel: RegistrationViewModel?
 
-    private var user: UserDTO?
+    private weak var user: UserDTO?
 
     lazy private var starFallView: StarFallView = {
         let view = StarFallView()
@@ -123,6 +123,15 @@ class RegistrationIdealTypeViewController: UIViewController {
         }
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        disposeBag = DisposeBag()
+    }
+
+    deinit {
+        log.info("deinit registration ideal type view controller..")
+    }
+
     private func configureSubviews() {
         view.addSubview(starFallView)
         view.addSubview(progressView)
@@ -176,7 +185,8 @@ class RegistrationIdealTypeViewController: UIViewController {
     }
 
     private func subscribeViewModel() {
-        registrationViewModel?.observe()
+        registrationViewModel?
+            .user
             .take(1)
             .subscribe(onNext: { [unowned self] user in
                 self.user = user
@@ -188,10 +198,10 @@ class RegistrationIdealTypeViewController: UIViewController {
     }
 
     private func update() {
-        guard user?.idealTypeIds != nil else {
+        guard let idealTypeIds = user?.idealTypeIds else {
             return
         }
-        for index in user!.idealTypeIds! {
+        for index in idealTypeIds {
             collectionView.setTagAt(UInt(index), selected: true)
         }
     }

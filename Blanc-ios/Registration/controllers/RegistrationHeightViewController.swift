@@ -8,13 +8,13 @@ import SwinjectStoryboard
 
 class RegistrationHeightViewController: UIViewController {
 
-    private let disposeBag: DisposeBag = DisposeBag()
+    private var disposeBag: DisposeBag = DisposeBag()
 
     private let ripple: Ripple = Ripple()
 
-    var registrationViewModel: RegistrationViewModel?
+    internal weak var registrationViewModel: RegistrationViewModel?
 
-    private var user: UserDTO?
+    private weak var user: UserDTO?
 
     private var labelSource = Array(stride(from: 100, to: 220, by: 1)).map({ "\($0) cm" })
 
@@ -77,7 +77,7 @@ class RegistrationHeightViewController: UIViewController {
         pickerView.dataSource = self
         pickerView.rx
             .itemSelected
-            .subscribe(onNext: { [unowned self] (row, component) in
+            .subscribe(onNext: { (row, component) in
                 self.user?.height = self.dataSource[row]
                 self.resultLabel.text = self.labelSource[row]
             })
@@ -116,6 +116,15 @@ class RegistrationHeightViewController: UIViewController {
         configureSubviews()
         configureConstraints()
         subscribeViewModel()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        disposeBag = DisposeBag()
+    }
+
+    deinit {
+        log.info("deinit registration height view controller..")
     }
 
     private func configureConstraints() {
@@ -173,7 +182,8 @@ class RegistrationHeightViewController: UIViewController {
     }
 
     private func subscribeViewModel() {
-        registrationViewModel?.observe()
+        registrationViewModel?
+            .user
             .take(1)
             .subscribe(onNext: { [unowned self] user in
                 self.user = user
