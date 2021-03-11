@@ -5,9 +5,9 @@ final class IAPManager: NSObject, SKProductsRequestDelegate, SKPaymentTransactio
 
     static let shared = IAPManager()
 
-    var products = [SKProduct]()
+    internal var products = [SKProduct]()
 
-    private var lock = DispatchSemaphore(value: 1)
+    internal var lock = DispatchSemaphore(value: 1)
 
     private var onPurchased: ((SKPaymentTransaction) -> Void)?
 
@@ -24,7 +24,7 @@ final class IAPManager: NSObject, SKProductsRequestDelegate, SKPaymentTransactio
 
     public func fetchProducts() {
         let request = SKProductsRequest(
-                productIdentifiers: Set(Product.allCases.compactMap({ $0.rawValue }))
+            productIdentifiers: Set(Product.allCases.compactMap({ $0.rawValue }))
         )
         request.delegate = self
         request.start()
