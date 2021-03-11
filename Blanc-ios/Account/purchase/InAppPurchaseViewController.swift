@@ -1,6 +1,8 @@
 import Foundation
 import UIKit
 import StoreKit
+import RxSwift
+import RxDataSources
 
 struct Product {
     let title: String
@@ -20,27 +22,22 @@ struct Product {
 
 class InAppPurchaseViewController: UIViewController {
 
-    private var products: [Product] = [
-        Product(productId: "ios.com.ground.blanc.point.2500.won", title: "포인트 10", discount: "할인 없음 😔", price: "₩2,500"),
-        Product(productId: "ios.com.ground.blanc.point.4900.won", title: "포인트 20", discount: "약 2% 할인", price: "₩4,900"),
-        Product(productId: "ios.com.ground.blanc.point.11000.won", title: "포인트 50", discount: "약 8.3% 할인", price: "₩11,000", tag: "할인율 대비 가격이 문안 합니다. 👍"),
-        Product(productId: "ios.com.ground.blanc.point.20000.won", title: "포인트 100", discount: "약 16.6% 할인", price: "₩20,000", tag: "보통 이 상품이 가장 적절 합니다. 😃"),
-        Product(productId: "ios.com.ground.blanc.point.36000.won", title: "포인트 200", discount: "약 25% 할인", price: "₩36,000"),
-        Product(productId: "ios.com.ground.blanc.point.79000.won", title: "포인트 500", discount: "약 37% 할인", price: "₩79,000")
-    ]
+    private let disposeBag: DisposeBag = DisposeBag()
 
-    var rightSideBarView: RightSideBarView?
+    private var dataSource: ReloadDataSource<SectionModel<String, Product>>!
 
-    var inAppPurchaseViewModel: InAppPurchaseViewModel?
+    internal var rightSideBarView: RightSideBarView?
+
+    internal weak var inAppPurchaseViewModel: InAppPurchaseViewModel?
 
     lazy private var rightBarButtonItem: UIBarButtonItem = {
-        guard (rightSideBarView != nil) else {
+        guard let rightSideBarView = rightSideBarView else {
             return UIBarButtonItem()
         }
-        rightSideBarView!.delegate {
+        rightSideBarView.delegate {
             self.navigationController?.pushViewController(.alarms, current: self)
         }
-        return UIBarButtonItem(customView: rightSideBarView!)
+        return UIBarButtonItem(customView: rightSideBarView)
     }()
 
     lazy private var leftBarButtonItem: UIBarButtonItem = {
@@ -70,7 +67,6 @@ class InAppPurchaseViewController: UIViewController {
         let tableView = UITableView()
         tableView.register(InAppPurchaseTableViewCell.self, forCellReuseIdentifier: InAppPurchaseTableViewCell.identifier)
         tableView.delegate = self
-        tableView.dataSource = self
         tableView.separatorColor = .systemGray5
         return tableView
     }()
@@ -99,6 +95,7 @@ class InAppPurchaseViewController: UIViewController {
         super.viewDidLoad()
         configureSubviews()
         configureConstraints()
+        subscribeInAppPurchaseViewModel()
     }
 
     private func configureSubviews() {
@@ -141,36 +138,43 @@ class InAppPurchaseViewController: UIViewController {
             make.trailing.equalTo(view.safeAreaLayoutGuide).inset(10)
         }
     }
-}
 
-extension InAppPurchaseViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        6
-    }
+    private func subscribeInAppPurchaseViewModel() {
 
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(
-                withIdentifier: InAppPurchaseTableViewCell.identifier, for: indexPath) as! InAppPurchaseTableViewCell
-        let product = products[indexPath.row]
-        cell.bind(product)
-        return cell
+        inAppPurchaseViewModel?
+            .products
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .bind(to: tableView.rx.items(cellIdentifier: InAppPurchaseTableViewCell.identifier)) { index, product, cell in
+                let cell = cell as? InAppPurchaseTableViewCell
+                cell?.bind(product)
+            }
+            .disposed(by: disposeBag)
+
+        inAppPurchaseViewModel?
+            .toast
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] message in
+                toast(message: message)
+            })
+            .disposed(by: disposeBag)
+
+        inAppPurchaseViewModel?
+            .loading
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] boolean in
+                navigationController?.progress(boolean)
+            })
+            .disposed(by: disposeBag)
     }
 }
 
 extension InAppPurchaseViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        navigationController?.startProgress()
-        let productId = products[indexPath.row].productId
-        inAppPurchaseViewModel?.purchase(
-                productId: productId,
-                onSuccess: {
-                    self.navigationController?.stopProgress()
-                },
-                onError: {
-                    self.toast(message: "결제 프로세스가 중단 되었습니다.")
-                    self.navigationController?.stopProgress()
-                })
+        inAppPurchaseViewModel?.purchase(indexPath: indexPath)
     }
 
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {

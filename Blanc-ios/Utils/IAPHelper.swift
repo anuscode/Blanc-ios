@@ -89,8 +89,9 @@ final class IAPManager: NSObject, SKProductsRequestDelegate, SKPaymentTransactio
     }
 
     private func purchase(_ transaction: SKPaymentTransaction) {
-        log.info("complete...")
-        deliverPurchaseNotificationFor(identifier: transaction.payment.productIdentifier)
+        let productIdentifier = transaction.payment.productIdentifier
+        log.info("complete...\(productIdentifier)")
+        deliverPurchaseNotificationFor(identifier: productIdentifier)
     }
 
     private func restore(_ transaction: SKPaymentTransaction) {
