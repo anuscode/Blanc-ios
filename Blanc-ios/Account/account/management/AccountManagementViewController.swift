@@ -15,6 +15,10 @@ class AccountManagementViewController: UIViewController {
 
     private let ripple: Ripple = Ripple()
 
+    lazy private var leftBarButtonItem: UIBarButtonItem = {
+        UIBarButtonItem(customView: LeftSideBarView(title: "계정 관리"))
+    }()
+
     lazy private var tableView: UITableView = {
         let tableView = UITableView()
         tableView.separatorStyle = .none
@@ -26,7 +30,8 @@ class AccountManagementViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        title = "계정 관리"
+        navigationItem.leftBarButtonItem = leftBarButtonItem
+        navigationItem.leftItemsSupplementBackButton = true
     }
 
     override func viewDidLoad() {
