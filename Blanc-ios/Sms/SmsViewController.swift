@@ -156,28 +156,39 @@ class SmsViewController: UIViewController {
             return
         }
 
+        guard let currentUser = auth.currentUser,
+              let uid = auth.uid else {
+            return
+        }
+
         spinnerView.visible(true)
         verificationService?
-            .issueSmsCode(currentUser: auth.currentUser!, uid: auth.uid, phone: phone)
+            .issueSmsCode(currentUser: currentUser, uid: uid, phone: phone)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
             .do(onDispose: {
                 self.spinnerView.visible(false)
             })
-            .subscribe(onSuccess: { verification in
-                if (verification.issued == true) {
+            .subscribe(onSuccess: { [unowned self] verification in
+                let status = verification.status
+                switch status {
+                case .SUCCEED_ISSUE:
                     let storyboard = UIStoryboard(name: "Sms", bundle: nil)
                     let vc = storyboard.instantiateViewController(
                         withIdentifier: "SmsConfirmViewController") as! SmsConfirmViewController
                     vc.modalPresentationStyle = .fullScreen
                     vc.setVerification(verification)
-                    self.present(vc, animated: false)
-                } else {
-                    self.toast(message: verification.reason)
+                    present(vc, animated: false)
+                case .FAILED_ISSUE:
+                    toast(message: "문자 발송에 실패 하였습니다. 개발팀에 문의 주세요.")
+                case .INVALID_PHONE_NUMBER:
+                    toast(message: "옳바르지 않은 전화번호 입니다.")
+                default:
+                    toast(message: "알 수 없는 에러가 발생 하였습니다.")
                 }
-            }, onError: { err in
+            }, onError: { [unowned self] err in
                 log.error(err)
-                self.toast(message: "문자 요청에 실패 하였습니다.")
+                toast(message: "문자 요청에 실패 하였습니다.")
             })
             .disposed(by: disposeBag)
     }

@@ -131,7 +131,7 @@ class SmsConfirmViewController: UIViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        disposeBag = nil
+        disposeBag = DisposeBag()
     }
 
     deinit {
@@ -201,31 +201,40 @@ class SmsConfirmViewController: UIViewController {
         if (result == nil) {
             return
         }
+        guard let currentUser = auth.currentUser,
+              let uid = auth.uid else {
+            return
+        }
         spinnerView.visible(true)
         activateConfirmButton(false)
-        verificationService?
-            .verifySmsCode(
+        verificationService?.verifySmsCode(
                 currentUser: auth.currentUser!,
                 uid: auth.uid,
                 phone: verification?.phone,
                 smsCode: smsCode,
                 expiredAt: verification?.expiredAt
             )
-            .do(onSuccess: { it in
-                if (it.verified != true) {
-                    let message = "문자 인증에 실패 하였습니다."
-                    self.toast(message: it.reason ?? message)
+            .do(onSuccess: { [unowned self] it in
+                if (it.status == .INVALID_SMS_CODE) {
+                    let message = "유효하지 않은 인증번호 입니다."
+                    toast(message: message)
                     throw NSError(domain: message, code: 42, userInfo: nil)
                 }
+                if (it.status == .EXPIRED_SMS_CODE) {
+                    let message = "인증시간이 만료 되었습니다."
+                    toast(message: message)
+                    throw NSError(domain: message, code: 42, userInfo: nil)
+                }
+                if (it.status == .VERIFIED_SMS_CODE) {
+                    log.info("Successfully verified sms code..")
+                }
             })
-            .do(onError: { err in
+            .do(onError: { [unowned self] err in
                 log.error(err)
-                self.activateConfirmButton(true)
+                activateConfirmButton(true)
             })
-            .flatMap { it -> Single<UserDTO> in
-                let currentUser = self.auth.currentUser!
-                let uid = self.auth.uid
-                return self.userService!.createUser(
+            .flatMap { [unowned self] it -> Single<UserDTO> in
+                userService!.createUser(
                     currentUser: currentUser,
                     uid: uid,
                     phone: it.phone,
@@ -233,18 +242,18 @@ class SmsConfirmViewController: UIViewController {
                     smsToken: it.smsToken
                 )
             }
-            .flatMap { it -> Single<Void> in
-                self.session!.generate()
+            .flatMap { [unowned self] it -> Single<Void> in
+                session!.generate()
             }
             .observeOn(MainScheduler.instance)
-            .subscribe(onSuccess: { _ in
-                self.spinnerView.visible(false)
-                self.replace(storyboard: "Registration", withIdentifier: "RegistrationNavigationViewController")
-            }, onError: { err in
+            .subscribe(onSuccess: { [unowned self] _ in
+                spinnerView.visible(false)
+                replace(storyboard: "Registration", withIdentifier: "RegistrationNavigationViewController")
+            }, onError: { [unowned self] err in
                 log.error(err)
-                self.spinnerView.visible(false)
-                self.activateConfirmButton(true)
-                self.toast(message: "문자 요청에 실패 하였습니다.")
+                spinnerView.visible(false)
+                activateConfirmButton(true)
+                toast(message: "문자 인증에 실패 하였습니다.")
             })
             .disposed(by: disposeBag!)
     }
@@ -273,9 +282,9 @@ class SmsConfirmViewController: UIViewController {
         Observable<Int>
             .interval(.seconds(1), scheduler: MainScheduler.instance)
             .subscribe(onNext: { [unowned self] _ in
-                let expiredAt = self.verification?.expiredAt ?? 0
-                let formatted = self.formatRemainingTime(expiredAt)
-                self.timeLeftLabel.text = formatted
+                let expiredAt = verification?.expiredAt ?? 0
+                let formatted = formatRemainingTime(expiredAt)
+                timeLeftLabel.text = formatted
             })
             .disposed(by: disposeBag!)
     }
