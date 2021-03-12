@@ -16,21 +16,11 @@ class InAppPurchaseModel {
         ]
     }
 
-    private let disposeBag: DisposeBag = DisposeBag()
-
-    private let auth: Auth = Auth.auth()
-
-    private let session: Session
-
-    private let paymentService: PaymentService
-
     internal let products: ReplaySubject = ReplaySubject<[Product]>.create(bufferSize: 1)
 
     private let repository: Repository = Repository()
 
-    init(session: Session, paymentService: PaymentService) {
-        self.session = session
-        self.paymentService = paymentService
+    init() {
         populate()
     }
 
@@ -42,52 +32,7 @@ class InAppPurchaseModel {
         products.onNext(repository.products)
     }
 
-    func purchase(indexPath: IndexPath, onSuccess: @escaping () -> Void, onError: @escaping () -> Void) {
-        let product = repository.products[indexPath.row]
-        let productId = product.productId
-
-        guard let currentUser = auth.currentUser,
-              let uid = session.uid,
-              let userId = session.id else {
-            return
-        }
-
-        IAPManager.shared.purchase(
-            productId: productId,
-            onPurchased: { [unowned self] transaction in
-
-                guard let receiptURL = Bundle.main.appStoreReceiptURL,
-                      let token = try? Data(contentsOf: receiptURL).base64EncodedString() else {
-                    onError()
-                    return
-                }
-                paymentService.purchase(
-                        currentUser: currentUser,
-                        uid: uid,
-                        userId: userId,
-                        token: token
-                    )
-                    .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                    .flatMap({ [unowned self] payment in
-                        session.refresh().map({ _ in payment })
-                    })
-                    .observeOn(MainScheduler.instance)
-                    .subscribe(onSuccess: { payment in
-                        if (payment.result != true) {
-                            return
-                        }
-                        IAPManager.shared.finishTransaction(transaction: transaction)
-                        onSuccess()
-                    }, onError: { err in
-                        log.error(err)
-                        onError()
-                    })
-                    .disposed(by: disposeBag)
-            },
-            onFailed: {
-                onError()
-                IAPManager.shared.lock.signal()
-            }
-        )
+    func getProduct(by indexPath: IndexPath) -> Product {
+        repository.products[indexPath.row]
     }
 }

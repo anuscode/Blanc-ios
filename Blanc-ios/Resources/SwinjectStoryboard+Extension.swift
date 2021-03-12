@@ -436,14 +436,15 @@ extension SwinjectStoryboard {
 
         /** InAppPurchase dependencies **/
         defaultContainer.register(InAppPurchaseModel.self) { resolver in
-            let session = resolver ~> Session.self
-            let paymentService = resolver ~> PaymentService.self
-            let inAppPurchaseModel = InAppPurchaseModel(session: session, paymentService: paymentService)
+            let inAppPurchaseModel = InAppPurchaseModel()
             return inAppPurchaseModel
         }.inObjectScope(.paymentScope)
         defaultContainer.register(InAppPurchaseViewModel.self) { resolver in
+            let session = resolver ~> Session.self
+            let paymentService = resolver ~> PaymentService.self
             let inAppPurchaseModel = resolver ~> InAppPurchaseModel.self
-            let inAppPurchaseViewModel = InAppPurchaseViewModel(inAppPurchaseModel: inAppPurchaseModel)
+            let inAppPurchaseViewModel = InAppPurchaseViewModel(
+                session: session, paymentService: paymentService, inAppPurchaseModel: inAppPurchaseModel)
             return inAppPurchaseViewModel
         }.inObjectScope(.paymentScope)
     }
