@@ -36,7 +36,7 @@ class AccountViewModel {
             ]),
             SectionModel<String, AccountData>(model: "설정", items: [
                 AccountData(icon: "bell", title: "푸시 설정"),
-                AccountData(icon: "power", title: "로그 아웃")
+                AccountData(icon: "gearshape", title: "계정 관리")
             ]),
             SectionModel<String, AccountData>(model: "고객 센터", items: [
                 AccountData(icon: "atom", title: "고객 센터"),
