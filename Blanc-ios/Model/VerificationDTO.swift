@@ -9,7 +9,8 @@ class VerificationDTO: Codable {
              INVALID_PHONE_NUMBER = "INVALID_PHONE_NUMBER",
              INVALID_SMS_CODE = "INVALID_SMS_CODE",
              EXPIRED_SMS_CODE = "EXPIRED_SMS_CODE",
-             VERIFIED_SMS_CODE = "VERIFIED_SMS_CODE"
+             VERIFIED_SMS_CODE = "VERIFIED_SMS_CODE",
+             DUPLICATE_PHONE_NUMBER = "DUPLICATE_PHONE_NUMBER"
     }
 
     var status: Status?

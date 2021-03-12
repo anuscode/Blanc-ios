@@ -225,6 +225,11 @@ class SmsConfirmViewController: UIViewController {
                     toast(message: message)
                     throw NSError(domain: message, code: 42, userInfo: nil)
                 }
+                if (it.status == .DUPLICATE_PHONE_NUMBER) {
+                    let message = "이미 등록 된 전화번호 입니다."
+                    toast(message: message)
+                    throw NSError(domain: message, code: 42, userInfo: nil)
+                }
                 if (it.status == .VERIFIED_SMS_CODE) {
                     log.info("Successfully verified sms code..")
                 }
