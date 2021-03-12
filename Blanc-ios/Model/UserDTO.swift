@@ -2,7 +2,7 @@ import Foundation
 import CoreLocation
 
 struct UserGlobal: Codable {
-    static let bodyTypes = ["마른 체형", "슬림 근육", "보통", "균형 잡힌", "통통", "큰 체격", "비밀"]
+    static let bodyTypes = ["마른", "슬림 근육", "보통", "균형 잡힌", "통통", "덩치 큼", "글래머", "비밀"]
     static let occupations = [
         "학생", "경영·사무", "영업·고객상담", "금융직", "연구·기술직", "IT·인터넷", "디자인", "서비스", "전문직", "의료",
         "생산제조", "건설", "유통무역", "미디어", "교육", "공무원", "사업가", "군인", "백수", "직접입력"
