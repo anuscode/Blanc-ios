@@ -622,12 +622,12 @@ class UserCardTableViewCell: UITableViewCell {
         let label3Text = "\(user.occupation ?? "알 수 없음") · \(user.lastLoginAt?.asStaledDay() ?? "오래 전") 접속"
         let starLabelText = "\(user.nickname ?? "알 수 없음")님의 매력을 알려주세요."
 
-        pageControl.numberOfPages = numberOfPages
         label1.text = label1Text
         label2.text = label2Text
         label3.text = label3Text
         starLabel.text = starLabelText
-
+        
+        pageControl.numberOfPages = numberOfPages
         carousel.reloadData()
     }
 }

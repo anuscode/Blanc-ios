@@ -23,7 +23,7 @@ class MyRatedScoreViewController: UIViewController {
 
     private var data: MyRatedData?
 
-    var myRatedScoreViewModel: MyRatedScoreViewModel?
+    internal weak var myRatedScoreViewModel: MyRatedScoreViewModel?
 
     lazy private var navigationBarContent: UIView = {
         let view = UIView()
@@ -82,11 +82,10 @@ class MyRatedScoreViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         extendedLayoutIncludesOpaqueBars = true
+        navigationItem.titleView = navigationBarContent
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.isTranslucent = true
-        navigationItem.titleView = navigationBarContent
-//        // navigationBarContent.alpha = 0
         navigationUserLabel.visible(false)
         navigationUserImage.visible(false)
     }
@@ -100,11 +99,23 @@ class MyRatedScoreViewController: UIViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        extendedLayoutIncludesOpaqueBars = false
+        navigationBarContent.alpha = 100
+        navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
+        navigationController?.navigationBar.shadowImage = nil
+        navigationController?.navigationBar.isTranslucent = true
+        navigationController?.navigationBar.alpha = 100
+        navigationController?.setNavigationBarHidden(false, animated: animated)
     }
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+        // should remove view model and model otherwise it shows the previous one.
         SwinjectStoryboard.defaultContainer.resetObjectScope(.myRatedScoreScope)
+    }
+
+    deinit {
+        log.info("deinit my rated score view controller..")
     }
 
     private func configureSubviews() {
@@ -115,22 +126,37 @@ class MyRatedScoreViewController: UIViewController {
     private func configureConstraints() {
         let window = UIApplication.shared.windows[0]
         tableView.frame = CGRect(x: 0, y: 0, width: view.width,
-                height: view.height - CGFloat(0) - window.safeAreaInsets.bottom)
+            height: view.height - CGFloat(0) - window.safeAreaInsets.bottom)
     }
 
     private func subscribeMyRatedScoreViewModel() {
-        myRatedScoreViewModel?.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [unowned self] data in
-                    self.data = data
-                    DispatchQueue.main.async {
-                        tableView.reloadData()
-                    }
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        myRatedScoreViewModel?
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] data in
+                self.data = data
+                tableView.reloadData()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
+
+        myRatedScoreViewModel?
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] data in
+                navigation(data)
+            })
+            .disposed(by: disposeBag)
+    }
+
+    private func navigation(_ data: MyRatedData) {
+        let url = data.currentUser?.avatar
+        let text = "\(data.currentUser?.nickname ?? "알 수 없음"), \(data.currentUser?.age ?? -1)"
+        navigationUserImage.url(url)
+        navigationUserLabel.text = text
     }
 }
 
@@ -141,21 +167,22 @@ extension MyRatedScoreViewController: UITableViewDelegate, UITableViewDataSource
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 0 {
+        switch section {
+        case 0:
             return 1
-        } else if section == 1 {
+        case 1:
             return 1
-        } else {
+        case 2:
             return data?.raters?.count ?? 0
+        default:
+            fatalError("Something is wrong..")
         }
     }
 
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-
         if (section != 2) {
             return UIView()
         }
-
         let view = UIView()
         view.backgroundColor = .white
         let label = UILabel()
@@ -195,20 +222,20 @@ extension MyRatedScoreViewController: UITableViewDelegate, UITableViewDataSource
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.section == 0 {  /** Carousel **/
             let cell = tableView.dequeueReusableCell(
-                    withIdentifier: MyRatedCarouselTableViewCell.identifier,
-                    for: indexPath) as! MyRatedCarouselTableViewCell
+                withIdentifier: MyRatedCarouselTableViewCell.identifier,
+                for: indexPath) as! MyRatedCarouselTableViewCell
             cell.bind(user: data?.currentUser)
             return cell
         } else if indexPath.section == 1 {  /** Score **/
             let cell = tableView.dequeueReusableCell(
-                    withIdentifier: MyRatedProfileTableViewCell.identifier,
-                    for: indexPath) as! MyRatedProfileTableViewCell
+                withIdentifier: MyRatedProfileTableViewCell.identifier,
+                for: indexPath) as! MyRatedProfileTableViewCell
             cell.bind(data?.currentUser)
             return cell
         } else {  /** Raters **/
             let cell = tableView.dequeueReusableCell(
-                    withIdentifier: MyRatedSmallUserProfileTableViewCell.identifier,
-                    for: indexPath) as! MyRatedSmallUserProfileTableViewCell
+                withIdentifier: MyRatedSmallUserProfileTableViewCell.identifier,
+                for: indexPath) as! MyRatedSmallUserProfileTableViewCell
             cell.bind(rater: data?.raters?[indexPath.row])
             return cell
         }

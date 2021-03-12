@@ -7,6 +7,8 @@ class MyRatedCarouselTableViewCell: UITableViewCell {
 
     static let identifier: String = "MyRatedCarouselTableViewCell"
 
+    private var user: UserDTO?
+
     lazy private var carousel: FSPagerView = {
         let carousel = FSPagerView(frame: frame)
         carousel.register(FSPagerViewCell.self, forCellWithReuseIdentifier: "cell")
@@ -15,8 +17,6 @@ class MyRatedCarouselTableViewCell: UITableViewCell {
         carousel.dataSource = self
         return carousel
     }()
-
-    private var user: UserDTO?
 
     private var pageControl: FSPageControl = {
         let pageControl = FSPageControl()
@@ -40,6 +40,7 @@ class MyRatedCarouselTableViewCell: UITableViewCell {
 
     private func addSubviews() {
         contentView.addSubview(carousel)
+        contentView.addSubview(pageControl)
     }
 
     private func configConstraints() {
@@ -47,13 +48,18 @@ class MyRatedCarouselTableViewCell: UITableViewCell {
             make.edges.equalToSuperview()
             make.height.equalTo(carousel.snp.width)
         }
+        pageControl.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(20)
+            make.trailing.equalToSuperview().inset(20)
+        }
     }
 
     func bind(user: UserDTO?) {
         self.user = user
-        DispatchQueue.main.async { [unowned self] in
-            carousel.reloadData()
-        }
+        let numberOfPages = user?.userImages?.count ?? 0
+        pageControl.numberOfPages = numberOfPages
+        pageControl.currentPage = 0
+        carousel.reloadData()
     }
 }
 
