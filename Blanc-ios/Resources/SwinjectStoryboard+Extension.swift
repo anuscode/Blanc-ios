@@ -69,6 +69,10 @@ extension ObjectScope {
     static let paymentScope = ObjectScope(
         storageFactory: PermanentStorage.init, description: "payment scope"
     )
+
+    static let accountManagement = ObjectScope(
+        storageFactory: PermanentStorage.init, description: "account management scope."
+    )
 }
 
 
@@ -344,6 +348,12 @@ extension SwinjectStoryboard {
             let accountViewModel = AccountViewModel(session: session)
             return accountViewModel
         }.inObjectScope(.mainScope)
+
+        /** Account dependencies **/
+        defaultContainer.register(AccountManagementViewModel.self) { resolver in
+            let accountManagementViewModel = AccountManagementViewModel()
+            return accountManagementViewModel
+        }.inObjectScope(.accountManagement)
 
         /** PushSetting dependencies **/
         defaultContainer.register(PushSettingModel.self) { resolver in
@@ -667,6 +677,11 @@ extension SwinjectStoryboard {
         defaultContainer.storyboardInitCompleted(AccountViewController.self) { resolver, controller in
             log.info("Injecting dependencies into AccountViewController")
             controller.accountViewModel = resolver ~> AccountViewModel.self
+        }
+
+        defaultContainer.storyboardInitCompleted(AccountManagementViewController.self) { resolver, controller in
+            log.info("Injecting dependencies into AccountManagementViewController")
+            controller.accountManagementViewModel = resolver ~> AccountManagementViewModel.self
         }
 
         defaultContainer.storyboardInitCompleted(InAppPurchaseViewController.self) { resolver, controller in

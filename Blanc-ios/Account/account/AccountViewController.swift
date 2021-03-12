@@ -306,11 +306,6 @@ class AccountViewController: UIViewController {
         tableView.delegate = self
         tableView.register(AccountTableViewCell.self, forCellReuseIdentifier: AccountTableViewCell.identifier)
         tableView.isScrollEnabled = false
-        let datasource = ReloadDataSource<SectionModel<String, AccountData>>.init(configureCell: configureCell)
-        Observable
-            .just(sections)
-            .bind(to: tableView.rx.items(dataSource: datasource))
-            .disposed(by: disposeBag)
         return tableView
     }()
 
@@ -351,7 +346,6 @@ class AccountViewController: UIViewController {
             make.leading.equalToSuperview().inset(10)
             make.trailing.equalToSuperview().inset(10)
         }
-
         tableViewContainer.snp.makeConstraints { make in
             make.top.equalTo(semiProfileView.snp.bottom).inset(-10)
             make.leading.equalToSuperview().inset(10)
@@ -361,6 +355,13 @@ class AccountViewController: UIViewController {
     }
 
     private func subscribeAccountViewModel() {
+
+        let datasource = ReloadDataSource<SectionModel<String, AccountData>>.init(configureCell: configureCell)
+        accountViewModel?
+            .sections
+            .bind(to: tableView.rx.items(dataSource: datasource))
+            .disposed(by: disposeBag)
+
         accountViewModel?
             .currentUser
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
@@ -424,19 +425,6 @@ extension AccountViewController {
             navigationController?.pushViewController(.avoidView, current: self)
         }
     }
-
-    private func logout() {
-        do {
-            try auth.signOut()
-            let navigation = parent
-            let tapBar = navigation?.parent
-            tapBar?.replace(withIdentifier: "InitPagerViewController") {
-                SwinjectStoryboard.defaultContainer.resetObjectScope(.mainScope)
-            }
-        } catch {
-            toast(message: "로그아웃에 실패 하였습니다. 다시 시도해 주세요.")
-        }
-    }
 }
 
 extension AccountViewController: UITableViewDelegate {
@@ -456,6 +444,7 @@ extension AccountViewController: UITableViewDelegate {
             make.top.equalToSuperview().inset(10)
             make.bottom.equalToSuperview().inset(10)
         }
+
         if (section != 0) {
             let border = UIView()
             border.backgroundColor = .systemGray4
@@ -467,6 +456,7 @@ extension AccountViewController: UITableViewDelegate {
                 make.height.equalTo(0.25)
             }
         }
+
         return view
     }
 
@@ -482,7 +472,7 @@ extension AccountViewController: UITableViewDelegate {
             if (indexPath.row == 0) {
                 navigationController?.pushViewController(.pushSetting, current: self)
             } else {
-                logout()
+                navigationController?.pushViewController(.accountManagement, current: self)
             }
         case 2:
             if (indexPath.row == 0) {

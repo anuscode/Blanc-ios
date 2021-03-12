@@ -267,6 +267,7 @@
 		C47AA032B7DA2F2DEC912127 /* InAppPurchaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AADDF123DA705D0D31C70 /* InAppPurchaseModel.swift */; };
 		C47AA16A0E6AC78EEB5E43A7 /* CLLocationManagerEvents+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA6A4C0FC210FE7589BD8 /* CLLocationManagerEvents+Rx.swift */; };
 		C47AA1900B60991001A67110 /* UIViewController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA38B8F28E7FCD81FD02B /* UIViewController+Extension.swift */; };
+		C47AA1EA024FC49C4DDE1935 /* AccountManagementViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA584E95F83FD558A930E /* AccountManagementViewController.swift */; };
 		C47AA29524543C2555487AEE /* InAppPurchaseViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA3977CB04CBF6AB4CA3B /* InAppPurchaseViewModel.swift */; };
 		C47AA2FAD71D31DAE9DF6FCA /* Broadcast.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AAA5893F5BE3DB46D70F2 /* Broadcast.swift */; };
 		C47AA32A10ACDA94C39E6D6E /* Int+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AAF64311FE6466E824F0D /* Int+Extension.swift */; };
@@ -279,6 +280,7 @@
 		C47AA762523F50CBEE156306 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA8F623619E368CA03001 /* Extensions.swift */; };
 		C47AA76AB974811288A3C50C /* RxCLLocationManagerDelegateProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA02088BC4DE22EAD45D1 /* RxCLLocationManagerDelegateProxy.swift */; };
 		C47AA7C626C4C16AA8A06DA9 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AAB4E79358AC85B769BE6 /* UIView+Extension.swift */; };
+		C47AA7DAAF3E229099FC41A5 /* AccountManagementViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AAD2E1CAA801E19F11EF1 /* AccountManagementViewModel.swift */; };
 		C47AA7ECE96CB9A9BB7216F8 /* StarFallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AAD87CBEFF0B42B8059B8 /* StarFallView.swift */; };
 		C47AA83E4F1FC818AC7EB61E /* InAppPurchaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AACA33B78F7DBDE4957FF /* InAppPurchaseViewController.swift */; };
 		C47AA94E16B75C679F0B7819 /* CLLocationManagerDelegateEvents+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA6DD792D18E8B9A36E7E /* CLLocationManagerDelegateEvents+Rx.swift */; };
@@ -590,6 +592,7 @@
 		C47AA3BE2666086EF0BDDA39 /* RxSelectors.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxSelectors.swift; sourceTree = "<group>"; };
 		C47AA3E64CCA2CB2598F30E6 /* Helpers.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Helpers.swift; sourceTree = "<group>"; };
 		C47AA4B7CDE30DB7D53AA6EB /* ImageViewViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageViewViewModel.swift; sourceTree = "<group>"; };
+		C47AA584E95F83FD558A930E /* AccountManagementViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountManagementViewController.swift; sourceTree = "<group>"; };
 		C47AA65EC5EB8834242CA34C /* RegistrationIntroductionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegistrationIntroductionViewController.swift; sourceTree = "<group>"; };
 		C47AA6A4C0FC210FE7589BD8 /* CLLocationManagerEvents+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CLLocationManagerEvents+Rx.swift"; sourceTree = "<group>"; };
 		C47AA6B42E110C411BA90F59 /* PaymentProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PaymentProvider.swift; sourceTree = "<group>"; };
@@ -605,6 +608,7 @@
 		C47AAC81B4B9E7A00D3EA155 /* InAppPurchaseTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppPurchaseTableViewCell.swift; sourceTree = "<group>"; };
 		C47AACA33B78F7DBDE4957FF /* InAppPurchaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppPurchaseViewController.swift; sourceTree = "<group>"; };
 		C47AAD0D9BE5100D1C653C97 /* ImageViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageViewModel.swift; sourceTree = "<group>"; };
+		C47AAD2E1CAA801E19F11EF1 /* AccountManagementViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountManagementViewModel.swift; sourceTree = "<group>"; };
 		C47AAD87CBEFF0B42B8059B8 /* StarFallView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StarFallView.swift; sourceTree = "<group>"; };
 		C47AADDF123DA705D0D31C70 /* InAppPurchaseModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppPurchaseModel.swift; sourceTree = "<group>"; };
 		C47AAF64311FE6466E824F0D /* Int+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Int+Extension.swift"; sourceTree = "<group>"; };
@@ -1428,6 +1432,7 @@
 				104EEC1325E3728F0069B2CF /* AccountViewModel.swift */,
 				104EEC1425E3728F0069B2CF /* cell */,
 				104EEC1725E3728F0069B2CF /* AccountViewController.swift */,
+				C47AAC4CA0CF9706D6911D8B /* management */,
 			);
 			path = account;
 			sourceTree = "<group>";
@@ -1562,6 +1567,15 @@
 				C47AAC81B4B9E7A00D3EA155 /* InAppPurchaseTableViewCell.swift */,
 			);
 			path = cell;
+			sourceTree = "<group>";
+		};
+		C47AAC4CA0CF9706D6911D8B /* management */ = {
+			isa = PBXGroup;
+			children = (
+				C47AA584E95F83FD558A930E /* AccountManagementViewController.swift */,
+				C47AAD2E1CAA801E19F11EF1 /* AccountManagementViewModel.swift */,
+			);
+			path = management;
 			sourceTree = "<group>";
 		};
 		C9BE95656549CA341B72515D /* Pods */ = {
@@ -2127,6 +2141,8 @@
 				C47AACEDFFF2220C6D2984F4 /* RegistrationIntroductionViewController.swift in Sources */,
 				C47AAE0EAAB48BD8979FAFA5 /* ImageViewModel.swift in Sources */,
 				C47AA341D3CD39CEF889B591 /* ImageViewViewModel.swift in Sources */,
+				C47AA1EA024FC49C4DDE1935 /* AccountManagementViewController.swift in Sources */,
+				C47AA7DAAF3E229099FC41A5 /* AccountManagementViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
