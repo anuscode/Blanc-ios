@@ -8,7 +8,7 @@ import RxSwift
 
 class SmsConfirmViewController: UIViewController {
 
-    private let regex = try! NSRegularExpression(pattern: "^[0-9]{6}$")
+    private let smsRegex = try! NSRegularExpression(pattern: "^[0-9]{6}$")
 
     private let auth: Auth = Auth.auth()
 
@@ -65,7 +65,7 @@ class SmsConfirmViewController: UIViewController {
             .map({ [unowned self] text -> Bool in
                 let value = text
                 let range = NSRange(location: 0, length: value.utf16.count)
-                let result = self.regex.firstMatch(in: value, range: range)
+                let result = self.smsRegex.firstMatch(in: value, range: range)
                 return (result != nil)
             })
             .subscribe(onNext: self.activateConfirmButton)
@@ -197,20 +197,21 @@ class SmsConfirmViewController: UIViewController {
     @objc private func didTapConfirmButton() {
         let smsCode = smsCodeTextField.text ?? ""
         let range = NSRange(location: 0, length: smsCode.utf16.count)
-        let result = regex.firstMatch(in: smsCode, range: range)
+        let result = smsRegex.firstMatch(in: smsCode, range: range)
         if (result == nil) {
             return
         }
         guard let currentUser = auth.currentUser,
-              let uid = auth.uid else {
+              let uid = auth.uid,
+              let phone = verification?.phone else {
             return
         }
         spinnerView.visible(true)
         activateConfirmButton(false)
         verificationService?.verifySmsCode(
-                currentUser: auth.currentUser!,
-                uid: auth.uid,
-                phone: verification?.phone,
+                currentUser: currentUser,
+                uid: uid,
+                phone: phone,
                 smsCode: smsCode,
                 expiredAt: verification?.expiredAt
             )
