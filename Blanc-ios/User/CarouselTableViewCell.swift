@@ -20,7 +20,6 @@ class CarouselTableViewCell: UITableViewCell {
         let label = UILabel()
         label.font = .boldSystemFont(ofSize: 24)
         label.textColor = .white
-        label.text = "용구쇼핑, 35"
         return label
     }()
 
@@ -28,7 +27,6 @@ class CarouselTableViewCell: UITableViewCell {
         let label = UILabel()
         label.font = .boldSystemFont(ofSize: 15)
         label.textColor = .white
-        label.text = "서울특별시 · 1km"
         return label
     }()
 
@@ -107,10 +105,16 @@ class CarouselTableViewCell: UITableViewCell {
 
     func bind(user: UserDTO?) {
         self.user = user
-        pageControl.numberOfPages = user?.userImages?.count ?? 0
+
+        let line1 = "\(self.user?.nickname ?? "알 수 없음"), \(user?.age ?? -1)"
+        let line2 = "\(self.user?.area ?? "알 수 없음") · \(user?.distance ?? "알 수 없음")"
+        let numberOfPages = user?.userImages?.count ?? 0
+
+        pageControl.numberOfPages = numberOfPages
+        pageControl.currentPage = 0
+        label1.text = line1
+        label2.text = line2
         carousel.reloadData()
-        label1.text = "\(self.user?.nickname ?? "알 수 없음"), \(user?.age ?? -1)"
-        label2.text = "\(self.user?.area ?? "알 수 없음") · \(user?.distance ?? "알 수 없음")"
     }
 }
 
