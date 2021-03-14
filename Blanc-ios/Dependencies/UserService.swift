@@ -50,7 +50,13 @@ class UserService {
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .filterSuccessfulStatusAndRedirectCodes()
             .map({ _ in true })
-            .catchErrorJustReturn(false)
+            .catchError({ error in
+                let err = error as? MoyaError
+                if (err?.response?.statusCode == 404) {
+                    return Single.just(false)
+                }
+                throw NSError(domain: "Only 200 and 404 are allowed in this function.", code: 0, userInfo: nil)
+            })
     }
 
     func listRecommendedUsers(uid: String?, userId: String?) -> Single<[UserDTO]> {
