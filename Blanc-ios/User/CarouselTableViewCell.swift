@@ -47,8 +47,8 @@ class CarouselTableViewCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        addSubviews()
-        configConstraints()
+        configureSubviews()
+        configureConstraints()
     }
 
     required init?(coder: NSCoder) {
@@ -59,7 +59,7 @@ class CarouselTableViewCell: UITableViewCell {
         super.layoutSubviews()
     }
 
-    private func addSubviews() {
+    private func configureSubviews() {
         contentView.addSubview(carousel)
         contentView.addSubview(pageControl)
         contentView.addSubview(gradientView)
@@ -67,7 +67,7 @@ class CarouselTableViewCell: UITableViewCell {
         contentView.addSubview(label2)
     }
 
-    private func configConstraints() {
+    private func configureConstraints() {
 
         let window = UIApplication.shared.keyWindow
         var topPadding = window?.safeAreaInsets.top ?? 0
