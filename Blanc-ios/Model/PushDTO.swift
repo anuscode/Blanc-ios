@@ -1,8 +1,10 @@
 import Foundation
 
-enum PushFor: String, Codable {
+enum Event: String, Codable {
     case LOG_OUT = "LOG_OUT",
-         APPROVAL = "APPROVAL",
+         APPROVED = "APPROVED",
+         REJECTED = "REJECTED",
+         BLOCKED = "BLOCKED",
          CONVERSATION = "CONVERSATION",
          POKE = "POKE",
          REQUEST = "REQUEST",
@@ -25,7 +27,7 @@ class PushDTO: NSObject, Decodable {
     var requestId: String?
     var conversationId: String?
     var messageId: String?
-    var pushFor: PushFor?
+    var event: Event?
     var category: Category?
     var nickname: String?
     var imageUrl: String?
@@ -42,7 +44,7 @@ class PushDTO: NSObject, Decodable {
              requestId,
              conversationId,
              messageId,
-             pushFor,
+             event,
              category,
              nickname,
              imageUrl,
@@ -106,9 +108,9 @@ class PushDTO: NSObject, Decodable {
         }
 
         do {
-            pushFor = try values.decode(PushFor?.self, forKey: .pushFor)
+            event = try values.decode(Event?.self, forKey: .event)
         } catch {
-            pushFor = nil
+            event = nil
         }
 
         do {
@@ -169,7 +171,7 @@ extension PushDTO: Encodable {
         try container.encode(requestId, forKey: .requestId)
         try container.encode(conversationId, forKey: .conversationId)
         try container.encode(messageId, forKey: .messageId)
-        try container.encode(pushFor, forKey: .pushFor)
+        try container.encode(event, forKey: .event)
         try container.encode(nickname, forKey: .nickname)
         try container.encode(imageUrl, forKey: .imageUrl)
         try container.encode(message, forKey: .message)
@@ -180,16 +182,16 @@ extension PushDTO: Encodable {
 
 extension PushDTO {
 
-    func isApproval() -> Bool {
-        pushFor == .APPROVAL
+    func isApproved() -> Bool {
+        event == .APPROVED
     }
 
     func isPoke() -> Bool {
-        pushFor == .POKE && userId.isNotEmpty()
+        event == .POKE && userId.isNotEmpty()
     }
 
     func isLookUp() -> Bool {
-        pushFor == .LOOK_UP && userId.isNotEmpty()
+        event == .LOOK_UP && userId.isNotEmpty()
     }
 
     /**
@@ -200,19 +202,19 @@ extension PushDTO {
      - Returns: Whether it's a request push message or not.
      **/
     func isRequest() -> Bool {
-        pushFor == .REQUEST && requestId.isNotEmpty()
+        event == .REQUEST && requestId.isNotEmpty()
     }
 
     func isFavorite() -> Bool {
-        pushFor == .FAVORITE && postId.isNotEmpty()
+        event == .FAVORITE && postId.isNotEmpty()
     }
 
     func isComment() -> Bool {
-        pushFor == .COMMENT && postId.isNotEmpty()
+        event == .COMMENT && postId.isNotEmpty()
     }
 
     func isThumbUp() -> Bool {
-        pushFor == .THUMB_UP && postId.isNotEmpty()
+        event == .THUMB_UP && postId.isNotEmpty()
     }
 
     /**
@@ -221,7 +223,7 @@ extension PushDTO {
      - Returns: Whether it's high rating push message or not.
      **/
     func isStarRating() -> Bool {
-        pushFor == .STAR_RATING && userId.isNotEmpty()
+        event == .STAR_RATING && userId.isNotEmpty()
     }
 
     /**
@@ -236,7 +238,7 @@ extension PushDTO {
      - Returns: Whether it's matched push message or not.
      **/
     func isMatched() -> Bool {
-        pushFor == .MATCHED && conversationId.isNotEmpty()
+        event == .MATCHED && conversationId.isNotEmpty()
     }
 
     /**
@@ -245,14 +247,14 @@ extension PushDTO {
      - Returns: Whether it's matched push message or not.
      **/
     func isOpened() -> Bool {
-        pushFor == .OPENED && conversationId.isNotEmpty()
+        event == .OPENED && conversationId.isNotEmpty()
     }
 
     func isMessage() -> Bool {
-        pushFor == .CONVERSATION && conversationId.isNotEmpty() && messageId.isNotEmpty()
+        event == .CONVERSATION && conversationId.isNotEmpty() && messageId.isNotEmpty()
     }
 
     func isLogout() -> Bool {
-        pushFor == .LOG_OUT
+        event == .LOG_OUT
     }
 }

@@ -8,7 +8,7 @@ class MainTabBarController: UITabBarController {
     internal weak var mainTabBarViewModel: MainTabBarViewModel?
 
     // Foreground Notification Candidates..
-    private let candidates: [PushFor?] = [
+    private let candidates: [Event?] = [
         .POKE, .REQUEST, .COMMENT, .FAVORITE, .MATCHED, .THUMB_UP, .OPENED, .LOG_OUT, .LOOK_UP, .STAR_RATING
     ]
 
@@ -48,7 +48,7 @@ class MainTabBarController: UITabBarController {
     }
 
     private func notify(_ push: PushDTO) {
-        if (!candidates.contains(push.pushFor)) {
+        if (!candidates.contains(push.event)) {
             return
         }
         let window = UIApplication.shared.keyWindow!

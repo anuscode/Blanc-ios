@@ -226,7 +226,7 @@ class RegistrationPendingViewController: UIViewController {
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [unowned self] push in
-                if (push.isApproval()) {
+                if (push.isApproved()) {
                     self.parent?.replace(storyboard: "Main", withIdentifier: "InitPagerViewController")
                 }
             }, onError: { err in
