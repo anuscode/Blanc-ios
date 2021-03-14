@@ -521,7 +521,7 @@ class LoginViewController: UIViewController {
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .flatMap { [unowned self] (oauthToken) -> Single<CustomTokenDTO> in
                 let idToken = oauthToken.accessToken
-                return userService.signInWithKakaoToken(idToken: idToken)
+                return userService.createCustomTokenWithKakao(idToken: idToken)
             }
             .observeOn(MainScheduler.instance)
             .do(onNext: { [unowned self] authResult in

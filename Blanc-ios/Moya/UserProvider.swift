@@ -20,7 +20,7 @@ enum UserProvider {
 
     // POST
     case createUser(idToken: String?, uid: String?, phone: String?, smsCode: String?, smsToken: String?)
-    case signInWithKakaoToken(idToken: String?)
+    case createCustomTokenWithKakao(idToken: String?)
     case pushPoke(uid: String?, userId: String?)
     case pushLookUp(uid: String?, userId: String?)
     case uploadUserImage(uid: String?, userId: String?, index: Int?, file: UIImage)
@@ -74,8 +74,8 @@ extension UserProvider: TargetType {
             return "users/\(userId ?? "")/score"
         case .createUser(idToken: _, uid: _, phone: _, smsCode: _, smsToken: _):
             return "users"
-        case .signInWithKakaoToken(idToken: _):
-            return "users/kakao"
+        case .createCustomTokenWithKakao(idToken: _):
+            return "users/custom_token/kakao"
         case .pushPoke(uid: _, userId: let userId):
             return "users/\(userId ?? "")/push/poke"
         case .pushLookUp(uid: _, userId: let userId):
@@ -120,7 +120,7 @@ extension UserProvider: TargetType {
              .isRegistered(uid: _):
             return .get
         case .createUser(idToken: _, uid: _, phone: _, smsCode: _, smsToken: _),
-             .signInWithKakaoToken(idToken: _),
+             .createCustomTokenWithKakao(idToken: _),
              .pushPoke(uid: _, userId: _),
              .pushLookUp(uid: _, userId: _),
              .uploadUserImage(uid: _, userId: _, index: _, file: _):
@@ -177,7 +177,7 @@ extension UserProvider: TargetType {
                 bodyEncoding: URLEncoding.httpBody,
                 urlParameters: [:]
             )
-        case .signInWithKakaoToken(idToken: _):
+        case .createCustomTokenWithKakao(idToken: _):
             return .requestPlain
         case .pushPoke(uid: _, userId: _):
             return .requestPlain
@@ -268,7 +268,7 @@ extension UserProvider: TargetType {
             _headers["uid"] = uid
             return _headers
 
-        case .signInWithKakaoToken(idToken: let idToken):
+        case .createCustomTokenWithKakao(idToken: let idToken):
             headers["id-token"] = idToken
             return headers
         case .pushPoke(uid: let uid, userId: _):

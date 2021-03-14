@@ -165,9 +165,9 @@ class UserService {
             .asSingle()
     }
 
-    func signInWithKakaoToken(idToken: String?) -> Single<CustomTokenDTO> {
+    func createCustomTokenWithKakao(idToken: String?) -> Single<CustomTokenDTO> {
         provider.rx
-            .request(.signInWithKakaoToken(idToken: idToken))
+            .request(.createCustomTokenWithKakao(idToken: idToken))
             .debug()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
