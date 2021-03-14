@@ -87,11 +87,11 @@ class AccountManagementViewController: UIViewController {
             .disposed(by: disposeBag)
 
         accountManagementViewModel?
-            .screenOut
+            .replaceViewController
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [unowned self] in
-                replace()
+                replaceViewController()
             })
             .disposed(by: disposeBag)
     }
@@ -100,8 +100,8 @@ class AccountManagementViewController: UIViewController {
         log.info("deinit account management view controller..")
     }
 
-    private func replace() {
-        self.replace(withIdentifier: "InitPagerViewController") {
+    private func replaceViewController() {
+        replace(withIdentifier: "InitPagerViewController") {
             SwinjectStoryboard.defaultContainer.resetObjectScope(.accountManagement)
             SwinjectStoryboard.defaultContainer.resetObjectScope(.mainScope)
         }
@@ -130,7 +130,7 @@ extension AccountManagementViewController: UITableViewDelegate {
                 preferredStyle: .actionSheet
             )
             let unregisterAction = UIAlertAction(title: "회원 탈퇴", style: .default) { [unowned self] (action) in
-                accountManagementViewModel?.unregister()
+                accountManagementViewModel?.withdraw()
             }
             let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
             cancelAction.setValue(UIColor.red, forKey: "titleTextColor")

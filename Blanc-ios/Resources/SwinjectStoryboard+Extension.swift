@@ -351,7 +351,9 @@ extension SwinjectStoryboard {
 
         /** Account dependencies **/
         defaultContainer.register(AccountManagementViewModel.self) { resolver in
-            let accountManagementViewModel = AccountManagementViewModel()
+            let session = resolver ~> Session.self
+            let userService = resolver ~> UserService.self
+            let accountManagementViewModel = AccountManagementViewModel(session: session, userService: userService)
             return accountManagementViewModel
         }.inObjectScope(.accountManagement)
 

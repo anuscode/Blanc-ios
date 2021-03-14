@@ -145,7 +145,10 @@ class RegistrationModel {
     }
 
     func unregister(onSuccess: @escaping () -> Void, onError: @escaping () -> Void) {
-        guard let user = session.user else {
+        guard let currentUser = auth.currentUser,
+              let user = session.user,
+              let uid = user.uid,
+              let userId = user.id else {
             return
         }
         if user.available != false {
@@ -155,7 +158,7 @@ class RegistrationModel {
             return
         }
         userService
-            .unregister(uid: user.uid, userId: user.id)
+            .unregister(currentUser: currentUser, uid: uid, userId: userId)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
             .subscribe(onSuccess: { _ in

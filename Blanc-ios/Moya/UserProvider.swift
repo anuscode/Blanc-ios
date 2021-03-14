@@ -19,7 +19,7 @@ enum UserProvider {
     case getPushSetting(uid: String?, userId: String?)
 
     // POST
-    case createUser(idToken: String?, uid: String?, phone: String?, smsCode: String?, smsToken: String?)
+    case registerUser(idToken: String?, uid: String?, phone: String?, smsCode: String?, smsToken: String?)
     case createCustomTokenWithKakao(idToken: String?)
     case pushPoke(uid: String?, userId: String?)
     case pushLookUp(uid: String?, userId: String?)
@@ -35,10 +35,11 @@ enum UserProvider {
     case updateUserLastLoginAt(uid: String?, userId: String?)
     case updateUserContacts(idToken: String?, uid: String?, userId: String?, phones: [String])
     case updateUserPushSetting(uid: String?, userId: String?, pushSetting: PushSetting)
+    case withdraw(idToken: String?, uid: String?, userId: String?)
 
     // DELETE
     case deleteUserImage(uid: String?, userId: String?, index: Int)
-    case unregister(uid: String?, userId: String?)
+    case unregister(idToken: String?, uid: String?, userId: String?)
 }
 
 extension UserProvider: TargetType {
@@ -72,8 +73,8 @@ extension UserProvider: TargetType {
             return "users/\(userId ?? "")/i_rated_high"
         case .listUsersRatedMe(uid: _, userId: let userId):  // TODO: fix later
             return "users/\(userId ?? "")/score"
-        case .createUser(idToken: _, uid: _, phone: _, smsCode: _, smsToken: _):
-            return "users"
+        case .registerUser(idToken: _, uid: _, phone: _, smsCode: _, smsToken: _):
+            return "users/register"
         case .createCustomTokenWithKakao(idToken: _):
             return "users/custom_token/kakao"
         case .pushPoke(uid: _, userId: let userId):
@@ -98,9 +99,11 @@ extension UserProvider: TargetType {
             return "users/\(userId ?? "")/contacts"
         case .updateUserPushSetting(uid: _, userId: let userId, pushSetting: _):
             return "users/\(userId ?? "")/setting/push"
+        case .withdraw(idToken: _, uid: _, userId: let userId):
+            return "users/\(userId ?? "")/withdraw"
         case .deleteUserImage(uid: _, userId: let userId, index: let index):
             return "users/\(userId ?? "")/user_images/\(index)"
-        case .unregister(uid: _, userId: let userId):
+        case .unregister(idToken: _, uid: _, userId: let userId):
             return "users/\(userId ?? "")/unregister"
         }
     }
@@ -119,7 +122,7 @@ extension UserProvider: TargetType {
              .listUsersRatedMe(uid: _, userId: _),
              .isRegistered(uid: _):
             return .get
-        case .createUser(idToken: _, uid: _, phone: _, smsCode: _, smsToken: _),
+        case .registerUser(idToken: _, uid: _, phone: _, smsCode: _, smsToken: _),
              .createCustomTokenWithKakao(idToken: _),
              .pushPoke(uid: _, userId: _),
              .pushLookUp(uid: _, userId: _),
@@ -132,11 +135,11 @@ extension UserProvider: TargetType {
              .updateUserLastLoginAt(uid: _, userId: _),
              .updateUserContacts(idToken: _, uid: _, userId: _, phones: _),
              .updateDeviceToken(uid: _, deviceToken: _),
-             .updateUserPushSetting(uid: _, userId: _, pushSetting: _):
+             .updateUserPushSetting(uid: _, userId: _, pushSetting: _),
+             .withdraw(idToken: _, uid: _, userId: _):
             return .put
-        case .deleteUserImage(uid: _, userId: _, index: _):
-            return .delete
-        case .unregister(uid: _, userId: _):
+        case .unregister(idToken: _, uid: _, userId: _),
+             .deleteUserImage(uid: _, userId: _, index: _):
             return .delete
         }
     }
@@ -171,9 +174,13 @@ extension UserProvider: TargetType {
             return .requestPlain
 
             /** POST **/
-        case .createUser(idToken: _, uid: _, phone: let phone, smsCode: let smsCode, smsToken: let smsToken):
+        case .registerUser(idToken: _, uid: _, phone: let phone, smsCode: let smsCode, smsToken: let smsToken):
             return .requestCompositeParameters(
-                bodyParameters: ["phone": phone!, "sms_code": smsCode!, "sms_token": smsToken!],
+                bodyParameters: [
+                    "phone": phone!,
+                    "sms_code": smsCode!,
+                    "sms_token": smsToken!
+                ],
                 bodyEncoding: URLEncoding.httpBody,
                 urlParameters: [:]
             )
@@ -216,11 +223,13 @@ extension UserProvider: TargetType {
             let encoder = JSONEncoder()
             encoder.keyEncodingStrategy = .convertToSnakeCase
             return .requestCustomJSONEncodable(pushSetting, encoder: encoder)
+        case .withdraw(idToken: _, uid: _, userId: _):
+            return .requestPlain
 
             /** DELETE **/
         case .deleteUserImage(uid: _, userId: _, index: _):
             return .requestPlain
-        case .unregister(uid: _, userId: _):
+        case .unregister(idToken: _, uid: _, userId: _):
             return .requestPlain
         }
     }
@@ -262,7 +271,7 @@ extension UserProvider: TargetType {
             headers["uid"] = uid
             return headers
 
-        case .createUser(idToken: let idToken, uid: let uid, phone: _, smsCode: _, smsToken: _):
+        case .registerUser(idToken: let idToken, uid: let uid, phone: _, smsCode: _, smsToken: _):
             var _headers = ["Content-Type": "application/x-www-form-urlencoded; charset=utf-8"]
             _headers["id-token"] = idToken
             _headers["uid"] = uid
@@ -308,10 +317,15 @@ extension UserProvider: TargetType {
         case .updateUserPushSetting(uid: let uid, userId: _, pushSetting: _):
             headers["uid"] = uid
             return headers
+        case .withdraw(idToken: let idToken, uid: let uid, userId: _):
+            headers["id-token"] = idToken
+            headers["uid"] = uid
+            return headers
         case .deleteUserImage(uid: let uid, userId: _, index: _):
             headers["uid"] = uid
             return headers
-        case .unregister(uid: let uid, userId: _):
+        case .unregister(idToken: let idToken, uid: let uid, userId: _):
+            headers["id-token"] = idToken
             headers["uid"] = uid
             return headers
         }

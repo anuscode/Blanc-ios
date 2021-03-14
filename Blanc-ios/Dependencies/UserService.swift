@@ -151,7 +151,7 @@ class UserService {
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .flatMap { [unowned self] result in
-                provider.rx.request(.createUser(
+                provider.rx.request(.registerUser(
                         idToken: result.token,
                         uid: uid,
                         phone: phone,
@@ -319,6 +319,26 @@ class UserService {
             .map({ _ in Void() })
     }
 
+    func withdraw(currentUser: User, uid: String?, userId: String?) -> Single<Void> {
+        currentUser.rx
+            .getIDTokenResult()
+            .debug()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .flatMap { [unowned self] result in
+                provider.rx
+                    .request(.withdraw(
+                        idToken: result.token,
+                        uid: uid,
+                        userId: userId)
+                    )
+                    .debug()
+                    .filterSuccessfulStatusAndRedirectCodes()
+                    .map({ _ in Void() })
+            }
+            .asSingle()
+    }
+
     // DELETE
     func deleteUserImage(uid: String?, userId: String?, index: Int) -> Single<UserDTO> {
         provider.rx
@@ -330,13 +350,23 @@ class UserService {
             .map(UserDTO.self, using: decoder)
     }
 
-    func unregister(uid: String?, userId: String?) -> Single<Void> {
-        provider.rx
-            .request(.unregister(uid: uid, userId: userId))
+    func unregister(currentUser: User, uid: String?, userId: String?) -> Single<Void> {
+        currentUser.rx
+            .getIDTokenResult()
+            .debug()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .debug()
-            .filterSuccessfulStatusAndRedirectCodes()
-            .map({ _ in Void() })
+            .flatMap { [unowned self] result in
+                provider.rx
+                    .request(.unregister(
+                        idToken: result.token,
+                        uid: uid,
+                        userId: userId)
+                    )
+                    .debug()
+                    .filterSuccessfulStatusAndRedirectCodes()
+                    .map({ _ in Void() })
+            }
+            .asSingle()
     }
 }
