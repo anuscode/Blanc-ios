@@ -5,13 +5,15 @@ import FSPagerView
 
 class CarouselTableViewCell: UITableViewCell {
 
-    static let identifier: String = "CarouselCell"
+    static let identifier: String = "CarouselTableViewCell"
 
     private weak var user: UserDTO?
 
+    private let carouselCellIdentifier = "CarouselCell"
+
     lazy private var carousel: FSPagerView = {
         let carousel = FSPagerView(frame: frame)
-        carousel.register(FSPagerViewCell.self, forCellWithReuseIdentifier: "cell")
+        carousel.register(FSPagerViewCell.self, forCellWithReuseIdentifier: carouselCellIdentifier)
         carousel.translatesAutoresizingMaskIntoConstraints = false
         carousel.delegate = self
         carousel.dataSource = self
@@ -122,11 +124,11 @@ extension CarouselTableViewCell: FSPagerViewDataSource, FSPagerViewDelegate {
     }
 
     func pagerView(_ pagerView: FSPagerView, cellForItemAt index: Int) -> FSPagerViewCell {
-        let cell = pagerView.dequeueReusableCell(withReuseIdentifier: "cell", at: index)
+        let cell = pagerView.dequeueReusableCell(withReuseIdentifier: carouselCellIdentifier, at: index)
         guard (user?.userImages != nil || user?.userImages?.count ?? 0 > 0) else {
             return cell
         }
-        cell.imageView?.url(user?.userImages![index].url)
+        cell.imageView?.url(user?.userImages?[index].url)
         cell.imageView?.contentMode = .scaleAspectFill
         return cell
     }
@@ -140,6 +142,6 @@ extension CarouselTableViewCell: FSPagerViewDataSource, FSPagerViewDelegate {
     }
 
     func pagerView(_ pagerView: FSPagerView, shouldHighlightItemAt index: Int) -> Bool {
-        return false
+        false
     }
 }
