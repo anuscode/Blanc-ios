@@ -7,6 +7,8 @@ class CarouselTableViewCell: UITableViewCell {
 
     static let identifier: String = "CarouselCell"
 
+    private weak var user: UserDTO?
+
     lazy private var carousel: FSPagerView = {
         let carousel = FSPagerView(frame: frame)
         carousel.register(FSPagerViewCell.self, forCellWithReuseIdentifier: "cell")
@@ -30,16 +32,12 @@ class CarouselTableViewCell: UITableViewCell {
         return label
     }()
 
-    let gradientView: GradientView = {
+    private let gradientView: GradientView = {
         let alpha0 = UIColor.userCardGradientBlack.withAlphaComponent(0)
         let alpha1 = UIColor.userCardGradientBlack.withAlphaComponent(0.8)
         let gradient = GradientView(colors: [alpha0, alpha1], locations: [0.0, 1.0])
         return gradient
     }()
-
-    private weak var user: UserDTO?
-
-    private var homeViewModel: HomeViewModel?
 
     private var pageControl: FSPageControl = {
         let pageControl = FSPageControl()
