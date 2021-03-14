@@ -71,7 +71,7 @@ class InitPagerViewController: UIPageViewController {
         route()
             .observeOn(MainScheduler.instance)
             .flatMap { view -> Single<View> in
-                self.delay(2.3).map({ view })
+                self.delay(2.0).map({ view })
             }
             .subscribe(onSuccess: { view in
                 switch view {
@@ -103,12 +103,15 @@ class InitPagerViewController: UIPageViewController {
         }
         userService
             .isRegistered(uid: uid)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
             .subscribe(onSuccess: { isRegistered in
-                if (!isRegistered) {
+                switch isRegistered {
+                case true:
+                    self.route(subject)
+                case false:
                     subject.onNext(View.SMS)
-                    return
                 }
-                self.route(subject)
             }, onError: { err in
                 log.error(err)
                 self.toast(message: "유저 가입정보를 가져오는데 실패 하였습니다.")
@@ -121,10 +124,14 @@ class InitPagerViewController: UIPageViewController {
     private func route(_ subject: ReplaySubject<View>) {
         session?
             .generate()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
             .subscribe(onSuccess: { user in
-                if (self.session?.user?.available == true) {
+                let available = self.session?.user?.available
+                switch available {
+                case true:
                     subject.onNext(View.MAIN)
-                } else {
+                default:
                     subject.onNext(View.REGISTRATION)
                 }
             }, onError: { err in
