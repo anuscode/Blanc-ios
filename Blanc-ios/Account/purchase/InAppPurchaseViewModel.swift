@@ -74,13 +74,13 @@ class InAppPurchaseViewModel {
                     switch result {
                     case .DUPLICATE:
                         IAPManager.shared.finishPurchase(transaction: transaction)
-                        toast.onNext("트랜잭션이 정상적으로 반영 되었습니다.")
+                        toast.onNext("이미 반영 된 트랜잭션 입니다.")
                     case .INVALID:
                         IAPManager.shared.finishPurchase(transaction: nil)
                         toast.onNext("유효하지 않은 트랜잭션 입니다.")
                     case .PURCHASED:
                         IAPManager.shared.finishPurchase(transaction: transaction)
-                        toast.onNext("이미 반영 된 트랜잭션 입니다.")
+                        toast.onNext("트랜잭션이 정상적으로 반영 되었습니다.")
                     case .none:
                         IAPManager.shared.finishPurchase(transaction: nil)
                         toast.onNext("정상적이지 않은 값이 전달 되었습니다. 걱정 마시고 개발팀에 문의 주세요.")
