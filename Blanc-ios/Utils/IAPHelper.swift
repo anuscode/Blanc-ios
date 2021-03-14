@@ -26,6 +26,10 @@ final class IAPManager: NSObject, SKProductsRequestDelegate, SKPaymentTransactio
              point79000 = "ios.com.ground.blanc.point.79000.won"
     }
 
+    func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
+        products = response.products
+    }
+
     public func fetchProducts() {
         let request = SKProductsRequest(
             productIdentifiers: Set(Product.allCases.compactMap({ $0.rawValue }))
@@ -34,17 +38,13 @@ final class IAPManager: NSObject, SKProductsRequestDelegate, SKPaymentTransactio
         request.start()
     }
 
-    func productsRequest(_ request: SKProductsRequest, didReceive response: SKProductsResponse) {
-        products = response.products
-    }
-
     public func startPurchase(productId: String,
                               onPurchased: @escaping (SKPaymentTransaction) -> Void,
                               onRestored: @escaping (SKPaymentTransaction) -> Void,
                               onFailed: @escaping () -> Void,
                               onCanceled: @escaping () -> Void) {
         lock.wait()
-        log.info("purchase begins..")
+        log.info("beginning purchase process..")
         guard SKPaymentQueue.canMakePayments() else {
             log.info("unavailable for purchasing process.. terminating it..")
             return
