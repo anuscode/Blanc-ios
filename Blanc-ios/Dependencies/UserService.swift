@@ -31,9 +31,9 @@ class UserService {
             .asSingle()
     }
 
-    func getUser(userId: String?) -> Single<UserDTO> {
+    func getUser(parameters: [String: Any]) -> Single<UserDTO> {
         provider.rx
-            .request(.getUser(userId: userId))
+            .request(.getUser(parameters: parameters))
             .debug()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
@@ -42,14 +42,15 @@ class UserService {
     }
 
     func isRegistered(uid: String?) -> Single<Bool> {
-        provider.rx
-            .request(.isRegistered(uid: uid))
+        let parameters = ["uid": uid ?? ""]
+        return provider.rx
+            .request(.getUser(parameters: parameters))
             .debug()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .filterSuccessfulStatusAndRedirectCodes()
-            .map(UserDTO.self, using: decoder)
-            .map({ user in user.exists ?? false })
+            .map({ _ in true })
+            .catchErrorJustReturn(false)
     }
 
     func listRecommendedUsers(uid: String?, userId: String?) -> Single<[UserDTO]> {

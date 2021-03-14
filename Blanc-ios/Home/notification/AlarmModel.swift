@@ -40,69 +40,75 @@ class AlarmModel {
     }
 
     private func populate() {
-        alarmService.listAlarms(uid: session.uid)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [unowned self] pushes in
-                    self.pushes = pushes.sorted(by: {
-                        $0.createdAt ?? 0 > $1.createdAt ?? 0
-                    })
-                    publish()
-                }, onError: { err in
-                    log.error(err)
+        alarmService
+            .listAlarms(uid: session.uid)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onSuccess: { [unowned self] pushes in
+                self.pushes = pushes.sorted(by: {
+                    $0.createdAt ?? 0 > $1.createdAt ?? 0
                 })
-                .disposed(by: disposeBag)
+                publish()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     private func subscribeBroadcast() {
-        Broadcast.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [unowned self] push in
-                    pushes.insert(push, at: 0)
-                    publish()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        Broadcast
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onNext: { [unowned self] push in
+                pushes.insert(push, at: 0)
+                publish()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     private func subscribeBackground() {
-        Background.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [unowned self] push in
-                    self.populate()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        Background
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onNext: { [unowned self] push in
+                populate()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     func getUser(userId: String, onSuccess: @escaping (_ user: UserDTO) -> Void, onError: @escaping () -> Void) -> Void {
-        userService.getUser(userId: userId)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [unowned self] user in
-                    onSuccess(user)
-                }, onError: { err in
-                    onError()
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        let parameters = ["id": userId]
+        userService
+            .getUser(parameters: parameters)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onSuccess: { user in
+                onSuccess(user)
+            }, onError: { err in
+                onError()
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     func getPost(postId: String, onSuccess: @escaping (_ post: PostDTO) -> Void, onError: @escaping () -> Void) -> Void {
-        postService.getPost(postId: postId)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { post in
-                    onSuccess(post)
-                }, onError: { err in
-                    onError()
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        postService
+            .getPost(postId: postId)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onSuccess: { post in
+                onSuccess(post)
+            }, onError: { err in
+                onError()
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     func updateAllAlarmsAsRead() {
@@ -111,17 +117,18 @@ class AlarmModel {
             log.info("skipping.. because all alarms are marked as read.")
             return
         }
-        alarmService.updateAllAlarmsAsRead(uid: session.uid)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: {
-                    self.pushes.forEach({ push in
-                        push.isRead = true
-                    })
-                    self.publish()
-                }, onError: { err in
-                    log.error(err)
+        alarmService
+            .updateAllAlarmsAsRead(uid: session.uid)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onSuccess: {
+                self.pushes.forEach({ push in
+                    push.isRead = true
                 })
-                .disposed(by: disposeBag)
+                self.publish()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 }

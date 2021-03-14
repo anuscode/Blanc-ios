@@ -5,7 +5,7 @@ enum UserProvider {
 
     // GET
     case getSession(idToken: String?, uid: String?)
-    case getUser(userId: String?)
+    case getUser(parameters: [String: Any])
     case isRegistered(uid: String?)
 
     case listRecommendedUsers(uid: String?, userId: String?)
@@ -52,8 +52,8 @@ extension UserProvider: TargetType {
 
         case .getSession(idToken: _, uid: _):
             return "users/session"
-        case .getUser(userId: let userId):
-            return "users/\(userId ?? "")"
+        case .getUser(parameters: _):
+            return "users"
         case .isRegistered(uid: let uid):
             return "users/uid/\(uid ?? "")"
         case .getPushSetting(uid: _, userId: let userId):
@@ -108,7 +108,7 @@ extension UserProvider: TargetType {
     var method: Moya.Method {
         switch self {
         case .getSession(idToken: _, uid: _),
-             .getUser(userId: _),
+             .getUser(parameters: _),
              .getPushSetting(uid: _, userId: _),
              .listRecommendedUsers(uid: _, userId: _),
              .listCloseUsers(uid: _, userId: _),
@@ -136,7 +136,7 @@ extension UserProvider: TargetType {
             return .put
         case .deleteUserImage(uid: _, userId: _, index: _):
             return .delete
-        case .unregister(uid: _, userId: let _):
+        case .unregister(uid: _, userId: _):
             return .delete
         }
     }
@@ -149,8 +149,8 @@ extension UserProvider: TargetType {
         switch self {
         case .getSession(idToken: _, uid: _):
             return .requestPlain
-        case .getUser(userId: _):
-            return .requestPlain
+        case .getUser(parameters: let parameters):
+            return .requestParameters(parameters: parameters, encoding: URLEncoding.queryString)
         case .isRegistered(uid: _):
             return .requestPlain
         case .getPushSetting(uid: _, userId: _):
@@ -232,7 +232,7 @@ extension UserProvider: TargetType {
             headers["id-token"] = idToken
             headers["uid"] = uid
             return headers
-        case .getUser(userId: _):
+        case .getUser(parameters: _):
             return headers
         case .isRegistered(uid: let uid):
             headers["uid"] = uid

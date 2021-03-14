@@ -76,8 +76,12 @@ class RatedModel {
     }
 
     private func appendUser(userId: String?) {
+        guard let userId = userId else {
+            return
+        }
+        let parameters = ["id": userId ?? ""]
         userService
-            .getUser(userId: userId)
+            .getUser(parameters: parameters)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .subscribe(onSuccess: { user in

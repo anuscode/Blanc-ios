@@ -96,17 +96,15 @@ class InitPagerViewController: UIPageViewController {
 
     private func route() -> Single<View> {
         let subject: ReplaySubject<View> = ReplaySubject.create(bufferSize: 1)
-        let uid = auth.currentUser?.uid
-
-        if (uid == nil) {
+        guard let userService = userService,
+              let uid = auth.currentUser?.uid else {
             subject.onNext(View.LOGIN)
             return subject.take(1).asSingle()
         }
-
-        userService?
+        userService
             .isRegistered(uid: uid)
-            .subscribe(onSuccess: { isExists in
-                if (!isExists) {
+            .subscribe(onSuccess: { isRegistered in
+                if (!isRegistered) {
                     subject.onNext(View.SMS)
                     return
                 }
