@@ -100,7 +100,7 @@ class PostManagementBody: UIView {
         label.text = "좋아요 누른 사람 보기"
         label.translatesAutoresizingMaskIntoConstraints = false
         label.isUserInteractionEnabled = true
-        label.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapFavoriteUsersLabel))
+        label.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapFavoriteUserListLabel))
         return label
     }()
 
@@ -187,7 +187,8 @@ class PostManagementBody: UIView {
     }
 
     private func configureUserFavoriteCountLabel() {
-        userFavoriteCountLabel.text = "\(post?.favoriteUserIds?.count ?? 0) 명의 사람들이 이 게시물을 좋아합니다."
+        let text = "\(post?.favoriteUserIds?.count ?? 0) 명의 사람들이 이 게시물을 좋아합니다."
+        userFavoriteCountLabel.text = text
     }
 
     private func configureDescriptionLabel() {
@@ -200,15 +201,17 @@ class PostManagementBody: UIView {
     }
 
     private func configureHeartImage() {
-        heartImageView.image = (delegate?.isCurrentUserFavoritePost(post) == true) ? redHeartImage : emptyHeartImage
+        let isCurrentUserFavoritePost = delegate?.isCurrentUserFavoritePost(post) == true
+        heartImageView.image = isCurrentUserFavoritePost ? redHeartImage : emptyHeartImage
     }
 
     @objc private func didTapHeartImageView() {
-        heartImageView.image = (delegate?.isCurrentUserFavoritePost(post) != true) ? redHeartImage : emptyHeartImage
+        let isNotCurrentUserFavoritePost = delegate?.isCurrentUserFavoritePost(post) != true
+        heartImageView.image = isNotCurrentUserFavoritePost ? redHeartImage : emptyHeartImage
         delegate?.favorite(post)
     }
 
-    @objc private func didTapFavoriteUsersLabel() {
+    @objc private func didTapFavoriteUserListLabel() {
         delegate?.presentFavoriteUserListView(post)
     }
 }
@@ -221,11 +224,13 @@ extension PostManagementBody: FSPagerViewDataSource, FSPagerViewDelegate {
 
     func pagerView(_ pagerView: FSPagerView, cellForItemAt index: Int) -> FSPagerViewCell {
         let cell = pagerView.dequeueReusableCell(withReuseIdentifier: "PostBodyPagerViewCell", at: index)
-        guard (post?.resources != nil || post?.resources?.count ?? 0 > 0) else {
+        guard let resources = post?.resources, resources.count > 0 else {
             return cell
         }
         let width = UIScreen.main.bounds.size.width
-        cell.imageView?.url(post?.resources![index].url, size: CGSize(width: width, height: width))
+        let size = CGSize(width: width, height: width)
+        let url = resources[index].url
+        cell.imageView?.url(url, size: size)
         cell.imageView?.contentMode = .scaleAspectFill
         return cell
     }
