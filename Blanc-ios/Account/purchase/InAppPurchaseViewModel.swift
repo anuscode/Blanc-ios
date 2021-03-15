@@ -76,7 +76,7 @@ class InAppPurchaseViewModel {
                         IAPManager.shared.finishPurchase(transaction: transaction)
                         toast.onNext("이미 반영 된 트랜잭션 입니다.")
                     case .INVALID:
-                        IAPManager.shared.finishPurchase(transaction: nil)
+                        IAPManager.shared.finishPurchase(transaction: transaction)
                         toast.onNext("유효하지 않은 트랜잭션 입니다.")
                     case .PURCHASED:
                         IAPManager.shared.finishPurchase(transaction: transaction)
