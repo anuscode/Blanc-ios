@@ -16,13 +16,22 @@ protocol CommentTableViewCellDelegate: class {
 
 class CommentTableViewCell: UITableViewCell {
 
+    private class Config {
+        static let userImageDiameter: CGFloat = 35
+        static let nicknameFontSize: CGFloat = 12
+        static let dateFontSize: CGFloat = 10
+        static let commentFontSize: CGFloat = 14
+        static let favoriteFontSize: CGFloat = 12
+        static let replyFontSize: CGFloat = 12
+        static let containerDiameter: CGFloat = 25
+        static let imageDiameter: CGFloat = 13
+        static let countLabelWidth: CGFloat = 10
+        static let countLabelHeight: CGFloat = 25
+    }
+
     static let identifier: String = "CommentTableViewCell"
 
     private let ripple: Ripple = Ripple()
-
-    private class Const {
-        static let imageDiameter: CGFloat = CGFloat(35)
-    }
 
     private weak var comment: CommentDTO?
 
@@ -56,7 +65,7 @@ class CommentTableViewCell: UITableViewCell {
 
     lazy private var userImage: UIImageView = {
         let imageView: UIImageView = UIImageView()
-        imageView.layer.cornerRadius = Const.imageDiameter / 2
+        imageView.layer.cornerRadius = Config.userImageDiameter / 2
         imageView.clipsToBounds = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
@@ -64,7 +73,7 @@ class CommentTableViewCell: UITableViewCell {
 
     lazy private var nicknameLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14)
+        label.font = UIFont.systemFont(ofSize: Config.nicknameFontSize)
         label.textColor = .darkText
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -72,7 +81,7 @@ class CommentTableViewCell: UITableViewCell {
 
     lazy private var dateLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 11)
+        label.font = UIFont.systemFont(ofSize: Config.dateFontSize)
         label.textColor = .systemGray
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -80,7 +89,7 @@ class CommentTableViewCell: UITableViewCell {
 
     lazy private var commentLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 16)
+        label.font = UIFont.systemFont(ofSize: Config.commentFontSize)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .black
         label.numberOfLines = 0
@@ -89,9 +98,14 @@ class CommentTableViewCell: UITableViewCell {
 
     lazy private var buttonsStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [
-            thumbUpImageContainer, thumbUpCount, thumbDownImageContainer, thumbDownCount, replyView
+            thumbUpImageContainer,
+            thumbUpCount,
+            thumbDownImageContainer,
+            thumbDownCount,
+            replyView
         ])
         stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.setCustomSpacing(5, after: thumbDownCount)
         stackView.axis = .horizontal
         return stackView
     }()
@@ -100,18 +114,18 @@ class CommentTableViewCell: UITableViewCell {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.masksToBounds = true
-        view.layer.cornerRadius = 15
+        view.layer.cornerRadius = Config.containerDiameter / 2
         view.isUserInteractionEnabled = true
-        view.width(25, priority: 800)
-        view.height(25, priority: 800)
+        view.width(Config.containerDiameter, priority: 800)
+        view.height(Config.containerDiameter, priority: 800)
 
         ripple.activate(to: view)
         view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapThumbUpImageView))
 
         view.addSubview(thumbUpImageView)
         thumbUpImageView.snp.makeConstraints { make in
-            make.width.equalTo(15)
-            make.height.equalTo(15)
+            make.width.equalTo(Config.imageDiameter)
+            make.height.equalTo(Config.imageDiameter)
             make.center.equalToSuperview()
         }
         return view
@@ -121,18 +135,18 @@ class CommentTableViewCell: UITableViewCell {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.layer.masksToBounds = true
-        view.layer.cornerRadius = 15
+        view.layer.cornerRadius = Config.containerDiameter / 2
         view.isUserInteractionEnabled = true
-        view.width(25, priority: 800)
-        view.height(25, priority: 800)
+        view.width(Config.containerDiameter, priority: 800)
+        view.height(Config.containerDiameter, priority: 800)
 
         ripple.activate(to: view)
         view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapThumbDownImageView))
 
         view.addSubview(thumbDownImageView)
         thumbDownImageView.snp.makeConstraints { make in
-            make.width.equalTo(15)
-            make.height.equalTo(15)
+            make.width.equalTo(Config.imageDiameter)
+            make.height.equalTo(Config.imageDiameter)
             make.center.equalToSuperview()
         }
         return view
@@ -153,29 +167,31 @@ class CommentTableViewCell: UITableViewCell {
     lazy private var thumbUpCount: UILabel = {
         let label = UILabel()
         label.text = "0"
-        label.width(15, priority: 800)
-        label.height(25, priority: 800)
+        label.font = .systemFont(ofSize: 13)
+        label.width(Config.countLabelWidth, priority: 800)
+        label.height(Config.countLabelHeight, priority: 800)
         return label
     }()
 
     lazy private var thumbDownCount: UILabel = {
         let label = UILabel()
         label.text = "0"
-        label.width(15, priority: 800)
-        label.height(25, priority: 800)
+        label.font = .systemFont(ofSize: 13)
+        label.width(Config.countLabelWidth, priority: 800)
+        label.height(Config.countLabelHeight, priority: 800)
         return label
     }()
 
     lazy private var authorFavoriteCommentStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [
-            authorFavoriteCommentLabel, heartImageView
+            authorFavoriteCommentLabel,
+            heartImageView
         ])
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
         stackView.setCustomSpacing(8, after: authorFavoriteCommentLabel)
         stackView.isLayoutMarginsRelativeArrangement = true
-        stackView.layoutMargins = UIEdgeInsets(
-            top: CGFloat(3), left: 0, bottom: 0, right: 0)
+        stackView.layoutMargins = UIEdgeInsets(top: 3, left: 0, bottom: 0, right: 0)
         return stackView
     }()
 
@@ -210,7 +226,7 @@ class CommentTableViewCell: UITableViewCell {
 
         let label = UILabel()
         label.text = "답글 달기"
-        label.font = UIFont.systemFont(ofSize: 12)
+        label.font = UIFont.systemFont(ofSize: Config.replyFontSize)
         label.textAlignment = .center
         view.addSubview(label)
         label.snp.makeConstraints { make in
@@ -257,8 +273,8 @@ class CommentTableViewCell: UITableViewCell {
         userImage.snp.makeConstraints { make in
             make.leading.equalTo(frontMargin.snp.trailing)
             make.top.equalToSuperview()
-            make.width.equalTo(Const.imageDiameter)
-            make.height.equalTo(Const.imageDiameter)
+            make.width.equalTo(Config.userImageDiameter)
+            make.height.equalTo(Config.userImageDiameter)
         }
 
         nicknameLabel.snp.makeConstraints { make in
@@ -294,8 +310,9 @@ class CommentTableViewCell: UITableViewCell {
     func bind(comment: CommentDTO?, delegate: CommentTableViewCellDelegate) {
         self.comment = comment
         self.delegate = delegate
+        let userImageSize = CGSize(width: Config.userImageDiameter, height: Config.userImageDiameter)
 
-        userImage.url(comment?.commenter?.avatar, size: CGSize(width: Const.imageDiameter, height: Const.imageDiameter))
+        userImage.url(comment?.commenter?.avatar, size: userImageSize)
         nicknameLabel.text = comment?.commenter?.nickname ?? ""
         dateLabel.text = comment?.createdAt.asStaledTime()
         commentLabel.text = comment?.comment ?? "[ERROR]"
@@ -328,8 +345,8 @@ class CommentTableViewCell: UITableViewCell {
     }
 
     private func showFavoriteCommentMessageStackView(_ flag: Bool) {
-        authorFavoriteCommentStackView.layoutMargins = UIEdgeInsets(
-            top: CGFloat(flag ? 3 : 0), left: 0, bottom: 0, right: 0)
+        let top = CGFloat(flag ? 3 : 0)
+        authorFavoriteCommentStackView.layoutMargins = UIEdgeInsets(top: top, left: 0, bottom: 0, right: 0)
         authorFavoriteCommentStackView.subviews.forEach { view in
             view.visible(flag)
         }
