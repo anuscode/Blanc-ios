@@ -21,7 +21,7 @@ class CommentTableViewCell: UITableViewCell {
         static let nicknameFontSize: CGFloat = 12
         static let dateFontSize: CGFloat = 10
         static let commentFontSize: CGFloat = 14
-        static let favoriteFontSize: CGFloat = 12
+        static let authorFavoriteFontSize: CGFloat = 10
         static let replyFontSize: CGFloat = 12
         static let containerDiameter: CGFloat = 25
         static let imageDiameter: CGFloat = 13
@@ -73,7 +73,7 @@ class CommentTableViewCell: UITableViewCell {
 
     lazy private var nicknameLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: Config.nicknameFontSize)
+        label.font = .systemFont(ofSize: Config.nicknameFontSize)
         label.textColor = .darkText
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -81,7 +81,7 @@ class CommentTableViewCell: UITableViewCell {
 
     lazy private var dateLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: Config.dateFontSize)
+        label.font = .systemFont(ofSize: Config.dateFontSize)
         label.textColor = .systemGray
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -89,7 +89,7 @@ class CommentTableViewCell: UITableViewCell {
 
     lazy private var commentLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: Config.commentFontSize)
+        label.font = .systemFont(ofSize: Config.commentFontSize)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.textColor = .black
         label.numberOfLines = 0
@@ -199,7 +199,7 @@ class CommentTableViewCell: UITableViewCell {
         var label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "작성자가 이 댓글을 좋아합니다!"
-        label.font = UIFont.systemFont(ofSize: 12)
+        label.font = .systemFont(ofSize: Config.authorFavoriteFontSize)
         label.textColor = .systemGray
         label.visible(false)
         return label
@@ -208,8 +208,8 @@ class CommentTableViewCell: UITableViewCell {
     lazy private var heartImageView: UIImageView = {
         var imageView = UIImageView(image: UIImage(named: "ic_heart_red"))
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.width(10, priority: 800)
-        imageView.height(10, priority: 800)
+        imageView.width(8, priority: 800)
+        imageView.height(8, priority: 800)
         imageView.visible(false)
         return imageView
     }()
@@ -226,7 +226,7 @@ class CommentTableViewCell: UITableViewCell {
 
         let label = UILabel()
         label.text = "답글 달기"
-        label.font = UIFont.systemFont(ofSize: Config.replyFontSize)
+        label.font = .systemFont(ofSize: Config.replyFontSize)
         label.textAlignment = .center
         view.addSubview(label)
         label.snp.makeConstraints { make in
