@@ -79,14 +79,14 @@ class PostManagementBody: UIView {
         stackView.setCustomSpacing(8, after: favoriteUsersLabel)
         stackView.isLayoutMarginsRelativeArrangement = true
         stackView.layoutMargins = UIEdgeInsets(
-                top: 0, left: CGFloat(PostConfig.textHorizontalMargin),
-                bottom: 0, right: CGFloat(PostConfig.textHorizontalMargin))
+            top: 0, left: PostConfig.textHorizontalMargin,
+            bottom: 0, right: PostConfig.textHorizontalMargin)
         return stackView
     }()
 
     lazy private var userFavoriteCountLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 17)
+        label.font = .systemFont(ofSize: PostConfig.bodyTextSize1)
         label.textColor = .black
         label.text = "0 명의 사람들이 이 게시물을 좋아합니다."
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -95,7 +95,7 @@ class PostManagementBody: UIView {
 
     lazy private(set) var favoriteUsersLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 16)
+        label.font = .systemFont(ofSize: PostConfig.bodyTextSize1)
         label.textColor = .systemPink
         label.text = "좋아요 누른 사람 보기"
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -106,7 +106,7 @@ class PostManagementBody: UIView {
 
     lazy private var descriptionLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 16)
+        label.font = .systemFont(ofSize: PostConfig.bodyTextSize1)
         label.textColor = .black
         label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -173,10 +173,15 @@ class PostManagementBody: UIView {
     }
 
     private func configureCarousel() {
-        if ((post?.resources?.count ?? 0) > 0) {
+        let numberOfItems = post?.resources?.count ?? 0
+        if (numberOfItems > 0) {
             carousel.reloadData()
+            pageControl.numberOfPages = numberOfItems
+            pageControl.visible(true)
+            pageControl.currentPage = 0
             carousel.visible(true)
         } else {
+            pageControl.visible(false)
             carousel.visible(false)
         }
     }
