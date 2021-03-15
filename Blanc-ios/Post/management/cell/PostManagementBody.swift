@@ -69,14 +69,14 @@ class PostManagementBody: UIView {
 
     lazy private var textsStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [
-            userFavoriteCountLabel, descriptionLabel, favoriteUsersLabel
+            userFavoriteCountLabel, descriptionLabel, favoriteUserListLabel
         ])
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .vertical
         stackView.distribution = .fill
         stackView.setCustomSpacing(8, after: userFavoriteCountLabel)
         stackView.setCustomSpacing(8, after: descriptionLabel)
-        stackView.setCustomSpacing(8, after: favoriteUsersLabel)
+        stackView.setCustomSpacing(8, after: favoriteUserListLabel)
         stackView.isLayoutMarginsRelativeArrangement = true
         stackView.layoutMargins = UIEdgeInsets(
             top: 0, left: PostConfig.textHorizontalMargin,
@@ -86,16 +86,16 @@ class PostManagementBody: UIView {
 
     lazy private var userFavoriteCountLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: PostConfig.bodyTextSize1)
+        label.font = .systemFont(ofSize: PostConfig.favoriteUserCountFontSize)
         label.textColor = .black
         label.text = "0 명의 사람들이 이 게시물을 좋아합니다."
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
-    lazy private(set) var favoriteUsersLabel: UILabel = {
+    lazy private(set) var favoriteUserListLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: PostConfig.bodyTextSize1)
+        label.font = .systemFont(ofSize: PostConfig.favoriteUserListFontSize)
         label.textColor = .systemPink
         label.text = "좋아요 누른 사람 보기"
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -106,7 +106,7 @@ class PostManagementBody: UIView {
 
     lazy private var descriptionLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: PostConfig.bodyTextSize1)
+        label.font = .systemFont(ofSize: PostConfig.descriptionFontSize)
         label.textColor = .black
         label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false

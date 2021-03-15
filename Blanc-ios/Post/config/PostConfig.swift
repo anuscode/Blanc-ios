@@ -7,6 +7,9 @@ class PostConfig {
     static let textHorizontalMargin: CGFloat = 16
     static let textVerticalMargin: CGFloat = 8
 
-    static let bodyTextSize1: CGFloat = 15
-    static let bodyTextSize2: CGFloat = 14
+    static let favoriteUserCountFontSize: CGFloat = 15
+    static let lastCommentFontSize: CGFloat = 15
+    static let commentCountFontSize: CGFloat = 15
+    static let descriptionFontSize: CGFloat = 15
+    static let favoriteUserListFontSize: CGFloat = 15
 }

@@ -63,18 +63,16 @@ class PostSingleBody: UIView {
 
     lazy private var userFavoriteCountLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 17)
+        label.font = .systemFont(ofSize: PostConfig.favoriteUserCountFontSize)
         label.textColor = .black
-        label.text = "3 명의 사람들이 이 게시물을 좋아합니다."
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
     lazy private var descriptionLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 16)
+        label.font = .systemFont(ofSize: PostConfig.descriptionFontSize)
         label.textColor = .black
-        label.text = "안녕하세요 :) 방갑습니다."
         label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -148,27 +146,37 @@ class PostSingleBody: UIView {
     }
 
     private func configureCarousel() {
-        if ((post?.resources?.count ?? 0) > 0) {
+        let numberOfPosts = post?.resources?.count ?? 0
+        if (numberOfPosts > 0) {
+            pageControl.numberOfPages = numberOfPosts
+            pageControl.currentPage = 0
+            pageControl.visible(true)
             carousel.reloadData()
+            carousel.visible(true)
         } else {
-            carousel.height(0)
+            pageControl.visible(false)
+            carousel.visible(false)
         }
     }
 
     private func setUserFavoriteCountLabel() {
-        userFavoriteCountLabel.text = "\(post?.favoriteUserIds?.count ?? 0) 명의 사람들이 이 게시물을 좋아합니다."
+        let favoriteUsersCount = post?.favoriteUserIds?.count ?? 0
+        userFavoriteCountLabel.text = "\(favoriteUsersCount) 명의 사람들이 이 게시물을 좋아합니다."
     }
 
     private func setDescriptionLabel() {
-        descriptionLabel.text = post?.description.isEmpty() == true ? "이미지 only 게시물 입니다." : post?.description
+        let isEmpty = post?.description.isEmpty() == true
+        descriptionLabel.text = isEmpty ? "..." : post?.description
     }
 
     private func setHeartImage() {
-        heartImageView.image = (delegate?.isCurrentUserFavoritePost() == true) ? redHeartImage : emptyHeartImage
+        let isCurrentUserFavoritePost = delegate?.isCurrentUserFavoritePost() == true
+        heartImageView.image = isCurrentUserFavoritePost ? redHeartImage : emptyHeartImage
     }
 
     @objc private func didTapHeartImageView() {
-        heartImageView.image = (delegate?.isCurrentUserFavoritePost() != true) ? redHeartImage : emptyHeartImage
+        let isNotCurrentUserFavoritePost = delegate?.isCurrentUserFavoritePost() != true
+        heartImageView.image = isNotCurrentUserFavoritePost ? redHeartImage : emptyHeartImage
         delegate?.favorite()
     }
 }
@@ -181,10 +189,11 @@ extension PostSingleBody: FSPagerViewDataSource, FSPagerViewDelegate {
 
     func pagerView(_ pagerView: FSPagerView, cellForItemAt index: Int) -> FSPagerViewCell {
         let cell = pagerView.dequeueReusableCell(withReuseIdentifier: "PostSingleBodyPagerViewCell", at: index)
-        guard (post?.resources != nil || post?.resources?.count ?? 0 > 0) else {
+        guard let resources = post?.resources, resources.count > 0 else {
             return cell
         }
-        cell.imageView?.url(post?.resources![index].url, size: CGSize(width: frame.size.width, height: frame.size.width))
+        let size = CGSize(width: frame.size.width, height: frame.size.width)
+        cell.imageView?.url(resources[index].url, size: size)
         cell.imageView?.contentMode = .scaleAspectFill
         return cell
     }
@@ -198,6 +207,6 @@ extension PostSingleBody: FSPagerViewDataSource, FSPagerViewDelegate {
     }
 
     func pagerView(_ pagerView: FSPagerView, shouldHighlightItemAt index: Int) -> Bool {
-        return false
+        false
     }
 }

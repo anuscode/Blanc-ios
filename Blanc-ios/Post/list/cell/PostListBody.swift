@@ -47,7 +47,7 @@ class PostListBody: UIView {
 
     lazy private var favoriteUserCountLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 17)
+        label.font = .systemFont(ofSize: PostConfig.favoriteUserCountFontSize)
         label.textColor = .black
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -55,7 +55,7 @@ class PostListBody: UIView {
 
     lazy private(set) var lastCommentLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 16)
+        label.font = .systemFont(ofSize: PostConfig.lastCommentFontSize)
         label.textColor = .black
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -63,7 +63,7 @@ class PostListBody: UIView {
 
     lazy private(set) var commentCountLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 16)
+        label.font = .systemFont(ofSize: PostConfig.commentCountFontSize)
         label.textColor = .systemBlue
         label.translatesAutoresizingMaskIntoConstraints = false
         label.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapCommentCountLabel))
@@ -72,7 +72,7 @@ class PostListBody: UIView {
 
     lazy private var descriptionLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 16)
+        label.font = .systemFont(ofSize: PostConfig.descriptionFontSize)
         label.textColor = .black
         label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false
