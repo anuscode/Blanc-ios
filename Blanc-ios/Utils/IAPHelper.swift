@@ -109,8 +109,7 @@ final class IAPManager: NSObject, SKProductsRequestDelegate, SKPaymentTransactio
         } else {
             onCanceled?()
         }
-        SKPaymentQueue.default().remove(self)
-        lock.signal()
+        finishPurchase(transaction: transaction)
     }
 
     private func deliverPurchaseNotificationFor(identifier: String) {

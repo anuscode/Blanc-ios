@@ -63,7 +63,8 @@ class InAppPurchaseViewModel {
             }
 
             log.info("token: \(token)")
-            paymentService.purchase(currentUser: currentUser, uid: uid, userId: userId, token: token)
+            paymentService
+                .purchase(currentUser: currentUser, uid: uid, userId: userId, token: token)
                 .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
                 .flatMap({ [unowned self] payment in
                     session.refresh().map({ _ in payment })
@@ -98,7 +99,7 @@ class InAppPurchaseViewModel {
         let onFailed = { [unowned self] in
             // IAPManager.shared.finishPurchase(transaction: nil)
             loading.onNext(false)
-            toast.onNext("애플 인앱 결제를 완료하지 못했습니다.")
+            toast.onNext("애플 서버의 응답이 없습니다.")
         }
 
         let onCanceled = { [unowned self] in
