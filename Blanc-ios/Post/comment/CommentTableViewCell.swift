@@ -18,6 +18,7 @@ class CommentTableViewCell: UITableViewCell {
 
     private class Config {
         static let userImageDiameter: CGFloat = 35
+        static let favoriteDiameter: CGFloat = 20
         static let nicknameFontSize: CGFloat = 12
         static let dateFontSize: CGFloat = 10
         static let commentFontSize: CGFloat = 14
@@ -34,6 +35,8 @@ class CommentTableViewCell: UITableViewCell {
     private let ripple: Ripple = Ripple()
 
     private weak var comment: CommentDTO?
+
+    private weak var post: PostDTO?
 
     private weak var delegate: CommentTableViewCellDelegate?
 
@@ -182,38 +185,6 @@ class CommentTableViewCell: UITableViewCell {
         return label
     }()
 
-    lazy private var authorFavoriteCommentStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [
-            authorFavoriteCommentLabel,
-            heartImageView
-        ])
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.axis = .horizontal
-        stackView.setCustomSpacing(8, after: authorFavoriteCommentLabel)
-        stackView.isLayoutMarginsRelativeArrangement = true
-        stackView.layoutMargins = UIEdgeInsets(top: 3, left: 0, bottom: 0, right: 0)
-        return stackView
-    }()
-
-    lazy private var authorFavoriteCommentLabel: UILabel = {
-        var label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "작성자가 이 댓글을 좋아합니다!"
-        label.font = .systemFont(ofSize: Config.authorFavoriteFontSize)
-        label.textColor = .systemGray
-        label.visible(false)
-        return label
-    }()
-
-    lazy private var heartImageView: UIImageView = {
-        var imageView = UIImageView(image: UIImage(named: "ic_heart_red"))
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.width(8, priority: 800)
-        imageView.height(8, priority: 800)
-        imageView.visible(false)
-        return imageView
-    }()
-
     lazy private var replyView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -236,6 +207,31 @@ class CommentTableViewCell: UITableViewCell {
         return view
     }()
 
+    lazy private var favoriteView: UIView = {
+        let view = UIView()
+        view.visible(false)
+        view.addSubview(favoriteUserImage)
+        favoriteUserImage.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        let heartImageView = UIImageView(image: UIImage(named: "ic_heart_red"))
+        view.addSubview(heartImageView)
+        heartImageView.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().inset(-3)
+            make.bottom.equalToSuperview().inset(-3)
+            make.width.equalTo(10)
+            make.height.equalTo(10)
+        }
+        return view
+    }()
+
+    lazy private var favoriteUserImage: UIImageView = {
+        let userImageView = UIImageView()
+        userImageView.layer.cornerRadius = Config.favoriteDiameter / 2
+        userImageView.clipsToBounds = true
+        return userImageView
+    }()
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configureSubviews()
@@ -256,8 +252,8 @@ class CommentTableViewCell: UITableViewCell {
         content.addSubview(userImage)
         content.addSubview(nicknameLabel)
         content.addSubview(dateLabel)
+        content.addSubview(favoriteView)
         content.addSubview(commentLabel)
-        content.addSubview(authorFavoriteCommentStackView)
         content.addSubview(buttonsStackView)
     }
 
@@ -290,40 +286,56 @@ class CommentTableViewCell: UITableViewCell {
 
         commentLabel.snp.makeConstraints { make in
             make.leading.equalTo(userImage.snp.trailing).inset(-11)
-            make.top.equalTo(nicknameLabel.snp.bottom).inset(-1)
+            make.top.equalTo(nicknameLabel.snp.bottom).inset(-3)
             make.trailing.equalToSuperview().inset(10)
-        }
-
-        authorFavoriteCommentStackView.snp.makeConstraints { make in
-            make.leading.equalTo(userImage.snp.trailing).inset(-11)
-            make.top.equalTo(commentLabel.snp.bottom)
-            make.bottom.equalTo(buttonsStackView.snp.top)
         }
 
         buttonsStackView.snp.makeConstraints { make in
             make.leading.equalTo(userImage.snp.trailing).inset(-8)
-            make.top.equalTo(authorFavoriteCommentLabel.snp.bottom)
+            make.top.equalTo(commentLabel.snp.bottom)
             make.bottom.equalToSuperview()
+        }
+
+        favoriteView.snp.makeConstraints { make in
+            make.leading.equalTo(buttonsStackView.snp.trailing).inset(-8)
+            make.centerY.equalTo(buttonsStackView.snp.centerY)
         }
     }
 
     func bind(comment: CommentDTO?, delegate: CommentTableViewCellDelegate) {
         self.comment = comment
         self.delegate = delegate
-        let userImageSize = CGSize(width: Config.userImageDiameter, height: Config.userImageDiameter)
 
-        userImage.url(comment?.commenter?.avatar, size: userImageSize)
-        nicknameLabel.text = comment?.commenter?.nickname ?? ""
-        dateLabel.text = comment?.createdAt.asStaledTime()
-        commentLabel.text = comment?.comment ?? "[ERROR]"
-        frontMargin.frame = CGRect(x: 0, y: 0, width: 35 * ((comment?.lv ?? 1) - 1), height: 0)
-        showButtonStackView(comment?.lv ?? 1 == 1)
-        showFavoriteCommentMessageStackView(delegate.isAuthorFavoriteComment(comment: comment))
+        let userImageDiameter = Config.userImageDiameter
+        let userImageSize = CGSize(width: userImageDiameter, height: userImageDiameter)
+        let userImageUrl = comment?.commenter?.avatar
+        let nickname = comment?.commenter?.nickname ?? ""
+        let staledTime = comment?.createdAt.asStaledTime()
+        let commentText = comment?.comment ?? "[ERROR]"
+        let frontMarginFrame = CGRect(x: 0, y: 0, width: 35 * ((comment?.lv ?? 1) - 1), height: 0)
+        let isButtonShown = comment?.lv ?? 1 == 1
+        userImage.url(userImageUrl, size: userImageSize)
+        nicknameLabel.text = nickname
+        dateLabel.text = staledTime
+        commentLabel.text = commentText
+        frontMargin.frame = frontMarginFrame
+        showButtonStackView(isButtonShown)
 
-        thumbUpImageView.image = delegate.isThumbedUp(comment: comment) == true ? thumbUpFilled : thumbUpEmpty
-        thumbUpCount.text = "\(comment?.thumbUpUserIds?.count ?? 0)"
-        thumbDownImageView.image = delegate.isThumbedDown(comment: comment) == true ? thumbDownFilled : thumbDownEmpty
-        thumbDownCount.text = "\(comment?.thumbDownUserIds?.count ?? 0)"
+        let isAuthorFavoriteComment = delegate.isAuthorFavoriteComment(comment: comment)
+        let favoriteDiameter = Config.favoriteDiameter
+        let size = CGSize(width: favoriteDiameter, height: favoriteDiameter)
+        let authorUserImageUrl = comment?.post?.author?.avatar
+        favoriteUserImage.url(authorUserImageUrl, size: size)
+        favoriteView.visible(isAuthorFavoriteComment)
+
+        let isThumbedUp = delegate.isThumbedUp(comment: comment) == true
+        let thumbUpCountText = "\(comment?.thumbUpUserIds?.count ?? 0)"
+        let isThumbedDown = delegate.isThumbedDown(comment: comment) == true
+        let thumbDownCountText = "\(comment?.thumbDownUserIds?.count ?? 0)"
+        thumbUpImageView.image = isThumbedUp ? thumbUpFilled : thumbUpEmpty
+        thumbUpCount.text = thumbUpCountText
+        thumbDownImageView.image = isThumbedDown ? thumbDownFilled : thumbDownEmpty
+        thumbDownCount.text = thumbDownCountText
     }
 
     @objc private func didTapThumbUpImageView() {
@@ -340,14 +352,6 @@ class CommentTableViewCell: UITableViewCell {
 
     private func showButtonStackView(_ flag: Bool) {
         buttonsStackView.subviews.forEach { view in
-            view.visible(flag)
-        }
-    }
-
-    private func showFavoriteCommentMessageStackView(_ flag: Bool) {
-        let top = CGFloat(flag ? 3 : 0)
-        authorFavoriteCommentStackView.layoutMargins = UIEdgeInsets(top: top, left: 0, bottom: 0, right: 0)
-        authorFavoriteCommentStackView.subviews.forEach { view in
             view.visible(flag)
         }
     }

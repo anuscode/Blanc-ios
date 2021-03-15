@@ -130,13 +130,21 @@ class PostSingleViewController: UIViewController {
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [unowned self] post in
                 self.post = post
-                comments = CommentDTO.flatten(comments: post.comments).toArray() as! [CommentDTO]
+                comments = (post.comments?.flatten(post: post).toArray() as? [CommentDTO]) ?? [CommentDTO]()
 
                 let isFirst = self.post == nil
                 let isThumbUpdates = self.post?.comments?.count == post.comments?.count
-                update(animatingDifferences: (!isFirst && !isThumbUpdates))
+                let animatingDifferences: Bool = (!isFirst && !isThumbUpdates)
+                update(animatingDifferences: animatingDifferences)
+            })
+            .disposed(by: disposeBag)
 
-                if (self.post?.enableComment == false) {
+        postSingleViewModel?
+            .post
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [unowned self] post in
+                if (post.enableComment == false) {
                     bottomTextField.placeHolder = "댓글이 금지 된 게시물 입니다."
                     bottomTextField.isEnabled = false
                 }

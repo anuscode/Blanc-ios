@@ -40,11 +40,11 @@ class PostManagementViewController: UIViewController {
 
     private var replyTo: CommentDTO?
 
-    var channel: Channel?
+    internal var channel: Channel?
 
-    var session: Session?
+    internal var session: Session?
 
-    var postManagementViewModel: PostManagementViewModel?
+    internal var postManagementViewModel: PostManagementViewModel?
 
     lazy private var dataSource: DataSource<Section, Postable> = DataSource<Section, Postable>(tableView: tableView) { [unowned self] (tableView, indexPath, data) -> UITableViewCell? in
         if (data is PostDTO) {
@@ -139,14 +139,17 @@ class PostManagementViewController: UIViewController {
         tableView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+
         bottomTextField.snp.makeConstraints { make in
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
             make.bottom.equalTo(view.safeAreaLayoutGuide)
         }
+
         closeTapBackground.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
+
         emptyView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide)
             make.leading.equalToSuperview()
@@ -161,11 +164,17 @@ class PostManagementViewController: UIViewController {
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [unowned self] posts in
-                data = PostDTO.flatten(posts: posts).toArray()
+                data = posts.flatten().toArray()
                 update()
-                emptyView.visible(data.count == 0)
-            }, onError: { err in
-                log.error(err)
+            })
+            .disposed(by: disposeBag)
+
+        postManagementViewModel?
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] posts in
+                emptyView.visible(posts.count == 0)
             })
             .disposed(by: disposeBag)
     }

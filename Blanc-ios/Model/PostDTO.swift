@@ -50,11 +50,21 @@ extension PostDTO {
 
 extension PostDTO {
     @discardableResult
-    static func flatten(posts: [PostDTO],
-                        result: LinkedList<Postable> = LinkedList()) -> LinkedList<Postable> {
+    static func flatten(posts: [PostDTO], result: LinkedList<Postable> = LinkedList()) -> LinkedList<Postable> {
         posts.forEach { post in
             result.append(post)
-            CommentDTO.flatten(comments: post.comments, result: result)
+            post.comments?.flatten(post: post, result: result)
+        }
+        return result
+    }
+}
+
+extension Array where Element == PostDTO {
+    @discardableResult
+    func flatten(result: LinkedList<Postable> = LinkedList()) -> LinkedList<Postable> {
+        forEach { post in
+            result.append(post)
+            post.comments?.flatten(post: post, result: result)
         }
         return result
     }
