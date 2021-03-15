@@ -72,7 +72,7 @@ class EmptyView: UIView {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.isUserInteractionEnabled = true
-        view.backgroundColor = .systemBlue
+        view.backgroundColor = .tinderPink
         view.layer.cornerRadius = 5
         view.layer.masksToBounds = true
         view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapButton))
