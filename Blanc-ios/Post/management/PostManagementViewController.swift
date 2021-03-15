@@ -52,13 +52,11 @@ class PostManagementViewController: UIViewController {
             cell.bind(post: (data as! PostDTO), delegate: self)
             return cell
         }
-
         if (data is CommentDTO) {
             let cell = tableView.dequeueReusableCell(withIdentifier: CommentCell.identifier, for: indexPath) as! CommentCell
             cell.bind(comment: (data as! CommentDTO), delegate: self)
             return cell
         }
-
         return nil
     }
 
@@ -262,7 +260,12 @@ extension PostManagementViewController: PostManagementTableViewCellDelegate {
             return
         }
         channel?.next(value: post)
-        navigationController?.pushViewController(.favoriteUsers, current: self)
+        navigationController?.pushViewController(
+            .favoriteUsers,
+            current: self,
+            hideBottomWhenStart: true,
+            hideBottomWhenEnd: true
+        )
     }
 
     func deletePost(postId: String?) {
