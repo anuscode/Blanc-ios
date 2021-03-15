@@ -219,12 +219,8 @@ class PostListBody: UIView {
     }
 
     private func configureDescriptionLabel() {
-        if (post?.description != nil && post?.description?.isEmpty != true) {
-            descriptionLabel.text = "\(post?.description ?? "")"
-            descriptionLabel.visible(true)
-        } else {
-            descriptionLabel.visible(false)
-        }
+        let isNotEmpty = post?.description != nil && post?.description?.isEmpty != true
+        descriptionLabel.text = isNotEmpty ? "\(post?.description ?? "")" : "..."
     }
 
     private func configureLastCommentLabel() {

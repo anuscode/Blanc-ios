@@ -140,9 +140,9 @@ class PostSingleBody: UIView {
         self.delegate = delegate
 
         configureCarousel()
-        setDescriptionLabel()
-        setUserFavoriteCountLabel()
-        setHeartImage()
+        configureDescriptionLabel()
+        configureUserFavoriteCountLabel()
+        configureHeartImage()
     }
 
     private func configureCarousel() {
@@ -159,17 +159,17 @@ class PostSingleBody: UIView {
         }
     }
 
-    private func setUserFavoriteCountLabel() {
+    private func configureUserFavoriteCountLabel() {
         let favoriteUsersCount = post?.favoriteUserIds?.count ?? 0
         userFavoriteCountLabel.text = "\(favoriteUsersCount) 명의 사람들이 이 게시물을 좋아합니다."
     }
 
-    private func setDescriptionLabel() {
-        let isEmpty = post?.description.isEmpty() == true
-        descriptionLabel.text = isEmpty ? "..." : post?.description
+    private func configureDescriptionLabel() {
+        let isNotEmpty = post?.description != nil && post?.description?.isEmpty != true
+        descriptionLabel.text = isNotEmpty ? "\(post?.description ?? "")" : "..."
     }
 
-    private func setHeartImage() {
+    private func configureHeartImage() {
         let isCurrentUserFavoritePost = delegate?.isCurrentUserFavoritePost() == true
         heartImageView.image = isCurrentUserFavoritePost ? redHeartImage : emptyHeartImage
     }
