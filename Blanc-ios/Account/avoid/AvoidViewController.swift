@@ -13,7 +13,7 @@ class AvoidViewController: UIViewController {
 
     private var dataSource: UITableViewDiffableDataSource<Section, Contact>?
 
-    var avoidViewModel: AvoidViewModel?
+    internal var avoidViewModel: AvoidViewModel?
 
     lazy private var leftBarButtonItem: UIBarButtonItem = {
         UIBarButtonItem(customView: LeftSideBarView(title: "지인 차단"))
@@ -99,34 +99,41 @@ class AvoidViewController: UIViewController {
     }
 
     private func subscribeAvoidViewModel() {
-        avoidViewModel?.observe()
+        avoidViewModel?
+            .contacts
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [unowned self] contacts in
                 self.contacts = contacts
-                DispatchQueue.main.async {
-                    update()
-                }
-            }, onError: { err in
-                log.error(err)
+                update()
+            })
+            .disposed(by: disposeBag)
+
+        avoidViewModel?
+            .toast
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] message in
+                toast(message: message)
+            })
+            .disposed(by: disposeBag)
+
+        avoidViewModel?
+            .popToRootView
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] _ in
+                navigationController?.popToRootViewController(animated: true)
             })
             .disposed(by: disposeBag)
     }
 
     private func populate() {
-        avoidViewModel?.populate(onError: {
-            self.toast(message: "연락처 정보를 가져오지 못했습니다.")
-        })
+        avoidViewModel?.populate()
     }
 
     @objc private func didTapButton() {
-        avoidViewModel?.updateUserContacts(onSuccess: { [unowned self] in
-            toast(message: "이제 연락처에 등록 된 사람은 서로 추천에서 제외 됩니다.") {
-                navigationController?.popToRootViewController(animated: true)
-            }
-        }, onError: { [unowned self] in
-            toast(message: "아는 사람 만나지 않기 등록 중 에러가 발생 하였습니다.")
-        })
+        avoidViewModel?.updateUserContacts()
     }
 }
 
