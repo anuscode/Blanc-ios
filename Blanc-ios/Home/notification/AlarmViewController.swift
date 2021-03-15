@@ -15,7 +15,7 @@ class AlarmViewController: UIViewController {
     internal weak var channel: Channel?
 
     lazy private var leftBarButtonItem: UIBarButtonItem = {
-        UIBarButtonItem(customView: LeftSideBarView(title: "알림 내역"))
+        UIBarButtonItem(customView: LeftSideBarView(title: "알림"))
     }()
 
     lazy private var tableView: UITableView = {
