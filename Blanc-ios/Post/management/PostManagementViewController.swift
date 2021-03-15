@@ -66,8 +66,8 @@ class PostManagementViewController: UIViewController {
 
     lazy private var emptyView: EmptyView = {
         let emptyView = EmptyView(animationName: "girl_with_phone", animationSpeed: 1)
-        emptyView.primaryText = "게시물이\n존재하지 않습니다."
-        emptyView.secondaryText = "첫번째 게시물을 작성해 보세요.."
+        emptyView.primaryText = "게시물이 존재하지 않습니다."
+        emptyView.secondaryText = "첫번째 게시물을 작성해 보세요."
         emptyView.buttonText = "메인 화면으로.."
         emptyView.didTapButtonDelegate = {
             self.navigationController?.popToRootViewController(animated: true)
