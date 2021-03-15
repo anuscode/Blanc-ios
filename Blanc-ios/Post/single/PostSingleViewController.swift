@@ -52,14 +52,14 @@ class PostSingleViewController: UIViewController {
         return tableView
     }()
 
-    lazy var bottomTextField: BottomTextField = {
+    lazy private var bottomTextField: BottomTextField = {
         let view = BottomTextField()
         view.configure(avatarUrl: session?.user?.avatar)
         view.configure(delegate: self)
         return view
     }()
 
-    lazy var closeTapBackground: UIView = {
+    lazy private var closeTapBackground: UIView = {
         let view = UIView()
         view.visible(false)
         view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(dismissTextField))
