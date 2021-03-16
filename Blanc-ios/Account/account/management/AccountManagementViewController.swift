@@ -122,7 +122,17 @@ extension AccountManagementViewController: UITableViewDelegate {
             alertController.addAction(cancelAction)
             alertController.addAction(logoutAction)
             alertController.modalPresentationStyle = .popover
-            present(alertController, animated: true, completion: nil)
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                if let popoverController = alertController.popoverPresentationController {
+                    popoverController.sourceView = view
+                    popoverController.sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 0, height: 0)
+                    popoverController.permittedArrowDirections = []
+                    present(alertController, animated: true, completion: nil)
+                }
+            } else {
+                present(alertController, animated: true, completion: nil)
+            }
+
         case 1:
             let alertController = UIAlertController(
                 title: "주의 바랍니다.",
@@ -137,7 +147,16 @@ extension AccountManagementViewController: UITableViewDelegate {
             alertController.addAction(cancelAction)
             alertController.addAction(unregisterAction)
             alertController.modalPresentationStyle = .popover
-            present(alertController, animated: true, completion: nil)
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                if let popoverController = alertController.popoverPresentationController {
+                    popoverController.sourceView = view
+                    popoverController.sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 0, height: 0)
+                    popoverController.permittedArrowDirections = []
+                    present(alertController, animated: true, completion: nil)
+                }
+            } else {
+                present(alertController, animated: true, completion: nil)
+            }
         default:
             fatalError("Something wrong with menu clicks..")
         }
