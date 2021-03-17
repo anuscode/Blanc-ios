@@ -90,11 +90,11 @@
 	<key>NSContactsUsageDescription</key>
 	<string>연락처 접근 권한이 필요 합니다.</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>블랑은 위치 정보를 필요로 합니다. 동의 하십니까?</string>
+	<string>블랑은 모든 유저의 위치정보를 수집하고 이를 소개 알고리즘의 메인 데이터로 사용 합니다. 동의 하십니까?</string>
 	<key>NSLocationAlwaysUsageDescription</key>
-	<string>블랑은 위치 정보를 필요로 합니다. 동의 하십니까?</string>
+	<string>블랑은 모든 유저의 위치정보를 수집하고 이를 소개 알고리즘의 메인 데이터로 사용 합니다. 동의 하십니까?</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>블랑은 위치 정보를 필요로 합니다. 동의 하십니까?</string>
+	<string>블랑은 모든 유저의 위치정보를 수집하고 이를 소개 알고리즘의 메인 데이터로 사용 합니다. 동의 하십니까?</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>JalnanOTF.otf</string>
