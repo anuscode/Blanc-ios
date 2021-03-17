@@ -10,6 +10,12 @@ class PostSingleBody: UIView {
 
     private weak var delegate: PostSingleTableViewCellDelegate?
 
+    lazy private var carouselStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [carousel])
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+
     lazy private var carousel: FSPagerView = {
         let pagerView = FSPagerView(frame: frame)
         pagerView.register(FSPagerViewCell.self, forCellWithReuseIdentifier: "PostSingleBodyPagerViewCell")
@@ -93,7 +99,7 @@ class PostSingleBody: UIView {
     }
 
     private func configureSubviews() {
-        addSubview(carousel)
+        addSubview(carouselStackView)
         addSubview(pageControl)
         addSubview(heartView)
         addSubview(userFavoriteCountLabel)
@@ -102,7 +108,7 @@ class PostSingleBody: UIView {
 
     private func configureConstraints() {
 
-        carousel.snp.makeConstraints { make in
+        carouselStackView.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
@@ -114,7 +120,7 @@ class PostSingleBody: UIView {
         }
 
         heartView.snp.makeConstraints { make in
-            make.top.equalTo(carousel.snp.bottom).offset(8)
+            make.top.equalTo(carouselStackView.snp.bottom).offset(8)
             make.leading.equalToSuperview().inset(12)
             make.width.equalTo(PostConfig.containerDiameter)
             make.height.equalTo(PostConfig.containerDiameter)

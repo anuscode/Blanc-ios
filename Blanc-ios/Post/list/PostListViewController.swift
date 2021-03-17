@@ -150,7 +150,10 @@ extension PostListViewController: PostBodyDelegate {
     func presentSinglePostView(post: PostDTO?) {
         channel(post: post)
         navigationController?.pushViewController(
-            .postSingle, current: self, hideBottomWhenStart: true, hideBottomWhenEnd: true
+            .postSingle,
+            current: self,
+            hideBottomWhenStart: true,
+            hideBottomWhenEnd: true
         )
     }
 
