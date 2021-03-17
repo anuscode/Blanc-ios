@@ -105,7 +105,7 @@ class LoginViewController: UIViewController {
         view.backgroundColor = .white
 
         let label = UILabel()
-        label.text = "Apple 계정으로 로그인"
+        label.text = "Apple로 로그인"
         label.font = .systemFont(ofSize: 16)
         label.textColor = .black
         label.textAlignment = .center
@@ -138,7 +138,7 @@ class LoginViewController: UIViewController {
         view.backgroundColor = .faceBook
 
         let label = UILabel()
-        label.text = "Facebook 계정으로 로그인"
+        label.text = "Facebook 로그인"
         label.font = .systemFont(ofSize: 16)
         label.textColor = .white
         label.textAlignment = .center
@@ -170,7 +170,7 @@ class LoginViewController: UIViewController {
         view.backgroundColor = .kakaoTalk
 
         let label = UILabel()
-        label.text = "KakaoTalk 계정으로 로그인"
+        label.text = "KakaoTalk 로그인"
         label.font = .systemFont(ofSize: 16)
         label.textColor = .kakaoBrown
         label.textAlignment = .center
