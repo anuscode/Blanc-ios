@@ -48,7 +48,7 @@ class InitPagerViewController: UIPageViewController {
         super.viewDidLoad()
         initRoute()
         setViewControllers([firstViewController], direction: .forward, animated: true)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
             self.setViewControllers([self.secondViewController], direction: .reverse, animated: true)
         }
     }
