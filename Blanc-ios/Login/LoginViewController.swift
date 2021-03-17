@@ -500,17 +500,20 @@ class LoginViewController: UIViewController {
     }
 
     private func signInWithKakaoCredential() {
-        guard UserApi.isKakaoTalkLoginAvailable() else {
-            toast(message: "카카오톡이 미설치 이거나 미인증 상태 입니다.")
-            return
-        }
-
         guard let userService = userService else {
             toast(message: "Dependencies absence..")
             return
         }
 
-        UserApi.shared.rx.loginWithKakaoTalk()
+        let kakaoWithKakao: () -> Observable<OAuthToken> = {
+            if (UserApi.isKakaoTalkLoginAvailable()) {
+                return UserApi.shared.rx.loginWithKakaoTalk()
+            } else {
+                return UserApi.shared.rx.loginWithKakaoAccount()
+            }
+        }
+
+        kakaoWithKakao()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
             .do(onNext: { [unowned self] authResult in
