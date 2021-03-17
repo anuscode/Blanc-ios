@@ -8,13 +8,13 @@ enum View {
 
 class InitPagerViewController: UIPageViewController {
 
-    let disposeBag: DisposeBag = DisposeBag()
+    private let disposeBag: DisposeBag = DisposeBag()
 
-    let auth: Auth = Auth.auth()
+    private let auth: Auth = Auth.auth()
 
-    var session: Session?
+    internal var session: Session?
 
-    var userService: UserService?
+    internal var userService: UserService?
 
     lazy private var gradient: GradientView = {
         let alpha0 = UIColor.tinderPink
