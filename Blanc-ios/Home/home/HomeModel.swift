@@ -31,8 +31,7 @@ class HomeModel {
         self.session = session
         self.userService = userService
         self.requestService = requestService
-        requestLocationAuthorization()
-        subscribeLocationAuthorizationChanges()
+        start()
     }
 
     func publish() {
@@ -41,6 +40,15 @@ class HomeModel {
 
     func observe() -> Observable<HomeUserData> {
         observable
+    }
+
+    private func start() {
+        if (manager.authorizationStatus == .notDetermined) {
+            subscribeLocationAuthorizationChanges()
+            requestLocationAuthorization()
+        } else {
+            populate()
+        }
     }
 
     private func populate() {
