@@ -505,7 +505,7 @@ class LoginViewController: UIViewController {
             return
         }
 
-        let kakaoWithKakao: () -> Observable<OAuthToken> = {
+        let loginWithKakao: () -> Observable<OAuthToken> = {
             if (UserApi.isKakaoTalkLoginAvailable()) {
                 return UserApi.shared.rx.loginWithKakaoTalk()
             } else {
@@ -513,7 +513,7 @@ class LoginViewController: UIViewController {
             }
         }
 
-        kakaoWithKakao()
+        loginWithKakao()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
             .do(onNext: { [unowned self] authResult in
@@ -522,7 +522,7 @@ class LoginViewController: UIViewController {
                 progressLabel.text = "카카오 토큰 검증 중.."
             })
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .flatMap { [unowned self] (oauthToken) -> Single<CustomTokenDTO> in
+            .flatMap { (oauthToken) -> Single<CustomTokenDTO> in
                 let idToken = oauthToken.accessToken
                 return userService.createCustomTokenWithKakao(idToken: idToken)
             }
@@ -538,7 +538,7 @@ class LoginViewController: UIViewController {
                 progressLabel.text = "회원 정보 조회 중.."
             })
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .flatMap({ [unowned self] authDataResult -> Single<Bool> in
+            .flatMap({ authDataResult -> Single<Bool> in
                 let uid = authDataResult.user.uid
                 return userService.isRegistered(uid: uid)
             })
