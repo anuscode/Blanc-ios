@@ -292,7 +292,16 @@ extension PostManagementViewController: PostManagementTableViewCellDelegate {
         alertController.addAction(deleteAction)
         alertController.modalPresentationStyle = .popover
 
-        present(alertController, animated: true, completion: nil)
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            if let popoverController = alertController.popoverPresentationController {
+                popoverController.sourceView = view
+                popoverController.sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 0, height: 0)
+                popoverController.permittedArrowDirections = []
+                present(alertController, animated: true, completion: nil)
+            }
+        } else {
+            present(alertController, animated: true, completion: nil)
+        }
     }
 
     private func channel(post: PostDTO?) {

@@ -122,6 +122,7 @@ extension AccountManagementViewController: UITableViewDelegate {
             alertController.addAction(cancelAction)
             alertController.addAction(logoutAction)
             alertController.modalPresentationStyle = .popover
+
             if UIDevice.current.userInterfaceIdiom == .pad {
                 if let popoverController = alertController.popoverPresentationController {
                     popoverController.sourceView = view
@@ -132,7 +133,6 @@ extension AccountManagementViewController: UITableViewDelegate {
             } else {
                 present(alertController, animated: true, completion: nil)
             }
-
         case 1:
             let alertController = UIAlertController(
                 title: "주의 바랍니다.",
@@ -147,6 +147,7 @@ extension AccountManagementViewController: UITableViewDelegate {
             alertController.addAction(cancelAction)
             alertController.addAction(unregisterAction)
             alertController.modalPresentationStyle = .popover
+
             if UIDevice.current.userInterfaceIdiom == .pad {
                 if let popoverController = alertController.popoverPresentationController {
                     popoverController.sourceView = view

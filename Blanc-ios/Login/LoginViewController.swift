@@ -121,8 +121,8 @@ class LoginViewController: UIViewController {
         imageView.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(20)
             make.centerY.equalToSuperview()
-            make.width.equalTo(25)
-            make.height.equalTo(30)
+            make.width.equalTo(20)
+            make.height.equalTo(25)
         }
 
         view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapAppleButton))
@@ -138,7 +138,7 @@ class LoginViewController: UIViewController {
         view.backgroundColor = .faceBook
 
         let label = UILabel()
-        label.text = "Facebook 로그인"
+        label.text = "Facebook으로 로그인"
         label.font = .systemFont(ofSize: 16)
         label.textColor = .white
         label.textAlignment = .center
@@ -154,8 +154,8 @@ class LoginViewController: UIViewController {
         imageView.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(20)
             make.centerY.equalToSuperview()
-            make.width.equalTo(25)
-            make.height.equalTo(25)
+            make.width.equalTo(20)
+            make.height.equalTo(20)
         }
 
         view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapFacebookButton))
@@ -170,7 +170,7 @@ class LoginViewController: UIViewController {
         view.backgroundColor = .kakaoTalk
 
         let label = UILabel()
-        label.text = "KakaoTalk 로그인"
+        label.text = "KakaoTalk으로 로그인"
         label.font = .systemFont(ofSize: 16)
         label.textColor = .kakaoBrown
         label.textAlignment = .center
@@ -186,8 +186,8 @@ class LoginViewController: UIViewController {
         imageView.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(20)
             make.centerY.equalToSuperview()
-            make.width.equalTo(25)
-            make.height.equalTo(25)
+            make.width.equalTo(20)
+            make.height.equalTo(20)
         }
 
         view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapKakaoButton))
