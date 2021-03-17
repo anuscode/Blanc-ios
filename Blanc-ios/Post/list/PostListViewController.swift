@@ -82,7 +82,7 @@ class PostListViewController: UIViewController {
                     }.map {
                         $1
                     }
-                update(posts)
+                update(self.posts)
             }, onError: { err in
                 log.error(err)
             })
