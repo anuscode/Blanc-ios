@@ -31,7 +31,7 @@ class HomeModel {
         self.session = session
         self.userService = userService
         self.requestService = requestService
-        // populate()
+        requestLocationAuthorization()
         subscribeLocationAuthorizationChanges()
     }
 
@@ -110,7 +110,8 @@ class HomeModel {
         let uid: String? = auth.uid
         let userId: String? = session.id
         var coord: Coordinate?
-        var addr: String?
+        var addr: String = "알 수 없음"
+        let unknown: String = "알 수 없음"
         return manager.rx
             .location
             .subscribeOn(MainScheduler.instance)
@@ -118,12 +119,19 @@ class HomeModel {
                 coord = Coordinate(location)
             })
             .observeOn(MainScheduler.instance)
-            .flatMap({ [unowned self] _ -> Observable<String> in
+            .flatMap({ [unowned self] location -> Observable<String> in
                 if (manager.authorizationStatus.rawValue <= 2) {
-                    return Observable.of("알 수 없음")
+                    return Observable.of(unknown)
                 }
-                return manager.rx.placemark
-                    .map({ placemark in placemark.locality ?? "알 수 없음" })
+                guard let location = location else {
+                    return Observable.just(unknown)
+                }
+                return manager.rx
+                    .placemark(with: location)
+                    .map({ placemark in
+                        placemark.locality ?? unknown
+                    })
+                    .catchErrorJustReturn(unknown)
             })
             .do(onNext: { locality in
                 addr = locality
@@ -135,14 +143,20 @@ class HomeModel {
                     userId: userId,
                     latitude: coord?.latitude ?? 0,
                     longitude: coord?.longitude ?? 0,
-                    area: addr ?? "알 수 없음"
+                    area: addr
                 )
             })
             .do(onNext: { [unowned self] location in
                 session.user?.location = location
+                session.user?.area = addr
+                session.publish()
             })
             .take(1)
             .asSingle()
+    }
+
+    private func requestLocationAuthorization() {
+        manager.requestAlwaysAuthorization()
     }
 
     private func subscribeLocationAuthorizationChanges() {
@@ -151,8 +165,10 @@ class HomeModel {
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [unowned self] _, status in
+                log.info("didChangeAuthorization called..")
                 switch status {
                 case .denied, .notDetermined, .restricted:
+                    log.info("status denied detected.. requesting authorization..")
                     manager.requestAlwaysAuthorization()
                 default:
                     log.info("Currently the location authorization is well granted..")

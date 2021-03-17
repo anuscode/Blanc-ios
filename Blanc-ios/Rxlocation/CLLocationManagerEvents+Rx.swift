@@ -5,6 +5,7 @@
 //  Created by Bob Obi on 08.11.17.
 //  Copyright © 2017 RxCoreLocation. All rights reserved.
 //
+
 import CoreLocation
 #if !RX_NO_MODULE
 import RxSwift
@@ -56,9 +57,10 @@ extension Reactive where Base: CLLocationManager {
     public var placemark: Observable<CLPlacemark> {
         return location.unwrap().flatMap(placemark(with:))
     }
+    /** Modified for placemark bug fix.. **/
     /// Private reactive wrapper for `CLGeocoder`.`reverseGeocodeLocation(_:completionHandler:)`
     /// used to search for placemark
-    private func placemark(with location: CLLocation) -> Observable<CLPlacemark> {
+    func placemark(with location: CLLocation) -> Observable<CLPlacemark> {
         return Observable.create { observer in
             let geocoder = CLGeocoder()
             geocoder.reverseGeocodeLocation(location) { placemarks, _ in
