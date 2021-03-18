@@ -160,7 +160,7 @@ class PostManagementViewController: UIViewController {
 
     private func subscribePostViewModel() {
         postManagementViewModel?
-            .observe()
+            .posts
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [unowned self] posts in
@@ -170,11 +170,20 @@ class PostManagementViewController: UIViewController {
             .disposed(by: disposeBag)
 
         postManagementViewModel?
-            .observe()
+            .posts
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [unowned self] posts in
                 emptyView.visible(posts.count == 0)
+            })
+            .disposed(by: disposeBag)
+
+        postManagementViewModel?
+            .toast
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] message in
+                toast(message: message)
             })
             .disposed(by: disposeBag)
     }
@@ -255,9 +264,7 @@ extension PostManagementViewController: UITableViewDelegate {
 extension PostManagementViewController: PostManagementTableViewCellDelegate {
 
     func favorite(_ post: PostDTO?) {
-        postManagementViewModel?.favorite(post: post) {
-            self.toast(message: "좋아요 도중 에러가 발생 하였습니다.")
-        }
+        postManagementViewModel?.favorite(post: post)
     }
 
     func isFavoritePost(_ post: PostDTO?) -> Bool {
@@ -280,9 +287,7 @@ extension PostManagementViewController: PostManagementTableViewCellDelegate {
     func deletePost(postId: String?) {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let deleteAction = UIAlertAction(title: "게시물 삭제", style: .default) { (action) in
-            self.postManagementViewModel?.deletePost(postId: postId, onError: {
-                self.toast(message: "포스트 삭제에 실패 하였습니다.")
-            })
+            self.postManagementViewModel?.deletePost(postId: postId)
         }
 
         let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
@@ -314,16 +319,12 @@ extension PostManagementViewController: PostManagementTableViewCellDelegate {
 extension PostManagementViewController: CommentTableViewCellDelegate {
     func thumbUp(comment: CommentDTO?) {
         let post = data.findApplicablePost(comment: comment)
-        postManagementViewModel?.thumbUp(post: post, comment: comment, onError: { message in
-            self.toast(message: message)
-        })
+        postManagementViewModel?.thumbUp(post: post, comment: comment)
     }
 
     func thumbDown(comment: CommentDTO?) {
         let post = data.findApplicablePost(comment: comment)
-        postManagementViewModel?.thumbDown(post: post, comment: comment, onError: { message in
-            self.toast(message: message)
-        })
+        postManagementViewModel?.thumbDown(post: post, comment: comment)
     }
 
     func isThumbedUp(comment: CommentDTO?) -> Bool {
@@ -353,15 +354,7 @@ extension PostManagementViewController: CommentTableViewCellDelegate {
 extension PostManagementViewController: BottomTextFieldDelegate {
     func trigger(message: String) {
         let post = data.findApplicablePost(comment: replyTo)
-        postManagementViewModel?
-            .createComment(
-                postId: post?.id,
-                commentId: replyTo?.id,
-                comment: message,
-                onError: { message in
-                    self.toast(message: message)
-                }
-            )
+        postManagementViewModel?.createComment(postId: post?.id, commentId: replyTo?.id, comment: message)
         dismissTextField()
     }
 

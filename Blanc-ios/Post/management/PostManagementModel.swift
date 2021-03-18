@@ -108,26 +108,23 @@ class PostManagementModel {
     // MARK - HANDLE COMMENT
 
     func thumbUp(post: PostDTO?, comment: CommentDTO?, onError: @escaping (_ message: String) -> Void) {
-        if (comment == nil) {
+        guard let comment = comment else {
             return
         }
-
-        if let index = comment!.thumbDownUserIds?.firstIndex(where: { $0 == session.id }) {
-            comment!.thumbDownUserIds?.remove(at: index)
+        if let index = comment.thumbDownUserIds?.firstIndex(where: { $0 == session.id }) {
+            comment.thumbDownUserIds?.remove(at: index)
         }
-
-        if (comment!.thumbUpUserIds?.contains(session.id ?? "") == true) {
-            if let index = comment!.thumbUpUserIds?.firstIndex(where: { $0 == session.id }) {
-                comment!.thumbUpUserIds?.remove(at: index)
+        if (comment.thumbUpUserIds?.contains(session.id ?? "") == true) {
+            if let index = comment.thumbUpUserIds?.firstIndex(where: { $0 == session.id }) {
+                comment.thumbUpUserIds?.remove(at: index)
                 deleteThumbUp(post: post, comment: comment, onError: onError)
             }
         } else {
-            if comment!.thumbUpUserIds?.firstIndex(where: { $0 == session.id }) == nil {
-                comment!.thumbUpUserIds?.append(session.id ?? "")
+            if comment.thumbUpUserIds?.firstIndex(where: { $0 == session.id }) == nil {
+                comment.thumbUpUserIds?.append(session.id ?? "")
                 createThumbUp(post: post, comment: comment, onError: onError)
             }
         }
-
         publish()
     }
 
@@ -168,22 +165,20 @@ class PostManagementModel {
     }
 
     func thumbDown(post: PostDTO?, comment: CommentDTO?, onError: @escaping (_ message: String) -> Void) {
-        if (comment == nil) {
+        guard let comment = comment else {
             return
         }
-
-        if let index = comment!.thumbUpUserIds?.firstIndex(where: { $0 == session.id }) {
-            comment!.thumbUpUserIds?.remove(at: index)
+        if let index = comment.thumbUpUserIds?.firstIndex(where: { $0 == session.id }) {
+            comment.thumbUpUserIds?.remove(at: index)
         }
-
-        if (comment!.thumbDownUserIds?.contains(session.id ?? "") == true) {
-            if let index = comment!.thumbDownUserIds?.firstIndex(where: { $0 == session.id }) {
-                comment!.thumbDownUserIds?.remove(at: index)
+        if (comment.thumbDownUserIds?.contains(session.id ?? "") == true) {
+            if let index = comment.thumbDownUserIds?.firstIndex(where: { $0 == session.id }) {
+                comment.thumbDownUserIds?.remove(at: index)
                 deleteThumbDown(post: post, comment: comment, onError: onError)
             }
         } else {
-            if comment!.thumbDownUserIds?.firstIndex(where: { $0 == session.id }) == nil {
-                comment!.thumbDownUserIds?.append(session.id ?? "")
+            if comment.thumbDownUserIds?.firstIndex(where: { $0 == session.id }) == nil {
+                comment.thumbDownUserIds?.append(session.id ?? "")
                 createThumbDown(post: post, comment: comment, onError: onError)
             }
         }
@@ -243,10 +238,10 @@ class PostManagementModel {
     func createComment(postId: String?,
                        commentId: String?,
                        comment: String,
-                       onError: @escaping (_ message: String?) -> Void) {
+                       onError: @escaping () -> Void) {
         guard let uid = auth.uid,
               let post = posts.first(where: { $0.id == postId }) else {
-            onError("코멘트 생성에 실패 하였습니다.")
+            onError()
             return
         }
         postService
@@ -264,7 +259,7 @@ class PostManagementModel {
                 publish()
                 log.info("Successfully created comment..")
             }, onError: { err in
-                onError("댓글 생성에 실패 하였습니다.")
+                onError()
             })
             .disposed(by: disposeBag)
     }
