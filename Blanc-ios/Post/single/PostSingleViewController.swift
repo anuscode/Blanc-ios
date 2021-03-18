@@ -258,10 +258,11 @@ extension PostSingleViewController: CommentTableViewCellDelegate {
 
     func isAuthorFavoriteComment(comment: CommentDTO?) -> Bool {
         guard let post = post,
+              let author = post.author,
               let comment = comment else {
             return false
         }
-        return comment.thumbUpUserIds?.firstIndex(where: { $0 == post.author?.id }) != nil
+        return comment.thumbUpUserIds?.firstIndex(where: { $0 == author.id }) != nil
     }
 
     func reply(comment: CommentDTO?) {

@@ -75,14 +75,14 @@ class PostManagementViewModel {
     }
 
     func createComment(postId: String?, commentId: String?, comment: String) {
-        let onError = { [unowned self] _ in
+        let onError = { [unowned self] in
             toast.onNext("댓글 생성에 실패 하였습니다.")
         }
         postManagementModel.createComment(postId: postId, commentId: commentId, comment: comment, onError: onError)
     }
 
     func deletePost(postId: String?) {
-        let onError = { [unowned self] _ in
+        let onError = { [unowned self] in
             toast.onNext("포스트 삭제에 실패 하였습니다.")
         }
         postManagementModel.deletePost(postId: postId, onError: onError)
