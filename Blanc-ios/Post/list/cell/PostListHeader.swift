@@ -27,7 +27,7 @@ class PostListHeader: UIView {
 
     lazy var headerLabel1: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 16)
+        label.font = UIFont.systemFont(ofSize: 14)
         label.textColor = .darkText
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -35,7 +35,7 @@ class PostListHeader: UIView {
 
     lazy var headerLabel2: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14)
+        label.font = UIFont.systemFont(ofSize: 12)
         label.textColor = .systemGray
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -69,14 +69,14 @@ class PostListHeader: UIView {
         }
 
         headerLabel1.snp.makeConstraints { make in
-            make.leading.equalTo(headerImage.snp.trailing).inset(-11)
+            make.leading.equalTo(headerImage.snp.trailing).inset(-12)
             make.top.equalToSuperview()
-            make.bottom.equalTo(verticalCenterGuideLine.snp.top).inset(9)
+            make.bottom.equalTo(verticalCenterGuideLine.snp.top).inset(11)
         }
 
         headerLabel2.snp.makeConstraints { make in
-            make.leading.equalTo(headerImage.snp.trailing).inset(-11)
-            make.top.equalTo(verticalCenterGuideLine.snp.bottom).inset(7)
+            make.leading.equalTo(headerImage.snp.trailing).inset(-12)
+            make.top.equalTo(verticalCenterGuideLine.snp.bottom).inset(9)
             make.bottom.equalToSuperview()
         }
 
