@@ -17,6 +17,7 @@ class CommentDTO: Postable, Codable {
     var thumbUpUserIds: [String]?
     var thumbDownUserIds: [String]?
     var favorite: Bool?
+    var isDeleted: Bool?
     var lv: Int?
 
     weak var post: PostDTO?

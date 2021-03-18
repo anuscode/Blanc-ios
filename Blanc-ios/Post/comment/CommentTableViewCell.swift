@@ -311,7 +311,7 @@ class CommentTableViewCell: UITableViewCell {
         let userImageUrl = comment?.commenter?.avatar
         let nickname = comment?.commenter?.nickname ?? ""
         let staledTime = comment?.createdAt.asStaledTime()
-        let commentText = comment?.comment ?? "[ERROR]"
+        let commentText = comment?.isDeleted != true ? (comment?.comment ?? "...") : "관리자가 삭제 한 댓글 입니다."
         let frontMarginFrame = CGRect(x: 0, y: 0, width: 35 * ((comment?.lv ?? 1) - 1), height: 0)
         let isButtonShown = comment?.lv ?? 1 == 1
         userImage.url(userImageUrl, size: userImageSize)

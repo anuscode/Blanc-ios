@@ -32,6 +32,7 @@ class PostDTO: Postable, Codable {
     var favoriteCount: Int?
     var comments: [CommentDTO]?
     var enableComment: Bool?
+    var isDeleted: Bool?
 
     static func ==(lhs: PostDTO, rhs: PostDTO) -> Bool {
         lhs === rhs
