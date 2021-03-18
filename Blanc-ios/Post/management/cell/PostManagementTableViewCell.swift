@@ -3,7 +3,7 @@ import UIKit
 
 protocol PostManagementTableViewCellDelegate: class {
     func favorite(_ post: PostDTO?)
-    func isCurrentUserFavoritePost(_ post: PostDTO?) -> Bool
+    func isFavoritePost(_ post: PostDTO?) -> Bool
     func presentFavoriteUserListView(_ post: PostDTO?)
     func deletePost(postId: String?)
 }

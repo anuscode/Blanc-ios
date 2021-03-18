@@ -44,8 +44,8 @@ class PostManagementViewModel {
         postManagementModel.favorite(post: post, onError: onError)
     }
 
-    func isCurrentUserFavoritePost(_ post: PostDTO?) -> Bool {
-        postManagementModel.isCurrentUserFavoritePost(post)
+    func isFavoritePost(_ post: PostDTO?) -> Bool {
+        postManagementModel.isFavoritePost(post)
     }
 
     func thumbUp(post: PostDTO?, comment: CommentDTO?, onError: @escaping (_ message: String) -> Void) {
@@ -62,10 +62,6 @@ class PostManagementViewModel {
 
     func isThumbedDown(comment: CommentDTO?) -> Bool {
         postManagementModel.isThumbedDown(comment: comment)
-    }
-
-    func isAuthorFavoriteComment(post: PostDTO?, comment: CommentDTO?) -> Bool {
-        postManagementModel.isAuthorFavoriteComment(post: post, comment: comment)
     }
 
     func createComment(postId: String?, commentId: String?, comment: String, onError: @escaping (_ message: String?) -> Void) {

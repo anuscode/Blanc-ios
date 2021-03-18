@@ -253,15 +253,7 @@ class PostSingleModel {
             .disposed(by: disposeBag)
     }
 
-    func isAuthorFavoriteComment(post: PostDTO?, comment: CommentDTO?) -> Bool {
-        guard let post = post,
-              let comment = comment else {
-            return false
-        }
-        return comment.thumbUpUserIds?.firstIndex(where: { $0 == post.author?.id }) != nil
-    }
-
-    func isCurrentUserFavoritePost() -> Bool {
+    func isFavoritePost() -> Bool {
         post?.favoriteUserIds?.firstIndex(of: session.id!) != nil
     }
 }

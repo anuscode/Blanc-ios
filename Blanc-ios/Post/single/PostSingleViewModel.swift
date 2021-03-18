@@ -69,10 +69,6 @@ class PostSingleViewModel {
         postSingleModel.isThumbedDown(comment: comment)
     }
 
-    func isAuthorFavoriteComment(post: PostDTO?, comment: CommentDTO?) -> Bool {
-        postSingleModel.isAuthorFavoriteComment(post: post, comment: comment)
-    }
-
     func createComment(postId: String?, commentId: String?, comment: String) {
         let onError = { [unowned self] message in
             toast.onNext(message)
@@ -87,8 +83,8 @@ class PostSingleViewModel {
         postSingleModel.favorite(onError: onError)
     }
 
-    func isCurrentUserFavoritePost() -> Bool {
-        postSingleModel.isCurrentUserFavoritePost()
+    func isFavoritePost() -> Bool {
+        postSingleModel.isFavoritePost()
     }
 
     func sync() {

@@ -197,12 +197,12 @@ class PostManagementBody: UIView {
     }
 
     private func configureHeartImage() {
-        let isCurrentUserFavoritePost = delegate?.isCurrentUserFavoritePost(post) == true
+        let isCurrentUserFavoritePost = delegate?.isFavoritePost(post) == true
         heartImageView.image = isCurrentUserFavoritePost ? redHeartImage : emptyHeartImage
     }
 
     @objc private func didTapHeartImageView() {
-        let isNotCurrentUserFavoritePost = delegate?.isCurrentUserFavoritePost(post) != true
+        let isNotCurrentUserFavoritePost = delegate?.isFavoritePost(post) != true
         heartImageView.image = isNotCurrentUserFavoritePost ? redHeartImage : emptyHeartImage
         delegate?.favorite(post)
     }

@@ -4,7 +4,7 @@ import FSPagerView
 
 protocol PostSingleTableViewCellDelegate: class {
     func favorite()
-    func isCurrentUserFavoritePost() -> Bool
+    func isFavoritePost() -> Bool
 }
 
 

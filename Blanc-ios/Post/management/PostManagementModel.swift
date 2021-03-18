@@ -101,7 +101,7 @@ class PostManagementModel {
             .disposed(by: disposeBag)
     }
 
-    func isCurrentUserFavoritePost(_ post: PostDTO?) -> Bool {
+    func isFavoritePost(_ post: PostDTO?) -> Bool {
         post?.favoriteUserIds?.firstIndex(of: session.id!) != nil
     }
 
@@ -238,14 +238,6 @@ class PostManagementModel {
             return false
         }
         return comment.thumbDownUserIds?.firstIndex(where: { $0 == session.id }) != nil
-    }
-
-    func isAuthorFavoriteComment(post: PostDTO?, comment: CommentDTO?) -> Bool {
-        guard let post = post,
-              let comment = comment else {
-            return false
-        }
-        return comment.thumbUpUserIds?.firstIndex(where: { $0 == post.author?.id }) != nil
     }
 
     func createComment(postId: String?,

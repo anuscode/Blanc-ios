@@ -260,8 +260,8 @@ extension PostManagementViewController: PostManagementTableViewCellDelegate {
         }
     }
 
-    func isCurrentUserFavoritePost(_ post: PostDTO?) -> Bool {
-        postManagementViewModel?.isCurrentUserFavoritePost(post) == true
+    func isFavoritePost(_ post: PostDTO?) -> Bool {
+        postManagementViewModel?.isFavoritePost(post) == true
     }
 
     func presentFavoriteUserListView(_ post: PostDTO?) {
@@ -335,8 +335,11 @@ extension PostManagementViewController: CommentTableViewCellDelegate {
     }
 
     func isAuthorFavoriteComment(comment: CommentDTO?) -> Bool {
-        let post = data.findApplicablePost(comment: comment)
-        return postManagementViewModel?.isAuthorFavoriteComment(post: post, comment: comment) ?? false
+        guard let post = data.findApplicablePost(comment: comment),
+              let comment = comment else {
+            return false
+        }
+        return comment.thumbUpUserIds?.firstIndex(where: { $0 == post.author?.id }) != nil
     }
 
     func reply(comment: CommentDTO?) {
@@ -357,7 +360,8 @@ extension PostManagementViewController: BottomTextFieldDelegate {
                 comment: message,
                 onError: { message in
                     self.toast(message: message)
-                })
+                }
+            )
         dismissTextField()
     }
 

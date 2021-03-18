@@ -176,12 +176,12 @@ class PostSingleBody: UIView {
     }
 
     private func configureHeartImage() {
-        let isCurrentUserFavoritePost = delegate?.isCurrentUserFavoritePost() == true
+        let isCurrentUserFavoritePost = delegate?.isFavoritePost() == true
         heartImageView.image = isCurrentUserFavoritePost ? redHeartImage : emptyHeartImage
     }
 
     @objc private func didTapHeartImageView() {
-        let isNotCurrentUserFavoritePost = delegate?.isCurrentUserFavoritePost() != true
+        let isNotCurrentUserFavoritePost = delegate?.isFavoritePost() != true
         heartImageView.image = isNotCurrentUserFavoritePost ? redHeartImage : emptyHeartImage
         delegate?.favorite()
     }
