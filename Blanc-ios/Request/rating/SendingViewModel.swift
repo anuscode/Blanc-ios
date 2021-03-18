@@ -32,8 +32,6 @@ class SendingViewModel {
             .subscribe(onNext: { [unowned self] users in
                 self.users = users
                 publish()
-            }, onError: { err in
-                log.error(err)
             })
             .disposed(by: disposeBag)
     }

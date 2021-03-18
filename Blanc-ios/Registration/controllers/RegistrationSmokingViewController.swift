@@ -217,9 +217,7 @@ class RegistrationSmokingViewController: UIViewController {
             .take(1)
             .subscribe(onNext: { [unowned self] user in
                 self.user = user
-                self.collectionView.reloadData()
-            }, onError: { err in
-                log.error(err)
+                collectionView.reloadData()
             })
             .disposed(by: disposeBag)
     }

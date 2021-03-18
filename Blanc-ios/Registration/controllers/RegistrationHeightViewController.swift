@@ -188,8 +188,6 @@ class RegistrationHeightViewController: UIViewController {
             .subscribe(onNext: { [unowned self] user in
                 self.user = user
                 update()
-            }, onError: { err in
-                log.error(err)
             })
             .disposed(by: disposeBag)
     }

@@ -57,7 +57,7 @@ class PostManagementViewController: UIViewController {
             cell.bind(comment: (data as! CommentDTO), delegate: self)
             return cell
         }
-        return nil
+        return UITableViewCell()
     }
 
     lazy private var leftBarButtonItem: UIBarButtonItem = {
