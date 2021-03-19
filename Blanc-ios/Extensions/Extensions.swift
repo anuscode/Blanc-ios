@@ -137,7 +137,6 @@ extension UILabel {
 }
 
 extension AnimationView {
-
     @discardableResult
     func begin() -> Observable<Void> {
         let subject: ReplaySubject = ReplaySubject<Void>.create(bufferSize: 1)
