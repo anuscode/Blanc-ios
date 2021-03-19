@@ -6,6 +6,12 @@ import TTGTagCollectionView
 import SwinjectStoryboard
 import Lottie
 
+private class Content: UIView {
+    override var intrinsicContentSize: CGSize {
+        UIView.layoutFittingExpandedSize
+    }
+}
+
 class UserSingleViewController: UIViewController {
 
     private class Const {
@@ -27,25 +33,45 @@ class UserSingleViewController: UIViewController {
 
     internal weak var userSingleViewModel: UserSingleViewModel?
 
-    lazy private var navigationBarContent: UIView = {
+    lazy private var navigationBarContent: Content = {
+        let content = Content()
         let view = UIView()
-        view.addSubview(navigationUserImage)
+
+        view.addSubview(navigationUserImageView)
         view.addSubview(navigationUserLabel)
-        navigationUserImage.snp.makeConstraints { make in
+
+        navigationUserImageView.snp.makeConstraints { make in
             make.leading.equalToSuperview()
+            make.centerY.equalToSuperview()
+            make.top.equalToSuperview()
+            make.bottom.equalToSuperview()
+            make.width.equalTo(Const.navigationUserImageSize)
+            make.height.equalTo(Const.navigationUserImageSize)
+        }
+
+        navigationUserLabel.snp.makeConstraints { make in
+            make.leading.equalTo(navigationUserImageView.snp.trailing).inset(-10)
+            make.trailing.equalToSuperview()
+            make.centerY.equalToSuperview()
+        }
+
+        content.addSubview(view)
+        content.addSubview(optionImageView)
+        view.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+        }
+
+        optionImageView.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().inset(5)
             make.centerY.equalToSuperview()
             make.width.equalTo(Const.navigationUserImageSize)
             make.height.equalTo(Const.navigationUserImageSize)
         }
-        navigationUserLabel.snp.makeConstraints { make in
-            make.leading.equalTo(navigationUserImage.snp.trailing).inset(-10)
-            make.trailing.equalToSuperview()
-            make.centerY.equalToSuperview()
-        }
-        return view
+
+        return content
     }()
 
-    lazy private var navigationUserImage: UIImageView = {
+    lazy private var navigationUserImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.cornerRadius = 14
         imageView.clipsToBounds = true
@@ -57,6 +83,13 @@ class UserSingleViewController: UIViewController {
         label.textColor = .darkText
         label.font = Const.navigationUserLabelFont
         return label
+    }()
+
+    lazy private var optionImageView: UIImageView = {
+        let imageView = UIImageView()
+        let image = UIImage(named: "ic_more_vert")
+        imageView.image = image
+        return imageView
     }()
 
     lazy private var tableView: UITableView = {
@@ -186,7 +219,8 @@ class UserSingleViewController: UIViewController {
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.isTranslucent = true
         navigationUserLabel.visible(false)
-        navigationUserImage.visible(false)
+        navigationUserImageView.visible(false)
+        optionImageView.visible(false)
     }
 
     override func viewDidLoad() {
@@ -276,7 +310,7 @@ class UserSingleViewController: UIViewController {
     }
 
     private func navigation(_ data: UserSingleData) {
-        navigationUserImage.url(data.user?.avatar)
+        navigationUserImageView.url(data.user?.avatar)
         navigationUserLabel.text = "\(data.user?.nickname ?? "알 수 없음"), \(data.user?.age ?? -1)"
     }
 
@@ -470,9 +504,10 @@ extension UserSingleViewController: UITableViewDelegate, UITableViewDataSource {
         navigationController?.navigationBar.isTranslucent = percent < 0.05 ? true : false
         navigationController?.navigationBar.alpha = percent < 0.05 ? 100 : percent
         navigationBarContent.alpha = percent < 0.05 ? 0 : percent
-        if (navigationUserImage.isHidden || navigationUserLabel.isHidden) {
+        if (navigationUserImageView.isHidden || navigationUserLabel.isHidden) {
             navigationUserLabel.visible(true)
-            navigationUserImage.visible(true)
+            navigationUserImageView.visible(true)
+            optionImageView.visible(true)
         }
     }
 }
