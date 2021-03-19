@@ -219,6 +219,7 @@ class UserSingleViewController: UIViewController {
         super.viewWillAppear(animated)
         extendedLayoutIncludesOpaqueBars = true
         navigationItem.titleView = navigationBarContent
+        navigationItem.backBarButtonItem = UIBarButtonItem.back
         navigationController?.navigationBar.addSubview(navigationBarContent)
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
@@ -315,35 +316,34 @@ class UserSingleViewController: UIViewController {
     }
 
     private func navigation(_ data: UserSingleData) {
-        navigationUserImageView.url(data.user?.avatar)
-        navigationUserLabel.text = "\(data.user?.nickname ?? "알 수 없음"), \(data.user?.age ?? -1)"
+        let avatar = data.user?.avatar
+        let nickname = data.user?.nickname ?? "알 수 없음"
+        let age = data.user?.age ?? -1
+        let text = "\(nickname), \(age)"
+        navigationUserImageView.url(avatar)
+        navigationUserLabel.text = text
     }
 
     private func enableRequestButton(_ data: UserSingleData) {
-
         let relationship = data.user?.relationship
-
         if (relationship?.isMatched ?? false) {
             requestButton.setTitle("이미 매칭 된 유저 입니다.", for: .normal)
             requestButton.isUserInteractionEnabled = false
             requestButton.backgroundColor = UIColor.bumble3.withAlphaComponent(0.6)
             return
         }
-
         if (relationship?.isUnmatched ?? false) {
             requestButton.setTitle("성사 되지 않은 유저 입니다.", for: .normal)
             requestButton.isUserInteractionEnabled = false
             requestButton.backgroundColor = UIColor.bumble3.withAlphaComponent(0.6)
             return
         }
-
         if (relationship?.isWhoSentMe ?? false) {
             requestButton.setTitle("친구신청 수락", for: .normal)
             requestButton.isUserInteractionEnabled = true
             requestButton.backgroundColor = .bumble3
             return
         }
-
         if (relationship?.isWhoISent ?? false) {
             requestButton.setTitle("이미 친구신청을 보냈습니다.", for: .normal)
             requestButton.isUserInteractionEnabled = false
@@ -395,12 +395,13 @@ class UserSingleViewController: UIViewController {
     @objc private func didTapOptionImageView() {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let reportAction = UIAlertAction(title: "신고", style: .default) { [unowned self] (action) in
-            navigationController?.pushViewController(
-                .report,
-                current: self,
-                hideBottomWhenStart: true,
-                hideBottomWhenEnd: true
-            )
+            toast(message: "구현 중입니다..")
+//            navigationController?.pushViewController(
+//                .report,
+//                current: self,
+//                hideBottomWhenStart: true,
+//                hideBottomWhenEnd: true
+//            )
         }
         let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
         cancelAction.setValue(UIColor.red, forKey: "titleTextColor")
