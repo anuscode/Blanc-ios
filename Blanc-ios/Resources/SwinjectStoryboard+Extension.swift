@@ -5,6 +5,12 @@ import SwinjectStoryboard
 import SwinjectAutoregistration
 
 extension ObjectScope {
+    static let smsScope = ObjectScope(
+        storageFactory: PermanentStorage.init, description: "sms scope."
+    )
+}
+
+extension ObjectScope {
     static let mainScope = ObjectScope(
         storageFactory: PermanentStorage.init, description: "main scope."
     )
@@ -114,6 +120,13 @@ extension SwinjectStoryboard {
             let userService = resolver ~> UserService.self
             return FcmTokenManager(session: session, userService: userService)
         }.inObjectScope(.container)
+
+        /** Sms dependencies **/
+        defaultContainer.register(SmsViewModel.self) { resolver in
+            log.info("Creating SmsViewModel..")
+            let verificationService = resolver ~> VerificationService.self
+            return SmsViewModel(verificationService: verificationService)
+        }.inObjectScope(.smsScope)
 
         /** MainTabBar dependencies **/
         defaultContainer.register(MainTabBarViewModel.self) { resolver in
@@ -273,7 +286,6 @@ extension SwinjectStoryboard {
         /** Requests dependencies **/
         defaultContainer.register(RequestsModel.self) { resolver in
             let session = resolver ~> Session.self
-            let channel = resolver ~> Channel.self
             let requestService = resolver ~> RequestService.self
             let requestsModel = RequestsModel(session: session, requestService: requestService)
             return requestsModel
@@ -568,7 +580,7 @@ extension SwinjectStoryboard {
     class func configSmsView() {
         defaultContainer.storyboardInitCompleted(SmsViewController.self) { resolver, controller in
             log.info("Injecting dependencies into SmsViewController")
-            controller.verificationService = resolver ~> VerificationService.self
+            controller.smsViewModel = resolver ~> SmsViewModel.self
         }
         defaultContainer.storyboardInitCompleted(SmsConfirmViewController.self) { resolver, controller in
             log.info("Injecting dependencies into SmsConfirmViewController")

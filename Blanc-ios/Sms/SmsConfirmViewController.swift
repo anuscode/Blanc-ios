@@ -208,7 +208,8 @@ class SmsConfirmViewController: UIViewController {
         }
         spinnerView.visible(true)
         activateConfirmButton(false)
-        verificationService?.verifySmsCode(
+        verificationService?
+            .verifySmsCode(
                 currentUser: currentUser,
                 uid: uid,
                 phone: phone,

@@ -14,17 +14,28 @@ class SmsViewController: UIViewController {
 
     private let regex = try! NSRegularExpression(pattern: "^\\+82[\\s-]?(0?10)[\\s-]?[0-9]{3,4}[\\s-]?[0-9]{4}$")
 
-    private let auth: Auth = Auth.auth()
-
-    private let disposeBag: DisposeBag = DisposeBag()
+    private var disposeBag: DisposeBag = DisposeBag()
 
     private let ripple: Ripple = Ripple()
 
-    internal var verificationService: VerificationService?
+    internal var smsViewModel: SmsViewModel?
+
+    lazy private var backButton: UIImageView = {
+        let imageView = UIImageView()
+        let image = UIImage(named: "ic_arrow_back")
+        imageView.image = image
+        imageView.layer.cornerRadius = 15
+        imageView.layer.masksToBounds = true
+        imageView.width(30)
+        imageView.height(30)
+        imageView.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapBackButton))
+        ripple.activate(to: imageView)
+        return imageView
+    }()
 
     lazy private var smsLabel: UILabel = {
         let label = UILabel()
-        label.text = "SMS 모바일 인증"
+        label.text = "SMS 인증"
         label.font = .systemFont(ofSize: 28)
         label.numberOfLines = 1;
         label.textColor = .black
@@ -70,7 +81,9 @@ class SmsViewController: UIViewController {
                 let result = self.regex.firstMatch(in: value, range: range)
                 return (result != nil)
             })
-            .subscribe(onNext: self.activateConfirmButton)
+            .subscribe(onNext: { [unowned self] value in
+                self.activateConfirmButton(value)
+            })
             .disposed(by: disposeBag)
         return textField
     }()
@@ -101,13 +114,24 @@ class SmsViewController: UIViewController {
         super.viewDidLoad()
         configureSubviews()
         configureConstraints()
+        subscribeSmsViewModel()
     }
 
     override func viewDidLayoutSubviews() {
         phoneTextField.becomeFirstResponder()
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+    }
+
+    deinit {
+        log.info("deinit SmsViewController...")
+        SwinjectStoryboard.defaultContainer.resetObjectScope(.smsScope)
+    }
+
     private func configureSubviews() {
+        view.addSubview(backButton)
         view.addSubview(smsLabel)
         view.addSubview(smsLabel2)
         view.addSubview(phoneTextField)
@@ -116,79 +140,61 @@ class SmsViewController: UIViewController {
     }
 
     private func configureConstraints() {
+        backButton.snp.makeConstraints { make in
+            make.leading.equalToSuperview().inset(20)
+            make.top.equalTo(view.safeAreaLayoutGuide).inset(20)
+        }
         smsLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(25)
-            make.top.equalTo(view.safeAreaLayoutGuide).inset(50)
+            make.top.equalTo(backButton.snp.bottom).offset(15)
         }
-
         smsLabel2.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(25)
-            make.top.equalTo(smsLabel.snp.bottom).offset(10)
+            make.top.equalTo(smsLabel.snp.bottom).offset(20)
         }
-
         phoneTextField.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(25)
             make.top.equalTo(smsLabel2.snp.bottom).offset(30)
             make.width.equalTo(view.width - 50)
             make.height.equalTo(60)
         }
-
         confirmButton.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(25)
             make.top.equalTo(phoneTextField.snp.bottom).offset(50)
             make.width.equalTo(view.width - 50)
             make.height.equalTo(52)
         }
-
         spinnerView.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
     }
 
-    @objc private func didTapConfirmButton() {
-        let text = phoneTextField.text ?? ""
-        let countryCode = "+82"
-        let phone = "\(countryCode)\(text)"
-        let range = NSRange(location: 0, length: phone.utf16.count)
-        let result = regex.firstMatch(in: phone, range: range)
-
-        if (result == nil) {
-            return
-        }
-
-        guard let currentUser = auth.currentUser,
-              let uid = auth.uid else {
-            return
-        }
-
-        spinnerView.visible(true)
-        verificationService?
-            .issueSmsCode(currentUser: currentUser, uid: uid, phone: phone)
+    private func subscribeSmsViewModel() {
+        smsViewModel?
+            .toast
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-            .observeOn(MainScheduler.instance)
-            .do(onDispose: {
-                self.spinnerView.visible(false)
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] message in
+                toast(message: message)
             })
-            .subscribe(onSuccess: { [unowned self] verification in
-                let status = verification.status
-                switch status {
-                case .SUCCEED_ISSUE:
-                    let storyboard = UIStoryboard(name: "Sms", bundle: nil)
-                    let vc = storyboard.instantiateViewController(
-                        withIdentifier: "SmsConfirmViewController") as! SmsConfirmViewController
-                    vc.modalPresentationStyle = .fullScreen
-                    vc.setVerification(verification)
-                    present(vc, animated: false)
-                case .FAILED_ISSUE:
-                    toast(message: "문자 발송에 실패 하였습니다. 개발팀에 문의 주세요.")
-                case .INVALID_PHONE_NUMBER:
-                    toast(message: "옳바르지 않은 전화번호 입니다.")
-                default:
-                    toast(message: "알 수 없는 에러가 발생 하였습니다.")
-                }
-            }, onError: { [unowned self] err in
-                log.error(err)
-                toast(message: "문자 요청에 실패 하였습니다.")
+            .disposed(by: disposeBag)
+
+        smsViewModel?
+            .loading
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] boolean in
+                showLoading(boolean)
+            })
+            .disposed(by: disposeBag)
+
+        smsViewModel?
+            .smsConfirm
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] verification in
+                log.info("smsViewModel")
+                presentSmsConfirmView(verification: verification)
             })
             .disposed(by: disposeBag)
     }
@@ -201,5 +207,38 @@ class SmsViewController: UIViewController {
             confirmButton.removeTarget(self, action: #selector(didTapConfirmButton), for: .touchUpInside)
             confirmButton.backgroundColor = .systemGray5
         }
+    }
+
+    private func showLoading(_ flag: Bool) {
+        spinnerView.visible(flag)
+    }
+
+    private func presentSmsConfirmView(verification: VerificationDTO) {
+        log.info("smsConfirm")
+        let storyboard = UIStoryboard(name: "Sms", bundle: nil)
+        let vc = storyboard.instantiateViewController(
+            withIdentifier: "SmsConfirmViewController") as! SmsConfirmViewController
+        vc.modalPresentationStyle = .fullScreen
+        vc.setVerification(verification)
+        present(vc, animated: false)
+    }
+
+    @objc private func didTapConfirmButton() {
+        let text = phoneTextField.text ?? ""
+        let countryCode = "+82"
+        let phone = "\(countryCode)\(text)"
+        let range = NSRange(location: 0, length: phone.utf16.count)
+        let result = regex.firstMatch(in: phone, range: range)
+
+        if (result != nil) {
+            smsViewModel?.issueSms(phone: phone)
+            return
+        }
+        toast(message: "전화번호가 옳바르지 않습니다.")
+    }
+
+    @objc private func didTapBackButton() {
+        smsViewModel?.signOut()
+        replace(storyboard: "Main", withIdentifier: "LoginViewController")
     }
 }
