@@ -532,11 +532,9 @@ class UserCardTableViewCell: UITableViewCell {
             .subscribe(onNext: { [unowned self] result in
                 switch (result) {
                 case .accept:
-                    let done = heartLottie.begin(with: contentView, constraint: {
-                        heartLottie.snp.makeConstraints { make in
-                            make.edges.equalTo(carousel.snp.edges)
-                        }
-                    })
+                    let done = heartLottie.begin(with: contentView) { make in
+                        make.edges.equalTo(carousel.snp.edges)
+                    }
                     delegate?.request(user, animationDone: done)
                 case .purchase:
                     delegate?.purchase()
@@ -552,12 +550,10 @@ class UserCardTableViewCell: UITableViewCell {
     @objc func didTapPokeButton(sender: UITapGestureRecognizer) {
         fireworkController.addFireworks(count: 2, around: button3)
         delegate?.poke(user, onBegin: {
-            pokeLottie.begin(with: contentView) {
-                pokeLottie.snp.makeConstraints { make in
-                    make.center.equalTo(carousel.snp.center)
-                    make.width.equalTo(carousel.snp.width).multipliedBy(0.5)
-                    make.height.equalTo(carousel.snp.height).multipliedBy(0.5)
-                }
+            pokeLottie.begin(with: contentView) { make in
+                make.center.equalTo(carousel.snp.center)
+                make.width.equalTo(carousel.snp.width).multipliedBy(0.5)
+                make.height.equalTo(carousel.snp.height).multipliedBy(0.5)
             }
         })
     }
@@ -565,12 +561,10 @@ class UserCardTableViewCell: UITableViewCell {
     @objc func didTapStarImage(sender: StarTapGesture) {
         let score = sender.index! + 1
         rate(score: score)
-        starLottie.begin(with: contentView) {
-            starLottie.snp.makeConstraints { make in
-                make.center.equalTo(carousel.snp.center)
-                make.width.equalTo(carousel.snp.width).multipliedBy(0.5)
-                make.height.equalTo(carousel.snp.height).multipliedBy(0.5)
-            }
+        starLottie.begin(with: contentView) { make in
+            make.center.equalTo(carousel.snp.center)
+            make.width.equalTo(carousel.snp.width).multipliedBy(0.5)
+            make.height.equalTo(carousel.snp.height).multipliedBy(0.5)
         }
         delegate?.rate(user, score: score)
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
@@ -626,7 +620,7 @@ class UserCardTableViewCell: UITableViewCell {
         label2.text = label2Text
         label3.text = label3Text
         starLabel.text = starLabelText
-        
+
         pageControl.numberOfPages = numberOfPages
         carousel.reloadData()
     }

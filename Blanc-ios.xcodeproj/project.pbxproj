@@ -259,6 +259,9 @@
 		104EEC8225E3733E0069B2CF /* Sms.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 104EEC8125E3733E0069B2CF /* Sms.storyboard */; };
 		104EEC8725E3736D0069B2CF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 104EEC8625E3736C0069B2CF /* GoogleService-Info.plist */; };
 		104EEC9225E3764B0069B2CF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 104EEC9125E3764B0069B2CF /* Assets.xcassets */; };
+		1061E0202604421D00A0F29E /* ReportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1061E01F2604421D00A0F29E /* ReportViewController.swift */; };
+		1061E0282604422B00A0F29E /* ReportViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1061E0272604422B00A0F29E /* ReportViewModel.swift */; };
+		1061E02D2604423500A0F29E /* ReportModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1061E02C2604423500A0F29E /* ReportModel.swift */; };
 		10C624B625EA71D70058D923 /* wink.json in Resources */ = {isa = PBXBuildFile; fileRef = 10C624B525EA71D70058D923 /* wink.json */; };
 		10E94E8C25FA56EF0084DB84 /* RegistrationImageGuideViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10E94E8B25FA56EF0084DB84 /* RegistrationImageGuideViewController.swift */; };
 		240D91B346CC87269CAF305D /* Pods_Blanc_ios_Blanc_iosUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61F4FB0474880E97BECB4B37 /* Pods_Blanc_ios_Blanc_iosUITests.framework */; };
@@ -574,6 +577,9 @@
 		104EEC8625E3736C0069B2CF /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		104EEC9125E3764B0069B2CF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = "../../../Blanc-ios/Blanc-ios/Assets.xcassets"; sourceTree = "<group>"; };
 		10584E6C25E3D036002B5F83 /* Blanc-ios.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Blanc-ios.entitlements"; sourceTree = "<group>"; };
+		1061E01F2604421D00A0F29E /* ReportViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportViewController.swift; sourceTree = "<group>"; };
+		1061E0272604422B00A0F29E /* ReportViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportViewModel.swift; sourceTree = "<group>"; };
+		1061E02C2604423500A0F29E /* ReportModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportModel.swift; sourceTree = "<group>"; };
 		10C624B525EA71D70058D923 /* wink.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = wink.json; sourceTree = "<group>"; };
 		10E94E8B25FA56EF0084DB84 /* RegistrationImageGuideViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationImageGuideViewController.swift; sourceTree = "<group>"; };
 		4406E03ED7B2F9B2374EBA3D /* Pods-Blanc-ios-Blanc-iosUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Blanc-ios-Blanc-iosUITests.release.xcconfig"; path = "Target Support Files/Pods-Blanc-ios-Blanc-iosUITests/Pods-Blanc-ios-Blanc-iosUITests.release.xcconfig"; sourceTree = "<group>"; };
@@ -670,6 +676,7 @@
 		104EE97D25E3703C0069B2CF /* Blanc-ios */ = {
 			isa = PBXGroup;
 			children = (
+				1061E01E2604420E00A0F29E /* Report */,
 				104EEC7425E372CE0069B2CF /* Storyboards */,
 				104EEC6825E372AC0069B2CF /* Fonts */,
 				104EEC6225E372A60069B2CF /* Root */,
@@ -1504,6 +1511,16 @@
 			path = Storyboards;
 			sourceTree = "<group>";
 		};
+		1061E01E2604420E00A0F29E /* Report */ = {
+			isa = PBXGroup;
+			children = (
+				1061E01F2604421D00A0F29E /* ReportViewController.swift */,
+				1061E0272604422B00A0F29E /* ReportViewModel.swift */,
+				1061E02C2604423500A0F29E /* ReportModel.swift */,
+			);
+			path = Report;
+			sourceTree = "<group>";
+		};
 		34C2D0AF467C3DF473550429 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -1923,11 +1940,13 @@
 				104EEA5625E3720B0069B2CF /* RightSideBarView.swift in Sources */,
 				104EEB4B25E3725D0069B2CF /* FavoriteUserListViewController.swift in Sources */,
 				104EE98925E3703C0069B2CF /* Blanc_ios.xcdatamodeld in Sources */,
+				1061E02D2604423500A0F29E /* ReportModel.swift in Sources */,
 				104EEBD125E372890069B2CF /* ConversationSingleModel.swift in Sources */,
 				104EEBB425E372830069B2CF /* DistanceUtil.swift in Sources */,
 				104EEAF925E372480069B2CF /* PushDTO.swift in Sources */,
 				104EEA3E25E372060069B2CF /* RegistrationSexViewController.swift in Sources */,
 				104EEA9D25E372240069B2CF /* Channel.swift in Sources */,
+				1061E0202604421D00A0F29E /* ReportViewController.swift in Sources */,
 				104EEB8525E372650069B2CF /* PagerViewController.swift in Sources */,
 				104EEBB925E372830069B2CF /* Ripple.swift in Sources */,
 				104EEB5A25E3725D0069B2CF /* PostListViewController.swift in Sources */,
@@ -2084,6 +2103,7 @@
 				104EEAFD25E372480069B2CF /* UserDTO.swift in Sources */,
 				104EEC1925E3728F0069B2CF /* AvoidTableViewCell.swift in Sources */,
 				104EEC3B25E3728F0069B2CF /* EducationViewController.swift in Sources */,
+				1061E0282604422B00A0F29E /* ReportViewModel.swift in Sources */,
 				104EEC3725E3728F0069B2CF /* SexViewController.swift in Sources */,
 				104EEB5325E3725D0069B2CF /* PostManagementViewModel.swift in Sources */,
 				104EEC2825E3728F0069B2CF /* PushSettingTableViewCell.swift in Sources */,

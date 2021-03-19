@@ -8,6 +8,7 @@ import MaterialComponents.MaterialTextControls_OutlinedTextAreas
 import MaterialComponents.MaterialTextControls_OutlinedTextFields
 import Kingfisher
 import Lottie
+import SnapKit
 
 extension UIButton {
     func setImageLeftTextCenter(imagePadding: CGFloat = 30.0) {
@@ -148,9 +149,9 @@ extension AnimationView {
     }
 
     @discardableResult
-    func begin(with v: UIView, constraint: () -> Void) -> Observable<Void> {
+    func begin(with v: UIView, constraint: (_ make: ConstraintMaker) -> Void) -> Observable<Void> {
         v.addSubview(self)
-        constraint()
+        self.snp.makeConstraints(constraint)
         return self.begin()
     }
 }

@@ -16,7 +16,9 @@ enum Identifier: String {
          profileView = "ProfileViewController",
          myRatedScore = "MyRatedScoreViewController",
          avoidView = "AvoidViewController",
-         accountManagement = "AccountManagementViewController"
+         accountManagement = "AccountManagementViewController",
+
+         report = "ReportViewController"
 }
 
 extension UINavigationController {

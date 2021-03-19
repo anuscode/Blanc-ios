@@ -89,6 +89,11 @@ class UserSingleViewController: UIViewController {
         let imageView = UIImageView()
         let image = UIImage(named: "ic_more_vert")
         imageView.image = image
+        imageView.layer.cornerRadius = CGFloat(Const.navigationUserImageSize / 2)
+        imageView.layer.masksToBounds = true
+        imageView.isUserInteractionEnabled = true
+        imageView.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapOptionImageView))
+        ripple.activate(to: imageView)
         return imageView
     }()
 
@@ -361,12 +366,10 @@ class UserSingleViewController: UIViewController {
             .subscribe(onNext: { [unowned self] result in
                 switch (result) {
                 case .accept:
-                    heartLottie.begin(with: view, constraint: {
-                        heartLottie.snp.makeConstraints { make in
-                            make.edges.equalToSuperview().multipliedBy(0.8)
-                            make.center.equalToSuperview()
-                        }
-                    })
+                    heartLottie.begin(with: view) { make in
+                        make.edges.equalToSuperview().multipliedBy(0.8)
+                        make.center.equalToSuperview()
+                    }
                     userSingleViewModel?.createRequest()
                 case .purchase:
                     navigationController?.pushViewController(.inAppPurchase, current: self)
@@ -380,15 +383,41 @@ class UserSingleViewController: UIViewController {
     }
 
     @objc private func poke() {
-        userSingleViewModel?.poke(onBegin: {
-            pokeLottie.begin(with: view) {
-                pokeLottie.snp.makeConstraints { make in
-                    make.center.equalToSuperview()
-                    make.width.equalToSuperview().multipliedBy(0.5)
-                    make.height.equalToSuperview().multipliedBy(0.5)
-                }
+        userSingleViewModel?.poke(onBegin: { [unowned self] in
+            pokeLottie.begin(with: view) { make in
+                make.center.equalToSuperview()
+                make.width.equalToSuperview().multipliedBy(0.5)
+                make.height.equalToSuperview().multipliedBy(0.5)
             }
         })
+    }
+
+    @objc private func didTapOptionImageView() {
+        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let reportAction = UIAlertAction(title: "신고", style: .default) { [unowned self] (action) in
+            navigationController?.pushViewController(
+                .report,
+                current: self,
+                hideBottomWhenStart: true,
+                hideBottomWhenEnd: true
+            )
+        }
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        cancelAction.setValue(UIColor.red, forKey: "titleTextColor")
+        alertController.addAction(reportAction)
+        alertController.addAction(cancelAction)
+        alertController.modalPresentationStyle = .popover
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            if let popoverController = alertController.popoverPresentationController {
+                let sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 0, height: 0)
+                popoverController.sourceView = view
+                popoverController.sourceRect = sourceRect
+                popoverController.permittedArrowDirections = []
+                present(alertController, animated: true, completion: nil)
+            }
+        } else {
+            present(alertController, animated: true, completion: nil)
+        }
     }
 }
 
@@ -514,12 +543,10 @@ extension UserSingleViewController: UITableViewDelegate, UITableViewDataSource {
 
 extension UserSingleViewController: ProfileCellDelegate {
     func rate(user: UserDTO?, score: Int) {
-        starLottie.begin(with: view) {
-            starLottie.snp.makeConstraints { make in
-                make.center.equalToSuperview()
-                make.width.equalToSuperview().multipliedBy(0.5)
-                make.height.equalToSuperview().multipliedBy(0.5)
-            }
+        starLottie.begin(with: view) { make in
+            make.center.equalToSuperview()
+            make.width.equalToSuperview().multipliedBy(0.5)
+            make.height.equalToSuperview().multipliedBy(0.5)
         }
         userSingleViewModel?.rate(score)
     }

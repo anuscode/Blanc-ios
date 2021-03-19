@@ -405,6 +405,21 @@
             </objects>
             <point key="canvasLocation" x="1458" y="1740"/>
         </scene>
+        <!--Report View Controller-->
+        <scene sceneID="8Qw-wg-Xa6">
+            <objects>
+                <viewController storyboardIdentifier="ReportViewController" id="dQL-aE-cNS" customClass="ReportViewController" customModule="Blanc_ios" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Ogq-cs-bJ8">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="FKo-8j-DVh"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="APD-x5-fSe" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4004" y="1740"/>
+        </scene>
         <!--Navigation Controller-->
         <scene sceneID="kNO-0c-iAe">
             <objects>
