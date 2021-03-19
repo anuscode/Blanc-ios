@@ -8,6 +8,9 @@ extension ObjectScope {
     static let smsScope = ObjectScope(
         storageFactory: PermanentStorage.init, description: "sms scope."
     )
+    static let smsConfirmScope = ObjectScope(
+        storageFactory: PermanentStorage.init, description: "sms scope."
+    )
 }
 
 extension ObjectScope {
@@ -127,6 +130,17 @@ extension SwinjectStoryboard {
             let verificationService = resolver ~> VerificationService.self
             return SmsViewModel(verificationService: verificationService)
         }.inObjectScope(.smsScope)
+        defaultContainer.register(SmsConfirmViewModel.self) { resolver in
+            log.info("Creating SmsConfirmViewModel..")
+            let session = resolver ~> Session.self
+            let userService = resolver ~> UserService.self
+            let verificationService = resolver ~> VerificationService.self
+            return SmsConfirmViewModel(
+                session: session,
+                userService: userService,
+                verificationService: verificationService
+            )
+        }.inObjectScope(.smsConfirmScope)
 
         /** MainTabBar dependencies **/
         defaultContainer.register(MainTabBarViewModel.self) { resolver in
@@ -584,9 +598,7 @@ extension SwinjectStoryboard {
         }
         defaultContainer.storyboardInitCompleted(SmsConfirmViewController.self) { resolver, controller in
             log.info("Injecting dependencies into SmsConfirmViewController")
-            controller.session = resolver ~> Session.self
-            controller.userService = resolver ~> UserService.self
-            controller.verificationService = resolver ~> VerificationService.self
+            controller.smsConfirmViewModel = resolver ~> SmsConfirmViewModel.self
         }
     }
 

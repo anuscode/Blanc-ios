@@ -12,6 +12,8 @@ class SmsViewModel {
 
     internal let loading: PublishSubject = PublishSubject<Bool>()
 
+    internal let confirmButton: PublishSubject = PublishSubject<Bool>()
+
     internal let smsConfirm: PublishSubject = PublishSubject<VerificationDTO>()
 
     private let verificationService: VerificationService

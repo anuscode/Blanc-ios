@@ -18,7 +18,7 @@ class SmsViewController: UIViewController {
 
     private let ripple: Ripple = Ripple()
 
-    internal var smsViewModel: SmsViewModel?
+    internal weak var smsViewModel: SmsViewModel?
 
     lazy private var backButton: UIImageView = {
         let imageView = UIImageView()
@@ -189,12 +189,20 @@ class SmsViewController: UIViewController {
             .disposed(by: disposeBag)
 
         smsViewModel?
+            .confirmButton
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] boolean in
+                activateConfirmButton(boolean)
+            })
+            .disposed(by: disposeBag)
+
+        smsViewModel?
             .smsConfirm
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [unowned self] verification in
-                log.info("smsViewModel")
-                presentSmsConfirmView(verification: verification)
+                goSmsConfirmView(verification: verification)
             })
             .disposed(by: disposeBag)
     }
@@ -213,8 +221,7 @@ class SmsViewController: UIViewController {
         spinnerView.visible(flag)
     }
 
-    private func presentSmsConfirmView(verification: VerificationDTO) {
-        log.info("smsConfirm")
+    private func goSmsConfirmView(verification: VerificationDTO) {
         let storyboard = UIStoryboard(name: "Sms", bundle: nil)
         let vc = storyboard.instantiateViewController(
             withIdentifier: "SmsConfirmViewController") as! SmsConfirmViewController

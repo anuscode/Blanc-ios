@@ -5,6 +5,7 @@ import MaterialComponents.MaterialTextControls_FilledTextFields
 import MaterialComponents.MaterialTextControls_OutlinedTextAreas
 import MaterialComponents.MaterialTextControls_OutlinedTextFields
 import RxSwift
+import SwinjectStoryboard
 
 class SmsConfirmViewController: UIViewController {
 
@@ -12,21 +13,37 @@ class SmsConfirmViewController: UIViewController {
 
     private let auth: Auth = Auth.auth()
 
-    private var disposeBag: DisposeBag? = DisposeBag()
+    private var disposeBag: DisposeBag = DisposeBag()
 
     private let ripple: Ripple = Ripple()
 
-    internal weak var session: Session?
-
-    internal weak var verificationService: VerificationService?
-
-    internal weak var userService: UserService?
-
     internal var verification: VerificationDTO?
+
+    internal var smsConfirmViewModel: SmsConfirmViewModel?
+
+    lazy private var backButton: UIImageView = {
+        let imageView = UIImageView()
+        let image = UIImage(named: "ic_arrow_back")
+        imageView.image = image
+        imageView.layer.cornerRadius = 15
+        imageView.layer.masksToBounds = true
+        imageView.width(30)
+        imageView.height(30)
+        imageView.rx
+            .tapGesture()
+            .when(.recognized)
+            .take(1)
+            .subscribe(onNext: { [unowned self] _ in
+                self.dismiss(animated: true)
+            })
+            .disposed(by: disposeBag)
+        ripple.activate(to: imageView)
+        return imageView
+    }()
 
     lazy private var smsLabel: UILabel = {
         let label = UILabel()
-        label.text = "SMS 모바일 인증"
+        label.text = "SMS 인증"
         label.font = .systemFont(ofSize: 28)
         label.numberOfLines = 1;
         label.textColor = .black
@@ -69,7 +86,7 @@ class SmsConfirmViewController: UIViewController {
                 return (result != nil)
             })
             .subscribe(onNext: self.activateConfirmButton)
-            .disposed(by: disposeBag!)
+            .disposed(by: disposeBag)
         return textField
     }()
 
@@ -91,7 +108,7 @@ class SmsConfirmViewController: UIViewController {
             .subscribe(onNext: { [unowned self] _ in
                 self.dismiss(animated: true)
             })
-            .disposed(by: disposeBag!)
+            .disposed(by: disposeBag)
         return button
     }()
 
@@ -122,7 +139,8 @@ class SmsConfirmViewController: UIViewController {
         super.viewDidLoad()
         configureSubviews()
         configureConstraints()
-        initInterval()
+        subscribeSmsConfirmViewModel()
+        interval()
     }
 
     override func viewDidLayoutSubviews() {
@@ -136,9 +154,11 @@ class SmsConfirmViewController: UIViewController {
 
     deinit {
         log.info("deinit SmsConfirmViewController..")
+        SwinjectStoryboard.defaultContainer.resetObjectScope(.smsConfirmScope)
     }
 
     private func configureSubviews() {
+        view.addSubview(backButton)
         view.addSubview(smsLabel)
         view.addSubview(smsLabel2)
         view.addSubview(smsCodeTextField)
@@ -149,124 +169,123 @@ class SmsConfirmViewController: UIViewController {
     }
 
     private func configureConstraints() {
+        backButton.snp.makeConstraints { make in
+            make.leading.equalToSuperview().inset(20)
+            make.top.equalTo(view.safeAreaLayoutGuide).inset(20)
+        }
         smsLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(25)
-            make.top.equalTo(view.safeAreaLayoutGuide).inset(50)
-            make.width.equalTo(view.width - 50)
+            make.top.equalTo(backButton.snp.bottom).offset(15)
         }
-
         smsLabel2.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(25)
-            make.top.equalTo(smsLabel.snp.bottom).offset(10)
-            make.width.equalTo(view.width - 50)
+            make.leading.equalToSuperview().inset(25)
+            make.top.equalTo(smsLabel.snp.bottom).offset(20)
         }
-
         smsCodeTextField.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(25)
             make.top.equalTo(smsLabel2.snp.bottom).offset(30)
             make.width.equalTo(view.width - 50)
             make.height.equalTo(60)
         }
-
         timeLeftLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(25)
             make.top.equalTo(smsCodeTextField.snp.bottom).offset(40)
             make.width.equalTo(view.width - 50)
             make.height.equalTo(52)
         }
-
         confirmButton.snp.makeConstraints { make in
             make.trailing.equalTo(smsCodeTextField.snp.trailing)
             make.top.equalTo(smsCodeTextField.snp.bottom).offset(40)
             make.width.equalTo((view.width - 50) / 3)
             make.height.equalTo(52)
         }
-
         resetButton.snp.makeConstraints { make in
             make.trailing.equalTo(confirmButton.snp.leading).inset(-20)
             make.centerY.equalTo(confirmButton.snp.centerY)
             make.width.equalTo(resetButton.intrinsicContentSize.width)
             make.height.equalTo(52)
         }
-
         spinnerView.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
     }
 
-    @objc private func didTapConfirmButton() {
-        let smsCode = smsCodeTextField.text ?? ""
-        let range = NSRange(location: 0, length: smsCode.utf16.count)
-        let result = smsRegex.firstMatch(in: smsCode, range: range)
-        if (result == nil) {
-            return
-        }
-        guard let currentUser = auth.currentUser,
-              let uid = auth.uid,
-              let phone = verification?.phone else {
-            return
-        }
-        spinnerView.visible(true)
-        activateConfirmButton(false)
-        verificationService?
-            .verifySmsCode(
-                currentUser: currentUser,
-                uid: uid,
-                phone: phone,
-                smsCode: smsCode,
-                expiredAt: verification?.expiredAt
-            )
-            .do(onSuccess: { [unowned self] it in
-                if (it.status == .INVALID_SMS_CODE) {
-                    let message = "유효하지 않은 인증번호 입니다."
-                    toast(message: message)
-                    throw NSError(domain: message, code: 42, userInfo: nil)
-                }
-                if (it.status == .EXPIRED_SMS_CODE) {
-                    let message = "인증시간이 만료 되었습니다."
-                    toast(message: message)
-                    throw NSError(domain: message, code: 42, userInfo: nil)
-                }
-                if (it.status == .DUPLICATE_PHONE_NUMBER) {
-                    let message = "이미 등록 된 전화번호 입니다."
-                    toast(message: message)
-                    throw NSError(domain: message, code: 42, userInfo: nil)
-                }
-                if (it.status == .VERIFIED_SMS_CODE) {
-                    log.info("Successfully verified sms code..")
-                }
+    private func subscribeSmsConfirmViewModel() {
+        smsConfirmViewModel?
+            .toast
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] message in
+                toast(message: message)
             })
-            .do(onError: { [unowned self] err in
-                log.error(err)
-                activateConfirmButton(true)
+            .disposed(by: disposeBag)
+
+        smsConfirmViewModel?
+            .loading
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] boolean in
+                showLoading(boolean)
             })
-            .flatMap { [unowned self] it -> Single<UserDTO> in
-                userService!.createUser(
-                    currentUser: currentUser,
-                    uid: uid,
-                    phone: it.phone,
-                    smsCode: it.smsCode,
-                    smsToken: it.smsToken
-                )
-            }
-            .flatMap { [unowned self] it -> Single<Void> in
-                session!.generate()
-            }
-            .observeOn(MainScheduler.instance)
-            .subscribe(onSuccess: { [unowned self] _ in
-                spinnerView.visible(false)
-                replace(storyboard: "Registration", withIdentifier: "RegistrationNavigationViewController")
-            }, onError: { [unowned self] err in
-                log.error(err)
-                spinnerView.visible(false)
-                activateConfirmButton(true)
-                toast(message: "문자 인증에 실패 하였습니다.")
+            .disposed(by: disposeBag)
+
+        smsConfirmViewModel?
+            .confirmButton
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] boolean in
+                activateConfirmButton(boolean)
             })
-            .disposed(by: disposeBag!)
+            .disposed(by: disposeBag)
+
+        smsConfirmViewModel?
+            .resetButton
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] boolean in
+                activateResetButton(boolean)
+            })
+            .disposed(by: disposeBag)
+
+        smsConfirmViewModel?
+            .registration
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] _ in
+                goRegistrationView()
+            })
+            .disposed(by: disposeBag)
     }
 
-    private func activateConfirmButton(_ isActivate: Bool) {
-        if (isActivate) {
+    private func interval() {
+        Observable<Int>
+            .interval(.seconds(1), scheduler: MainScheduler.instance)
+            .subscribe(onNext: { [unowned self] _ in
+                let expiredAt = verification?.expiredAt ?? 0
+                let current = Int(NSDate().timeIntervalSince1970)
+                let seconds = expiredAt - current
+                if (seconds <= 0) {
+                    dismiss(animated: true)
+                }
+                let format = "남은 시간: %02d:%02d"
+                let min = (seconds % 3600) / 60
+                let sec = seconds % 60
+                let text = String(format: format, min, sec)
+                timeLeftLabel.text = text
+            })
+            .disposed(by: disposeBag)
+    }
+
+    func setVerification(_ verification: VerificationDTO) {
+        self.verification = verification
+    }
+
+    private func showLoading(_ boolean: Bool) {
+        spinnerView.visible(boolean)
+    }
+
+    private func activateConfirmButton(_ boolean: Bool) {
+        if (boolean) {
             confirmButton.addTarget(self, action: #selector(didTapConfirmButton), for: .touchUpInside)
             confirmButton.backgroundColor = .systemBlue
         } else {
@@ -275,28 +294,28 @@ class SmsConfirmViewController: UIViewController {
         }
     }
 
-    private func formatRemainingTime(_ expiredAt: Int) -> String {
-        let current = Int(NSDate().timeIntervalSince1970)
-        let seconds = expiredAt - current
-        if (seconds <= 0) {
-            dismiss(animated: true)
-            return "시간 만료"
+    private func activateResetButton(_ boolean: Bool) {
+        resetButton.isUserInteractionEnabled = boolean
+    }
+
+    private func goRegistrationView() {
+        replace(storyboard: "Registration", withIdentifier: "RegistrationNavigationViewController")
+    }
+
+    @objc private func didTapConfirmButton() {
+        let smsCode = smsCodeTextField.text ?? ""
+        let range = NSRange(location: 0, length: smsCode.utf16.count)
+        let result = smsRegex.firstMatch(in: smsCode, range: range)
+
+        if (result == nil) {
+            toast(message: "SMS 번호가 옳바르지 않습니다.")
+            return
         }
-        return String(format: "남은 시간: %02d:%02d", ((seconds % 3600) / 60), (seconds % 60))
-    }
-
-    private func initInterval() {
-        Observable<Int>
-            .interval(.seconds(1), scheduler: MainScheduler.instance)
-            .subscribe(onNext: { [unowned self] _ in
-                let expiredAt = verification?.expiredAt ?? 0
-                let formatted = formatRemainingTime(expiredAt)
-                timeLeftLabel.text = formatted
-            })
-            .disposed(by: disposeBag!)
-    }
-
-    func setVerification(_ verification: VerificationDTO) {
-        self.verification = verification
+        guard let phone = verification?.phone,
+              let expiredAt = verification?.expiredAt else {
+            toast(message: "잘못 된 설정 입니다. 초기화 후 다시 시도해 주세요.")
+            return
+        }
+        smsConfirmViewModel?.verifySmsCode(phone: phone, smsCode: smsCode, expiredAt: expiredAt)
     }
 }
