@@ -193,7 +193,12 @@ extension UserProvider: TargetType {
         case .uploadUserImage(uid: _, userId: _, index: _, file: let file):
             let imageData = file.jpegData(compressionQuality: 1.0)
             let formData = [
-                Moya.MultipartFormData(provider: .data(imageData!), name: "user_image", fileName: "image.jpeg", mimeType: "image/jpeg")
+                Moya.MultipartFormData(
+                    provider: .data(imageData!),
+                    name: "user_image",
+                    fileName: "image.jpeg",
+                    mimeType: "image/jpeg"
+                )
             ]
             return .uploadMultipart(formData)
 
