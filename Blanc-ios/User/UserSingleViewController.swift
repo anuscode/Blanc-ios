@@ -383,25 +383,25 @@ class UserSingleViewController: UIViewController {
     }
 
     @objc private func poke() {
-        userSingleViewModel?.poke(onBegin: { [unowned self] in
+        let onBegin: () -> Void = { [unowned self] in
             pokeLottie.begin(with: view) { make in
                 make.center.equalToSuperview()
                 make.width.equalToSuperview().multipliedBy(0.5)
                 make.height.equalToSuperview().multipliedBy(0.5)
             }
-        })
+        }
+        userSingleViewModel?.poke(onBegin: onBegin)
     }
 
     @objc private func didTapOptionImageView() {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let reportAction = UIAlertAction(title: "신고", style: .default) { [unowned self] (action) in
-            toast(message: "구현 중입니다..")
-//            navigationController?.pushViewController(
-//                .report,
-//                current: self,
-//                hideBottomWhenStart: true,
-//                hideBottomWhenEnd: true
-//            )
+            navigationController?.pushViewController(
+                .report,
+                current: self,
+                hideBottomWhenStart: true,
+                hideBottomWhenEnd: true
+            )
         }
         let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
         cancelAction.setValue(UIColor.red, forKey: "titleTextColor")
