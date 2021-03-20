@@ -45,7 +45,7 @@ class ConversationSingleModel {
 
     private func populate() {
         channel
-            .observe(ConversationDTO.self)
+            .conversation
             .take(1)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))

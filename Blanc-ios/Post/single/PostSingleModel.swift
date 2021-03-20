@@ -41,7 +41,7 @@ class PostSingleModel {
 
     func subscribeChannel() {
         channel
-            .observe(PostDTO.self)
+            .post
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .subscribe(onNext: { [unowned self] post in

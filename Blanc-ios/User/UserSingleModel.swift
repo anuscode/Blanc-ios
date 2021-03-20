@@ -48,7 +48,7 @@ class UserSingleModel {
 
     func subscribeChannel() {
         channel
-            .observe(UserDTO.self)
+            .user
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
             .do(onNext: { [unowned self]  user in

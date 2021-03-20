@@ -38,29 +38,31 @@ class FavoriteUserListModel {
     }
 
     private func subscribeChannel() {
-        channel.observe(PostDTO.self)
-                .take(1)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [unowned self] post in
-                    populate(post: post)
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        channel
+            .post
+            .take(1)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onNext: { [unowned self] post in
+                populate(post: post)
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     private func populate(post: PostDTO?) {
-        postService.listAllFavoriteUsers(uid: session.uid, postId: post?.id)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [unowned self] users in
-                    self.users = users
-                    publish()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        postService
+            .listAllFavoriteUsers(uid: session.uid, postId: post?.id)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onSuccess: { [unowned self] users in
+                self.users = users
+                publish()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     func channel(user: UserDTO?) {
