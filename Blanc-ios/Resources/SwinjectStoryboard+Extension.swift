@@ -103,6 +103,7 @@ extension SwinjectStoryboard {
         defaultContainer.autoregister(Preferences.self, initializer: Preferences.init).inObjectScope(.container)
         defaultContainer.autoregister(CLLocationManager.self, initializer: CLLocationManager.init).inObjectScope(.container)
 
+        defaultContainer.autoregister(ReportService.self, initializer: ReportService.init).inObjectScope(.container)
         defaultContainer.autoregister(UserService.self, initializer: UserService.init).inObjectScope(.container)
         defaultContainer.autoregister(VerificationService.self, initializer: VerificationService.init).inObjectScope(.container)
         defaultContainer.autoregister(RequestService.self, initializer: RequestService.init).inObjectScope(.container)
@@ -215,8 +216,13 @@ extension SwinjectStoryboard {
             let requestsModel = resolver ~> RequestsModel.self
             let conversationModel = resolver ~> ConversationModel.self
             let userSingleViewModel = UserSingleViewModel(
-                session: session, homeModel: homeModel, userSingleModel: userSingleModel,
-                sendingModel: sendingModel, requestsModel: requestsModel, conversationModel: conversationModel)
+                session: session,
+                homeModel: homeModel,
+                userSingleModel: userSingleModel,
+                sendingModel: sendingModel,
+                requestsModel: requestsModel,
+                conversationModel: conversationModel
+            )
             return userSingleViewModel
         }.inObjectScope(.userSingleScope)
 
@@ -317,8 +323,11 @@ extension SwinjectStoryboard {
             let ratedModel = resolver ~> RatedModel.self
             let conversationModel = resolver ~> ConversationModel.self
             let receivedViewModel = ReceivedViewModel(
-                session: session, channel: channel, requestsModel: requestsModel,
-                ratedModel: ratedModel, conversationModel: conversationModel
+                session: session,
+                channel: channel,
+                requestsModel: requestsModel,
+                ratedModel: ratedModel,
+                conversationModel: conversationModel
             )
             return receivedViewModel
         }.inObjectScope(.mainScope)
@@ -460,7 +469,6 @@ extension SwinjectStoryboard {
             let profileViewModel = ProfileViewModel(profileModel: profileModel)
             return profileViewModel
         }.inObjectScope(.profileScope)
-
 
         /** InAppPurchase dependencies **/
         defaultContainer.register(InAppPurchaseModel.self) { resolver in
@@ -716,6 +724,13 @@ extension SwinjectStoryboard {
             let rightSideBarViewModel = resolver ~> RightSideBarViewModel.self
             controller.rightSideBarView = RightSideBarView(rightSideBarViewModel: rightSideBarViewModel)
             controller.inAppPurchaseViewModel = inAppPurchaseViewModel
+        }
+
+        defaultContainer.storyboardInitCompleted(ReportViewController.self) { resolver, controller in
+            log.info("Injecting dependencies into ReportViewController")
+            let reportService = resolver ~> ReportService.self
+            let reportViewModel = ReportViewModel(reportService: reportService)
+            controller.reportViewModel = reportViewModel
         }
 
         defaultContainer.storyboardInitCompleted(PushSettingViewController.self) { resolver, controller in
