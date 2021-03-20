@@ -15,16 +15,12 @@ class PostCreateModel {
         self.session = session
     }
 
-    func createPost(files: [UIImage], description: String?, enableComment: Bool,
-                    onCompleted: @escaping () -> Void, onError: @escaping () -> Void) {
-        postService.createPost(uid: session.uid, files: files, description: description, enableComment: enableComment)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [unowned self] in
-                    onCompleted()
-                }, onError: { err in
-                    onError()
-                })
-                .disposed(by: disposeBag)
+    func createPost(files: [UIImage], description: String?, enableComment: Bool) -> Single<Void> {
+        postService.createPost(
+            uid: session.uid,
+            files: files,
+            description: description,
+            enableComment: enableComment
+        )
     }
 }
