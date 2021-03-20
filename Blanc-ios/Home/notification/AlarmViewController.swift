@@ -12,8 +12,6 @@ class AlarmViewController: UIViewController {
 
     internal weak var alarmViewModel: AlarmViewModel?
 
-    internal weak var channel: Channel?
-
     lazy private var leftBarButtonItem: UIBarButtonItem = {
         UIBarButtonItem(customView: LeftSideBarView(title: "알림"))
     }()
@@ -158,7 +156,7 @@ extension AlarmViewController: UITableViewDelegate {
             }
             alarmViewModel?.getPost(postId: postId, onSuccess: { post in
                 DispatchQueue.main.async {
-                    self.channel?.next(value: post)
+                    Channel.next(value: post)
                     self.navigationController?.pushViewController(.postSingle, current: self)
                 }
             }, onError: {
@@ -172,7 +170,7 @@ extension AlarmViewController: UITableViewDelegate {
         }
         alarmViewModel?.getUser(userId: userId, onSuccess: { user in
             DispatchQueue.main.async {
-                self.channel?.next(value: user)
+                Channel.next(value: user)
                 self.navigationController?.pushViewController(.userSingle, current: self)
             }
         }, onError: {

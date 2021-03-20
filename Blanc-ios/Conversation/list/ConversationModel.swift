@@ -11,17 +11,14 @@ class ConversationModel {
 
     private var session: Session
 
-    private var channel: Channel
-
     private var conversationService: ConversationService
 
     private var conversations: [ConversationDTO] = []
 
     private let realm = try! Realm()
 
-    init(session: Session, channel: Channel, conversationService: ConversationService) {
+    init(session: Session, conversationService: ConversationService) {
         self.session = session
-        self.channel = channel
         self.conversationService = conversationService
         populate()
         subscribeBroadcast()
@@ -199,14 +196,14 @@ class ConversationModel {
         guard let user = user else {
             return
         }
-        channel.next(value: user)
+        Channel.next(value: user)
     }
 
     func channel(conversation: ConversationDTO?) {
         guard let conversation = conversation else {
             return
         }
-        channel.next(value: conversation)
+        Channel.next(value: conversation)
     }
 
     func sync(conversation: ConversationDTO) {

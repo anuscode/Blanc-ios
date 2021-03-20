@@ -14,7 +14,6 @@ private extension Array where Element: Postable {
     func findApplicablePost(comment: CommentDTO?) -> PostDTO? {
         var postIndices: [Int] = []
         var commentIndex: Int = 0
-
         enumerated().forEach { (i: Int, v: Element) in
             if (v is PostDTO) {
                 postIndices.append(i)
@@ -23,11 +22,9 @@ private extension Array where Element: Postable {
                 commentIndex = i
             }
         }
-
         let postIndex = postIndices.filter {
             $0 < commentIndex
         }.max()
-
         return postIndex != nil ? (self[postIndex!] as! PostDTO) : nil
     }
 }
@@ -39,8 +36,6 @@ class PostManagementViewController: UIViewController {
     private var data: [Postable] = []
 
     private var replyTo: CommentDTO?
-
-    internal var channel: Channel?
 
     internal var session: Session?
 
@@ -275,7 +270,7 @@ extension PostManagementViewController: PostManagementTableViewCellDelegate {
         guard let post = post else {
             return
         }
-        channel?.next(value: post)
+        Channel.next(value: post)
         navigationController?.pushViewController(
             .favoriteUsers,
             current: self,
@@ -311,7 +306,7 @@ extension PostManagementViewController: PostManagementTableViewCellDelegate {
 
     private func channel(post: PostDTO?) {
         if let post = post {
-            channel?.next(value: post)
+            Channel.next(value: post)
         }
     }
 }

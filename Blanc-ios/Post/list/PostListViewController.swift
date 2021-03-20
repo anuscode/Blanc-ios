@@ -17,8 +17,6 @@ class PostListViewController: UIViewController {
 
     private var posts: [PostDTO] = []
 
-    internal var channel: Channel?
-
     internal var postViewModel: PostViewModel?
 
     internal var scrollToRow: Int?
@@ -165,7 +163,7 @@ extension PostListViewController: PostBodyDelegate {
         guard let post = post else {
             return
         }
-        channel?.next(value: post)
+        Channel.next(value: post)
     }
 }
 
@@ -180,6 +178,6 @@ extension PostListViewController: PostHeaderDelegate {
         guard let user = user else {
             return
         }
-        channel?.next(value: user)
+        Channel.next(value: user)
     }
 }

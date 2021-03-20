@@ -117,7 +117,6 @@ extension SwinjectStoryboard {
             let preferences = resolver ~> Preferences.self
             return Session(userService: userService, preferences: preferences)
         }.inObjectScope(.container)
-        defaultContainer.autoregister(Channel.self, initializer: Channel.init).inObjectScope(.container)
 
         defaultContainer.register(FcmTokenManager.self) { resolver in
             let session = resolver ~> Session.self
@@ -160,16 +159,18 @@ extension SwinjectStoryboard {
             return homeModel
         }.inObjectScope(.mainScope)
         defaultContainer.register(HomeViewModel.self) { resolver in
-            let channel = resolver ~> Channel.self
             let session = resolver ~> Session.self
             let homeModel = resolver ~> HomeModel.self
             let sendingModel = resolver ~> SendingModel.self
             let requestsModel = resolver ~> RequestsModel.self
             let conversationModel = resolver ~> ConversationModel.self
             let homeViewModel = HomeViewModel(
-                session: session, channel: channel,
-                homeModel: homeModel, sendingModel: sendingModel,
-                requestsModel: requestsModel, conversationModel: conversationModel)
+                session: session,
+                homeModel: homeModel,
+                sendingModel: sendingModel,
+                requestsModel: requestsModel,
+                conversationModel: conversationModel
+            )
             return homeViewModel
         }.inObjectScope(.mainScope)
 
@@ -201,11 +202,13 @@ extension SwinjectStoryboard {
         /** UserSingle dependencies **/
         defaultContainer.register(UserSingleModel.self) { resolver in
             let session = resolver ~> Session.self
-            let channel = resolver ~> Channel.self
             let userService = resolver ~> UserService.self
             let requestService = resolver ~> RequestService.self
             let userSingleModel = UserSingleModel(
-                session: session, channel: channel, userService: userService, requestService: requestService)
+                session: session,
+                userService: userService,
+                requestService: requestService
+            )
             return userSingleModel
         }.inObjectScope(.userSingleScope)
         defaultContainer.register(UserSingleViewModel.self) { resolver in
@@ -256,9 +259,8 @@ extension SwinjectStoryboard {
         /** PostSingle dependencies **/
         defaultContainer.register(PostSingleModel.self) { resolver in
             let session = resolver ~> Session.self
-            let channel = resolver ~> Channel.self
             let postService = resolver ~> PostService.self
-            let postSingleModel = PostSingleModel(session: session, channel: channel, postService: postService)
+            let postSingleModel = PostSingleModel(session: session, postService: postService)
             return postSingleModel
         }.inObjectScope(.postSingleScope)
         defaultContainer.register(PostSingleViewModel.self) { resolver in
@@ -266,7 +268,10 @@ extension SwinjectStoryboard {
             let postSingleModel = resolver ~> PostSingleModel.self
             let postModel = resolver ~> PostModel.self
             let postSingleViewModel = PostSingleViewModel(
-                session: session, postSingleModel: postSingleModel, postModel: postModel)
+                session: session,
+                postSingleModel: postSingleModel,
+                postModel: postModel
+            )
             return postSingleViewModel
         }.inObjectScope(.postSingleScope)
 
@@ -290,11 +295,10 @@ extension SwinjectStoryboard {
         /** FavoriteUserList dependencies **/
         defaultContainer.register(FavoriteUserListModel.self) { resolver in
             let session: Session = resolver ~> Session.self
-            let channel: Channel = resolver ~> Channel.self
             let userService: UserService = resolver ~> UserService.self
             let postService: PostService = resolver ~> PostService.self
             let favoriteUserListModel = FavoriteUserListModel(
-                session: session, channel: channel, userService: userService, postService: postService)
+                session: session, userService: userService, postService: postService)
             return favoriteUserListModel
         }.inObjectScope(.favoriteUserListScope)
         defaultContainer.register(FavoriteUserListViewModel.self) { resolver in
@@ -318,13 +322,11 @@ extension SwinjectStoryboard {
         }.inObjectScope(.mainScope)
         defaultContainer.register(ReceivedViewModel.self) { resolver in
             let session = resolver ~> Session.self
-            let channel = resolver ~> Channel.self
             let requestsModel = resolver ~> RequestsModel.self
             let ratedModel = resolver ~> RatedModel.self
             let conversationModel = resolver ~> ConversationModel.self
             let receivedViewModel = ReceivedViewModel(
                 session: session,
-                channel: channel,
                 requestsModel: requestsModel,
                 ratedModel: ratedModel,
                 conversationModel: conversationModel
@@ -335,9 +337,8 @@ extension SwinjectStoryboard {
         /** Rating dependencies **/
         defaultContainer.register(SendingModel.self) { resolver in
             let session = resolver ~> Session.self
-            let channel = resolver ~> Channel.self
             let userService = resolver ~> UserService.self
-            let sendingModel = SendingModel(session: session, channel: channel, userService: userService)
+            let sendingModel = SendingModel(session: session, userService: userService)
             return sendingModel
         }.inObjectScope(.mainScope)
         defaultContainer.register(SendingViewModel.self) { resolver in
@@ -349,9 +350,8 @@ extension SwinjectStoryboard {
         /** Conversation list dependencies **/
         defaultContainer.register(ConversationModel.self) { resolver in
             let session = resolver ~> Session.self
-            let channel = resolver ~> Channel.self
             let conversationService = resolver ~> ConversationService.self
-            let conversationModel = ConversationModel(session: session, channel: channel, conversationService: conversationService)
+            let conversationModel = ConversationModel(session: session, conversationService: conversationService)
             return conversationModel
         }.inObjectScope(.mainScope)
         defaultContainer.register(ConversationViewModel.self) { resolver in
@@ -363,10 +363,10 @@ extension SwinjectStoryboard {
         /** Conversation single dependencies **/
         defaultContainer.register(ConversationSingleModel.self) { resolver in
             let session = resolver ~> Session.self
-            let channel = resolver ~> Channel.self
             let conversationService = resolver ~> ConversationService.self
             let conversationSingleModel = ConversationSingleModel(
-                session: session, channel: channel, conversationService: conversationService)
+                session: session, conversationService: conversationService
+            )
             return conversationSingleModel
         }.inObjectScope(.conversationSingleScope)
         defaultContainer.register(ConversationSingleViewModel.self) { resolver in
@@ -637,7 +637,6 @@ extension SwinjectStoryboard {
 
         defaultContainer.storyboardInitCompleted(AlarmViewController.self) { resolver, controller in
             log.info("Injecting dependencies into AlarmViewController")
-            controller.channel = resolver ~> Channel.self
             controller.alarmViewModel = resolver ~> AlarmViewModel.self
         }
 
@@ -653,7 +652,6 @@ extension SwinjectStoryboard {
 
         defaultContainer.storyboardInitCompleted(PostListViewController.self) { resolver, controller in
             log.info("Injecting dependencies into PostListViewController")
-            controller.channel = resolver ~> Channel.self
             controller.postViewModel = resolver ~> PostViewModel.self
         }
 
@@ -670,7 +668,6 @@ extension SwinjectStoryboard {
 
         defaultContainer.storyboardInitCompleted(PostManagementViewController.self) { resolver, controller in
             log.info("Injecting dependencies into PostManagementViewController")
-            controller.channel = resolver ~> Channel.self
             controller.session = resolver ~> Session.self
             controller.postManagementViewModel = resolver ~> PostManagementViewModel.self
         }

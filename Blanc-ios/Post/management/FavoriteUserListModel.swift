@@ -15,15 +15,12 @@ class FavoriteUserListModel {
 
     private var session: Session
 
-    private var channel: Channel
-
     private var userService: UserService
 
     private var postService: PostService
 
-    init(session: Session, channel: Channel, userService: UserService, postService: PostService) {
+    init(session: Session, userService: UserService, postService: PostService) {
         self.session = session
-        self.channel = channel
         self.userService = userService
         self.postService = postService
         subscribeChannel()
@@ -38,7 +35,7 @@ class FavoriteUserListModel {
     }
 
     private func subscribeChannel() {
-        channel
+        Channel
             .post
             .take(1)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
@@ -69,6 +66,6 @@ class FavoriteUserListModel {
         if (user == nil) {
             return
         }
-        channel.next(value: user!)
+        Channel.next(value: user!)
     }
 }

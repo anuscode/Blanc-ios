@@ -14,13 +14,10 @@ class PostSingleModel {
 
     private var session: Session
 
-    private var channel: Channel
-
     private var postService: PostService
 
-    init(session: Session, channel: Channel, postService: PostService) {
+    init(session: Session, postService: PostService) {
         self.session = session
-        self.channel = channel
         self.postService = postService
         subscribeChannel()
     }
@@ -40,7 +37,7 @@ class PostSingleModel {
     }
 
     func subscribeChannel() {
-        channel
+        Channel
             .post
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))

@@ -9,15 +9,12 @@ class SendingModel {
 
     private var session: Session
 
-    private var channel: Channel
-
     private var userService: UserService
 
     private var users: [UserDTO] = []
 
-    init(session: Session, channel: Channel, userService: UserService) {
+    init(session: Session, userService: UserService) {
         self.session = session
-        self.channel = channel
         self.userService = userService
         populate()
     }
@@ -51,7 +48,7 @@ class SendingModel {
         guard let user = user else {
             return
         }
-        channel.next(value: user)
+        Channel.next(value: user)
     }
 
     func append(user: UserDTO?) {

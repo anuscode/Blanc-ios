@@ -29,8 +29,6 @@ class HomeViewModel {
 
     private var repository: Repository = Repository()
 
-    private var channel: Channel
-
     private var session: Session
 
     private let homeModel: HomeModel
@@ -41,10 +39,12 @@ class HomeViewModel {
 
     private let sendingModel: SendingModel
 
-    init(session: Session, channel: Channel, homeModel: HomeModel, sendingModel: SendingModel,
-         requestsModel: RequestsModel, conversationModel: ConversationModel) {
+    init(session: Session,
+         homeModel: HomeModel,
+         sendingModel: SendingModel,
+         requestsModel: RequestsModel,
+         conversationModel: ConversationModel) {
         self.session = session
-        self.channel = channel
         self.homeModel = homeModel
         self.sendingModel = sendingModel
         self.requestsModel = requestsModel
@@ -124,7 +124,7 @@ class HomeViewModel {
 
     func channel(user: UserDTO?) {
         if let user = user {
-            channel.next(value: user)
+            Channel.next(value: user)
         }
     }
 

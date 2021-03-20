@@ -27,8 +27,6 @@ class ReceivedViewModel {
 
     private let session: Session
 
-    private let channel: Channel
-
     private let requestsModel: RequestsModel
 
     private let ratedModel: RatedModel
@@ -38,13 +36,11 @@ class ReceivedViewModel {
     private let nsLock: NSLock = NSLock()
 
     init(session: Session,
-         channel: Channel,
          requestsModel: RequestsModel,
          ratedModel: RatedModel,
          conversationModel: ConversationModel
     ) {
         self.session = session
-        self.channel = channel
         self.requestsModel = requestsModel
         self.ratedModel = ratedModel
         self.conversationModel = conversationModel
@@ -106,7 +102,7 @@ class ReceivedViewModel {
         guard let user = user else {
             return
         }
-        channel.next(value: user)
+        Channel.next(value: user)
     }
 
     func accept(request: RequestDTO?) {

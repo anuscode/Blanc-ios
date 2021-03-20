@@ -20,15 +20,12 @@ class UserSingleModel {
 
     private var session: Session
 
-    private var channel: Channel
-
     private var userService: UserService
 
     private var requestService: RequestService
 
-    init(session: Session, channel: Channel, userService: UserService, requestService: RequestService) {
+    init(session: Session, userService: UserService, requestService: RequestService) {
         self.session = session
-        self.channel = channel
         self.userService = userService
         self.requestService = requestService
         subscribeChannel()
@@ -47,7 +44,7 @@ class UserSingleModel {
     }
 
     func subscribeChannel() {
-        channel
+        Channel
             .user
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)

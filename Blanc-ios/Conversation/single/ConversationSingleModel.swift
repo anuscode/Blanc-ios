@@ -13,17 +13,14 @@ class ConversationSingleModel {
 
     private var session: Session
 
-    private let channel: Channel
-
     private let conversationService: ConversationService
 
     private let auth: Auth = Auth.auth()
 
     private let realm = try! Realm()
 
-    init(session: Session, channel: Channel, conversationService: ConversationService) {
+    init(session: Session, conversationService: ConversationService) {
         self.session = session
-        self.channel = channel
         self.conversationService = conversationService
         populate()
         subscribeBroadcast()
@@ -44,7 +41,7 @@ class ConversationSingleModel {
     }
 
     private func populate() {
-        channel
+        Channel
             .conversation
             .take(1)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
@@ -152,7 +149,7 @@ class ConversationSingleModel {
 
     func channel(user: UserDTO?) {
         if (user != nil) {
-            channel.next(value: user!)
+            Channel.next(value: user!)
         }
     }
 
