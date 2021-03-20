@@ -26,9 +26,7 @@ class ReportViewController: UIViewController {
 
     private var isFirstBeginEditing = true
 
-    var session: Session?
-
-    var postCreateViewModel: PostCreateViewModel?
+    internal var reportViewModel: ReportViewModel!
 
     lazy private var leftBarButtonItem: UIBarButtonItem = {
         UIBarButtonItem(customView: LeftSideBarView(title: "신고"))
@@ -66,6 +64,14 @@ class ReportViewController: UIViewController {
         return label
     }()
 
+    lazy private var warningLabel: UILabel = {
+        let label = UILabel()
+        label.text = "무분별한 신고 시 계정 정지를 당할 수 있습니다."
+        label.font = .systemFont(ofSize: 12)
+        label.textColor = .black
+        return label
+    }()
+
     lazy private var collectionViewLayout: UICollectionViewFlowLayout = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
@@ -92,12 +98,12 @@ class ReportViewController: UIViewController {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .white
-        view.addSubview(createButton)
+        view.addSubview(reportButton)
 
         let window = UIApplication.shared.windows[0]
         let bottomPadding = window.safeAreaInsets.bottom
 
-        createButton.snp.makeConstraints { make in
+        reportButton.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(5)
             make.bottom.equalToSuperview().inset(bottomPadding + 5)
             make.leading.equalToSuperview().inset(20)
@@ -107,13 +113,13 @@ class ReportViewController: UIViewController {
         return view
     }()
 
-    lazy private var createButton: UIButton = {
+    lazy private var reportButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .bumble3
-        button.setTitle("게시글 등록", for: .normal)
+        button.setTitle("신고 접수", for: .normal)
         button.layer.cornerRadius = 5
-        button.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapCreateButton))
+        button.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapReportButton))
         ripple.activate(to: button)
         return button
     }()
@@ -143,14 +149,13 @@ class ReportViewController: UIViewController {
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        // should remove view model and model otherwise it shows the previous one.
-        SwinjectStoryboard.defaultContainer.resetObjectScope(.postSingleScope)
         navigationController?.setNavigationBarHidden(false, animated: animated)
     }
 
     private func configureSubviews() {
         view.addSubview(textView)
         view.addSubview(placeholder)
+        view.addSubview(warningLabel)
         view.addSubview(collectionView)
         view.addSubview(bottomView)
         view.addSubview(transparentView)
@@ -168,8 +173,12 @@ class ReportViewController: UIViewController {
             make.top.equalTo(textView.snp.top).inset(23)
             make.leading.equalTo(textView.snp.leading).inset(20)
         }
-        collectionView.snp.makeConstraints { make in
+        warningLabel.snp.makeConstraints { make in
             make.top.equalTo(textView.snp.bottom).inset(-10)
+            make.leading.equalTo(textView.snp.leading)
+        }
+        collectionView.snp.makeConstraints { make in
+            make.top.equalTo(warningLabel.snp.bottom).inset(-20)
             make.centerX.equalToSuperview()
             make.width.equalToSuperview().multipliedBy(0.8)
             make.bottom.equalTo(bottomView.snp.top).inset(-30)
@@ -187,22 +196,54 @@ class ReportViewController: UIViewController {
         }
     }
 
-    @objc func didTapCreateButton() {
+    private func subscribePostCreateViewModel() {
+        reportViewModel
+            .toast
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onNext: { [unowned self] message in
+                toast(message: message)
+            })
+            .disposed(by: disposeBag)
 
-        let isDescriptionRegistered = textView.text.isNotEmpty()
-        let isImageRegistered = images.count > 0
+        reportViewModel
+            .loading
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] value in
+                loadingView.visible(value)
+            })
+            .disposed(by: disposeBag)
 
-        if (!isDescriptionRegistered && !isImageRegistered) {
+        reportViewModel
+            .popView
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] _ in
+                navigationController?.popViewController(animated: true)
+                SwinjectStoryboard.defaultContainer.resetObjectScope(.postCreateScope)
+            })
+            .disposed(by: disposeBag)
+
+        reportViewModel
+            .reportButton
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .bind(to: reportButton.rx.isUserInteractionEnabled)
+            .disposed(by: disposeBag)
+    }
+
+    @objc func didTapReportButton() {
+        let isDescriptionEmpty = textView.text.isEmpty()
+        if (isDescriptionEmpty) {
             let title = "등록 된 내용이 없습니다."
-            let message = "이미지 or 게시글 중 최소 한개는 반드시 충족 되야합니다."
+            let message = "신고 내용을 적어 주세요."
             toast(title: title, message: message)
             return
         }
-
         let files = images.filter({ $0 != nil }) as! [UIImage]
         let description = textView.text
-
-        loadingView.visible(true)
+        reportViewModel.report(files: files, description: description)
     }
 
     @objc private func didTapTransparentView() {
@@ -245,13 +286,12 @@ extension ReportViewController: UICollectionViewDataSource, UICollectionViewDele
 extension ReportViewController: PostCreateResourceCollectionViewCellDelegate {
     func delete(image: UIImage?) {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-
         let deleteAction = UIAlertAction(title: "이미지 삭제", style: .default) { [unowned self] (action) in
-            let index = images.firstIndex(of: image)
-            if (index == nil) {
+            guard let index = images.firstIndex(of: image) else {
                 toast(message: "예상치 못한 에러가 발생 하였습니다.")
+                return
             }
-            images.remove(at: index!)
+            images.remove(at: index)
             collectionView.reloadData()
         }
 
@@ -277,6 +317,10 @@ extension ReportViewController: PostCreateResourceCollectionViewCellDelegate {
 
 extension ReportViewController: PostCreateAddCollectionViewCellDelegate {
     func addImage() {
+        if (images.count >= 3) {
+            toast(message: "사진은 3장까지 허용 됩니다.")
+            return
+        }
         let imagePicker = UIImagePickerController()
         imagePicker.sourceType = .photoLibrary
         imagePicker.allowsEditing = false
