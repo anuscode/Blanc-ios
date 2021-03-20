@@ -129,10 +129,8 @@ class PostCreateViewController: UIViewController {
         return button
     }()
 
-    lazy private var loadingView: LoadingView = {
-        let loadingView = LoadingView()
-        loadingView.visible(false)
-        return loadingView
+    lazy private var loadingView: Spinner = {
+        Spinner()
     }()
 
     override func viewWillAppear(_ animated: Bool) {
