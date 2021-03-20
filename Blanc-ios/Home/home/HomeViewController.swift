@@ -356,10 +356,11 @@ extension HomeViewController: UITableViewDelegate {
 extension HomeViewController: UserCardCellDelegate {
 
     func didTapSearchView(_ user: UserDTO?) {
-        if let homeViewModel = homeViewModel {
-            homeViewModel.channel(user: user)
-            navigationController?.pushViewController(.userSingle, current: self)
+        guard let user = user else {
+            return
         }
+        Channel.next(value: user)
+        navigationController?.pushViewController(.userSingle, current: self)
     }
 
     func confirm(_ user: UserDTO?) -> Observable<ConfirmResult> {

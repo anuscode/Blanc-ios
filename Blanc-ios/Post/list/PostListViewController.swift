@@ -146,7 +146,10 @@ extension PostListViewController: PostBodyDelegate {
     }
 
     func presentSinglePostView(post: PostDTO?) {
-        channel(post: post)
+        guard let post = post else {
+            return
+        }
+        Channel.next(value: post)
         navigationController?.pushViewController(
             .postSingle,
             current: self,
@@ -158,26 +161,15 @@ extension PostListViewController: PostBodyDelegate {
     func isCurrentUserFavoritePost(_ post: PostDTO?) -> Bool {
         postViewModel?.isCurrentUserFavoritePost(post) == true
     }
-
-    private func channel(post: PostDTO?) {
-        guard let post = post else {
-            return
-        }
-        Channel.next(value: post)
-    }
 }
 
 extension PostListViewController: PostHeaderDelegate {
 
     func didTapUserImage(user: UserDTO?) -> Void {
-        channel(user: user)
-        navigationController?.pushViewController(.userSingle, current: self)
-    }
-
-    private func channel(user: UserDTO?) {
         guard let user = user else {
             return
         }
         Channel.next(value: user)
+        navigationController?.pushViewController(.userSingle, current: self)
     }
 }

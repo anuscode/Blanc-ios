@@ -41,12 +41,4 @@ class ConversationViewModel {
     func leaveConversation(conversationId: String?) {
         conversationModel.leaveConversation(conversationId: conversationId)
     }
-
-    func channel(user: UserDTO?) {
-        conversationModel.channel(user: user)
-    }
-
-    func channel(conversation: ConversationDTO?) {
-        conversationModel.channel(conversation: conversation)
-    }
 }

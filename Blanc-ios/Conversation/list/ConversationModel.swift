@@ -192,20 +192,6 @@ class ConversationModel {
             .disposed(by: disposeBag)
     }
 
-    func channel(user: UserDTO?) {
-        guard let user = user else {
-            return
-        }
-        Channel.next(value: user)
-    }
-
-    func channel(conversation: ConversationDTO?) {
-        guard let conversation = conversation else {
-            return
-        }
-        Channel.next(value: conversation)
-    }
-
     func sync(conversation: ConversationDTO) {
         if let index = conversations.firstIndex(where: { $0.id == conversation.id }) {
             conversations[index] = conversation

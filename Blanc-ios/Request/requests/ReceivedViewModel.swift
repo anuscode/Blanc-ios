@@ -98,13 +98,6 @@ class ReceivedViewModel {
             .disposed(by: disposeBag)
     }
 
-    func channel(user: UserDTO?) {
-        guard let user = user else {
-            return
-        }
-        Channel.next(value: user)
-    }
-
     func accept(request: RequestDTO?) {
         // refresh conversation list if successfully done.
         let onSuccess = { [unowned self] in

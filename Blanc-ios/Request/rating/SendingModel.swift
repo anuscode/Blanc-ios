@@ -44,13 +44,6 @@ class SendingModel {
             .disposed(by: disposeBag)
     }
 
-    func channel(user: UserDTO?) {
-        guard let user = user else {
-            return
-        }
-        Channel.next(value: user)
-    }
-
     func append(user: UserDTO?) {
         guard let user = user else {
             return

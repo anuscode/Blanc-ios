@@ -230,7 +230,10 @@ extension ConversationViewController: UITableViewDelegate {
 extension ConversationViewController: ConversationTableViewCellDelegate {
 
     func presentUserSingleView(user: UserDTO?) {
-        conversationViewModel?.channel(user: user)
+        guard let user = user else {
+            return
+        }
+        Channel.next(value: user)
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyboard.instantiateViewController(
             withIdentifier: "UserSingleViewController") as! UserSingleViewController
@@ -245,7 +248,10 @@ extension ConversationViewController: ConversationTableViewCellDelegate {
     }
 
     func presentConversationSingleView(conversation: ConversationDTO?) {
-        conversationViewModel?.channel(conversation: conversation)
+        guard let conversation = conversation else {
+            return
+        }
+        Channel.next(value: conversation)
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "ConversationSingleViewController")
         vc.modalPresentationStyle = .fullScreen

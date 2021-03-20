@@ -219,7 +219,7 @@ extension FavoriteUserListViewController: SmallUserProfileTableViewCellDelegate 
         guard let user = user else {
             return
         }
-        favoriteUserListViewModel?.channel(user: user)
+        Channel.next(value: user)
         navigationController?.pushViewController(
             .userSingle,
             current: self,

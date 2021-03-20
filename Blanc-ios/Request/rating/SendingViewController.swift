@@ -162,7 +162,10 @@ extension SendingViewController: UITableViewDelegate {
 
 extension SendingViewController: SmallUserProfileTableViewCellDelegate {
     func presentUserSingleView(user: UserDTO?) {
-        sendingViewModel?.channel(user: user)
+        guard let user = user else {
+            return
+        }
+        Channel.next(value: user)
         pushUserSingleViewController?()
     }
 }

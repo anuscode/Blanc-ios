@@ -122,12 +122,6 @@ class HomeViewModel {
         homeModel.updateUserLastLoginAt()
     }
 
-    func channel(user: UserDTO?) {
-        if let user = user {
-            Channel.next(value: user)
-        }
-    }
-
     private func processReload(data: HomeUserData) {
         var isReloadRequired = false
 

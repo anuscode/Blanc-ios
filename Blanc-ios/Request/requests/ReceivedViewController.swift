@@ -259,7 +259,10 @@ extension ReceivedViewController: UITableViewDelegate {
 
 extension ReceivedViewController: UserProfileCellDelegate {
     func presentUserSingleView(user: UserDTO?) {
-        receivedViewModel?.channel(user: user)
+        guard let user = user else {
+            return
+        }
+        Channel.next(value: user)
         pushUserSingleViewController?()
     }
 

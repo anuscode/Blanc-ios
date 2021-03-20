@@ -303,12 +303,6 @@ extension PostManagementViewController: PostManagementTableViewCellDelegate {
             present(alertController, animated: true, completion: nil)
         }
     }
-
-    private func channel(post: PostDTO?) {
-        if let post = post {
-            Channel.next(value: post)
-        }
-    }
 }
 
 extension PostManagementViewController: CommentTableViewCellDelegate {

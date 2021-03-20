@@ -147,12 +147,6 @@ class ConversationSingleModel {
             .disposed(by: disposeBag)
     }
 
-    func channel(user: UserDTO?) {
-        if (user != nil) {
-            Channel.next(value: user!)
-        }
-    }
-
     func getSession() -> Session {
         session
     }

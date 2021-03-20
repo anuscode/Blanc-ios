@@ -35,8 +35,4 @@ class SendingViewModel {
             })
             .disposed(by: disposeBag)
     }
-
-    func channel(user: UserDTO?) {
-        sendingModel.channel(user: user)
-    }
 }

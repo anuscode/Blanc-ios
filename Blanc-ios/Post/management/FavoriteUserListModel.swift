@@ -61,11 +61,4 @@ class FavoriteUserListModel {
             })
             .disposed(by: disposeBag)
     }
-
-    func channel(user: UserDTO?) {
-        if (user == nil) {
-            return
-        }
-        Channel.next(value: user!)
-    }
 }

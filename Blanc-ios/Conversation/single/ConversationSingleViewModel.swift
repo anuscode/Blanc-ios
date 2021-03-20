@@ -68,10 +68,6 @@ class ConversationSingleViewModel {
         conversationSingleModel.sendMessage(message: message, onError: onError)
     }
 
-    func channel(user: UserDTO?) {
-        conversationSingleModel.channel(user: user)
-    }
-
     func getSession() -> Session {
         conversationSingleModel.getSession()
     }
