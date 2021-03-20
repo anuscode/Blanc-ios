@@ -9,7 +9,7 @@ class Channel {
 
     internal let conversation: ReplaySubject = ReplaySubject<ConversationDTO>.create(bufferSize: 1)
 
-    internal let reportee: ReplaySubject = ReplaySubject<UserDTO>.create(bufferSize: 1)
+    internal static let reportee: ReplaySubject = ReplaySubject<UserDTO>.create(bufferSize: 1)
 
     func next(value: UserDTO) {
         user.onNext(value)

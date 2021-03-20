@@ -728,8 +728,9 @@ extension SwinjectStoryboard {
 
         defaultContainer.storyboardInitCompleted(ReportViewController.self) { resolver, controller in
             log.info("Injecting dependencies into ReportViewController")
+            let session = resolver ~> Session.self
             let reportService = resolver ~> ReportService.self
-            let reportViewModel = ReportViewModel(reportService: reportService)
+            let reportViewModel = ReportViewModel(session: session, reportService: reportService)
             controller.reportViewModel = reportViewModel
         }
 

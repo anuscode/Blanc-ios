@@ -18,9 +18,20 @@ class ReportService {
     }
 
     // GET
-    func report(uid: String?, files: [UIImage], description: String) -> Single<Void> {
+    func report(uid: String?,
+                reporterId: String?,
+                reporteeId: String?,
+                files: [UIImage],
+                description: String) -> Single<Void> {
+
         provider.rx
-            .request(.report(uid: uid, files: files, description: description))
+            .request(.report(
+                uid: uid,
+                reporterId: reporterId,
+                reporteeId: reporteeId,
+                files: files,
+                description: description)
+            )
             .debug()
             .filterSuccessfulStatusAndRedirectCodes()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))

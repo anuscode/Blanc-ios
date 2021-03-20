@@ -1,7 +1,13 @@
 import Moya
 
 enum ReportProvider {
-    case report(uid: String?, files: [UIImage], description: String)
+    case report(
+        uid: String?,
+        reporterId: String?,
+        reporteeId: String?,
+        files: [UIImage],
+        description: String
+    )
 }
 
 
@@ -13,15 +19,20 @@ extension ReportProvider: TargetType {
 
     var path: String {
         switch self {
-        case .report(uid: _, files: _, description: _):
-            return "alarms"
+        case .report(
+            uid: _,
+            reporterId: let reporterId,
+            reporteeId: let reporteeId,
+            files: _,
+            description: _
+        ): return "/report/reporter/\(reporterId ?? "")/reportee/\(reporteeId ?? "")"
         }
     }
 
     var method: Moya.Method {
         switch self {
-        case .report(uid: _, files: _, description: _):
-            return .get
+        case .report(uid: _, reporterId: _, reporteeId: _, files: _, description: _):
+            return .post
         }
     }
 
@@ -31,7 +42,7 @@ extension ReportProvider: TargetType {
 
     var task: Task {
         switch self {
-        case .report(uid: _, files: let files, description: let description):
+        case .report(uid: _, reporterId: _, reporteeId: _, files: let files, description: let description):
             let descriptionData = description.data(using: String.Encoding.utf8) ?? Data()
             var formData: [Moya.MultipartFormData] = [
                 Moya.MultipartFormData(provider: .data(descriptionData), name: "description"),
@@ -56,7 +67,7 @@ extension ReportProvider: TargetType {
     var headers: [String: String]? {
         var headers = ["Content-Type": "application/json"]
         switch self {
-        case .report(uid: let uid, files: _, description: _):
+        case .report(uid: let uid, reporterId: _, reporteeId: _, files: _, description: _):
             headers["uid"] = uid
             return headers
         }

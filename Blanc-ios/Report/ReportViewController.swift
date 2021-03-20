@@ -39,6 +39,12 @@ class ReportViewController: UIViewController {
         return view
     }()
 
+    lazy private var titleLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = .black
+        return label
+    }()
+
     lazy private var textView: UITextView = {
         let textView = UITextView()
         textView.font = .systemFont(ofSize: 16)
@@ -124,10 +130,8 @@ class ReportViewController: UIViewController {
         return button
     }()
 
-    lazy private var loadingView: LoadingView = {
-        let loadingView = LoadingView()
-        loadingView.visible(false)
-        return loadingView
+    lazy private var loadingView: Spinner = {
+        Spinner()
     }()
 
     override func viewWillAppear(_ animated: Bool) {
@@ -141,6 +145,7 @@ class ReportViewController: UIViewController {
         super.viewDidLoad()
         configureSubviews()
         configureConstraints()
+        subscribePostCreateViewModel()
     }
 
     override func viewDidLayoutSubviews() {
@@ -153,6 +158,7 @@ class ReportViewController: UIViewController {
     }
 
     private func configureSubviews() {
+        view.addSubview(titleLabel)
         view.addSubview(textView)
         view.addSubview(placeholder)
         view.addSubview(warningLabel)
@@ -163,8 +169,12 @@ class ReportViewController: UIViewController {
     }
 
     private func configureConstraints() {
+        titleLabel.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide).inset(20)
+            make.leading.equalTo(textView.snp.leading)
+        }
         textView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide).inset(30)
+            make.top.equalTo(titleLabel.snp.bottom).offset(20)
             make.centerX.equalToSuperview()
             make.height.equalTo(200)
             make.width.equalToSuperview().multipliedBy(0.8)
@@ -191,16 +201,24 @@ class ReportViewController: UIViewController {
         transparentView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-        loadingView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
     }
 
     private func subscribePostCreateViewModel() {
         reportViewModel
+            .reportee
+            .take(1)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] reportee in
+                let nickname = reportee.nickname ?? ""
+                titleLabel.text = "\(nickname) 님을 신고합니다."
+            })
+            .disposed(by: disposeBag)
+
+        reportViewModel
             .toast
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [unowned self] message in
                 toast(message: message)
             })
@@ -234,15 +252,14 @@ class ReportViewController: UIViewController {
     }
 
     @objc func didTapReportButton() {
-        let isDescriptionEmpty = textView.text.isEmpty()
-        if (isDescriptionEmpty) {
+        let files = images.filter({ $0 != nil }) as! [UIImage]
+        let description: String = textView.text ?? ""
+        if (description.isEmpty) {
             let title = "등록 된 내용이 없습니다."
             let message = "신고 내용을 적어 주세요."
             toast(title: title, message: message)
             return
         }
-        let files = images.filter({ $0 != nil }) as! [UIImage]
-        let description = textView.text
         reportViewModel.report(files: files, description: description)
     }
 
@@ -304,8 +321,9 @@ extension ReportViewController: PostCreateResourceCollectionViewCellDelegate {
 
         if UIDevice.current.userInterfaceIdiom == .pad {
             if let popoverController = alertController.popoverPresentationController {
+                let sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 0, height: 0)
                 popoverController.sourceView = view
-                popoverController.sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 0, height: 0)
+                popoverController.sourceRect = sourceRect
                 popoverController.permittedArrowDirections = []
                 present(alertController, animated: true, completion: nil)
             }

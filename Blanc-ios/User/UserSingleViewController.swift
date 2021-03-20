@@ -31,7 +31,7 @@ class UserSingleViewController: UIViewController {
 
     private var data: UserSingleData?
 
-    internal weak var userSingleViewModel: UserSingleViewModel?
+    internal weak var userSingleViewModel: UserSingleViewModel!
 
     lazy private var navigationBarContent: Content = {
         let content = Content()
@@ -249,11 +249,11 @@ class UserSingleViewController: UIViewController {
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        // should remove view model and model otherwise it shows the previous one.
-        SwinjectStoryboard.defaultContainer.resetObjectScope(.userSingleScope)
     }
 
     deinit {
+        // should remove view model and model otherwise it shows the previous one.
+        SwinjectStoryboard.defaultContainer.resetObjectScope(.userSingleScope)
         log.info("deinit UserSingleViewController..")
     }
 
@@ -396,6 +396,10 @@ class UserSingleViewController: UIViewController {
     @objc private func didTapOptionImageView() {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let reportAction = UIAlertAction(title: "신고", style: .default) { [unowned self] (action) in
+            guard let user = data?.user else {
+                return
+            }
+            Channel.reportee.onNext(user)
             navigationController?.pushViewController(
                 .report,
                 current: self,
