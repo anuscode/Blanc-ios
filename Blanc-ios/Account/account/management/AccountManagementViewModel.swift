@@ -53,7 +53,7 @@ class AccountManagementViewModel {
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
             .subscribe(onSuccess: { [unowned self] _ in
-                session.signOut()
+                Session.signOut()
                 replaceViewController.onNext(Void())
             }, onError: { [unowned self] err in
                 log.error(err)

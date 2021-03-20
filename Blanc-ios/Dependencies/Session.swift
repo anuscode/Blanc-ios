@@ -76,11 +76,14 @@ class Session {
         publish()
     }
 
-    public func signOut() {
+    @discardableResult
+    public static func signOut() -> Bool {
         do {
-            try auth.signOut()
+            try Auth.auth().signOut()
+            return true
         } catch {
             log.error("Failed to logout.")
+            return false
         }
     }
 
@@ -104,7 +107,7 @@ class Session {
                 }
                 if (push.isLogout()) {
                     log.info("detected login in another device..")
-                    signOut()
+                    Session.signOut()
                     let window = UIApplication.shared.keyWindow
                     let storyboard = UIStoryboard(name: "Main", bundle: nil)
                     let vc = storyboard.instantiateViewController(withIdentifier: "InitPagerViewController")

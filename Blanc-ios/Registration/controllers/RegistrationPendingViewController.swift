@@ -7,11 +7,11 @@ import TTGTagCollectionView
 
 class RegistrationPendingViewController: UIViewController {
 
-    var registrationViewModel: RegistrationViewModel?
-
     private let disposeBag: DisposeBag = DisposeBag()
 
     private var ripple = Ripple()
+
+    internal var registrationViewModel: RegistrationViewModel!
 
     lazy private var starFallView: StarFallView = {
         let view = StarFallView()
@@ -213,9 +213,7 @@ class RegistrationPendingViewController: UIViewController {
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [unowned self] user in
-                self.update(user)
-            }, onError: { err in
-                self.toast(message: "알 수 없는 에러가 발생 하였습니다.")
+                update(user)
             })
             .disposed(by: disposeBag)
     }
@@ -227,10 +225,8 @@ class RegistrationPendingViewController: UIViewController {
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [unowned self] push in
                 if (push.isApproved()) {
-                    self.parent?.replace(storyboard: "Main", withIdentifier: "InitPagerViewController")
+                    parent?.replace(storyboard: "Main", withIdentifier: "InitPagerViewController")
                 }
-            }, onError: { err in
-                self.toast(message: "알 수 없는 에러가 발생 하였습니다.")
             })
             .disposed(by: disposeBag)
     }
@@ -266,20 +262,33 @@ class RegistrationPendingViewController: UIViewController {
     }
 
     @objc private func unregister(sender: UITapGestureRecognizer) {
-        let unregisterAction = UIAlertAction(title: "가입 취소", style: .default) { (action) in
-            self.registrationViewModel?.unregister(onSuccess: {
-                self.parent?.replace(storyboard: "Main", withIdentifier: "InitPagerViewController")
-            }, onError: {
-                self.toast(message: "가입 취소가 정상적으로 완료되지 않았습니다..")
+        let unregisterAction = UIAlertAction(title: "가입 취소", style: .default) { [unowned self] (action) in
+            registrationViewModel?.unregister(onSuccess: { [unowned self] in
+                let isSignOut = Session.signOut()
+                if (isSignOut) {
+                    parent?.replace(storyboard: "Main", withIdentifier: "InitPagerViewController")
+                } else {
+                    toast(message: "로그아웃에 실패 하였습니다.")
+                }
+            }, onError: { [unowned self] in
+                toast(message: "가입 취소가 정상적으로 완료되지 않았습니다..")
             })
         }
-
+        let signOutAction = UIAlertAction(title: "LOG OUT", style: .default) { [unowned self] (action) in
+            let isSignOut = Session.signOut()
+            if (isSignOut) {
+                parent?.replace(storyboard: "Main", withIdentifier: "InitPagerViewController")
+            } else {
+                toast(message: "로그아웃에 실패 하였습니다.")
+            }
+        }
         let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
         cancelAction.setValue(UIColor.red, forKey: "titleTextColor")
 
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        alertController.addAction(cancelAction)
         alertController.addAction(unregisterAction)
+        alertController.addAction(signOutAction)
+        alertController.addAction(cancelAction)
         alertController.modalPresentationStyle = .popover
 
         if UIDevice.current.userInterfaceIdiom == .pad {

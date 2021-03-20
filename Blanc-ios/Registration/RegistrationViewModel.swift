@@ -14,15 +14,15 @@ class RegistrationViewModel {
 
     private var repository: Repository = Repository()
 
-    let user: ReplaySubject = ReplaySubject<UserDTO>.create(bufferSize: 1)
+    internal let user: ReplaySubject = ReplaySubject<UserDTO>.create(bufferSize: 1)
 
-    let loading: PublishSubject = PublishSubject<Bool>()
+    internal let loading: PublishSubject = PublishSubject<Bool>()
 
-    let toast: PublishSubject = PublishSubject<String>()
+    internal let toast: PublishSubject = PublishSubject<String>()
 
-    let imagesClickable: PublishSubject = PublishSubject<Bool>()
+    internal let imagesClickable: PublishSubject = PublishSubject<Bool>()
 
-    let next: PublishSubject = PublishSubject<Void>()
+    internal let next: PublishSubject = PublishSubject<Void>()
 
     init(registrationModel: RegistrationModel) {
         self.registrationModel = registrationModel

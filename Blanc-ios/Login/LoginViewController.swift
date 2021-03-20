@@ -575,7 +575,7 @@ class LoginViewController: UIViewController {
                 log.error(err)
                 progressView.visible(false)
                 enableLoginButtons(true)
-                session?.signOut()
+                Session.signOut()
             })
             .disposed(by: disposeBag)
     }

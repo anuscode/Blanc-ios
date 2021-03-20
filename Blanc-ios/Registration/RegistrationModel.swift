@@ -162,7 +162,6 @@ class RegistrationModel {
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
             .subscribe(onSuccess: { _ in
-                self.session.signOut()
                 onSuccess()
             }, onError: { err in
                 log.error(err)
