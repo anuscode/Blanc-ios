@@ -233,7 +233,7 @@ extension ConversationViewController: ConversationTableViewCellDelegate {
         guard let user = user else {
             return
         }
-        Channel.next(value: user)
+        Channel.user(value: user)
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyboard.instantiateViewController(
             withIdentifier: "UserSingleViewController") as! UserSingleViewController
@@ -251,7 +251,7 @@ extension ConversationViewController: ConversationTableViewCellDelegate {
         guard let conversation = conversation else {
             return
         }
-        Channel.next(value: conversation)
+        Channel.conversation(value: conversation)
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let vc = storyboard.instantiateViewController(withIdentifier: "ConversationSingleViewController")
         vc.modalPresentationStyle = .fullScreen

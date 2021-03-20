@@ -149,7 +149,7 @@ extension PostListViewController: PostBodyDelegate {
         guard let post = post else {
             return
         }
-        Channel.next(value: post)
+        Channel.post(value: post)
         navigationController?.pushViewController(
             .postSingle,
             current: self,
@@ -169,7 +169,7 @@ extension PostListViewController: PostHeaderDelegate {
         guard let user = user else {
             return
         }
-        Channel.next(value: user)
+        Channel.user(value: user)
         navigationController?.pushViewController(.userSingle, current: self)
     }
 }

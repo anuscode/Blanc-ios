@@ -270,7 +270,7 @@ extension PostManagementViewController: PostManagementTableViewCellDelegate {
         guard let post = post else {
             return
         }
-        Channel.next(value: post)
+        Channel.post(value: post)
         navigationController?.pushViewController(
             .favoriteUsers,
             current: self,

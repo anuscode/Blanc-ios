@@ -262,7 +262,7 @@ extension ReceivedViewController: UserProfileCellDelegate {
         guard let user = user else {
             return
         }
-        Channel.next(value: user)
+        Channel.user(value: user)
         pushUserSingleViewController?()
     }
 

@@ -11,15 +11,19 @@ class Channel {
 
     internal static let reportee: ReplaySubject = ReplaySubject<UserDTO>.create(bufferSize: 1)
 
-    internal static func next(value: UserDTO) {
+    internal static func user(value: UserDTO) {
         Channel.user.onNext(value)
     }
 
-    internal static func next(value: PostDTO) {
+    internal static func post(value: PostDTO) {
         Channel.post.onNext(value)
     }
 
-    internal static func next(value: ConversationDTO) {
+    internal static func conversation(value: ConversationDTO) {
         Channel.conversation.onNext(value)
+    }
+
+    internal static func reportee(value: UserDTO) {
+        Channel.reportee.onNext(value)
     }
 }

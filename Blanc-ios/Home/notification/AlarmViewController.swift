@@ -156,7 +156,7 @@ extension AlarmViewController: UITableViewDelegate {
             }
             alarmViewModel?.getPost(postId: postId, onSuccess: { post in
                 DispatchQueue.main.async {
-                    Channel.next(value: post)
+                    Channel.post(value: post)
                     self.navigationController?.pushViewController(.postSingle, current: self)
                 }
             }, onError: {
@@ -170,7 +170,7 @@ extension AlarmViewController: UITableViewDelegate {
         }
         alarmViewModel?.getUser(userId: userId, onSuccess: { user in
             DispatchQueue.main.async {
-                Channel.next(value: user)
+                Channel.user(value: user)
                 self.navigationController?.pushViewController(.userSingle, current: self)
             }
         }, onError: {

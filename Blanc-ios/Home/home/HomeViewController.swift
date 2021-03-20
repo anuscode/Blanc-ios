@@ -359,7 +359,7 @@ extension HomeViewController: UserCardCellDelegate {
         guard let user = user else {
             return
         }
-        Channel.next(value: user)
+        Channel.user(value: user)
         navigationController?.pushViewController(.userSingle, current: self)
     }
 
