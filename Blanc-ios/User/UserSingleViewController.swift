@@ -399,7 +399,7 @@ class UserSingleViewController: UIViewController {
             guard let user = data?.user else {
                 return
             }
-            Channel.reportee(value: user)
+            Channel.next(reportee: user)
             navigationController?.pushViewController(
                 .report,
                 current: self,

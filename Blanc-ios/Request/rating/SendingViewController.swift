@@ -165,7 +165,7 @@ extension SendingViewController: SmallUserProfileTableViewCellDelegate {
         guard let user = user else {
             return
         }
-        Channel.user(value: user)
+        Channel.next(user: user)
         pushUserSingleViewController?()
     }
 }
