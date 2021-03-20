@@ -26,8 +26,6 @@ class PostCreateViewController: UIViewController {
 
     private var isFirstBeginEditing = true
 
-    internal var session: Session?
-
     internal var postCreateViewModel: PostCreateViewModel?
 
     lazy private var leftBarButtonItem: UIBarButtonItem = {

@@ -651,7 +651,6 @@ extension SwinjectStoryboard {
 
         defaultContainer.storyboardInitCompleted(PostCreateViewController.self) { resolver, controller in
             log.info("Injecting dependencies into PostCreateViewController")
-            controller.session = resolver ~> Session.self
             controller.postCreateViewModel = resolver ~> PostCreateViewModel.self
         }
 
