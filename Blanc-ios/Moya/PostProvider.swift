@@ -120,8 +120,10 @@ extension PostProvider: TargetType {
                 if (imageData != nil) {
                     formData.append(
                         Moya.MultipartFormData(
-                            provider: .data(imageData!), name: "post_image_\(index)",
-                            fileName: "post_image_\(index).jpeg", mimeType: "image/jpeg"
+                            provider: .data(imageData!),
+                            name: "post_image_\(index)",
+                            fileName: "post_image_\(index).jpeg",
+                            mimeType: "image/jpeg"
                         )
                     )
                 }

@@ -51,9 +51,9 @@ class PostService {
             .debug()
             .filterSuccessfulStatusAndRedirectCodes()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-            .map { _ in
+            .map({ _ in
                 Void()
-            }
+            })
     }
 
     func createFavorite(uid: String?, postId: String?) -> Single<Void> {
