@@ -10,11 +10,11 @@ class ProfileModel {
 
     private let auth: Auth = Auth.auth()
 
-    private var userDTO: UserDTO?
+    private var user: UserDTO?
 
-    var session: Session
+    private var session: Session
 
-    var userService: UserService
+    private var userService: UserService
 
     init(session: Session, userService: UserService) {
         self.session = session
@@ -23,10 +23,10 @@ class ProfileModel {
     }
 
     func publish() {
-        guard (userDTO != nil) else {
+        guard let user = user else {
             return
         }
-        observable.onNext(userDTO!)
+        observable.onNext(user)
     }
 
     func update() {
@@ -38,82 +38,101 @@ class ProfileModel {
     }
 
     private func populate() {
-        session.observe()
-                .take(1)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [unowned self] user in
-                    userDTO = user
-                    publish()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        session
+            .observe()
+            .take(1)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onNext: { [unowned self] user in
+                self.user = user
+                publish()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     func updateUserProfile() -> Single<Void> {
-        userService.updateUserProfile(currentUser: auth.currentUser!, uid: auth.uid, userId: userDTO?.id, user: userDTO!)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .do(onSuccess: { [unowned self] response in
-                    guard userDTO != nil else {
-                        return
-                    }
-                    session.update(userDTO!)
+        let currentUser = auth.currentUser!
+        let uid = auth.uid
+        let userId = user?.id
+        return userService
+            .updateUserProfile(
+                currentUser: currentUser,
+                uid: uid,
+                userId: userId,
+                user: user!
+            )
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .do(onSuccess: { [unowned self] response in
+                if let user = user {
+                    session.update(user)
                     publish()
-                })
-                .map { _ in
-                    Void()
                 }
+            })
+            .map({ _ in
+                Void()
+            })
     }
 
     func uploadUserImage(index: Int?, file: UIImage) -> Single<ImageDTO> {
-        userService.uploadUserImage(uid: auth.uid, userId: userDTO?.id, index: index, file: file)
-                .do(onSuccess: { [unowned self] imageDTO in
-                    let index = userDTO?.userImagesTemp?.firstIndex(where: { $0.index == imageDTO.index })
-                    if (index != nil) {
-                        userDTO?.userImagesTemp?.remove(at: index!)
-                    }
-                    userDTO?.userImagesTemp?.append(imageDTO)
-                    userDTO?.userImagesTemp?.sort {
-                        $0.index ?? 0 < $1.index ?? 0
-                    }
-                    userDTO?.status = Status.OPENED
-                    publish()
-                })
+        let uid = auth.uid
+        let userId = user?.id
+        return userService
+            .uploadUserImage(
+                uid: uid,
+                userId: userId,
+                index: index,
+                file: file
+            )
+            .do(onSuccess: { [unowned self] imageDTO in
+                let index = user?.userImagesTemp?.firstIndex(where: { $0.index == imageDTO.index })
+                if (index != nil) {
+                    user?.userImagesTemp?.remove(at: index!)
+                }
+                user?.userImagesTemp?.append(imageDTO)
+                user?.userImagesTemp?.sort {
+                    $0.index ?? 0 < $1.index ?? 0
+                }
+                user?.status = Status.OPENED
+                publish()
+            })
 
     }
 
     func deleteUserImage(index: Int) {
-        userService.deleteUserImage(uid: auth.uid, userId: userDTO?.id, index: index)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: { [unowned self] _ in
-                    let index = userDTO?.userImagesTemp?.firstIndex(where: { $0.index == index })
-                    if (index != nil) {
-                        userDTO?.userImagesTemp?.remove(at: index!)
-                    }
-                    userDTO?.status = Status.OPENED
-                    publish()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        let uid = auth.uid
+        let userId = user?.id
+        return userService
+            .deleteUserImage(uid: uid, userId: userId, index: index)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onSuccess: { [unowned self] _ in
+                let index = user?.userImagesTemp?.firstIndex(where: { $0.index == index })
+                if (index != nil) {
+                    user?.userImagesTemp?.remove(at: index!)
+                }
+                user?.status = Status.OPENED
+                publish()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     func updateUserStatusPending() -> Single<UserDTO> {
-        userService.updateUserStatusPending(uid: auth.uid, userId: session.user?.id)
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .do(onSuccess: { [unowned self] _ in
-                    session.user?.status = Status.PENDING
-                    session.publish()
-                    userDTO?.status = Status.PENDING
-                    publish()
-                })
-    }
-
-    func isModified() -> Bool {
-        false
+        let uid = auth.uid
+        let userId = session.user?.id
+        return userService
+            .updateUserStatusPending(uid: uid, userId: userId)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .do(onSuccess: { [unowned self] _ in
+                session.user?.status = Status.PENDING
+                session.publish()
+                user?.status = Status.PENDING
+                publish()
+            })
     }
 }

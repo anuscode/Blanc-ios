@@ -589,22 +589,22 @@ class ProfileViewController: UIViewController {
         }
 
         configLineConstraints(
-                line: nicknameLine,
-                titleLabel: nicknameTitleLabel,
-                valueLabel: nicknameValueLabel,
-                top: scrollView.snp.top)
+            line: nicknameLine,
+            titleLabel: nicknameTitleLabel,
+            valueLabel: nicknameValueLabel,
+            top: scrollView.snp.top)
 
         configLineConstraints(
-                line: sexLine,
-                titleLabel: sexTitleLabel,
-                valueLabel: sexValueLabel,
-                top: nicknameLine.snp.bottom)
+            line: sexLine,
+            titleLabel: sexTitleLabel,
+            valueLabel: sexValueLabel,
+            top: nicknameLine.snp.bottom)
 
         configLineConstraints(
-                line: birthdayLine,
-                titleLabel: birthdayTitleLabel,
-                valueLabel: birthdayValueLabel,
-                top: sexLine.snp.bottom)
+            line: birthdayLine,
+            titleLabel: birthdayTitleLabel,
+            valueLabel: birthdayValueLabel,
+            top: sexLine.snp.bottom)
 
         guideLine1.snp.makeConstraints { make in
             make.top.equalTo(birthdayLine.snp.bottom)
@@ -614,16 +614,16 @@ class ProfileViewController: UIViewController {
         }
 
         configLineConstraints(
-                line: heightLine,
-                titleLabel: heightTitleLabel,
-                valueLabel: heightValueLabel,
-                top: birthdayLine.snp.bottom)
+            line: heightLine,
+            titleLabel: heightTitleLabel,
+            valueLabel: heightValueLabel,
+            top: birthdayLine.snp.bottom)
 
         configLineConstraints(
-                line: bodyTypeLine,
-                titleLabel: bodyTitleTypeLabel,
-                valueLabel: bodyTypeValueLabel,
-                top: heightLine.snp.bottom)
+            line: bodyTypeLine,
+            titleLabel: bodyTitleTypeLabel,
+            valueLabel: bodyTypeValueLabel,
+            top: heightLine.snp.bottom)
 
         guideLine2.snp.makeConstraints { make in
             make.top.equalTo(bodyTypeLine.snp.bottom)
@@ -633,16 +633,16 @@ class ProfileViewController: UIViewController {
         }
 
         configLineConstraints(
-                line: occupationLine,
-                titleLabel: occupationTitleLabel,
-                valueLabel: occupationValueLabel,
-                top: bodyTypeLine.snp.bottom)
+            line: occupationLine,
+            titleLabel: occupationTitleLabel,
+            valueLabel: occupationValueLabel,
+            top: bodyTypeLine.snp.bottom)
 
         configLineConstraints(
-                line: educationLine,
-                titleLabel: educationTitleLabel,
-                valueLabel: educationValueLabel,
-                top: occupationLine.snp.bottom)
+            line: educationLine,
+            titleLabel: educationTitleLabel,
+            valueLabel: educationValueLabel,
+            top: occupationLine.snp.bottom)
 
         guideLine3.snp.makeConstraints { make in
             make.top.equalTo(educationLine.snp.bottom)
@@ -652,28 +652,28 @@ class ProfileViewController: UIViewController {
         }
 
         configLineConstraints(
-                line: religionLine,
-                titleLabel: religionTitleLabel,
-                valueLabel: religionValueLabel,
-                top: educationLine.snp.bottom)
+            line: religionLine,
+            titleLabel: religionTitleLabel,
+            valueLabel: religionValueLabel,
+            top: educationLine.snp.bottom)
 
         configLineConstraints(
-                line: drinkLine,
-                titleLabel: drinkTitleLabel,
-                valueLabel: drinkValueLabel,
-                top: religionLine.snp.bottom)
+            line: drinkLine,
+            titleLabel: drinkTitleLabel,
+            valueLabel: drinkValueLabel,
+            top: religionLine.snp.bottom)
 
         configLineConstraints(
-                line: smokingLine,
-                titleLabel: smokingTitleLabel,
-                valueLabel: smokingValueLabel,
-                top: drinkLine.snp.bottom)
+            line: smokingLine,
+            titleLabel: smokingTitleLabel,
+            valueLabel: smokingValueLabel,
+            top: drinkLine.snp.bottom)
 
         configLineConstraints(
-                line: bloodTypeLine,
-                titleLabel: bloodTypeTitleLabel,
-                valueLabel: bloodTypeValueLabel,
-                top: smokingLine.snp.bottom)
+            line: bloodTypeLine,
+            titleLabel: bloodTypeTitleLabel,
+            valueLabel: bloodTypeValueLabel,
+            top: smokingLine.snp.bottom)
 
         guideLine4.snp.makeConstraints { make in
             make.top.equalTo(bloodTypeLine.snp.bottom)
@@ -709,10 +709,10 @@ class ProfileViewController: UIViewController {
         }
 
         configLineConstraints(
-                line: charmLine,
-                titleLabel: charmTitleLabel,
-                collectionView: charmCollectionView,
-                top: introductionLine.snp.bottom
+            line: charmLine,
+            titleLabel: charmTitleLabel,
+            collectionView: charmCollectionView,
+            top: introductionLine.snp.bottom
         )
 
         guideLine6.snp.makeConstraints { make in
@@ -723,10 +723,10 @@ class ProfileViewController: UIViewController {
         }
 
         configLineConstraints(
-                line: idealTypeLine,
-                titleLabel: idealTypeTitleLabel,
-                collectionView: idealTypeCollectionView,
-                top: charmLine.snp.bottom
+            line: idealTypeLine,
+            titleLabel: idealTypeTitleLabel,
+            collectionView: idealTypeCollectionView,
+            top: charmLine.snp.bottom
         )
 
         guideLine7.snp.makeConstraints { make in
@@ -737,10 +737,10 @@ class ProfileViewController: UIViewController {
         }
 
         configLineConstraints(
-                line: interestsLine,
-                titleLabel: interestsTitleLabel,
-                collectionView: interestsCollectionView,
-                top: idealTypeLine.snp.bottom
+            line: interestsLine,
+            titleLabel: interestsTitleLabel,
+            collectionView: interestsCollectionView,
+            top: idealTypeLine.snp.bottom
         )
 
         bottomView.snp.makeConstraints { make in
@@ -773,7 +773,7 @@ class ProfileViewController: UIViewController {
     @objc private func popBirthday() {
         let storyboard = UIStoryboard(name: "ProfileFragments", bundle: nil)
         let birthdayViewController = (storyboard.instantiateViewController(
-                withIdentifier: "BirthdayViewController") as! BirthdayViewController)
+            withIdentifier: "BirthdayViewController") as! BirthdayViewController)
         addChild(birthdayViewController)
         showFragment(subView: birthdayViewController.view)
     }
@@ -781,7 +781,7 @@ class ProfileViewController: UIViewController {
     @objc private func popHeight() {
         let storyboard = UIStoryboard(name: "ProfileFragments", bundle: nil)
         let heightViewController = (storyboard.instantiateViewController(
-                withIdentifier: "HeightViewController") as! HeightViewController)
+            withIdentifier: "HeightViewController") as! HeightViewController)
         addChild(heightViewController)
         showFragment(subView: heightViewController.view)
     }
@@ -789,7 +789,7 @@ class ProfileViewController: UIViewController {
     @objc private func popBodyType() {
         let storyboard = UIStoryboard(name: "ProfileFragments", bundle: nil)
         let bodyTypeViewController = (storyboard.instantiateViewController(
-                withIdentifier: "BodyTypeViewController") as! BodyTypeViewController)
+            withIdentifier: "BodyTypeViewController") as! BodyTypeViewController)
         addChild(bodyTypeViewController)
         showFragment(subView: bodyTypeViewController.view)
     }
@@ -797,7 +797,7 @@ class ProfileViewController: UIViewController {
     @objc private func popOccupation() {
         let storyboard = UIStoryboard(name: "ProfileFragments", bundle: nil)
         let occupationViewController = (storyboard.instantiateViewController(
-                withIdentifier: "OccupationViewController") as! OccupationViewController)
+            withIdentifier: "OccupationViewController") as! OccupationViewController)
         addChild(occupationViewController)
         showFragment(subView: occupationViewController.view)
     }
@@ -805,7 +805,7 @@ class ProfileViewController: UIViewController {
     @objc private func popEducation() {
         let storyboard = UIStoryboard(name: "ProfileFragments", bundle: nil)
         let educationViewController = (storyboard.instantiateViewController(
-                withIdentifier: "EducationViewController") as! EducationViewController)
+            withIdentifier: "EducationViewController") as! EducationViewController)
         addChild(educationViewController)
         showFragment(subView: educationViewController.view)
     }
@@ -813,7 +813,7 @@ class ProfileViewController: UIViewController {
     @objc private func popReligion() {
         let storyboard = UIStoryboard(name: "ProfileFragments", bundle: nil)
         let religionViewController = (storyboard.instantiateViewController(
-                withIdentifier: "ReligionViewController") as! ReligionViewController)
+            withIdentifier: "ReligionViewController") as! ReligionViewController)
         addChild(religionViewController)
         showFragment(subView: religionViewController.view)
     }
@@ -821,7 +821,7 @@ class ProfileViewController: UIViewController {
     @objc private func popDrink() {
         let storyboard = UIStoryboard(name: "ProfileFragments", bundle: nil)
         let drinkViewController = (storyboard.instantiateViewController(
-                withIdentifier: "DrinkViewController") as! DrinkViewController)
+            withIdentifier: "DrinkViewController") as! DrinkViewController)
         addChild(drinkViewController)
         showFragment(subView: drinkViewController.view)
     }
@@ -829,7 +829,7 @@ class ProfileViewController: UIViewController {
     @objc private func popSmoking() {
         let storyboard = UIStoryboard(name: "ProfileFragments", bundle: nil)
         let smokingViewController = (storyboard.instantiateViewController(
-                withIdentifier: "SmokingViewController") as! SmokingViewController)
+            withIdentifier: "SmokingViewController") as! SmokingViewController)
         addChild(smokingViewController)
         showFragment(subView: smokingViewController.view)
     }
@@ -837,7 +837,7 @@ class ProfileViewController: UIViewController {
     @objc private func popBloodType() {
         let storyboard = UIStoryboard(name: "ProfileFragments", bundle: nil)
         let bloodTypeViewController = (storyboard.instantiateViewController(
-                withIdentifier: "BloodTypeViewController") as! BloodTypeViewController)
+            withIdentifier: "BloodTypeViewController") as! BloodTypeViewController)
         addChild(bloodTypeViewController)
         showFragment(subView: bloodTypeViewController.view)
     }
@@ -845,7 +845,7 @@ class ProfileViewController: UIViewController {
     @objc private func popIntroduction() {
         let storyboard = UIStoryboard(name: "ProfileFragments", bundle: nil)
         let introductionViewController = (storyboard.instantiateViewController(
-                withIdentifier: "IntroductionViewController") as! IntroductionViewController)
+            withIdentifier: "IntroductionViewController") as! IntroductionViewController)
         addChild(introductionViewController)
         showFragment(subView: introductionViewController.view)
     }
@@ -853,7 +853,7 @@ class ProfileViewController: UIViewController {
     @objc fileprivate func popCharm() {
         let storyboard = UIStoryboard(name: "ProfileFragments", bundle: nil)
         let charmViewController = (storyboard.instantiateViewController(
-                withIdentifier: "CharmViewController") as! CharmViewController)
+            withIdentifier: "CharmViewController") as! CharmViewController)
         addChild(charmViewController)
         showFragment(subView: charmViewController.view)
     }
@@ -861,7 +861,7 @@ class ProfileViewController: UIViewController {
     @objc fileprivate func popIdealType() {
         let storyboard = UIStoryboard(name: "ProfileFragments", bundle: nil)
         let idealTypeViewController = (storyboard.instantiateViewController(
-                withIdentifier: "IdealTypeViewController") as! IdealTypeViewController)
+            withIdentifier: "IdealTypeViewController") as! IdealTypeViewController)
         addChild(idealTypeViewController)
         showFragment(subView: idealTypeViewController.view)
     }
@@ -869,7 +869,7 @@ class ProfileViewController: UIViewController {
     @objc fileprivate func popInterests() {
         let storyboard = UIStoryboard(name: "ProfileFragments", bundle: nil)
         let interestsViewController = (storyboard.instantiateViewController(
-                withIdentifier: "InterestsViewController") as! InterestsViewController)
+            withIdentifier: "InterestsViewController") as! InterestsViewController)
         addChild(interestsViewController)
         showFragment(subView: interestsViewController.view)
     }
@@ -879,27 +879,30 @@ class ProfileViewController: UIViewController {
     }
 
     @objc func didTapSaveButton(_ sender: UITapGestureRecognizer) {
-        profileViewModel?.updateUserProfile()
-                .observeOn(MainScheduler.instance)
-                .subscribe(onSuccess: { [unowned self] in
-                    navigationController?.popToRootViewController(animated: true)
-                }, onError: { [unowned self] err in
-                    toast(message: "프로필 저장 중 에러가 발생 하였습니다.")
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        profileViewModel?
+            .updateUserProfile()
+            .observeOn(MainScheduler.instance)
+            .subscribe(onSuccess: { [unowned self] in
+                navigationController?.popToRootViewController(animated: true)
+            }, onError: { [unowned self] err in
+                toast(message: "프로필 저장 중 에러가 발생 하였습니다.")
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     private func subscribeViewModel() {
-        profileViewModel?.observe()
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(MainScheduler.instance)
-                .subscribe(onNext: { [unowned self] userDTO in
-                    setValue(userDTO: userDTO)
-                    clearFragments()
-                }, onError: { err in
-                    log.error(err)
-                }).disposed(by: disposeBag)
+        profileViewModel?
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [unowned self] userDTO in
+                setValue(userDTO: userDTO)
+                clearFragments()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     private func clearFragments() {
