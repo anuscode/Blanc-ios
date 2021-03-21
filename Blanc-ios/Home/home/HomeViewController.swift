@@ -9,6 +9,10 @@ import Lottie
 
 class HomeViewController: UIViewController {
 
+    fileprivate enum Section {
+        case Recommendation, Close, RealTime
+    }
+
     private var disposeBag: DisposeBag = DisposeBag()
 
     private var ripple: Ripple = Ripple()
@@ -226,9 +230,6 @@ class HomeViewController: UIViewController {
 }
 
 extension HomeViewController: UITableViewDelegate {
-    fileprivate enum Section {
-        case Recommendation, Close, RealTime
-    }
 
     private func generateFooterView(mainText: String, secondaryText: String) -> UIView {
         let view = UIView()
@@ -306,7 +307,6 @@ extension HomeViewController: UITableViewDelegate {
             make.height.equalTo(3)
             make.bottom.equalToSuperview().inset(10)
         }
-
         return view
     }
 
