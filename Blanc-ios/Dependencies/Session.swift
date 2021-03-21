@@ -68,8 +68,11 @@ class Session {
     func refresh() -> Single<UserDTO> {
         let currentUser = auth.currentUser!
         let uid = auth.uid
-        userService
-            .getSession(currentUser: currentUser, uid: uid)
+        return userService
+            .getSession(
+                currentUser: currentUser,
+                uid: uid
+            )
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .do(afterSuccess: { [unowned self] user in
                 update(user)
