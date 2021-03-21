@@ -6,12 +6,12 @@ class AccountViewModel {
 
     private let disposeBag: DisposeBag = DisposeBag()
 
-    let sections: ReplaySubject<[SectionModel<String, AccountData>]> =
+    internal let sections: ReplaySubject<[SectionModel<String, AccountData>]> =
         ReplaySubject<[SectionModel<String, AccountData>]>.create(bufferSize: 1)
 
-    let currentUser: ReplaySubject = ReplaySubject<UserDTO>.create(bufferSize: 1)
+    internal let currentUser: ReplaySubject = ReplaySubject<UserDTO>.create(bufferSize: 1)
 
-    private weak var session: Session?
+    private var session: Session
 
     init(session: Session) {
         self.session = session
@@ -19,7 +19,7 @@ class AccountViewModel {
     }
 
     private func populate() {
-        session?
+        session
             .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
