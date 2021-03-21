@@ -17,9 +17,9 @@ class RequestConfirmViewController: BaseConfirmViewController {
     private var user: UserDTO? = nil
 
     // my session.
-    var session: Session?
+    internal weak var session: Session?
 
-    let ripple: Ripple = Ripple()
+    private let ripple: Ripple = Ripple()
 
     lazy private var pingmeLabel: UILabel = {
         var label = UILabel()

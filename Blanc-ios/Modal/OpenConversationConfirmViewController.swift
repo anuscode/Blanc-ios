@@ -8,7 +8,7 @@ class OpenConversationConfirmViewController: BaseConfirmViewController {
     static func present(target: UIViewController, user: UserDTO?) -> Observable<ConfirmResult> {
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         let controller = storyboard.instantiateViewController(
-                withIdentifier: "OpenConversationConfirmViewController") as! OpenConversationConfirmViewController
+            withIdentifier: "OpenConversationConfirmViewController") as! OpenConversationConfirmViewController
         controller.setUser(user)
         target.present(controller, animated: false, completion: nil)
         return controller.observe().take(1)
@@ -18,9 +18,9 @@ class OpenConversationConfirmViewController: BaseConfirmViewController {
     private var user: UserDTO? = nil
 
     // my session.
-    var session: Session?
+    internal weak var session: Session?
 
-    let ripple: Ripple = Ripple()
+    private let ripple: Ripple = Ripple()
 
     lazy private var blancLabel: UILabel = {
         var label = UILabel()

@@ -223,7 +223,7 @@ class LoginViewController: UIViewController {
 
     lazy private var versionLabel: UILabel = {
         let label = UILabel()
-        label.text = "powered by Ground • v1.0.0"
+        label.text = "presented by ground • v1.0.4"
         label.font = .systemFont(ofSize: 12, weight: .light)
         label.numberOfLines = 1;
         label.textColor = .black
@@ -514,7 +514,7 @@ class LoginViewController: UIViewController {
         }
 
         loginWithKakao()
-            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribeOn(MainScheduler.instance)
             .observeOn(MainScheduler.instance)
             .do(onNext: { [unowned self] authResult in
                 enableLoginButtons(false)

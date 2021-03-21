@@ -327,32 +327,35 @@ class UserSingleViewController: UIViewController {
     private func enableRequestButton(_ data: UserSingleData) {
         let relationship = data.user?.relationship
         if (relationship?.isMatched ?? false) {
-            requestButton.setTitle("이미 매칭 된 유저 입니다.", for: .normal)
+            requestButton.setTitle("연결 된 유저", for: .normal)
             requestButton.isUserInteractionEnabled = false
-            requestButton.backgroundColor = UIColor.bumble3.withAlphaComponent(0.6)
+            requestButton.backgroundColor = UIColor.bumble3.withAlphaComponent(0.7)
             return
         }
         if (relationship?.isUnmatched ?? false) {
-            requestButton.setTitle("성사 되지 않은 유저 입니다.", for: .normal)
+            requestButton.setTitle("이미 보냄", for: .normal)
             requestButton.isUserInteractionEnabled = false
-            requestButton.backgroundColor = UIColor.bumble3.withAlphaComponent(0.6)
+            requestButton.backgroundColor = UIColor.bumble3.withAlphaComponent(0.7)
             return
         }
         if (relationship?.isWhoSentMe ?? false) {
-            requestButton.setTitle("친구신청 수락", for: .normal)
+            requestButton.setTitle("수락", for: .normal)
             requestButton.isUserInteractionEnabled = true
             requestButton.backgroundColor = .bumble3
             return
         }
         if (relationship?.isWhoISent ?? false) {
-            requestButton.setTitle("이미 친구신청을 보냈습니다.", for: .normal)
+            requestButton.setTitle("이미 보냄", for: .normal)
             requestButton.isUserInteractionEnabled = false
-            requestButton.backgroundColor = UIColor.bumble3.withAlphaComponent(0.6)
+            requestButton.backgroundColor = UIColor.bumble3.withAlphaComponent(0.7)
             return
         }
+        requestButton.setTitle("친구 신청", for: .normal)
+        requestButton.isUserInteractionEnabled = true
+        requestButton.backgroundColor = .bumble3
     }
 
-    @objc private func request(user: UserDTO?) {
+    @objc private func request() {
         guard let user = data?.user else {
             return
         }
@@ -505,7 +508,7 @@ extension UserSingleViewController: UITableViewDelegate, UITableViewDataSource {
                 return cell
             }
             if (relationship?.isUnmatched ?? false) {
-                cell.bind(message: "성사되지 않은 관계입니다.")
+                cell.bind(message: "이미 친구신청을 보낸 상대입니다.")
                 return cell
             }
             if (relationship?.isWhoSentMe ?? false) {

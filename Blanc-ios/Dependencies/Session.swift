@@ -18,11 +18,11 @@ class Session {
     internal var user: UserDTO?
 
     internal var id: String? {
-        user?._id ?? nil
+        user?.id
     }
 
     internal var uid: String? {
-        user?.uid ?? nil
+        user?.uid
     }
 
     init(userService: UserService, preferences: Preferences) {
@@ -36,10 +36,9 @@ class Session {
     }
 
     func publish() {
-        guard let user = user else {
-            return
+        if let user = user {
+            observable.onNext(user)
         }
-        observable.onNext(user)
     }
 
     func generate() -> Single<Void> {
@@ -61,14 +60,20 @@ class Session {
                     return Single.just(UserDTO())
                 }
             })
-            .map({ _ in Void() })
+            .map({ _ in
+                Void()
+            })
     }
 
     func refresh() -> Single<UserDTO> {
+        let currentUser = auth.currentUser!
+        let uid = auth.uid
         userService
-            .getSession(currentUser: auth.currentUser!, uid: auth.uid)
+            .getSession(currentUser: currentUser, uid: uid)
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .do(afterSuccess: update)
+            .do(afterSuccess: { [unowned self] user in
+                update(user)
+            })
     }
 
     func update(_ user: UserDTO) {
@@ -91,10 +96,11 @@ class Session {
         Broadcast
             .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [unowned self] push in
                 if (push.isRequest()) {
                     user?.userIdsSentMeRequest?.append(push.userId!)
+                    publish()
                 }
                 if (push.isMatched()) {
                     if let index = user?.userIdsISentRequest?.firstIndex(of: push.userId!) {
@@ -104,6 +110,7 @@ class Session {
                         user?.userIdsSentMeRequest?.remove(at: index)
                     }
                     user?.userIdsMatched?.append(push.userId!)
+                    publish()
                 }
                 if (push.isLogout()) {
                     log.info("detected login in another device..")
@@ -112,14 +119,12 @@ class Session {
                     let storyboard = UIStoryboard(name: "Main", bundle: nil)
                     let vc = storyboard.instantiateViewController(withIdentifier: "InitPagerViewController")
                     vc.modalPresentationStyle = .fullScreen
-                    DispatchQueue.main.async {
-                        window?.rootViewController?.dismiss(animated: false, completion: {
-                            let window = UIApplication.shared.windows.first
-                            window?.rootViewController?.present(vc, animated: false, completion: {
-                                vc.toast(message: "다른 디바이스에서 로그인이 감지되어 로그아웃 되었습니다.")
-                            })
-                        })
-                    }
+                    window?.rootViewController?.dismiss(animated: false, completion: {
+                        let window = UIApplication.shared.windows.first
+                        window?.rootViewController?.present(vc, animated: false) {
+                            vc.toast(message: "다른 디바이스에서 로그인이 감지되어 로그아웃 되었습니다.")
+                        }
+                    })
                 }
             }, onError: { err in
                 log.error(err)
@@ -128,7 +133,8 @@ class Session {
     }
 
     func relationship(with: UserDTO?) -> Relationship? {
-        guard let userId = with?.id else {
+        guard let target = with,
+              let userId = with?.id else {
             return nil
         }
         let relationship = Relationship()
@@ -137,6 +143,7 @@ class Session {
         relationship.isWhoISent = user?.userIdsISentRequest?.contains(userId) ?? false
         relationship.isWhoSentMe = user?.userIdsSentMeRequest?.contains(userId) ?? false
         relationship.starRating = user?.starRatingsIRated?.first(where: { $0.userId == userId })
+        relationship.distance = user?.distance(from: target, type: String.self)
         return relationship
     }
 }

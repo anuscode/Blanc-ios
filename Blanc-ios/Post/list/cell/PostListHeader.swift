@@ -3,29 +3,33 @@ import UIKit
 
 protocol PostHeaderDelegate: class {
     func didTapUserImage(user: UserDTO?) -> Void
+    func didTapOption(user: UserDTO?) -> Void
 }
 
 class PostListHeader: UIView {
 
     class Constant {
-        static let headerImageDiameter: Int = 40
+        static let headerImageDiameter: CGFloat = 40
         static let headerHeight: Int = 55
+        static let optionImageDiameter: CGFloat = 28
     }
 
-    weak var user: UserDTO?
+    private let ripple: Ripple = Ripple()
 
-    weak var delegate: PostHeaderDelegate?
+    private weak var user: UserDTO?
 
-    lazy var headerImage: UIImageView = {
+    private weak var delegate: PostHeaderDelegate?
+
+    lazy private var headerImage: UIImageView = {
         let imageView: UIImageView = UIImageView()
-        imageView.layer.cornerRadius = CGFloat(Constant.headerImageDiameter / 2)
+        imageView.layer.cornerRadius = Constant.headerImageDiameter / 2
         imageView.clipsToBounds = true
         imageView.translatesAutoresizingMaskIntoConstraints = false
         imageView.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapUserImage))
         return imageView
     }()
 
-    lazy var headerLabel1: UILabel = {
+    lazy private var headerLabel1: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 14)
         label.textColor = .darkText
@@ -33,7 +37,7 @@ class PostListHeader: UIView {
         return label
     }()
 
-    lazy var headerLabel2: UILabel = {
+    lazy private var headerLabel2: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 12)
         label.textColor = .systemGray
@@ -41,18 +45,31 @@ class PostListHeader: UIView {
         return label
     }()
 
-    lazy var verticalCenterGuideLine: UIView = {
+    lazy private var verticalCenterGuideLine: UIView = {
         let view = UIView()
         return view
     }()
 
-    lazy var header: UIView = {
+    lazy private var optionImageView: UIImageView = {
+        let imageView = UIImageView()
+        let image = UIImage(named: "ic_more_vert")
+        imageView.image = image
+        imageView.layer.cornerRadius = Constant.optionImageDiameter / 2
+        imageView.layer.masksToBounds = true
+        imageView.isUserInteractionEnabled = true
+        imageView.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapOptionImageView))
+        ripple.activate(to: imageView)
+        return imageView
+    }()
+
+    lazy private var header: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(headerImage)
         view.addSubview(verticalCenterGuideLine)
         view.addSubview(headerLabel1)
         view.addSubview(headerLabel2)
+        view.addSubview(optionImageView)
 
         headerImage.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(15)
@@ -78,6 +95,13 @@ class PostListHeader: UIView {
             make.leading.equalTo(headerImage.snp.trailing).inset(-12)
             make.top.equalTo(verticalCenterGuideLine.snp.bottom).inset(9)
             make.bottom.equalToSuperview()
+        }
+
+        optionImageView.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().inset(10)
+            make.centerY.equalToSuperview()
+            make.width.equalTo(Constant.optionImageDiameter)
+            make.height.equalTo(Constant.optionImageDiameter)
         }
 
         return view
@@ -110,13 +134,23 @@ class PostListHeader: UIView {
     func bind(user: UserDTO?, delegate: PostHeaderDelegate? = nil) {
         self.user = user
         self.delegate = delegate
-        headerImage.url(user?.avatar, size: CGSize(width: Constant.headerImageDiameter, height: Constant.headerImageDiameter))
-        headerLabel1.text = "\(user?.nickname ?? "알 수 없음") · \(user?.age ?? -1)"
-        headerLabel2.text = "\(user?.occupation ?? "알 수 없음") · \(user?.area ?? "알 수 없음")"
+
+        let url = user?.avatar
+        let size = CGSize(width: Constant.headerImageDiameter, height: Constant.headerImageDiameter)
+        let text1 = "\(user?.nickname ?? "알 수 없음") · \(user?.age ?? -1)"
+        let text2 = "\(user?.occupation ?? "알 수 없음") · \(user?.area ?? "알 수 없음")"
+
+        headerImage.url(url, size: size)
+        headerLabel1.text = text1
+        headerLabel2.text = text2
     }
 
     @objc func didTapUserImage() {
         log.info("Touched header user image: \(user?.nickname ?? "")")
         delegate?.didTapUserImage(user: user)
+    }
+
+    @objc func didTapOptionImageView() {
+        delegate?.didTapOption(user: user)
     }
 }

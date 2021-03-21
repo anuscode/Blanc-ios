@@ -172,4 +172,36 @@ extension PostListViewController: PostHeaderDelegate {
         Channel.next(user: user)
         navigationController?.pushViewController(.userSingle, current: self)
     }
+
+    func didTapOption(user: UserDTO?) {
+        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let reportAction = UIAlertAction(title: "신고", style: .default) { [unowned self] (action) in
+            guard let user = user else {
+                return
+            }
+            Channel.next(reportee: user)
+            navigationController?.pushViewController(
+                .report,
+                current: self,
+                hideBottomWhenStart: true,
+                hideBottomWhenEnd: true
+            )
+        }
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        cancelAction.setValue(UIColor.red, forKey: "titleTextColor")
+        alertController.addAction(reportAction)
+        alertController.addAction(cancelAction)
+        alertController.modalPresentationStyle = .popover
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            if let popoverController = alertController.popoverPresentationController {
+                let sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 0, height: 0)
+                popoverController.sourceView = view
+                popoverController.sourceRect = sourceRect
+                popoverController.permittedArrowDirections = []
+                present(alertController, animated: true, completion: nil)
+            }
+        } else {
+            present(alertController, animated: true, completion: nil)
+        }
+    }
 }

@@ -49,7 +49,6 @@ class UserSingleModel {
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
             .do(onNext: { [unowned self]  user in
-                user.distance = session.user?.distance(from: user, type: String.self)
                 user.relationship = session.relationship(with: user)
             })
             .subscribe(onNext: { [unowned self] user in
@@ -57,6 +56,7 @@ class UserSingleModel {
                 publish()
                 populateUserPosts(user: user)
                 pushLookup()
+                subscribeSession()
             }, onError: { err in
                 log.error(err)
             })
@@ -81,6 +81,25 @@ class UserSingleModel {
             .disposed(by: disposeBag)
     }
 
+    func subscribeSession() {
+        session
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .skip(1)
+            .subscribe(onNext: { [unowned self] _ in
+                log.info("subscribe session in user single model..")
+                if let user = data.user {
+                    user.relationship = session.relationship(with: user)
+                    publish()
+                }
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
+
+    }
+
     func createRequest(onSuccess: @escaping (_ request: RequestDTO) -> Void,
                        onError: @escaping () -> Void
     ) {
@@ -102,8 +121,7 @@ class UserSingleModel {
             .flatMap({ _ in self.session.refresh() })
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onSuccess: { [unowned self]  _ in
-                let relationship = session.relationship(with: user)
-                user.relationship = relationship
+                user.relationship = session.relationship(with: user)
                 publish()
             }, onError: { err in
                 log.error(err)

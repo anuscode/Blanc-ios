@@ -112,7 +112,7 @@ class SmallUserProfileTableViewCell: UITableViewCell {
         let diameter = Const.diameter
         userImage.url(user?.avatar, cornerRadius: 0, size: CGSize(width: diameter, height: diameter))
         line1.text = "\(user?.nickname ?? "알 수 없음"), \(user?.age ?? -1)"
-        line2.text = "\(user?.area ?? "알 수 없음") · \(user?.distance ?? "알 수 없음")"
+        line2.text = "\(user?.area ?? "알 수 없음") · \(user?.relationship?.distance ?? "알 수 없음")"
         line3.text = "\(user?.occupation ?? "알 수 없음") · \(user?.education ?? "알 수 없음")"
     }
 

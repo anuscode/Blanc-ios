@@ -527,6 +527,27 @@ class UserCardTableViewCell: UITableViewCell {
             return
         }
         fireworkController.addFireworks(count: 2, around: button2)
+
+        if (user.relationship?.isMatched == true) {
+            return
+        }
+
+        if (user.relationship?.isUnmatched == true) {
+            return
+        }
+
+        if (user.relationship?.isWhoISent == true) {
+            return
+        }
+
+        if (user.relationship?.isWhoSentMe == true) {
+            let done = heartLottie.begin(with: contentView) { make in
+                make.edges.equalTo(carousel.snp.edges)
+            }
+            delegate?.request(user, animationDone: done)
+            return
+        }
+
         delegate?
             .confirm(user)
             .subscribe(onNext: { [unowned self] result in
@@ -612,7 +633,7 @@ class UserCardTableViewCell: UITableViewCell {
 
         let numberOfPages = user.userImages?.count ?? 0
         let label1Text = "\(user.nickname ?? "알 수 없음"), \(user.age ?? 0)"
-        let label2Text = "\(user.area ?? "알 수 없음") · \(user.distance ?? "알 수 없음")"
+        let label2Text = "\(user.area ?? "알 수 없음") · \(user.relationship?.distance ?? "알 수 없음")"
         let label3Text = "\(user.occupation ?? "알 수 없음") · \(user.lastLoginAt?.asStaledDay() ?? "오래 전") 접속"
         let starLabelText = "\(user.nickname ?? "알 수 없음")님의 매력을 알려주세요."
 
@@ -623,6 +644,39 @@ class UserCardTableViewCell: UITableViewCell {
 
         pageControl.numberOfPages = numberOfPages
         carousel.reloadData()
+
+        configureRequestButton(by: user)
+    }
+
+    private func configureRequestButton(by user: UserDTO?) {
+        let relationship = user?.relationship
+        if (relationship?.isMatched ?? false) {
+            button2.setTitle("연결 된 유저", for: .normal)
+            button2.isUserInteractionEnabled = false
+            button2.backgroundColor = UIColor.bumble1
+            return
+        }
+        if (relationship?.isUnmatched ?? false) {
+            button2.setTitle("이미 보냄", for: .normal)
+            button2.isUserInteractionEnabled = false
+            button2.backgroundColor = UIColor.bumble1
+            return
+        }
+        if (relationship?.isWhoSentMe ?? false) {
+            button2.setTitle("수락", for: .normal)
+            button2.isUserInteractionEnabled = true
+            button2.backgroundColor = UIColor.bumble3
+            return
+        }
+        if (relationship?.isWhoISent ?? false) {
+            button2.setTitle("이미 보냄", for: .normal)
+            button2.isUserInteractionEnabled = false
+            button2.backgroundColor = UIColor.bumble1
+            return
+        }
+        button2.setTitle("친구 신청", for: .normal)
+        button2.isUserInteractionEnabled = true
+        button2.backgroundColor = UIColor.bumble3
     }
 }
 

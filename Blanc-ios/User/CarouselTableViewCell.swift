@@ -107,7 +107,7 @@ class CarouselTableViewCell: UITableViewCell {
         self.user = user
 
         let line1 = "\(self.user?.nickname ?? "알 수 없음"), \(user?.age ?? -1)"
-        let line2 = "\(self.user?.area ?? "알 수 없음") · \(user?.distance ?? "알 수 없음")"
+        let line2 = "\(self.user?.area ?? "알 수 없음") · \(user?.relationship?.distance ?? "알 수 없음")"
         let numberOfPages = user?.userImages?.count ?? 0
 
         pageControl.numberOfPages = numberOfPages

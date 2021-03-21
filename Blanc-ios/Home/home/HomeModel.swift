@@ -55,40 +55,38 @@ class HomeModel {
         updateUserLocation()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .flatMap { [unowned self] it -> Single<[UserDTO]> in
+            .flatMap({ [unowned self] it -> Single<[UserDTO]> in
                 listRecommendedUsers()
-            }
+            })
             .do(afterSuccess: { [unowned self] users in
                 // loop to calculate and set a distance from current user.
-                users.distance(session)
                 users.forEach({
                     $0.relationship = session.relationship(with: $0)
                 })
                 data.recommendedUsers = users
             })
-            .flatMap { [unowned self] it -> Single<[UserDTO]> in
+            .flatMap({ [unowned self] it -> Single<[UserDTO]> in
                 listCloseUsers()
-            }
-            .do(afterSuccess: { [unowned self]  users in
+            })
+            .do(afterSuccess: { [unowned self] users in
                 // loop to calculate and set a distance from current user.
-                users.distance(session)
                 users.forEach({
                     $0.relationship = session.relationship(with: $0)
                 })
                 data.closeUsers = users
             })
-            .flatMap { [unowned self] it -> Single<[UserDTO]> in
+            .flatMap({ [unowned self] it -> Single<[UserDTO]> in
                 listRealTimeAccessUsers()
-            }
-            .do(afterSuccess: { [unowned self]  users in
+            })
+            .do(afterSuccess: { [unowned self] users in
                 // loop to calculate and set a distance from current user.
-                users.distance(session)
                 users.forEach({
                     $0.relationship = session.relationship(with: $0)
                 })
                 data.realTimeUsers = users
             })
             .subscribe(onSuccess: { [unowned self] _ in
+                subscribeSession()
                 publish()
             }, onError: { err in
                 log.error(err)
@@ -163,6 +161,29 @@ class HomeModel {
             .asSingle()
     }
 
+    private func subscribeSession() {
+        session
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .skip(1)
+            .subscribe(onNext: { [unowned self] _ in
+                data.recommendedUsers.forEach({
+                    $0.relationship = session.relationship(with: $0)
+                })
+                data.realTimeUsers.forEach({
+                    $0.relationship = session.relationship(with: $0)
+                })
+                data.closeUsers.forEach({
+                    $0.relationship = session.relationship(with: $0)
+                })
+                publish()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
+    }
+
     private func requestLocationAuthorization() {
         manager.requestAlwaysAuthorization()
     }
@@ -206,11 +227,13 @@ class HomeModel {
         guard (set.count != 1) else {
             return
         }
-        requestService.createRequest(
+        requestService
+            .createRequest(
                 currentUser: currentUser,
                 uid: uid,
                 userId: userId,
-                requestType: .FRIEND)
+                requestType: .FRIEND
+            )
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .do(onSuccess: { request in
@@ -231,7 +254,9 @@ class HomeModel {
             .disposed(by: disposeBag)
     }
 
-    func poke(_ user: UserDTO?, onComplete: @escaping () -> Void, onError: @escaping () -> Void) {
+    func poke(_ user: UserDTO?,
+              onComplete: @escaping () -> Void,
+              onError: @escaping () -> Void) {
         guard let user = user,
               let uid = auth.uid,
               let userId = user.id else {
@@ -267,9 +292,7 @@ class HomeModel {
             .subscribe(onSuccess: { [unowned self] _ in
                 let starRating = StarRating(userId: userId, score: score)
                 session.user?.starRatingsIRated?.append(starRating)
-                user.relationship?.starRating = starRating
                 session.publish()
-                publish()
                 onSuccess()
                 log.info("Successfully rated score \(score) with user: \(userId)")
             }, onError: { err in
@@ -277,6 +300,29 @@ class HomeModel {
                 onError()
             })
             .disposed(by: disposeBag)
+    }
+
+    func update(user: UserDTO?) {
+        update(userId: user?.id)
+    }
+
+    func update(userId: String?) {
+        guard let userId = userId else {
+            return
+        }
+        if let index = data.recommendedUsers.firstIndex(where: { $0.id == userId }) {
+            let user = data.recommendedUsers[index]
+            user.relationship = session.relationship(with: user)
+        }
+        if let index = data.closeUsers.firstIndex(where: { $0.id == userId }) {
+            let user = data.closeUsers[index]
+            user.relationship = session.relationship(with: user)
+        }
+        if let index = data.realTimeUsers.firstIndex(where: { $0.id == userId }) {
+            let user = data.realTimeUsers[index]
+            user.relationship = session.relationship(with: user)
+        }
+        publish()
     }
 
     func remove(_ user: UserDTO?) {

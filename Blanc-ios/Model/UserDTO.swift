@@ -99,9 +99,10 @@ class Relationship: Codable {
     var isWhoSentMe: Bool = false
     var isWhoISent: Bool = false
     var starRating: StarRating? = nil
+    var distance: String?
 }
 
-class UserDTO: NSObject, Codable {
+class UserDTO: Codable {
     var _id: String?
     var id: String? {
         get {
@@ -206,11 +207,6 @@ class UserDTO: NSObject, Codable {
     /** remaining paid point. **/
     var point: Float?
 
-    /** the belows are for convenience but not coming from server. **/
-    var distance: String?
-    var isAdvertise: Bool? = false
-    var isShimmer: Bool? = false
-
     var avatar: String? {
         get {
             let image = userImages?.min(by: { $0.index ?? 7 < $1.index ?? 7 })
@@ -226,35 +222,26 @@ class UserDTO: NSObject, Codable {
 
     /** relationship with current user. **/
     var relationship: Relationship?
+}
+
+extension UserDTO: Hashable {
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(ObjectIdentifier(self))
+        if let relationship = relationship {
+            hasher.combine(ObjectIdentifier(relationship))
+        }
+    }
 
     static func ==(lhs: UserDTO, rhs: UserDTO) -> Bool {
-        lhs.id == rhs.id
+        lhs.isEqual(to: rhs)
+    }
+
+    func isEqual(to other: UserDTO) -> Bool {
+        id == other.id
     }
 }
 
 extension UserDTO {
-    func copy() -> UserDTO {
-        do {
-            let jsonData = try JSONEncoder().encode(self)
-            let userDTO = try JSONDecoder().decode(UserDTO.self, from: jsonData)
-            return userDTO
-        } catch {
-            log.error("Failed to deep copy..")
-            return UserDTO()
-        }
-    }
-
-    func toJson() -> [String: Any] {
-        do {
-            let jsonData = try JSONEncoder().encode(self)
-            let json = try JSONSerialization.jsonObject(with: jsonData, options: .allowFragments) as? [String: Any] ?? [:]
-            return json
-        } catch {
-            log.error("Failed to deep copy..")
-            return [:]
-        }
-    }
-
     func getTempImageUrl(index: Int) -> String {
         let imageDTOs = userImagesTemp
         let imageDTO = imageDTOs?.first(where: { $0.index == index })
@@ -271,14 +258,12 @@ extension UserDTO {
         let user1 = self
         let user2 = from
 
-        let coordinate1 = user1.location?.toCLLocation()
-        let coordinate2 = user2?.location?.toCLLocation()
-
-        guard coordinate1 != nil && coordinate2 != nil else {
+        guard let coordinate1 = user1.location?.toCLLocation(),
+              let coordinate2 = user2?.location?.toCLLocation() else {
             return nil
         }
 
-        var distance = coordinate1!.distance(from: coordinate2!)
+        var distance = coordinate1.distance(from: coordinate2)
         distance = round(distance / 100) / 10
         distance = max(distance, 1.0)
         return distance

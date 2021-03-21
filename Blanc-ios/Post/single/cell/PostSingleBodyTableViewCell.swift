@@ -7,7 +7,6 @@ protocol PostSingleTableViewCellDelegate: class {
     func isFavoritePost() -> Bool
 }
 
-
 class PostSingleBodyTableViewCell: UITableViewCell {
 
     static let identifier: String = "PostSingleBodyTableViewCell"

@@ -35,8 +35,8 @@ class ConversationSingleModel {
     }
 
     private func publish() {
-        if (conversation != nil) {
-            observable.onNext(conversation!)
+        if let conversation = conversation {
+            observable.onNext(conversation)
         }
     }
 
@@ -48,32 +48,34 @@ class ConversationSingleModel {
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .subscribe(onNext: { [unowned self] conversation in
                 getConversation(conversationId: conversation.id)
-            }, onError: { err in
-                log.error(err)
             })
             .disposed(by: disposeBag)
     }
 
     private func getConversation(conversationId: String?) {
+        guard let uid = session.uid,
+              let conversationId = conversationId else {
+            return
+        }
         conversationService
-            .getConversation(uid: session.uid, conversationId: conversationId)
+            .getConversation(uid: uid, conversationId: conversationId)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .do(onSuccess: { conversation in
+            .do(onSuccess: { [unowned self] conversation in
                 let partner = conversation.partner
-                partner?.distance = partner?.distance(from: self.session.user, type: String.self)
+                partner?.relationship = session.relationship(with: partner)
             })
-            .map { [unowned self] conversation -> ConversationDTO in
-                conversation.messages = conversation.messages?.map { [unowned self] message -> MessageDTO in
-                    message.isCurrentUserMessage = (message.userId == session.id && message.userId != nil)
-                    return message
+            .do(onSuccess: { [unowned self] conversation in
+                conversation.messages?.forEach { message in
+                    message.isCurrentUserMessage = message.userId == session.id
                 }
-                return conversation
-            }
-            .subscribe(onSuccess: { conversation in
+            })
+            .do(onSuccess: { [unowned self] conversation in
+                self.conversation?.currentUser = session.user
+            })
+            .subscribe(onSuccess: { [unowned self] conversation in
                 self.conversation = conversation
-                self.conversation?.currentUser = self.session.user
-                self.publish()
+                publish()
             }, onError: { err in
                 log.error(err)
             })
@@ -90,10 +92,8 @@ class ConversationSingleModel {
                 }
             })
             .observeOn(MainScheduler.asyncInstance)
-            .subscribe(onNext: { [unowned self] push in
+            .subscribe(onNext: { [unowned self] _ in
                 setReadAll()
-            }, onError: { err in
-                log.error(err)
             })
             .disposed(by: disposeBag)
     }
@@ -111,19 +111,27 @@ class ConversationSingleModel {
     }
 
     func updateConversationAvailable(
-        conversation: ConversationDTO?, onCompleted: @escaping () -> Void, onError: @escaping () -> Void) {
+        conversation: ConversationDTO?,
+        onCompleted: @escaping () -> Void,
+        onError: @escaping () -> Void
+    ) {
+        let currentUser = auth.currentUser!
+        let uid = session.uid
+        let conversationId = conversation?.id
         conversationService
             .updateConversationAvailable(
-                currentUser: auth.currentUser!,
-                uid: session.uid,
-                conversationId: conversation?.id
+                currentUser: currentUser,
+                uid: uid,
+                conversationId: conversationId
             )
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .flatMap({ _ in self.session.refresh() })
-            .subscribe(onSuccess: { _ in
+            .flatMap({ [unowned self] _ in
+                session.refresh()
+            })
+            .subscribe(onSuccess: { [unowned self] _ in
                 self.conversation?.available = true
-                self.publish()
+                publish()
                 onCompleted()
             }, onError: { err in
                 onError()
@@ -132,15 +140,21 @@ class ConversationSingleModel {
     }
 
     func sendMessage(message: String, onError: @escaping () -> Void) {
+        let uid = session.uid
+        let conversationId = conversation?.id
         conversationService
-            .sendMessage(uid: session.uid, conversationId: conversation?.id, message: message)
+            .sendMessage(
+                uid: uid,
+                conversationId: conversationId,
+                message: message
+            )
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
-            .subscribe(onSuccess: { message in
+            .subscribe(onSuccess: { [unowned self] message in
                 message.isCurrentUserMessage = true
-                self.conversation?.messages?.append(message)
-                self.publish()
-                self.setReadAll()
+                conversation?.messages?.append(message)
+                publish()
+                setReadAll()
             }, onError: { err in
                 onError()
             })

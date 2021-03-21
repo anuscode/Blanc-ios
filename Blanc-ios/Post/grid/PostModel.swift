@@ -49,8 +49,8 @@ class PostModel {
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .do(onNext: { [unowned self] posts in
                 posts.forEach({ post in
-                    post.author?.distance = session.user?.distance(
-                        from: post.author, type: String.self)
+                    let author = post.author
+                    author?.relationship = session.relationship(with: author)
                 })
             })
             .subscribe(onSuccess: { [unowned self] posts in

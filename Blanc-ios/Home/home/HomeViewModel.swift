@@ -52,14 +52,6 @@ class HomeViewModel {
         subscribeHomeModel()
     }
 
-    func observe() -> Observable<HomeUserData> {
-        data
-    }
-
-    private func publish() {
-        data.onNext(repository.data)
-    }
-
     private func subscribeHomeModel() {
         homeModel
             .observe()
@@ -67,7 +59,7 @@ class HomeViewModel {
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .do(onNext: { [unowned self] data in
                 repository.data = data
-                publish()
+                self.data.onNext(repository.data)
             })
             .subscribe(onNext: { [unowned self] data in
                 processReload(data: data)
@@ -123,6 +115,7 @@ class HomeViewModel {
     }
 
     private func processReload(data: HomeUserData) {
+        log.info("checking for whether a reload is required..")
         var isReloadRequired = false
 
         if (lastCounts.recommendedUsers > 0 && data.recommendedUsers.count == 0) {
@@ -134,13 +127,21 @@ class HomeViewModel {
         if (lastCounts.closeUsers > 0 && data.closeUsers.count == 0) {
             isReloadRequired = true
         }
+        if (lastCounts.recommendedUsers == data.recommendedUsers.count &&
+            lastCounts.realtimeUsers == data.realTimeUsers.count &&
+            lastCounts.closeUsers == data.closeUsers.count) {
+            isReloadRequired = true
+        }
 
         lastCounts.recommendedUsers = data.recommendedUsers.count
         lastCounts.realtimeUsers = data.realTimeUsers.count
         lastCounts.closeUsers = data.closeUsers.count
 
         if (isReloadRequired) {
+            log.info("reload is required..")
             reload.onNext(Void())
+        } else {
+            log.info("reload is not required..")
         }
     }
 }

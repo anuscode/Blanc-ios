@@ -280,7 +280,7 @@ public extension Optional where Wrapped == String {
 extension Array where Element == UserDTO {
     func distance(_ user: UserDTO?) {
         forEach {
-            $0.distance = $0.distance(from: user, type: String.self)
+            $0.relationship?.distance = $0.distance(from: user, type: String.self)
         }
     }
 
