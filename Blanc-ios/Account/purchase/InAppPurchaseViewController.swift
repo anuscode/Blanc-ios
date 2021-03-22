@@ -107,31 +107,26 @@ class InAppPurchaseViewController: UIViewController {
     }
 
     private func configureConstraints() {
-
         guideLine.snp.makeConstraints { make in
             make.leading.equalToSuperview()
             make.top.equalTo(view.safeAreaLayoutGuide).inset(50)
         }
-
         titleLabel1.snp.makeConstraints { make in
             make.bottom.equalTo(guideLine.snp.top)
             make.leading.equalToSuperview().inset(15)
         }
-
         underLine1.snp.makeConstraints { make in
             make.top.equalTo(titleLabel1.snp.bottom).offset(5)
             make.leading.equalTo(titleLabel1.snp.leading)
             make.trailing.equalTo(titleLabel1.snp.trailing)
             make.height.equalTo(3)
         }
-
         tableView.snp.makeConstraints { make in
             make.top.equalTo(titleLabel1.snp.bottom).offset(20)
             make.height.equalTo(69.5 * 4 + 110 * 2)
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
         }
-
         policyLabel.snp.makeConstraints { make in
             make.top.equalTo(tableView.snp.bottom).inset(-20)
             make.leading.equalToSuperview()

@@ -27,7 +27,7 @@ class InAppPurchaseTableViewCell: UITableViewCell {
         return view
     }()
 
-    private lazy var stackView: UIStackView = {
+    lazy private var stackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [
             titleLabel, discountLabel
         ])
