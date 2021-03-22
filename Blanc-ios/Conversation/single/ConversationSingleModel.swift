@@ -87,6 +87,14 @@ class ConversationSingleModel {
             .do(onNext: { [unowned self] push in
                 if (push.isMessage()) {
                     appendMessage(push: push)
+                    publish()
+                }
+                if (push.isOpened()) {
+                    let conversationId = push.conversationId
+                    if (conversation?.id == conversationId) {
+                        conversation?.available = true
+                        publish()
+                    }
                 }
             })
             .observeOn(MainScheduler.asyncInstance)
@@ -105,7 +113,6 @@ class ConversationSingleModel {
             return
         }
         conversation?.messages?.append(message)
-        publish()
     }
 
     func updateConversationAvailable(
