@@ -102,7 +102,7 @@ class Relationship: Codable {
     var distance: String?
 }
 
-class UserDTO: Codable {
+class UserDTO: Diffable, Codable {
     var _id: String?
     var id: String? {
         get {
@@ -222,22 +222,9 @@ class UserDTO: Codable {
 
     /** relationship with current user. **/
     var relationship: Relationship?
-}
 
-extension UserDTO: Hashable {
-    func hash(into hasher: inout Hasher) {
-        hasher.combine(ObjectIdentifier(self))
-        if let relationship = relationship {
-            hasher.combine(ObjectIdentifier(relationship))
-        }
-    }
+    func isEqual(to: UserDTO) {
 
-    static func ==(lhs: UserDTO, rhs: UserDTO) -> Bool {
-        lhs.isEqual(to: rhs)
-    }
-
-    func isEqual(to other: UserDTO) -> Bool {
-        id == other.id
     }
 }
 

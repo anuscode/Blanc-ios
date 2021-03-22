@@ -10,7 +10,7 @@ class Resource: Codable {
     var url: String?
 }
 
-class PostDTO: Postable, Codable {
+class PostDTO: Diffable, Codable {
 
     var _id: String? = ""
     var id: String? {
@@ -51,7 +51,7 @@ extension PostDTO {
 
 extension PostDTO {
     @discardableResult
-    static func flatten(posts: [PostDTO], result: LinkedList<Postable> = LinkedList()) -> LinkedList<Postable> {
+    static func flatten(posts: [PostDTO], result: LinkedList<Diffable> = LinkedList()) -> LinkedList<Diffable> {
         posts.forEach { post in
             result.append(post)
             post.comments?.flatten(post: post, result: result)
@@ -62,7 +62,7 @@ extension PostDTO {
 
 extension Array where Element == PostDTO {
     @discardableResult
-    func flatten(result: LinkedList<Postable> = LinkedList()) -> LinkedList<Postable> {
+    func flatten(result: LinkedList<Diffable> = LinkedList()) -> LinkedList<Diffable> {
         forEach { post in
             result.append(post)
             post.comments?.flatten(post: post, result: result)

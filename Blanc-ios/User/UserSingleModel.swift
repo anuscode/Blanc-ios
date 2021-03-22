@@ -72,6 +72,7 @@ class UserSingleModel {
             .listAllUserPosts(uid: uid, userId: userId)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
+            .delay(.seconds(0.5), scheduler: MainScheduler.asyncInstance)
             .subscribe(onSuccess: { [unowned self]  posts in
                 data.posts = posts
                 publish()

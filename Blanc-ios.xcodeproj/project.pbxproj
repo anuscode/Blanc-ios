@@ -115,7 +115,7 @@
 		104EEAE725E372420069B2CF /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEAE525E372420069B2CF /* LoginViewController.swift */; };
 		104EEAF625E372480069B2CF /* VerificationDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEAEC25E372480069B2CF /* VerificationDTO.swift */; };
 		104EEAF725E372480069B2CF /* CustomToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEAED25E372480069B2CF /* CustomToken.swift */; };
-		104EEAF825E372480069B2CF /* Postable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEAEE25E372480069B2CF /* Postable.swift */; };
+		104EEAF825E372480069B2CF /* Diffable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEAEE25E372480069B2CF /* Diffable.swift */; };
 		104EEAF925E372480069B2CF /* PushDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEAEF25E372480069B2CF /* PushDTO.swift */; };
 		104EEAFA25E372480069B2CF /* PostDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEAF025E372480069B2CF /* PostDTO.swift */; };
 		104EEAFB25E372480069B2CF /* ConversationDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEAF125E372480069B2CF /* ConversationDTO.swift */; };
@@ -436,7 +436,7 @@
 		104EEAE525E372420069B2CF /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		104EEAEC25E372480069B2CF /* VerificationDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerificationDTO.swift; sourceTree = "<group>"; };
 		104EEAED25E372480069B2CF /* CustomToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomToken.swift; sourceTree = "<group>"; };
-		104EEAEE25E372480069B2CF /* Postable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Postable.swift; sourceTree = "<group>"; };
+		104EEAEE25E372480069B2CF /* Diffable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Diffable.swift; sourceTree = "<group>"; };
 		104EEAEF25E372480069B2CF /* PushDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushDTO.swift; sourceTree = "<group>"; };
 		104EEAF025E372480069B2CF /* PostDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostDTO.swift; sourceTree = "<group>"; };
 		104EEAF125E372480069B2CF /* ConversationDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationDTO.swift; sourceTree = "<group>"; };
@@ -1012,7 +1012,7 @@
 			children = (
 				104EEAEC25E372480069B2CF /* VerificationDTO.swift */,
 				104EEAED25E372480069B2CF /* CustomToken.swift */,
-				104EEAEE25E372480069B2CF /* Postable.swift */,
+				104EEAEE25E372480069B2CF /* Diffable.swift */,
 				104EEAEF25E372480069B2CF /* PushDTO.swift */,
 				104EEAF025E372480069B2CF /* PostDTO.swift */,
 				104EEAF125E372480069B2CF /* ConversationDTO.swift */,
@@ -2136,7 +2136,7 @@
 				104EEA0625E371FE0069B2CF /* ClassicFireworkController.swift in Sources */,
 				104EEB8025E372650069B2CF /* RatedModel.swift in Sources */,
 				104EEB4A25E3725D0069B2CF /* CommentTableViewCell.swift in Sources */,
-				104EEAF825E372480069B2CF /* Postable.swift in Sources */,
+				104EEAF825E372480069B2CF /* Diffable.swift in Sources */,
 				104EEAFA25E372480069B2CF /* PostDTO.swift in Sources */,
 				104EEB5525E3725D0069B2CF /* PostSingleModel.swift in Sources */,
 				104EEA4825E372060069B2CF /* RegistrationImageViewController.swift in Sources */,

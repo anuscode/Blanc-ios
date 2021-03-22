@@ -449,7 +449,7 @@ extension UserSingleViewController: UITableViewDelegate, UITableViewDataSource {
         if indexPath.section == 0 {
             return view.width
         } else if indexPath.section == 1 {
-            return 25
+            return 28
         } else if indexPath.section == 2 {
             return UITableView.automaticDimension
         } else {

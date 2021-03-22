@@ -10,7 +10,7 @@ private typealias PostCell = PostManagementTableViewCell
 private typealias CommentCell = CommentTableViewCell
 
 
-private extension Array where Element: Postable {
+private extension Array where Element: Diffable {
     func findApplicablePost(comment: CommentDTO?) -> PostDTO? {
         var postIndices: [Int] = []
         var commentIndex: Int = 0
@@ -33,7 +33,7 @@ class PostManagementViewController: UIViewController {
 
     private var disposeBag: DisposeBag = DisposeBag()
 
-    private var data: [Postable] = []
+    private var data: [Diffable] = []
 
     private var replyTo: CommentDTO?
 
@@ -41,7 +41,7 @@ class PostManagementViewController: UIViewController {
 
     internal var postManagementViewModel: PostManagementViewModel?
 
-    lazy private var dataSource: DataSource<Section, Postable> = DataSource<Section, Postable>(tableView: tableView) { [unowned self] (tableView, indexPath, data) -> UITableViewCell? in
+    lazy private var dataSource: DataSource<Section, Diffable> = DataSource<Section, Diffable>(tableView: tableView) { [unowned self] (tableView, indexPath, data) -> UITableViewCell? in
         if (data is PostDTO) {
             let cell = tableView.dequeueReusableCell(withIdentifier: PostCell.identifier, for: indexPath) as! PostCell
             cell.bind(post: (data as! PostDTO), delegate: self)
@@ -220,7 +220,7 @@ extension PostManagementViewController {
     }
 
     private func update() {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, Postable>()
+        var snapshot = NSDiffableDataSourceSnapshot<Section, Diffable>()
         snapshot.appendSections([.main])
         snapshot.appendItems(data)
         dataSource.apply(snapshot, animatingDifferences: false, completion: nil)

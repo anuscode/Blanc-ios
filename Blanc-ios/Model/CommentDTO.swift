@@ -1,6 +1,6 @@
 import Foundation
 
-class CommentDTO: Postable, Codable {
+class CommentDTO: Diffable, Codable {
     var _id: String? = ""
     var id: String? {
         get {
@@ -31,8 +31,8 @@ extension CommentDTO {
 
     @discardableResult
     static func flatten(comments: [CommentDTO]?,
-                        result: LinkedList<Postable> = LinkedList(),
-                        lv: Int = 1) -> LinkedList<Postable> {
+                        result: LinkedList<Diffable> = LinkedList(),
+                        lv: Int = 1) -> LinkedList<Diffable> {
         comments?.forEach { comment in
             comment.lv = lv
             result.append(comment)
@@ -48,9 +48,9 @@ extension Array where Element == CommentDTO {
     @discardableResult
     func flatten(
         post: PostDTO?,
-        result: LinkedList<Postable> = LinkedList(),
+        result: LinkedList<Diffable> = LinkedList(),
         lv: Int = 1
-    ) -> LinkedList<Postable> {
+    ) -> LinkedList<Diffable> {
         forEach { comment in
             comment.lv = lv
             comment.post = post
