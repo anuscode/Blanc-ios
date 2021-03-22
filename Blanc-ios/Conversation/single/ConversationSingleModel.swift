@@ -24,6 +24,7 @@ class ConversationSingleModel {
         self.conversationService = conversationService
         populate()
         subscribeBroadcast()
+        subscribeBackground()
     }
 
     deinit {
@@ -100,6 +101,19 @@ class ConversationSingleModel {
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [unowned self] _ in
                 setReadAll()
+            })
+            .disposed(by: disposeBag)
+    }
+
+    private func subscribeBackground() {
+        Background
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onNext: { [unowned self] push in
+                populate()
+            }, onError: { err in
+                log.error(err)
             })
             .disposed(by: disposeBag)
     }

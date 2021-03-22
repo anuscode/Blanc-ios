@@ -7,7 +7,6 @@ class Background {
     static private let observable: PublishSubject = PublishSubject<Void>()
 
     static func publish() {
-        log.info("Found notification while background..")
         observable.onNext(Void())
     }
 
