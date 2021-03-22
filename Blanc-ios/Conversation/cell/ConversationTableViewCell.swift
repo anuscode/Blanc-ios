@@ -78,9 +78,8 @@ class ConversationTableViewCell: UITableViewCell {
 
     lazy private var lastMessageTime: UILabel = {
         let label = UILabel()
-        label.text = "5분 전"
         label.textColor = .deepGray
-        label.font = .systemFont(ofSize: 12, weight: .thin)
+        label.font = .systemFont(ofSize: 10)
         return label
     }()
 
