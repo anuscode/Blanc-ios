@@ -89,10 +89,15 @@ class ConversationSingleViewController: UIViewController {
         view.backgroundColor = .white
         view.visible(false)
 
+        view.addSubview(starFallView)
         view.addSubview(inactiveUserImage)
         view.addSubview(inactiveLabel1)
         view.addSubview(inactiveLabel2)
         view.addSubview(activeButton)
+
+        starFallView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
 
         inactiveUserImage.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
@@ -117,20 +122,19 @@ class ConversationSingleViewController: UIViewController {
         return view
     }()
 
-    lazy var inactiveUserImage: UIImageView = {
-        let screenWidth = UIScreen.main.bounds.width
-        let imageView = UIImageView()
-        imageView.layer.cornerRadius = screenWidth / 8
-        imageView.layer.masksToBounds = true
-        imageView.image = UIImage(named: "ic_google")
-        imageView.width(screenWidth / 4)
-        imageView.height(screenWidth / 4)
+    lazy var starFallView: StarFallView = {
+        let view = StarFallView()
+        return view
+    }()
+
+    lazy private var inactiveUserImage: GradientCircleImageView = {
+        let width = UIScreen.main.bounds.width
+        let imageView = GradientCircleImageView(diameter: width / 3.5)
         return imageView
     }()
 
     lazy var inactiveLabel1: UILabel = {
         let label = UILabel()
-        label.text = "소소한 님과 연결 되었습니다."
         label.font = .systemFont(ofSize: 22)
         return label
     }()
@@ -225,15 +229,32 @@ class ConversationSingleViewController: UIViewController {
     }
 
     private func subscribeConversationSingleViewModel() {
+
         conversationSingleViewModel?
             .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [unowned self] conversation in
                 self.conversation = conversation
-                navigation(conversation)
-                controlActivation(conversation)
                 update()
+            })
+            .disposed(by: disposeBag)
+
+        conversationSingleViewModel?
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] conversation in
+                navigation()
+            })
+            .disposed(by: disposeBag)
+
+        conversationSingleViewModel?
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] conversation in
+                activate()
             })
             .disposed(by: disposeBag)
 
@@ -247,19 +268,21 @@ class ConversationSingleViewController: UIViewController {
             .disposed(by: disposeBag)
     }
 
-    private func navigation(_ conversation: ConversationDTO) {
-        navigationUserImage.url(conversation.partner?.avatar)
-        navigationUserLabel.text = "\(conversation.partner?.nickname ?? "알 수 없음"), \(conversation.partner?.age ?? -1)"
+    private func navigation() {
+        let nickname = conversation?.partner?.nickname ?? "알 수 없음"
+        let age = conversation?.partner?.age ?? 0
+        let avatar = conversation?.partner?.avatar
+        navigationUserImage.url(avatar)
+        navigationUserLabel.text = "\(nickname), \(age)"
     }
 
-    private func controlActivation(_ conversation: ConversationDTO) {
-        inactiveConversationView.visible(conversation.available != true)
-        inactiveUserImage.url(conversation.partner?.avatar)
-        if (conversation.references?.count ?? 0 > 1) {
-            inactiveLabel1.text = "\(conversation.partner?.nickname ?? "알 수 없음") 님과 연결 되었습니다."
-        } else {
-            inactiveLabel1.text = "해당 사용자가 대화방을 나갔습니다."
-        }
+    private func activate() {
+        let hasPartner = conversation?.participants?.count ?? 0 > 1
+        let positive = "\(conversation?.partner?.nickname ?? "알 수 없음") 님과 연결 되었습니다."
+        let negative = "해당 사용자가 대화방을 나갔습니다."
+        inactiveLabel1.text = hasPartner ? positive : negative
+        inactiveUserImage.url(conversation?.partner?.avatar)
+        inactiveConversationView.visible(conversation?.available != true)
     }
 
     @objc private func keyboardWillShow(notification: NSNotification) {
@@ -289,11 +312,8 @@ class ConversationSingleViewController: UIViewController {
             }
             tableView.layoutIfNeeded()
             if (conversation?.messages?.count ?? 0 > 0) {
-                print(conversation?.messages?.count ?? 0)
-                tableView.scrollToRow(
-                    at: IndexPath(row: conversation!.messages!.count - 1, section: 0),
-                    at: .bottom,
-                    animated: true)
+                let indexPath = IndexPath(row: conversation!.messages!.count - 1, section: 0)
+                tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
             }
         }
     }
@@ -306,7 +326,6 @@ class ConversationSingleViewController: UIViewController {
             make.trailing.equalToSuperview()
             make.bottom.equalTo(bottomTextField.snp.top)
         }
-
         bottomTextField.snp.removeConstraints()
         bottomTextField.snp.makeConstraints { make in
             make.leading.equalToSuperview()
@@ -394,8 +413,8 @@ extension ConversationSingleViewController {
         snapshot.appendItems(conversation?.messages ?? [])
         dataSource?.apply(snapshot, animatingDifferences: animatingDifferences) { [unowned self] in
             if (conversation?.messages?.count ?? 0 > 0) {
-                tableView.scrollToRow(at: IndexPath(row: ((conversation?.messages?.count ?? 1) - 1), section: 0),
-                    at: .bottom, animated: true)
+                let indexPath = IndexPath(row: ((conversation?.messages?.count ?? 1) - 1), section: 0)
+                tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
             }
         }
     }
@@ -412,9 +431,6 @@ extension ConversationSingleViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard let user = dataSource?.itemIdentifier(for: indexPath) else {
-            return
-        }
     }
 }
 
