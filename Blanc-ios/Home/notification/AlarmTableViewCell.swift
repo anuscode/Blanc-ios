@@ -3,7 +3,7 @@ import UIKit
 
 public class Gradient45View: UIView {
 
-    let gradient: CAGradientLayer
+    private let gradient: CAGradientLayer
 
     init(gradient: CAGradientLayer) {
         self.gradient = gradient
@@ -110,7 +110,7 @@ class AlarmTableViewCell: UITableViewCell {
         let label = UILabel()
         label.textColor = .darkText
         label.numberOfLines = 2
-        label.font = .systemFont(ofSize: 16)
+        label.font = .systemFont(ofSize: 14, weight: .semibold)
         return label
     }()
 
