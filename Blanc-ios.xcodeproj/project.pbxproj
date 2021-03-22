@@ -145,7 +145,7 @@
 		104EEB5525E3725D0069B2CF /* PostSingleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEB2E25E3725D0069B2CF /* PostSingleModel.swift */; };
 		104EEB5625E3725D0069B2CF /* PostSingleBody.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEB3025E3725D0069B2CF /* PostSingleBody.swift */; };
 		104EEB5725E3725D0069B2CF /* PostSingleHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEB3125E3725D0069B2CF /* PostSingleHeader.swift */; };
-		104EEB5825E3725D0069B2CF /* PostSingleBodyTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEB3225E3725D0069B2CF /* PostSingleBodyTableViewCell.swift */; };
+		104EEB5825E3725D0069B2CF /* PostSingleTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEB3225E3725D0069B2CF /* PostSingleTableViewCell.swift */; };
 		104EEB5925E3725D0069B2CF /* PostSingleViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEB3325E3725D0069B2CF /* PostSingleViewModel.swift */; };
 		104EEB5A25E3725D0069B2CF /* PostListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEB3525E3725D0069B2CF /* PostListViewController.swift */; };
 		104EEB5B25E3725D0069B2CF /* PostBodyDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEB3725E3725D0069B2CF /* PostBodyDelegate.swift */; };
@@ -466,7 +466,7 @@
 		104EEB2E25E3725D0069B2CF /* PostSingleModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostSingleModel.swift; sourceTree = "<group>"; };
 		104EEB3025E3725D0069B2CF /* PostSingleBody.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostSingleBody.swift; sourceTree = "<group>"; };
 		104EEB3125E3725D0069B2CF /* PostSingleHeader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostSingleHeader.swift; sourceTree = "<group>"; };
-		104EEB3225E3725D0069B2CF /* PostSingleBodyTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostSingleBodyTableViewCell.swift; sourceTree = "<group>"; };
+		104EEB3225E3725D0069B2CF /* PostSingleTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostSingleTableViewCell.swift; sourceTree = "<group>"; };
 		104EEB3325E3725D0069B2CF /* PostSingleViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostSingleViewModel.swift; sourceTree = "<group>"; };
 		104EEB3525E3725D0069B2CF /* PostListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostListViewController.swift; sourceTree = "<group>"; };
 		104EEB3725E3725D0069B2CF /* PostBodyDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostBodyDelegate.swift; sourceTree = "<group>"; };
@@ -1112,7 +1112,7 @@
 			children = (
 				104EEB3025E3725D0069B2CF /* PostSingleBody.swift */,
 				104EEB3125E3725D0069B2CF /* PostSingleHeader.swift */,
-				104EEB3225E3725D0069B2CF /* PostSingleBodyTableViewCell.swift */,
+				104EEB3225E3725D0069B2CF /* PostSingleTableViewCell.swift */,
 			);
 			path = cell;
 			sourceTree = "<group>";
@@ -2143,7 +2143,7 @@
 				104EEC5A25E3729B0069B2CF /* RealmService.swift in Sources */,
 				104EEB9525E3726B0069B2CF /* SceneDelegate.swift in Sources */,
 				104EEC2A25E3728F0069B2CF /* BodyTypeViewController.swift in Sources */,
-				104EEB5825E3725D0069B2CF /* PostSingleBodyTableViewCell.swift in Sources */,
+				104EEB5825E3725D0069B2CF /* PostSingleTableViewCell.swift in Sources */,
 				104EEC4F25E372950069B2CF /* ProfileTableViewCell.swift in Sources */,
 				C47AA32A10ACDA94C39E6D6E /* Int+Extension.swift in Sources */,
 				C47AA2FAD71D31DAE9DF6FCA /* Broadcast.swift in Sources */,

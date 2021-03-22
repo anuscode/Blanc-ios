@@ -163,9 +163,9 @@ extension PostListViewController: PostBodyDelegate {
     }
 }
 
-extension PostListViewController: PostHeaderDelegate {
+extension PostListViewController: PostListHeaderDelegate {
 
-    func didTapUserImage(user: UserDTO?) -> Void {
+    func goUserSingle(user: UserDTO?) -> Void {
         guard let user = user else {
             return
         }
@@ -173,7 +173,7 @@ extension PostListViewController: PostHeaderDelegate {
         navigationController?.pushViewController(.userSingle, current: self)
     }
 
-    func didTapOption(user: UserDTO?) {
+    func showOptions(user: UserDTO?) {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let reportAction = UIAlertAction(title: "신고", style: .default) { [unowned self] (action) in
             guard let user = user else {

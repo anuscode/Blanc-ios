@@ -2,16 +2,11 @@ import Foundation
 import UIKit
 import FSPagerView
 
-protocol PostSingleTableViewCellDelegate: class {
-    func favorite()
-    func isFavoritePost() -> Bool
-}
+class PostSingleTableViewCell: UITableViewCell {
 
-class PostSingleBodyTableViewCell: UITableViewCell {
+    static let identifier: String = "PostSingleTableViewCell"
 
-    static let identifier: String = "PostSingleBodyTableViewCell"
-
-    private weak var delegate: PostSingleTableViewCellDelegate?
+    private weak var delegate: PostSingleBodyDelegate?
 
     private let header: PostSingleHeader = {
         let header = PostSingleHeader()
@@ -25,8 +20,8 @@ class PostSingleBodyTableViewCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        addSubviews()
-        configConstraints()
+        configureSubviews()
+        configureConstraints()
     }
 
     required init?(coder: NSCoder) {
@@ -41,12 +36,12 @@ class PostSingleBodyTableViewCell: UITableViewCell {
         super.prepareForReuse()
     }
 
-    private func addSubviews() {
+    private func configureSubviews() {
         contentView.addSubview(header)
         contentView.addSubview(body)
     }
 
-    private func configConstraints() {
+    private func configureConstraints() {
         header.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.width.equalToSuperview()
@@ -60,8 +55,8 @@ class PostSingleBodyTableViewCell: UITableViewCell {
         }
     }
 
-    func bind(post: PostDTO?, delegate: PostSingleTableViewCellDelegate) {
-        header.bind(user: post?.author)
-        body.bind(post: post, delegate: delegate)
+    func bind(post: PostDTO?, headerDelegate: PostSingleHeaderDelegate? = nil, bodyDelegate: PostSingleBodyDelegate) {
+        header.bind(post: post, delegate: headerDelegate)
+        body.bind(post: post, delegate: bodyDelegate)
     }
 }

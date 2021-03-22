@@ -58,9 +58,9 @@ class PostListResourceTableViewCell: UITableViewCell {
     }
 
     func bind(post: PostDTO?,
-              headerDelegate: PostHeaderDelegate? = nil,
+              headerDelegate: PostListHeaderDelegate? = nil,
               bodyDelegate: PostBodyDelegate? = nil) {
-        header.bind(user: post?.author, delegate: headerDelegate)
+        header.bind(post: post, delegate: headerDelegate)
         body.bind(post: post, delegate: bodyDelegate)
     }
 }

@@ -2,16 +2,23 @@ import Foundation
 import UIKit
 import FSPagerView
 
+protocol PostSingleBodyDelegate: class {
+    func favorite()
+    func isFavoritePost() -> Bool
+}
+
 class PostSingleBody: UIView {
 
     private var post: PostDTO?
 
     private let ripple = Ripple()
 
-    private weak var delegate: PostSingleTableViewCellDelegate?
+    private weak var delegate: PostSingleBodyDelegate?
 
     lazy private var carouselStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [carousel])
+        let stackView = UIStackView(arrangedSubviews: [
+            carousel
+        ])
         stackView.translatesAutoresizingMaskIntoConstraints = false
         return stackView
     }()
@@ -107,31 +114,26 @@ class PostSingleBody: UIView {
     }
 
     private func configureConstraints() {
-
         carouselStackView.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
         }
-
         pageControl.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(20)
             make.trailing.equalToSuperview().inset(20)
         }
-
         heartView.snp.makeConstraints { make in
             make.top.equalTo(carouselStackView.snp.bottom).offset(8)
             make.leading.equalToSuperview().inset(12)
             make.width.equalTo(PostConfig.containerDiameter)
             make.height.equalTo(PostConfig.containerDiameter)
         }
-
         userFavoriteCountLabel.snp.makeConstraints { make in
             make.top.equalTo(heartView.snp.bottom).offset(6)
             make.leading.equalToSuperview().inset(15)
             make.trailing.equalToSuperview()
         }
-
         descriptionLabel.snp.makeConstraints { make in
             make.top.equalTo(userFavoriteCountLabel.snp.bottom).offset(10)
             make.leading.equalToSuperview().inset(15)
@@ -141,7 +143,7 @@ class PostSingleBody: UIView {
         }
     }
 
-    func bind(post: PostDTO?, delegate: PostSingleTableViewCellDelegate) {
+    func bind(post: PostDTO?, delegate: PostSingleBodyDelegate) {
         self.post = post
         self.delegate = delegate
 

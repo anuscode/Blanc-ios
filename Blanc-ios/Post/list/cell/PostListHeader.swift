@@ -1,9 +1,9 @@
 import Foundation
 import UIKit
 
-protocol PostHeaderDelegate: class {
-    func didTapUserImage(user: UserDTO?) -> Void
-    func didTapOption(user: UserDTO?) -> Void
+protocol PostListHeaderDelegate: class {
+    func goUserSingle(user: UserDTO?) -> Void
+    func showOptions(user: UserDTO?) -> Void
 }
 
 class PostListHeader: UIView {
@@ -16,9 +16,9 @@ class PostListHeader: UIView {
 
     private let ripple: Ripple = Ripple()
 
-    private weak var user: UserDTO?
+    private weak var post: PostDTO?
 
-    private weak var delegate: PostHeaderDelegate?
+    private weak var delegate: PostListHeaderDelegate?
 
     lazy private var headerImage: UIImageView = {
         let imageView: UIImageView = UIImageView()
@@ -31,7 +31,7 @@ class PostListHeader: UIView {
 
     lazy private var headerLabel1: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14)
+        label.font = .systemFont(ofSize: 14, weight: .semibold)
         label.textColor = .darkText
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -39,7 +39,7 @@ class PostListHeader: UIView {
 
     lazy private var headerLabel2: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 12)
+        label.font = .systemFont(ofSize: 12)
         label.textColor = .systemGray
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -131,13 +131,15 @@ class PostListHeader: UIView {
         }
     }
 
-    func bind(user: UserDTO?, delegate: PostHeaderDelegate? = nil) {
-        self.user = user
+    func bind(post: PostDTO?, delegate: PostListHeaderDelegate? = nil) {
+        self.post = post
         self.delegate = delegate
 
+        let user = post?.author
         let url = user?.avatar
-        let size = CGSize(width: Constant.headerImageDiameter, height: Constant.headerImageDiameter)
-        let text1 = "\(user?.nickname ?? "알 수 없음") · \(user?.age ?? -1)"
+        let diameter = Constant.headerImageDiameter
+        let size = CGSize(width: diameter, height: diameter)
+        let text1 = "\(user?.nickname ?? "알 수 없음") · \(user?.age ?? 0)"
         let text2 = "\(user?.occupation ?? "알 수 없음") · \(user?.area ?? "알 수 없음")"
 
         headerImage.url(url, size: size)
@@ -146,11 +148,10 @@ class PostListHeader: UIView {
     }
 
     @objc func didTapUserImage() {
-        log.info("Touched header user image: \(user?.nickname ?? "")")
-        delegate?.didTapUserImage(user: user)
+        delegate?.goUserSingle(user: post?.author)
     }
 
     @objc func didTapOptionImageView() {
-        delegate?.didTapOption(user: user)
+        delegate?.showOptions(user: post?.author)
     }
 }

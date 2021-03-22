@@ -6,6 +6,10 @@ import Lottie
 
 class PostSingleViewController: UIViewController {
 
+    fileprivate enum Section {
+        case Post, Comments
+    }
+
     private class Const {
         static let navigationUserImageSize: Int = 28
         static let navigationUserLabelFont: UIFont = .systemFont(ofSize: 15)
@@ -45,7 +49,7 @@ class PostSingleViewController: UIViewController {
         tableView.rowHeight = UITableView.automaticDimension
         // should use right size otherwise it will raise performance issue.
         tableView.estimatedRowHeight = 100
-        tableView.register(PostSingleBodyTableViewCell.self, forCellReuseIdentifier: PostSingleBodyTableViewCell.identifier)
+        tableView.register(PostSingleTableViewCell.self, forCellReuseIdentifier: PostSingleTableViewCell.identifier)
         tableView.register(CommentTableViewCell.self, forCellReuseIdentifier: CommentTableViewCell.identifier)
         tableView.separatorColor = .clear
         tableView.allowsSelection = false
@@ -68,6 +72,7 @@ class PostSingleViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationItem.backBarButtonItem = UIBarButtonItem.back
         navigationItem.leftBarButtonItem = leftBarButtonItem
         navigationItem.leftItemsSupplementBackButton = true
         navigationController?.navigationBar.barTintColor = .white
@@ -88,13 +93,12 @@ class PostSingleViewController: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         // should remove view model and model otherwise it shows the previous one.
-        postSingleViewModel?.sync()
-        navigationController?.setNavigationBarHidden(false, animated: animated)
-        SwinjectStoryboard.defaultContainer.resetObjectScope(.postSingleScope)
     }
 
     deinit {
         log.info("deinit post single view controller..")
+        postSingleViewModel?.sync()
+        SwinjectStoryboard.defaultContainer.resetObjectScope(.postSingleScope)
     }
 
     private func configureSubviews() {
@@ -187,18 +191,14 @@ class PostSingleViewController: UIViewController {
 
 extension PostSingleViewController {
 
-    fileprivate enum Section {
-        case Post, Comments
-    }
-
     private func configureTableViewDataSource() {
         dataSource = UITableViewDiffableDataSource<Section, AnyHashable>(tableView: tableView) { [unowned self] (tableView, indexPath, item) -> UITableViewCell? in
             if let post = item as? PostDTO {
                 guard let cell = tableView.dequeueReusableCell(
-                    withIdentifier: PostSingleBodyTableViewCell.identifier, for: indexPath) as? PostSingleBodyTableViewCell else {
+                    withIdentifier: PostSingleTableViewCell.identifier, for: indexPath) as? PostSingleTableViewCell else {
                     return UITableViewCell()
                 }
-                cell.bind(post: post, delegate: self)
+                cell.bind(post: post, headerDelegate: self, bodyDelegate: self)
                 return cell
             }
             if let comment = item as? CommentDTO {
@@ -282,7 +282,49 @@ extension PostSingleViewController: BottomTextFieldDelegate {
     }
 }
 
-extension PostSingleViewController: PostSingleTableViewCellDelegate {
+extension PostSingleViewController: PostSingleHeaderDelegate {
+    func goUserSingle(user: UserDTO?) {
+        guard let user = user else {
+            return
+        }
+        Channel.next(user: user)
+        navigationController?.pushViewController(.userSingle, current: self)
+    }
+
+    func showOptions(user: UserDTO?) {
+        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let reportAction = UIAlertAction(title: "신고", style: .default) { [unowned self] (action) in
+            guard let user = user else {
+                return
+            }
+            Channel.next(reportee: user)
+            navigationController?.pushViewController(
+                .report,
+                current: self,
+                hideBottomWhenStart: true,
+                hideBottomWhenEnd: true
+            )
+        }
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        cancelAction.setValue(UIColor.red, forKey: "titleTextColor")
+        alertController.addAction(reportAction)
+        alertController.addAction(cancelAction)
+        alertController.modalPresentationStyle = .popover
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            if let popoverController = alertController.popoverPresentationController {
+                let sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 0, height: 0)
+                popoverController.sourceView = view
+                popoverController.sourceRect = sourceRect
+                popoverController.permittedArrowDirections = []
+                present(alertController, animated: true, completion: nil)
+            }
+        } else {
+            present(alertController, animated: true, completion: nil)
+        }
+    }
+}
+
+extension PostSingleViewController: PostSingleBodyDelegate {
     func favorite() {
         postSingleViewModel?.favorite()
     }
@@ -291,3 +333,4 @@ extension PostSingleViewController: PostSingleTableViewCellDelegate {
         postSingleViewModel?.isFavoritePost() ?? false
     }
 }
+
