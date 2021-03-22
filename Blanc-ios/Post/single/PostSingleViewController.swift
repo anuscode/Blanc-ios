@@ -135,11 +135,7 @@ class PostSingleViewController: UIViewController {
             .subscribe(onNext: { [unowned self] post in
                 self.post = post
                 comments = (post.comments?.flatten(post: post).toArray() as? [CommentDTO]) ?? [CommentDTO]()
-
-                let isFirst = self.post == nil
-                let isThumbUpdates = self.post?.comments?.count == post.comments?.count
-                let animatingDifferences: Bool = (!isFirst && !isThumbUpdates)
-                update(animatingDifferences: animatingDifferences)
+                update(animatingDifferences: false)
             })
             .disposed(by: disposeBag)
 
@@ -212,6 +208,7 @@ extension PostSingleViewController {
             return nil
         }
         tableView.dataSource = dataSource
+        dataSource.defaultRowAnimation = .left
     }
 
     private func update(animatingDifferences: Bool = false) {
