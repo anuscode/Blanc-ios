@@ -43,10 +43,6 @@ extension PostDTO {
     func isTextOnly() -> Bool {
         resources?.count ?? 0 == 0
     }
-
-    func isDescriptionEmpty() -> Bool {
-        description.isEmpty()
-    }
 }
 
 extension PostDTO {
