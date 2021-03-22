@@ -222,7 +222,7 @@ class UserSingleViewController: UIViewController {
         navigationItem.backBarButtonItem = UIBarButtonItem.back
         navigationController?.navigationBar.addSubview(navigationBarContent)
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        navigationController?.navigationBar.shadowImage = UIImage()
+        navigationController?.navigationBar.setValue(true, forKey: "hidesShadow")
         navigationController?.navigationBar.isTranslucent = true
         navigationUserLabel.visible(false)
         navigationUserImageView.visible(false)
@@ -538,9 +538,11 @@ extension UserSingleViewController: UITableViewDelegate, UITableViewDataSource {
         let maximum = view.width - 80
         let y: CGFloat = min(scrollView.contentOffset.y, maximum)
         let percent = y / maximum
-        navigationController?.navigationBar.isTranslucent = percent < 0.05 ? true : false
-        navigationController?.navigationBar.alpha = percent < 0.05 ? 100 : percent
-        navigationBarContent.alpha = percent < 0.05 ? 0 : percent
+        let isThreshold = percent < 0.05
+        navigationController?.navigationBar.isTranslucent = isThreshold ? true : false
+        navigationController?.navigationBar.alpha = isThreshold ? 100 : percent
+        navigationBarContent.alpha = isThreshold ? 0 : percent
+        navigationController?.navigationBar.setValue(isThreshold, forKey: "hidesShadow")
         if (navigationUserImageView.isHidden || navigationUserLabel.isHidden) {
             navigationUserLabel.visible(true)
             navigationUserImageView.visible(true)
