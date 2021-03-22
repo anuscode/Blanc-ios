@@ -36,7 +36,9 @@ class RatedModel {
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .do(onNext: { [unowned self] users in
                 // loop to calculate and set a distance from current user.
-                users.distance(session)
+                users.forEach({ user in
+                    user.relationship = session.relationship(with: user)
+                })
             })
             .subscribe(onSuccess: { [unowned self] users in
                 self.users = users

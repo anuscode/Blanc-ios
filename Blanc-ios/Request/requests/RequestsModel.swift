@@ -37,7 +37,9 @@ class RequestsModel {
             .do(onNext: { [unowned self] requests in
                 // loop to calculate and set a distance from current user.
                 let users = requests.map({ $0.userFrom }).filter({ $0 != nil }) as! [UserDTO]
-                users.distance(session)
+                users.forEach({ user in
+                    user.relationship = session.relationship(with: user)
+                })
             })
             .subscribe(onSuccess: { [unowned self] requests in
                 self.requests = requests
