@@ -277,18 +277,6 @@ public extension Optional where Wrapped == String {
     }
 }
 
-extension Array where Element == UserDTO {
-    func distance(_ user: UserDTO?) {
-        forEach {
-            $0.relationship?.distance = $0.distance(from: user, type: String.self)
-        }
-    }
-
-    func distance(_ session: Session) {
-        distance(session.user)
-    }
-}
-
 extension UIBarButtonItem {
     static let back: UIBarButtonItem = {
         let item = UIBarButtonItem()

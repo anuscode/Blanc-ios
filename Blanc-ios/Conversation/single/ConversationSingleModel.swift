@@ -62,6 +62,7 @@ class ConversationSingleModel {
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .do(onSuccess: { [unowned self] conversation in
+                conversation.currentUser = session.user
                 let partner = conversation.partner
                 partner?.relationship = session.relationship(with: partner)
             })
@@ -69,9 +70,6 @@ class ConversationSingleModel {
                 conversation.messages?.forEach { message in
                     message.isCurrentUserMessage = message.userId == session.id
                 }
-            })
-            .do(onSuccess: { [unowned self] conversation in
-                self.conversation?.currentUser = session.user
             })
             .subscribe(onSuccess: { [unowned self] conversation in
                 self.conversation = conversation
