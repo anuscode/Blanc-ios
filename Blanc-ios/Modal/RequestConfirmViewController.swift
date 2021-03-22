@@ -68,7 +68,6 @@ class RequestConfirmViewController: BaseConfirmViewController {
 
     lazy private var consumePointLabel: UILabel = {
         let label = UILabel()
-        label.text = "무료"
         label.textColor = .white
         label.font = .boldSystemFont(ofSize: 12)
         return label
@@ -76,7 +75,6 @@ class RequestConfirmViewController: BaseConfirmViewController {
 
     lazy private var pointLeftLabel: UILabel = {
         let label = UILabel()
-        label.text = "잔여 포인트: 0.0"
         label.textColor = .darkGray
         label.font = .boldSystemFont(ofSize: 12)
         return label
@@ -86,6 +84,8 @@ class RequestConfirmViewController: BaseConfirmViewController {
         let view = UIView()
 
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.isUserInteractionEnabled = true
+        view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapPurchaseButton))
 
         let border1 = UIView()
         border1.translatesAutoresizingMaskIntoConstraints = false
@@ -115,7 +115,7 @@ class RequestConfirmViewController: BaseConfirmViewController {
         view.addSubview(forwardImageView)
         view.addSubview(border2)
 
-        view.isUserInteractionEnabled = true
+
         ripple.activate(to: view)
 
         border1.snp.makeConstraints { make in
@@ -161,7 +161,6 @@ class RequestConfirmViewController: BaseConfirmViewController {
 
     lazy private var timeLeftLabel: UILabel = {
         let label = UILabel()
-        label.text = "무료로 요청이 가능합니다."
         label.textColor = .darkGray
         label.font = .boldSystemFont(ofSize: 12)
         return label
@@ -211,11 +210,11 @@ class RequestConfirmViewController: BaseConfirmViewController {
         configureConstraints()
         update()
         Timer.scheduledTimer(
-                timeInterval: 1.0,
-                target: self,
-                selector: #selector(update),
-                userInfo: nil,
-                repeats: true
+            timeInterval: 1.0,
+            target: self,
+            selector: #selector(update),
+            userInfo: nil,
+            repeats: true
         )
     }
 

@@ -17,7 +17,7 @@ class OpenConversationConfirmViewController: BaseConfirmViewController {
     // user to request
     private var user: UserDTO? = nil
 
-    // my session.
+    // current user session
     internal weak var session: Session?
 
     private let ripple: Ripple = Ripple()
@@ -46,7 +46,6 @@ class OpenConversationConfirmViewController: BaseConfirmViewController {
     lazy private var subjectLabel: UILabel = {
         var label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "여자_테스트계정_1\n님에게 친구 신청을 합니다."
         label.numberOfLines = 0
         label.textColor = .darkText
         label.font = .systemFont(ofSize: 15)
@@ -69,7 +68,6 @@ class OpenConversationConfirmViewController: BaseConfirmViewController {
 
     lazy private var consumePointLabel: UILabel = {
         let label = UILabel()
-        label.text = "무료"
         label.textColor = .white
         label.font = .boldSystemFont(ofSize: 12)
         return label
@@ -77,7 +75,6 @@ class OpenConversationConfirmViewController: BaseConfirmViewController {
 
     lazy private var pointLeftLabel: UILabel = {
         let label = UILabel()
-        label.text = "잔여 포인트: 0.0"
         label.textColor = .darkGray
         label.font = .boldSystemFont(ofSize: 12)
         return label
@@ -87,6 +84,8 @@ class OpenConversationConfirmViewController: BaseConfirmViewController {
         let view = UIView()
 
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.isUserInteractionEnabled = true
+        view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapPurchaseButton))
 
         let border1 = UIView()
         border1.translatesAutoresizingMaskIntoConstraints = false
@@ -116,7 +115,6 @@ class OpenConversationConfirmViewController: BaseConfirmViewController {
         view.addSubview(forwardImageView)
         view.addSubview(border2)
 
-        view.isUserInteractionEnabled = true
         ripple.activate(to: view)
 
         border1.snp.makeConstraints { make in
