@@ -93,6 +93,16 @@ class ConversationModel {
                     // update a conversation.available to true
                     openConversation(conversationId: push.conversationId)
                 }
+                if (push.isLeft()) {
+                    guard let conversationId = push.conversationId,
+                          let conversation = conversations.first(where: { $0.id == conversationId }),
+                          let userId = push.userId,
+                          let index = conversation.participants?.firstIndex(where: { $0.id == userId }) else {
+                        return
+                    }
+                    conversation.participants?.remove(at: index)
+                    publish()
+                }
                 if (push.isMessage()) {
                     appendMessage(push: push)
                 }

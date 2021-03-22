@@ -12,7 +12,8 @@ enum Event: String, Codable {
          FAVORITE = "FAVORITE",
          MATCHED = "MATCHED",
          THUMB_UP = "THUMB_UP",
-         OPENED = "OPENED",
+         CONVERSATION_OPEN = "CONVERSATION_OPEN",
+         CONVERSATION_LEAVE = "CONVERSATION_LEAVE",
          LOOK_UP = "LOOK_UP",
          STAR_RATING = "STAR_RATING"
 }
@@ -247,7 +248,11 @@ extension PushDTO {
      - Returns: Whether it's matched push message or not.
      **/
     func isOpened() -> Bool {
-        event == .OPENED && conversationId.isNotEmpty()
+        event == .CONVERSATION_OPEN && conversationId.isNotEmpty()
+    }
+
+    func isLeft() -> Bool {
+        event == .CONVERSATION_LEAVE && conversationId.isNotEmpty() && userId.isNotEmpty()
     }
 
     func isMessage() -> Bool {

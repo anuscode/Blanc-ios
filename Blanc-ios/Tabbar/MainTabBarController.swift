@@ -9,7 +9,17 @@ class MainTabBarController: UITabBarController {
 
     // Foreground Notification Candidates..
     private let candidates: [Event?] = [
-        .POKE, .REQUEST, .COMMENT, .FAVORITE, .MATCHED, .THUMB_UP, .OPENED, .LOG_OUT, .LOOK_UP, .STAR_RATING
+        .POKE,
+        .REQUEST,
+        .COMMENT,
+        .FAVORITE,
+        .MATCHED,
+        .THUMB_UP,
+        .CONVERSATION_OPEN,
+        .CONVERSATION_LEAVE,
+        .LOG_OUT,
+        .LOOK_UP,
+        .STAR_RATING
     ]
 
     override func viewWillAppear(_ animated: Bool) {
@@ -34,7 +44,9 @@ class MainTabBarController: UITabBarController {
             .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: notify)
+            .subscribe(onNext: { [unowned self] push in
+                notify(push)
+            })
             .disposed(by: disposeBag!)
     }
 
@@ -43,7 +55,9 @@ class MainTabBarController: UITabBarController {
             .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
-            .subscribe(onNext: setBadgeOnTab)
+            .subscribe(onNext: { [unowned self] hasUnread in
+                setBadgeOnTab(hasUnread)
+            })
             .disposed(by: disposeBag!)
     }
 
@@ -62,9 +76,9 @@ class MainTabBarController: UITabBarController {
             let tabBarItem = tabBarItems[3]
             tabBarItem.badgeValue = hasUnread ? "●" : ""
             tabBarItem.badgeColor = .clear
-            tabBarItem.setBadgeTextAttributes([
-                NSAttributedString.Key.foregroundColor: UIColor.systemPink
-            ], for: .normal)
+            tabBarItem.setBadgeTextAttributes(
+                [NSAttributedString.Key.foregroundColor: UIColor.systemPink], for: .normal
+            )
         }
     }
 }

@@ -91,10 +91,24 @@ class ConversationSingleModel {
                     publish()
                 }
                 if (push.isOpened()) {
-                    let conversationId = push.conversationId
+                    guard let conversationId = push.conversationId else {
+                        return
+                    }
                     if (conversation?.id == conversationId) {
                         conversation?.available = true
                         publish()
+                    }
+                }
+                if (push.isLeft()) {
+                    guard let conversationId = push.conversationId,
+                          let userId = push.userId else {
+                        return
+                    }
+                    if (conversation?.id == conversationId) {
+                        if let index = conversation?.participants?.firstIndex(where: { $0.id == userId }) {
+                            conversation?.participants?.remove(at: index)
+                            publish()
+                        }
                     }
                 }
             })
@@ -112,8 +126,6 @@ class ConversationSingleModel {
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .subscribe(onNext: { [unowned self] push in
                 populate()
-            }, onError: { err in
-                log.error(err)
             })
             .disposed(by: disposeBag)
     }
