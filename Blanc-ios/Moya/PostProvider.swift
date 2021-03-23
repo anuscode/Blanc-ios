@@ -101,7 +101,10 @@ extension PostProvider: TargetType {
         switch self {
 
         case .listPosts(uid:_, lastId: let lastId):
-            return .requestParameters(parameters: ["last_id": lastId ?? ""], encoding: URLEncoding.queryString)
+            return .requestParameters(
+                parameters: ["last_id": lastId ?? ""],
+                encoding: URLEncoding.queryString
+            )
         case .getPost(postId: _):
             return .requestPlain
         case .listAllFavoriteUsers(uid: _, postId: _):
