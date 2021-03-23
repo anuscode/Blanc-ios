@@ -25,16 +25,17 @@ class AlarmViewModel {
     }
 
     private func subscribeAlarmModel() {
-        alarmModel.observe()
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onNext: { [unowned self] pushes in
-                    self.pushes = pushes
-                    publish()
-                }, onError: { err in
-                    log.error(err)
-                })
-                .disposed(by: disposeBag)
+        alarmModel
+            .observe()
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onNext: { [unowned self] pushes in
+                self.pushes = pushes
+                publish()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 
     func getUser(userId: String, onSuccess: @escaping (_ user: UserDTO) -> Void, onError: @escaping () -> Void) {
