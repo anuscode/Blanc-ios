@@ -60,9 +60,7 @@ class HomeModel {
             })
             .do(afterSuccess: { [unowned self] users in
                 // loop to calculate and set a distance from current user.
-                users.forEach({
-                    $0.relationship = session.relationship(with: $0)
-                })
+                users.forEach({ $0.relationship = session.relationship(with: $0) })
                 data.recommendedUsers = users
             })
             .flatMap({ [unowned self] it -> Single<[UserDTO]> in
@@ -70,9 +68,7 @@ class HomeModel {
             })
             .do(afterSuccess: { [unowned self] users in
                 // loop to calculate and set a distance from current user.
-                users.forEach({
-                    $0.relationship = session.relationship(with: $0)
-                })
+                users.forEach({ $0.relationship = session.relationship(with: $0) })
                 data.closeUsers = users
             })
             .flatMap({ [unowned self] it -> Single<[UserDTO]> in
@@ -80,9 +76,7 @@ class HomeModel {
             })
             .do(afterSuccess: { [unowned self] users in
                 // loop to calculate and set a distance from current user.
-                users.forEach({
-                    $0.relationship = session.relationship(with: $0)
-                })
+                users.forEach({ $0.relationship = session.relationship(with: $0) })
                 data.realTimeUsers = users
             })
             .subscribe(onSuccess: { [unowned self] _ in
@@ -168,15 +162,39 @@ class HomeModel {
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .skip(1)
             .subscribe(onNext: { [unowned self] _ in
-                data.recommendedUsers.forEach({
-                    $0.relationship = session.relationship(with: $0)
-                })
-                data.realTimeUsers.forEach({
-                    $0.relationship = session.relationship(with: $0)
-                })
-                data.closeUsers.forEach({
-                    $0.relationship = session.relationship(with: $0)
-                })
+                var updateIndexes1: [Int] = []
+                data.recommendedUsers.enumerated().forEach { (index, item) in
+                    let old = item.relationship
+                    let new = session.relationship(with: item)
+                    if (new?.isDifferent(old) == true) {
+                        item.relationship = new
+                        updateIndexes1.append(index)
+                    }
+                }
+                updateIndexes1.forEach({ data.recommendedUsers.diffable($0) })
+
+                var updateIndexes2: [Int] = []
+                data.realTimeUsers.enumerated().forEach { (index, item) in
+                    let old = item.relationship
+                    let new = session.relationship(with: item)
+                    if (new?.isDifferent(old) == true) {
+                        item.relationship = new
+                        updateIndexes2.append(index)
+                    }
+                }
+                updateIndexes2.forEach({ data.realTimeUsers.diffable($0) })
+
+                var updateIndexes3: [Int] = []
+                data.closeUsers.enumerated().forEach { (index, item) in
+                    let old = item.relationship
+                    let new = session.relationship(with: item)
+                    if (new?.isDifferent(old) == true) {
+                        item.relationship = new
+                        updateIndexes3.append(index)
+                    }
+                }
+                updateIndexes3.forEach({ data.closeUsers.diffable($0) })
+
                 publish()
             }, onError: { err in
                 log.error(err)
@@ -219,14 +237,6 @@ class HomeModel {
               let userId = user.id else {
             return
         }
-        let index1 = data.recommendedUsers.firstIndex(of: user)
-        let index2 = data.closeUsers.firstIndex(of: user)
-        let index3 = data.realTimeUsers.firstIndex(of: user)
-        let set = Set<Int?>([index1, index2, index3])
-
-        guard (set.count != 1) else {
-            return
-        }
         requestService
             .createRequest(
                 currentUser: currentUser,
@@ -239,14 +249,17 @@ class HomeModel {
             .do(onSuccess: { request in
                 onComplete(request)
             })
-            .flatMap({ [unowned self]  _ in
-                session.refresh()
-            })
             .flatMap({ _ in
                 animationDone.asSingle()
             })
-            .subscribe(onSuccess: { [unowned self]  _ in
+            .do(onNext: { [unowned self] _ in
                 remove(user)
+            })
+            .flatMap({ [unowned self] _ in
+                session.refresh()
+            })
+            .subscribe(onSuccess: { _ in
+                log.info("successfully requested..")
             }, onError: { err in
                 log.error(err)
                 onError()
@@ -292,7 +305,7 @@ class HomeModel {
             .subscribe(onSuccess: { [unowned self] _ in
                 let starRating = StarRating(userId: userId, score: score)
                 session.user?.starRatingsIRated?.append(starRating)
-                session.publish()
+                user.relationship = session.relationship(with: user)
                 onSuccess()
                 log.info("Successfully rated score \(score) with user: \(userId)")
             }, onError: { err in

@@ -68,5 +68,6 @@ class EmptySectionTableViewCell: UITableViewCell {
     func bind(mainText: String, secondaryText: String) {
         mainLabel.text = mainText
         secondaryLabel.text = secondaryText
+        animationView.play()
     }
 }

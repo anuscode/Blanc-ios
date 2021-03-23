@@ -100,9 +100,22 @@ class Relationship: Codable {
     var isWhoISent: Bool = false
     var starRating: StarRating? = nil
     var distance: String?
+
+    func isDifferent(_ relationship: Relationship?) -> Bool {
+        guard let relationship = relationship else {
+            return true
+        }
+        return isMatched != relationship.isMatched ||
+            isWhoISent != relationship.isWhoISent ||
+            isUnmatched != relationship.isUnmatched ||
+            isWhoSentMe != relationship.isWhoSentMe ||
+            isWhoISent != relationship.isWhoISent ||
+            starRating?.score != relationship.starRating?.score ||
+            distance != relationship.distance
+    }
 }
 
-class UserDTO: Diffable, Codable {
+class UserDTO: Hashable, Codable {
     var _id: String?
     var id: String? {
         get {
@@ -223,8 +236,14 @@ class UserDTO: Diffable, Codable {
     /** relationship with current user. **/
     var relationship: Relationship?
 
-    func isEqual(to: UserDTO) {
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
 
+    var uuid: UUID? = UUID()
+
+    static func ==(lhs: UserDTO, rhs: UserDTO) -> Bool {
+        lhs.uuid?.hashValue == rhs.uuid?.hashValue
     }
 }
 
@@ -259,5 +278,31 @@ extension UserDTO {
     func distance(from: UserDTO?, type: String.Type) -> String {
         let distance = self.distance(from: from)
         return distance != nil ? "\(distance!) km" : "알 수 없음"
+    }
+}
+
+extension UserDTO {
+    func copy() -> UserDTO {
+        do {
+            let jsonData = try JSONEncoder().encode(self)
+            let userDTO = try JSONDecoder().decode(UserDTO.self, from: jsonData)
+            return userDTO
+        } catch {
+            log.error("Failed to deep copy..")
+            return UserDTO()
+        }
+    }
+}
+
+extension Array where Element: Codable {
+    mutating func diffable(_ index: Int) {
+        let item = self[index]
+        do {
+            let encoded = try JSONEncoder().encode(item)
+            let decoded = try JSONDecoder().decode(Element.self, from: encoded)
+            self[index] = decoded
+        } catch {
+            log.error("Failed to deep copy..")
+        }
     }
 }

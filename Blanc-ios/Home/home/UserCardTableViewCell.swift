@@ -643,6 +643,7 @@ class UserCardTableViewCell: UITableViewCell {
         starLabel.text = starLabelText
 
         pageControl.numberOfPages = numberOfPages
+        pageControl.currentPage = 0
         carousel.reloadData()
 
         configureRequestButton(by: user)
