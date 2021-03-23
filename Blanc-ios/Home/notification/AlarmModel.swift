@@ -1,11 +1,14 @@
 import Foundation
 import RxSwift
+import FirebaseAuth
 
 class AlarmModel {
 
+    private let disposeBag: DisposeBag = DisposeBag()
+
     private let observable: ReplaySubject = ReplaySubject<[PushDTO]>.create(bufferSize: 1)
 
-    private let disposeBag: DisposeBag = DisposeBag()
+    private let auth = Auth.auth()
 
     private let session: Session
 
@@ -40,8 +43,11 @@ class AlarmModel {
     }
 
     private func populate() {
+        guard let uid = auth.uid else {
+            return
+        }
         alarmService
-            .listAlarms(uid: session.uid)
+            .listAlarms(uid: uid)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .subscribe(onSuccess: { [unowned self] pushes in
