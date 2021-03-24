@@ -1,14 +1,118 @@
 import Foundation
 import RxSwift
+import FirebaseAuth
 
+
+class UserSingleData {
+
+    class Carousel: Hashable {
+        var uuid: UUID = UUID()
+        var user: UserDTO!
+
+        static func ==(lhs: Carousel, rhs: Carousel) -> Bool {
+            lhs === rhs
+        }
+
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(uuid)
+        }
+    }
+
+    class Belt: Hashable {
+        var uuid: UUID = UUID()
+        var match: Relationship.Match = .nothing
+        var message: String {
+            get {
+                switch match {
+                case .isMatched:
+                    return "이미 매칭 된 유저입니다."
+                case .isUnmatched:
+                    return "이미 친구신청을 보낸 상대입니다."
+                case .isWhoSentMe:
+                    return "내게 친구신청을 보낸 상대입니다."
+                case .isWhoISent:
+                    return "이미 친구신청을 보낸 상대입니다."
+                default:
+                    return "먼저 친구신청을 보내보세요."
+                }
+            }
+        }
+
+        static func ==(lhs: Belt, rhs: Belt) -> Bool {
+            lhs === rhs
+        }
+
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(uuid.hashValue)
+        }
+    }
+
+    class Body: Hashable {
+        var uuid: UUID = UUID()
+        var user: UserDTO!
+
+        static func ==(lhs: Body, rhs: Body) -> Bool {
+            lhs === rhs
+        }
+
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(uuid)
+        }
+    }
+
+    var user: UserDTO? {
+        didSet {
+            setCarousel(user: user)
+            setBelt(user: user)
+            setBody(user: user)
+            setPosts(user: user)
+        }
+    }
+    var carousel: [Carousel] = [Carousel()]
+    var belt: [Belt] = []
+    var body: [Body] = [Body()]
+    var posts: [PostDTO] = []
+
+    func setCarousel(user: UserDTO?) {
+        carousel[0].user = user
+    }
+
+    func setBelt(user: UserDTO?) {
+        if let match = user?.relationship?.match, match != .nothing {
+            let belt = Belt()
+            belt.match = match
+            self.belt = [belt]
+        } else {
+            belt = []
+        }
+    }
+
+    func setBody(user: UserDTO?) {
+        body[0].user = user
+    }
+
+    func setPosts(user: UserDTO?) {
+        posts = user?.posts ?? []
+    }
+}
 
 class UserSingleViewModel {
 
+    private class Repository {
+        var data: UserSingleData = UserSingleData()
+    }
+
     private let disposeBag: DisposeBag = DisposeBag()
 
-    private let observable: ReplaySubject = ReplaySubject<UserSingleData>.create(bufferSize: 1)
+    private let auth: Auth = Auth.auth()
 
-    private var data: UserSingleData? = nil
+    private let repository: Repository = Repository()
+
+    internal let data: ReplaySubject = ReplaySubject<UserSingleData>.create(bufferSize: 1)
+
+    internal let loading: PublishSubject = PublishSubject<Bool>()
+
+    internal let toast: PublishSubject = PublishSubject<String>()
 
     private var session: Session
 
@@ -22,12 +126,13 @@ class UserSingleViewModel {
 
     private var conversationModel: ConversationModel
 
-    let loading: PublishSubject = PublishSubject<Bool>()
-
-    let toast: PublishSubject = PublishSubject<String>()
-
-    init(session: Session, homeModel: HomeModel, userSingleModel: UserSingleModel,
-         sendingModel: SendingModel, requestsModel: RequestsModel, conversationModel: ConversationModel) {
+    init(session: Session,
+         homeModel: HomeModel,
+         userSingleModel: UserSingleModel,
+         sendingModel: SendingModel,
+         requestsModel: RequestsModel,
+         conversationModel: ConversationModel
+    ) {
         self.session = session
         self.homeModel = homeModel
         self.userSingleModel = userSingleModel
@@ -41,24 +146,14 @@ class UserSingleViewModel {
         log.info("deinit UserSingleViewModel..")
     }
 
-    private func publish() {
-        if let data = data {
-            observable.onNext(data)
-        }
-    }
-
-    func observe() -> Observable<UserSingleData> {
-        observable
-    }
-
     func subscribeUserModel() {
         userSingleModel
-            .observe()
+            .user
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .subscribe(onNext: { [unowned self] data in
-                self.data = data
-                publish()
+            .subscribe(onNext: { [unowned self] user in
+                repository.data.user = user
+                data.onNext(repository.data)
             }, onError: { err in
                 log.error(err)
             })
@@ -73,7 +168,7 @@ class UserSingleViewModel {
                 requestsModel.populate()
             }
             // 홈 화면 유저 리스트 삭제.
-            let user = data?.user
+            let user = repository.data.user
             homeModel.remove(user)
         }
         let onError: () -> Void = { [unowned self] in
@@ -83,7 +178,11 @@ class UserSingleViewModel {
     }
 
     func poke(onBegin: () -> Void) {
-        if (!RealmService.isPokeAvailable(uid: session.uid, userId: data?.user?.id)) {
+        guard let uid = auth.uid,
+              let userId = repository.data.user?.id else {
+            return
+        }
+        if (!RealmService.isPokeAvailable(uid: uid, userId: userId)) {
             toast.onNext("5분 이내에 같은 유저를 찌를 수 없습니다.")
             return
         }
@@ -99,11 +198,22 @@ class UserSingleViewModel {
 
     func rate(_ score: Int) {
         let onSuccess = { [unowned self] in
-            sendingModel.append(user: data?.user)
+            sendingModel.append(user: repository.data.user)
         }
         let onError = { [unowned self] in
             toast.onNext("별점주기 도중 에러가 발생 하였습니다.")
         }
         userSingleModel.rate(score, onSuccess: onSuccess, onError: onError)
+    }
+
+    func favorite(_ post: PostDTO?) {
+        let onError = { [unowned self] in
+            toast.onNext("게시물 좋아요 업데이트 도중 에러가 발생 하였습니다.")
+        }
+        userSingleModel.favorite(post, onError: onError)
+    }
+
+    func isCurrentUserFavoritePost(_ post: PostDTO?) -> Bool {
+        userSingleModel.isCurrentUserFavoritePost(post)
     }
 }

@@ -2,33 +2,37 @@ import Foundation
 import RxSwift
 import FirebaseAuth
 
-
-class UserSingleData {
-    var user: UserDTO?
-    var posts: [PostDTO]?
-}
-
 class UserSingleModel {
+
+    private class Repository {
+        var user: UserDTO!
+    }
 
     private let disposeBag: DisposeBag = DisposeBag()
 
-    private let observable: ReplaySubject = ReplaySubject<UserSingleData>.create(bufferSize: 1)
-
     private let auth: Auth = Auth.auth()
 
-    private var data: UserSingleData = UserSingleData()
+    internal let user: ReplaySubject = ReplaySubject<UserDTO>.create(bufferSize: 1)
 
-    private var session: Session
+    private let repository: Repository = Repository()
 
-    private var userService: UserService
+    private let session: Session
 
-    private var requestService: RequestService
+    private let userService: UserService
 
-    init(session: Session, userService: UserService, requestService: RequestService) {
+    private let postService: PostService
+
+    private let requestService: RequestService
+
+    init(session: Session,
+         userService: UserService,
+         postService: PostService,
+         requestService: RequestService) {
         self.session = session
         self.userService = userService
+        self.postService = postService
         self.requestService = requestService
-        subscribeChannel()
+        populate()
     }
 
     deinit {
@@ -36,23 +40,20 @@ class UserSingleModel {
     }
 
     func publish() {
-        observable.onNext(data)
+        user.onNext(repository.user)
     }
 
-    func observe() -> Observable<UserSingleData> {
-        observable
-    }
-
-    func subscribeChannel() {
+    func populate() {
         Channel
             .user
+            .take(1)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
             .do(onNext: { [unowned self]  user in
                 user.relationship = session.relationship(with: user)
             })
             .subscribe(onNext: { [unowned self] user in
-                data.user = user
+                repository.user = user
                 publish()
                 populateUserPosts(user: user)
                 pushLookup()
@@ -64,7 +65,7 @@ class UserSingleModel {
     }
 
     func populateUserPosts(user: UserDTO?) {
-        guard let uid = session.uid,
+        guard let uid = auth.uid,
               let userId = user?.id else {
             return
         }
@@ -72,9 +73,8 @@ class UserSingleModel {
             .listAllUserPosts(uid: uid, userId: userId)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
-            .delay(.milliseconds(500), scheduler: MainScheduler.asyncInstance)
-            .subscribe(onSuccess: { [unowned self]  posts in
-                data.posts = posts
+            .subscribe(onSuccess: { [unowned self] posts in
+                repository.user.posts = posts
                 publish()
             }, onError: { err in
                 log.error(err)
@@ -90,22 +90,18 @@ class UserSingleModel {
             .skip(1)
             .subscribe(onNext: { [unowned self] _ in
                 log.info("subscribe session in user single model..")
-                if let user = data.user {
-                    user.relationship = session.relationship(with: user)
-                    publish()
-                }
+                // TODO: make new instance..
+                repository.user.relationship = session.relationship(with: repository.user)
+                publish()
             }, onError: { err in
                 log.error(err)
             })
             .disposed(by: disposeBag)
-
     }
 
-    func createRequest(onSuccess: @escaping (_ request: RequestDTO) -> Void,
-                       onError: @escaping () -> Void
-    ) {
-        guard let uid = session.uid,
-              let user = data.user,
+    func createRequest(onSuccess: @escaping (_ request: RequestDTO) -> Void, onError: @escaping () -> Void) {
+        guard let uid = auth.uid,
+              let user = repository.user,
               let userId = user.id,
               let currentUser = auth.currentUser else {
             onError()
@@ -132,8 +128,8 @@ class UserSingleModel {
     }
 
     func poke(onSuccess: @escaping () -> Void, onError: @escaping () -> Void) {
-        guard let uid = session.uid,
-              let user = data.user,
+        guard let uid = auth.uid,
+              let user = repository.user,
               let userId = user.id else {
             return
         }
@@ -152,8 +148,8 @@ class UserSingleModel {
     }
 
     func rate(_ score: Int, onSuccess: @escaping () -> Void, onError: @escaping () -> Void) {
-        guard let uid = session.uid,
-              let user = data.user,
+        guard let uid = auth.uid,
+              let user = repository.user,
               let userId = user.id else {
             onError()
             return
@@ -182,8 +178,8 @@ class UserSingleModel {
     }
 
     func pushLookup() {
-        guard let uid = session.uid,
-              let user = data.user,
+        guard let uid = auth.uid,
+              let user = repository.user,
               let userId = user.id else {
             return
         }
@@ -197,5 +193,74 @@ class UserSingleModel {
                 log.error(err)
             })
             .disposed(by: disposeBag)
+    }
+
+    func favorite(_ post: PostDTO?, onError: @escaping () -> Void) {
+        if (isCurrentUserFavoritePost(post)) {
+            deleteFavorite(post, onError: onError)
+        } else {
+            createFavorite(post, onError: onError)
+        }
+    }
+
+    private func createFavorite(_ post: PostDTO?, onError: @escaping () -> Void) {
+        guard let uid = auth.uid,
+              let userId = session.id,
+              let postId = post?.id else {
+            return
+        }
+        if (post?.favoriteUserIds?.firstIndex(of: userId) == nil) {
+            post?.favoriteUserIds?.append(userId)
+        }
+        if let index = repository.user.posts?.firstIndex(where: { $0.id == postId }) {
+            repository.user.posts?.diffable(index)
+        }
+        publish()
+        postService
+            .createFavorite(uid: uid, postId: postId)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onSuccess: { _ in
+                log.info("Successfully created favorite post..")
+            }, onError: { [unowned self] err in
+                log.error(err)
+                onError()
+                publish()
+            })
+            .disposed(by: disposeBag)
+    }
+
+    private func deleteFavorite(_ post: PostDTO?, onError: (() -> Void)?) {
+        guard let uid = auth.uid,
+              let userId = session.id,
+              let postId = post?.id else {
+            return
+        }
+        if let index = post?.favoriteUserIds?.firstIndex(of: userId) {
+            post?.favoriteUserIds?.remove(at: index)
+        }
+        if let index = repository.user.posts?.firstIndex(where: { $0.id == postId }) {
+            repository.user.posts?.diffable(index)
+        }
+        publish()
+        postService
+            .deleteFavorite(uid: uid, postId: postId)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onSuccess: { _ in
+                log.info("Successfully deleted favorite post..")
+            }, onError: { [unowned self] err in
+                log.info(err)
+                onError?()
+                publish()
+            })
+            .disposed(by: disposeBag)
+    }
+
+    func isCurrentUserFavoritePost(_ post: PostDTO?) -> Bool {
+        if let userId = session.id {
+            return post?.favoriteUserIds?.firstIndex(of: userId) != nil
+        }
+        return false
     }
 }

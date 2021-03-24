@@ -114,7 +114,7 @@ class CarouselTableViewCell: UITableViewCell {
         pageControl.currentPage = 0
         label1.text = line1
         label2.text = line2
-        carousel.reloadData()
+        carousel.selectItem(at: 0, animated: false)
     }
 }
 

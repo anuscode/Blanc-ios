@@ -11,17 +11,17 @@ protocol ProfileCellDelegate: class {
 class ProfileTableViewCell: UITableViewCell {
     static let identifier: String = "ProfileCell"
 
-    let fontSize: CGFloat = 14
+    private let fontSize: CGFloat = 14
 
-    let itemMargin: Int = -15
+    private let itemMargin: Int = -15
 
-    let valueColor: UIColor = .darkText
+    private let valueColor: UIColor = .darkText
 
-    let titleColor: UIColor = .darkGray
+    private let titleColor: UIColor = .darkGray
 
-    weak var user: UserDTO?
+    private weak var user: UserDTO?
 
-    weak var delegate: ProfileCellDelegate?
+    private weak var delegate: ProfileCellDelegate?
 
     lazy private var introductionLabel: UILabel = {
         let label = UILabel()
@@ -442,7 +442,6 @@ class ProfileTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configureSubviews()
-        configureLabelValues()
         configureConstraints()
     }
 
@@ -644,12 +643,11 @@ class ProfileTableViewCell: UITableViewCell {
             make.leading.equalToSuperview().inset(120)
             make.trailing.equalToSuperview().inset(20)
         }
-
     }
 
     private func configureLabelValues() {
-        user?.introduction = user?.introduction ?? "등록 된 자기소개가 없습니다."
-        introductionLabel.text = user?.introduction
+        let introduction = user?.introduction.isNotEmpty() == true ? user?.introduction : "\n등록 된 자기소개가 없습니다.\n"
+        introductionLabel.text = introduction
         heightValueLabel.text = "\(user?.height ?? 0) cm"
         bodyTypeValueLabel.text = user?.bodyType
         occupationValueLabel.text = user?.occupation
@@ -658,7 +656,9 @@ class ProfileTableViewCell: UITableViewCell {
         drinkValueLabel.text = user?.drink
         smokingValueLabel.text = user?.smoking
         bloodTypeValueLabel.text = user?.blood
+    }
 
+    private func configureTagValues() {
         charmCollectionView.removeAllTags()
         if (user?.charmIds != nil && (user?.charmIds?.count ?? 0) > 0) {
             charmCollectionView.addTags(user?.charmIds?.map({ (index: Int) -> String in
@@ -681,7 +681,8 @@ class ProfileTableViewCell: UITableViewCell {
         }
     }
 
-    private func configureStarRatingValues(starRating: StarRating?) {
+    private func configureStarRatingValues() {
+        let starRating = user?.relationship?.starRating
         let score = user?.relationship?.starRating?.score
         rate(score: score)
         if (starRating?.score != nil && starRating!.score! > 0) {
@@ -692,11 +693,12 @@ class ProfileTableViewCell: UITableViewCell {
         }
     }
 
-    func bind(user: UserDTO?) {
+    func bind(user: UserDTO?, delegate: ProfileCellDelegate) {
         self.user = user
-        let starRating = user?.relationship?.starRating
+        self.delegate = delegate
         configureLabelValues()
-        configureStarRatingValues(starRating: starRating)
+        configureTagValues()
+        configureStarRatingValues()
     }
 
     private func rate(score: Int?) {

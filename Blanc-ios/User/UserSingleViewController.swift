@@ -12,7 +12,13 @@ private class Content: UIView {
     }
 }
 
+private typealias DataSource = UITableViewDiffableDataSource
+
 class UserSingleViewController: UIViewController {
+
+    fileprivate enum Section {
+        case Carousel, Belt, Body, Posts
+    }
 
     private class Const {
         static let navigationUserImageSize: Int = 28
@@ -30,6 +36,8 @@ class UserSingleViewController: UIViewController {
     private let sections: [String] = ["Carousel", "Matching", "Profile", "Posts"]
 
     private var data: UserSingleData?
+
+    private var dataSource: DataSource<Section, AnyHashable>!
 
     internal weak var userSingleViewModel: UserSingleViewModel!
 
@@ -101,7 +109,6 @@ class UserSingleViewController: UIViewController {
         let tableView: UITableView = UITableView()
         tableView.contentInsetAdjustmentBehavior = .never
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.dataSource = self
         tableView.delegate = self
         tableView.register(CarouselTableViewCell.self, forCellReuseIdentifier: CarouselTableViewCell.identifier)
         tableView.register(MatchingTableViewCell.self, forCellReuseIdentifier: MatchingTableViewCell.identifier)
@@ -233,6 +240,7 @@ class UserSingleViewController: UIViewController {
         super.viewDidLoad()
         configureSubviews()
         configureConstraints()
+        configureTableView()
         subscribeUserSingleViewModel()
     }
 
@@ -276,19 +284,59 @@ class UserSingleViewController: UIViewController {
         }
     }
 
+    private func configureTableView() {
+        dataSource = DataSource<Section, AnyHashable>(tableView: tableView) { [unowned self] (tableView, indexPath, user) -> UITableViewCell? in
+            if indexPath.section == 0 {
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: CarouselTableViewCell.identifier, for: indexPath) as! CarouselTableViewCell
+                cell.bind(user: data?.carousel[0].user)
+                return cell
+            } else if indexPath.section == 1 {
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: MatchingTableViewCell.identifier, for: indexPath) as! MatchingTableViewCell
+                cell.bind(message: data?.belt[0].message)
+                return cell
+            } else if indexPath.section == 2 {
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: ProfileTableViewCell.identifier, for: indexPath) as! ProfileTableViewCell
+                cell.bind(user: data?.body[0].user, delegate: self)
+                return cell
+            } else {
+                let cell = tableView.dequeueReusableCell(
+                    withIdentifier: PostListResourceTableViewCell.identifier, for: indexPath) as! PostListResourceTableViewCell
+                cell.bind(post: data?.posts[indexPath.row], bodyDelegate: self)
+                return cell
+            }
+        }
+        dataSource.defaultRowAnimation = .none
+        tableView.dataSource = dataSource
+    }
+
     private func subscribeUserSingleViewModel() {
         userSingleViewModel?
-            .observe()
+            .data
+            .take(2)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [unowned self] data in
                 self.data = data
-                tableView.reloadData()
+                update(data, animatingDifferences: true)
             })
             .disposed(by: disposeBag)
 
         userSingleViewModel?
-            .observe()
+            .data
+            .skip(2)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] data in
+                self.data = data
+                update(data, animatingDifferences: false)
+            })
+            .disposed(by: disposeBag)
+
+        userSingleViewModel?
+            .data
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [unowned self] data in
@@ -306,7 +354,7 @@ class UserSingleViewController: UIViewController {
             .disposed(by: disposeBag)
 
         userSingleViewModel?
-            .observe()
+            .data
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [unowned self] data in
@@ -325,41 +373,50 @@ class UserSingleViewController: UIViewController {
     }
 
     private func enableRequestButton(_ data: UserSingleData) {
-        let relationship = data.user?.relationship
-        if (relationship?.isMatched ?? false) {
+        let match = data.user?.relationship?.match
+        switch match {
+        case .isMatched:
             requestButton.setTitle("연결 된 유저", for: .normal)
             requestButton.isUserInteractionEnabled = false
             requestButton.backgroundColor = UIColor.bumble3.withAlphaComponent(0.7)
             return
-        }
-        if (relationship?.isUnmatched ?? false) {
+        case .isUnmatched:
             requestButton.setTitle("이미 보냄", for: .normal)
             requestButton.isUserInteractionEnabled = false
             requestButton.backgroundColor = UIColor.bumble3.withAlphaComponent(0.7)
             return
-        }
-        if (relationship?.isWhoSentMe ?? false) {
+        case .isWhoSentMe:
             requestButton.setTitle("수락", for: .normal)
             requestButton.isUserInteractionEnabled = true
             requestButton.backgroundColor = .bumble3
             return
-        }
-        if (relationship?.isWhoISent ?? false) {
+        case .isWhoISent:
             requestButton.setTitle("이미 보냄", for: .normal)
             requestButton.isUserInteractionEnabled = false
             requestButton.backgroundColor = UIColor.bumble3.withAlphaComponent(0.7)
             return
+        default:
+            requestButton.setTitle("친구 신청", for: .normal)
+            requestButton.isUserInteractionEnabled = true
+            requestButton.backgroundColor = .bumble3
         }
-        requestButton.setTitle("친구 신청", for: .normal)
-        requestButton.isUserInteractionEnabled = true
-        requestButton.backgroundColor = .bumble3
+    }
+
+    private func update(_ data: UserSingleData, animatingDifferences: Bool) {
+        var snapshot = NSDiffableDataSourceSnapshot<Section, AnyHashable>()
+        snapshot.appendSections([.Carousel, .Belt, .Body, .Posts])
+        snapshot.appendItems(data.carousel, toSection: .Carousel)
+        snapshot.appendItems(data.belt, toSection: .Belt)
+        snapshot.appendItems(data.body, toSection: .Body)
+        snapshot.appendItems(data.posts, toSection: .Posts)
+        dataSource.apply(snapshot, animatingDifferences: animatingDifferences)
     }
 
     @objc private func request() {
         guard let user = data?.user else {
             return
         }
-        if (user.relationship?.isWhoSentMe ?? false) {
+        if (user.relationship?.match == .isWhoSentMe) {
             // do not ask when it's a request already sent.
             userSingleViewModel?.createRequest()
             return
@@ -430,16 +487,7 @@ class UserSingleViewController: UIViewController {
 }
 
 
-extension UserSingleViewController: UITableViewDelegate, UITableViewDataSource {
-
-    // sections parts..
-    func numberOfSections(in tableView: UITableView) -> Int {
-        sections.count
-    }
-
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        sections[section]
-    }
+extension UserSingleViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         CGFloat.leastNormalMagnitude
@@ -464,74 +512,6 @@ extension UserSingleViewController: UITableViewDelegate, UITableViewDataSource {
     // cells parts..
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
-    }
-
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if section == 0 {
-            return 1
-        } else if section == 1 {
-            guard let relationship = data?.user?.relationship else {
-                return 0
-            }
-            if (relationship.isMatched) {
-                return 1
-            }
-            if (relationship.isUnmatched) {
-                return 1
-            }
-            if (relationship.isWhoSentMe) {
-                return 1
-            }
-            if (relationship.isWhoISent) {
-                return 1
-            }
-            return 0
-        } else if section == 2 {
-            return 1
-        } else {
-            return data?.posts?.count ?? 0
-        }
-    }
-
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.section == 0 {
-            let cell = tableView.dequeueReusableCell(
-                withIdentifier: CarouselTableViewCell.identifier, for: indexPath) as! CarouselTableViewCell
-            cell.bind(user: data?.user)
-            return cell
-        } else if indexPath.section == 1 {
-            let cell = tableView.dequeueReusableCell(
-                withIdentifier: MatchingTableViewCell.identifier, for: indexPath) as! MatchingTableViewCell
-            let relationship = data?.user?.relationship
-            if (relationship?.isMatched == true) {
-                cell.bind(message: "이미 매칭 된 유저입니다.")
-                return cell
-            }
-            if (relationship?.isUnmatched ?? false) {
-                cell.bind(message: "이미 친구신청을 보낸 상대입니다.")
-                return cell
-            }
-            if (relationship?.isWhoSentMe ?? false) {
-                cell.bind(message: "내게 친구신청을 보낸 상대입니다.")
-                return cell
-            }
-            if (relationship?.isWhoISent ?? false) {
-                cell.bind(message: "이미 친구신청을 보낸 상대입니다.")
-                return cell
-            }
-            return cell
-        } else if indexPath.section == 2 {
-            let cell = tableView.dequeueReusableCell(
-                withIdentifier: ProfileTableViewCell.identifier, for: indexPath) as! ProfileTableViewCell
-            cell.delegate = self
-            cell.bind(user: data?.user)
-            return cell
-        } else {
-            let cell = tableView.dequeueReusableCell(
-                withIdentifier: PostListResourceTableViewCell.identifier, for: indexPath) as! PostListResourceTableViewCell
-            cell.bind(post: data?.posts?[indexPath.row], bodyDelegate: self)
-            return cell
-        }
     }
 
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -564,15 +544,24 @@ extension UserSingleViewController: ProfileCellDelegate {
 
 extension UserSingleViewController: PostBodyDelegate {
     func favorite(post: PostDTO?) {
-        toast(message: "유저 프로필 열람 중엔 지원하지 않습니다.")
+        userSingleViewModel?.favorite(post)
     }
 
     func presentSinglePostView(post: PostDTO?) {
-        toast(message: "유저 프로필 열람 중엔 지원하지 않습니다.")
+        guard let post = post else {
+            return
+        }
+        Channel.next(post: post)
+        navigationController?.pushViewController(
+            .postSingle,
+            current: self,
+            hideBottomWhenStart: true,
+            hideBottomWhenEnd: true
+        )
     }
 
     func isCurrentUserFavoritePost(_ post: PostDTO?) -> Bool {
-        false
+        userSingleViewModel.isCurrentUserFavoritePost(post) ?? false
     }
 }
 

@@ -203,10 +203,12 @@ extension SwinjectStoryboard {
         defaultContainer.register(UserSingleModel.self) { resolver in
             let session = resolver ~> Session.self
             let userService = resolver ~> UserService.self
+            let postService = resolver ~> PostService.self
             let requestService = resolver ~> RequestService.self
             let userSingleModel = UserSingleModel(
                 session: session,
                 userService: userService,
+                postService: postService,
                 requestService: requestService
             )
             return userSingleModel
