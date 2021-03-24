@@ -136,8 +136,6 @@ class ConversationModel {
                     conversations[index] = conversation
                 }
                 publish()
-            }, onError: { err in
-                log.error(err)
             })
             .disposed(by: disposeBag)
     }
