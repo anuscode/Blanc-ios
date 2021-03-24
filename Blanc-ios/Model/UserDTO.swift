@@ -93,52 +93,53 @@ enum Status: String, Codable {
          BLOCKED = "BLOCKED"
 }
 
-class Relationship: Codable {
-
-    enum Match {
-        case isMatched,
-             isUnmatched,
-             isWhoSentMe,
-             isWhoISent,
-             nothing
-    }
-
-    var isMatched: Bool = false
-    var isUnmatched: Bool = false
-    var isWhoSentMe: Bool = false
-    var isWhoISent: Bool = false
-
-    var starRating: StarRating? = nil
-    var distance: String?
-    var match: Match {
-        get {
-            if (isMatched) {
-                return .isMatched
-            }
-            if (isUnmatched) {
-                return .isUnmatched
-            }
-            if (isWhoSentMe) {
-                return .isWhoSentMe
-            }
-            if (isWhoISent) {
-                return .isWhoISent
-            }
-            return .nothing
-        }
-    }
-
-    func isDifferent(_ relationship: Relationship?) -> Bool {
-        guard let relationship = relationship else {
-            return true
-        }
-        return match != relationship.match ||
-            starRating?.score != relationship.starRating?.score ||
-            distance != relationship.distance
-    }
-}
-
 class UserDTO: Hashable, Codable {
+
+    class Relationship: Codable {
+
+        enum Match {
+            case isMatched,
+                 isUnmatched,
+                 isWhoSentMe,
+                 isWhoISent,
+                 nothing
+        }
+
+        var isMatched: Bool = false
+        var isUnmatched: Bool = false
+        var isWhoSentMe: Bool = false
+        var isWhoISent: Bool = false
+
+        var starRating: StarRating? = nil
+        var distance: String?
+        var match: Match {
+            get {
+                if (isMatched) {
+                    return .isMatched
+                }
+                if (isUnmatched) {
+                    return .isUnmatched
+                }
+                if (isWhoSentMe) {
+                    return .isWhoSentMe
+                }
+                if (isWhoISent) {
+                    return .isWhoISent
+                }
+                return .nothing
+            }
+        }
+
+        func isDifferent(_ relationship: Relationship?) -> Bool {
+            guard let relationship = relationship else {
+                return true
+            }
+            return match != relationship.match ||
+                starRating?.score != relationship.starRating?.score ||
+                distance != relationship.distance
+        }
+    }
+
     var uuid: UUID? = UUID()
     var _id: String?
     var id: String? {

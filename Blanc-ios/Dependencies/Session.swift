@@ -135,12 +135,12 @@ class Session {
             .disposed(by: disposeBag)
     }
 
-    func relationship(with: UserDTO?) -> Relationship? {
+    func relationship(with: UserDTO?) -> UserDTO.Relationship? {
         guard let target = with,
               let userId = with?.id else {
             return nil
         }
-        let relationship = Relationship()
+        let relationship = UserDTO.Relationship()
         relationship.isMatched = user?.userIdsMatched?.contains(userId) ?? false
         relationship.isUnmatched = user?.userIdsUnmatched?.contains(userId) ?? false
         relationship.isWhoISent = user?.userIdsISentRequest?.contains(userId) ?? false

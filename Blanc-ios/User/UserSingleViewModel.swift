@@ -20,7 +20,7 @@ class UserSingleData {
 
     class Belt: Hashable {
         var uuid: UUID = UUID()
-        var match: Relationship.Match = .nothing
+        var match: UserDTO.Relationship.Match = .nothing
         var message: String {
             get {
                 switch match {
