@@ -13,11 +13,9 @@ class ConversationSingleViewModel {
 
     private let conversationSingleModel: ConversationSingleModel
 
-    private let conversationModel: ConversationModel
 
-    init(conversationSingleModel: ConversationSingleModel, conversationModel: ConversationModel) {
+    init(conversationSingleModel: ConversationSingleModel) {
         self.conversationSingleModel = conversationSingleModel
-        self.conversationModel = conversationModel
         subscribeConversationModel()
     }
 
@@ -75,7 +73,7 @@ class ConversationSingleViewModel {
     func sync() {
         conversationSingleModel.setReadAll()
         if let conversation = conversation {
-            conversationModel.sync(conversation: conversation)
+            Synchronize.next(conversation: conversation)
         }
     }
 }

@@ -23,6 +23,7 @@ class ConversationModel {
         populate()
         subscribeBroadcast()
         subscribeBackground()
+        subscribeSynchronize()
     }
 
     deinit {
@@ -125,6 +126,22 @@ class ConversationModel {
             .disposed(by: disposeBag)
     }
 
+    private func subscribeSynchronize() {
+        Synchronize
+            .conversation
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onNext: { [unowned self] conversation in
+                if let index = conversations.firstIndex(where: { $0.id == conversation.id }) {
+                    conversations[index] = conversation
+                }
+                publish()
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
+    }
+
     /**
      Returns last read messages as dict
      An example returning structure is like below
@@ -200,12 +217,5 @@ class ConversationModel {
                 log.error(err)
             })
             .disposed(by: disposeBag)
-    }
-
-    func sync(conversation: ConversationDTO) {
-        if let index = conversations.firstIndex(where: { $0.id == conversation.id }) {
-            conversations[index] = conversation
-        }
-        publish()
     }
 }

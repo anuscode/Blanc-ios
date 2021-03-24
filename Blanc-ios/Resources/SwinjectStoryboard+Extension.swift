@@ -373,9 +373,8 @@ extension SwinjectStoryboard {
         }.inObjectScope(.conversationSingleScope)
         defaultContainer.register(ConversationSingleViewModel.self) { resolver in
             let conversationSingleModel = resolver ~> ConversationSingleModel.self
-            let conversationModel = resolver ~> ConversationModel.self
             let conversationSingleViewModel = ConversationSingleViewModel(
-                conversationSingleModel: conversationSingleModel, conversationModel: conversationModel)
+                conversationSingleModel: conversationSingleModel)
             return conversationSingleViewModel
         }.inObjectScope(.conversationSingleScope)
 

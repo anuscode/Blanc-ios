@@ -189,12 +189,12 @@ class ConversationSingleViewController: UIViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        conversationSingleViewModel?.sync()
-        SwinjectStoryboard.defaultContainer.resetObjectScope(.conversationSingleScope)
         NotificationCenter.default.removeObserver(self)
     }
 
     deinit {
+        conversationSingleViewModel?.sync()
+        SwinjectStoryboard.defaultContainer.resetObjectScope(.conversationSingleScope)
         log.info("deinit ConversationSingleViewController..")
     }
 
