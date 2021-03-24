@@ -333,11 +333,11 @@ extension LinkedList: Collection {
 }
 
 extension LinkedList {
-    func toArray() -> [Diffable] {
-        var array: [Diffable] = [Diffable]()
+    func toArray() -> [AnyHashable] {
+        var array: [AnyHashable] = [AnyHashable]()
         array.reserveCapacity(count)
         forEach { comment in
-            array.append(comment as! Diffable)
+            array.append(comment as! AnyHashable)
         }
         return array
     }

@@ -1,6 +1,6 @@
 import Foundation
 
-class CommentDTO: Diffable, Codable {
+class CommentDTO: Hashable, Codable {
     var _id: String? = ""
     var id: String? {
         get {
@@ -22,6 +22,10 @@ class CommentDTO: Diffable, Codable {
 
     weak var post: PostDTO?
 
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(ObjectIdentifier(self))
+    }
+
     static func ==(lhs: CommentDTO, rhs: CommentDTO) -> Bool {
         lhs === rhs
     }
@@ -31,8 +35,8 @@ extension CommentDTO {
 
     @discardableResult
     static func flatten(comments: [CommentDTO]?,
-                        result: LinkedList<Diffable> = LinkedList(),
-                        lv: Int = 1) -> LinkedList<Diffable> {
+                        result: LinkedList<AnyHashable> = LinkedList(),
+                        lv: Int = 1) -> LinkedList<AnyHashable> {
         comments?.forEach { comment in
             comment.lv = lv
             result.append(comment)
@@ -48,9 +52,9 @@ extension Array where Element == CommentDTO {
     @discardableResult
     func flatten(
         post: PostDTO?,
-        result: LinkedList<Diffable> = LinkedList(),
+        result: LinkedList<AnyHashable> = LinkedList(),
         lv: Int = 1
-    ) -> LinkedList<Diffable> {
+    ) -> LinkedList<AnyHashable> {
         forEach { comment in
             comment.lv = lv
             comment.post = post

@@ -1,16 +1,16 @@
 import Foundation
 
-
-enum ResourceType: String, Codable {
-    case image = "IMAGE", video = "VIDEO"
-}
-
 class Resource: Codable {
+
+    enum ResourceType: String, Codable {
+        case image = "IMAGE", video = "VIDEO"
+    }
+
     var type: ResourceType?
     var url: String?
 }
 
-class PostDTO: Diffable, Codable {
+class PostDTO: Hashable, Codable {
 
     var _id: String? = ""
     var id: String? {
@@ -34,6 +34,10 @@ class PostDTO: Diffable, Codable {
     var enableComment: Bool?
     var isDeleted: Bool?
 
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(ObjectIdentifier(self))
+    }
+
     static func ==(lhs: PostDTO, rhs: PostDTO) -> Bool {
         lhs === rhs
     }
@@ -47,7 +51,7 @@ extension PostDTO {
 
 extension PostDTO {
     @discardableResult
-    static func flatten(posts: [PostDTO], result: LinkedList<Diffable> = LinkedList()) -> LinkedList<Diffable> {
+    static func flatten(posts: [PostDTO], result: LinkedList<AnyHashable> = LinkedList()) -> LinkedList<AnyHashable> {
         posts.forEach { post in
             result.append(post)
             post.comments?.flatten(post: post, result: result)
@@ -58,7 +62,7 @@ extension PostDTO {
 
 extension Array where Element == PostDTO {
     @discardableResult
-    func flatten(result: LinkedList<Diffable> = LinkedList()) -> LinkedList<Diffable> {
+    func flatten(result: LinkedList<AnyHashable> = LinkedList()) -> LinkedList<AnyHashable> {
         forEach { post in
             result.append(post)
             post.comments?.flatten(post: post, result: result)
