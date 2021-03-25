@@ -22,6 +22,33 @@ class CommentDTO: Hashable, Codable {
 
     weak var post: PostDTO?
 
+    private enum CodingKeys: CodingKey {
+        case _id,
+             commenter,
+             comment,
+             comments,
+             createdAt,
+             thumbUpUserIds,
+             thumbDownUserIds,
+             favorite,
+             isDeleted,
+             lv
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(_id, forKey: ._id)
+        try container.encode(commenter, forKey: .commenter)
+        try container.encode(comment, forKey: .comment)
+        try container.encode(comments, forKey: .comments)
+        try container.encode(createdAt, forKey: .createdAt)
+        try container.encode(thumbUpUserIds, forKey: .thumbUpUserIds)
+        try container.encode(thumbDownUserIds, forKey: .thumbDownUserIds)
+        try container.encode(favorite, forKey: .favorite)
+        try container.encode(isDeleted, forKey: .isDeleted)
+        try container.encode(lv, forKey: .lv)
+    }
+
     func hash(into hasher: inout Hasher) {
         hasher.combine(ObjectIdentifier(self))
     }
