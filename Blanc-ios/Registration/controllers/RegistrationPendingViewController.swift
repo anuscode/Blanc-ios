@@ -139,6 +139,11 @@ class RegistrationPendingViewController: UIViewController {
         configureConstraints()
         subscribeViewModel()
         subscribeBroadcast()
+        subscribeBackground()
+    }
+
+    deinit {
+        log.info("deinit RegistrationPendingViewController..")
     }
 
     private func configureSubviews() {
@@ -227,6 +232,17 @@ class RegistrationPendingViewController: UIViewController {
                 if (push.isApproved()) {
                     parent?.replace(storyboard: "Main", withIdentifier: "InitPagerViewController")
                 }
+            })
+            .disposed(by: disposeBag)
+    }
+
+    private func subscribeBackground() {
+        Background
+            .observe()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
+            .subscribe(onNext: { [unowned self] push in
+                parent?.replace(storyboard: "Main", withIdentifier: "InitPagerViewController")
             })
             .disposed(by: disposeBag)
     }
