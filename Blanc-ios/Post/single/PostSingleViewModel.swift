@@ -10,9 +10,9 @@ class PostSingleViewModel {
 
     private let disposeBag: DisposeBag = DisposeBag()
 
-    let post: ReplaySubject = ReplaySubject<PostDTO>.create(bufferSize: 1)
+    internal let post: ReplaySubject = ReplaySubject<PostDTO>.create(bufferSize: 1)
 
-    let toast: PublishSubject = PublishSubject<String>()
+    internal let toast: PublishSubject = PublishSubject<String>()
 
     private let repository: Repository = Repository()
 
@@ -20,12 +20,9 @@ class PostSingleViewModel {
 
     private var postSingleModel: PostSingleModel
 
-    private var postModel: PostModel
-
-    init(session: Session, postSingleModel: PostSingleModel, postModel: PostModel) {
+    init(session: Session, postSingleModel: PostSingleModel) {
         self.session = session
         self.postSingleModel = postSingleModel
-        self.postModel = postModel
         subscribePostSingleModel()
     }
 
@@ -84,13 +81,12 @@ class PostSingleViewModel {
     }
 
     func isFavoritePost() -> Bool {
-        postSingleModel.isFavoritePost()
+        postSingleModel.isCurrentUserFavoritePost()
     }
 
     func sync() {
-        guard let post = repository.post else {
-            return
+        if let post = repository.post {
+            Synchronize.next(post: post)
         }
-        postModel.sync(post: post)
     }
 }

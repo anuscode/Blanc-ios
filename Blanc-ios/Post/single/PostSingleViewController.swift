@@ -92,7 +92,6 @@ class PostSingleViewController: UIViewController {
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        // should remove view model and model otherwise it shows the previous one.
     }
 
     deinit {

@@ -72,11 +72,17 @@ class PostSingleModel {
     }
 
     private func createThumbUp(post: PostDTO?, comment: CommentDTO?, onError: @escaping (_ message: String) -> Void) {
+        guard let uid = auth.uid,
+              let postId = post?.id,
+              let commentId = comment?.id else {
+            onError("댓글 좋아요 생성에 실패 하였습니다.")
+            return
+        }
         postService
             .createThumbUp(
-                uid: session.uid,
-                postId: post?.id,
-                commentId: comment?.id
+                uid: uid,
+                postId: postId,
+                commentId: commentId
             )
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
@@ -89,11 +95,17 @@ class PostSingleModel {
     }
 
     private func deleteThumbUp(post: PostDTO?, comment: CommentDTO?, onError: @escaping (_ message: String) -> Void) {
+        guard let uid = auth.uid,
+              let postId = post?.id,
+              let commentId = comment?.id else {
+            onError("댓글 좋아요 삭제에 실패 하였습니다.")
+            return
+        }
         postService
             .deleteThumbUp(
-                uid: session.uid,
-                postId: post?.id,
-                commentId: comment?.id
+                uid: uid,
+                postId: postId,
+                commentId: commentId
             )
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
@@ -127,11 +139,17 @@ class PostSingleModel {
     }
 
     private func createThumbDown(post: PostDTO?, comment: CommentDTO?, onError: @escaping (_ message: String) -> Void) {
+        guard let uid = auth.uid,
+              let postId = post?.id,
+              let commentId = comment?.id else {
+            onError("댓글 싫어요 생성에 실패 하였습니다.")
+            return
+        }
         postService
             .createThumbDown(
-                uid: session.uid,
-                postId: post?.id,
-                commentId: comment?.id
+                uid: uid,
+                postId: postId,
+                commentId: commentId
             )
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
@@ -144,11 +162,17 @@ class PostSingleModel {
     }
 
     private func deleteThumbDown(post: PostDTO?, comment: CommentDTO?, onError: @escaping (_ message: String) -> Void) {
+        guard let uid = auth.uid,
+              let postId = post?.id,
+              let commentId = comment?.id else {
+            onError("댓글 싫어요 삭제에 실패 하였습니다.")
+            return
+        }
         postService
             .deleteThumbDown(
-                uid: session.uid,
-                postId: post?.id,
-                commentId: comment?.id
+                uid: uid,
+                postId: postId,
+                commentId: commentId
             )
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
@@ -174,10 +198,19 @@ class PostSingleModel {
         return comment.thumbDownUserIds?.firstIndex(where: { $0 == session.id }) != nil
     }
 
-    func createComment(postId: String?, commentId: String?, comment: String, onError: @escaping (_ message: String) -> Void) {
+    func createComment(postId: String?,
+                       commentId: String?,
+                       comment: String,
+                       onError: @escaping (_ message: String) -> Void) {
+        // comment id can be nil when a parent comment is not applicable.
+        guard let uid = auth.uid,
+              let postId = post?.id else {
+            onError("댓글 생성에 실패 하였습니다.")
+            return
+        }
         postService
             .createComment(
-                uid: auth.uid,
+                uid: uid,
                 postId: postId,
                 commentId: commentId,
                 comment: comment
@@ -201,7 +234,7 @@ class PostSingleModel {
     }
 
     func favorite(onError: @escaping (_ message: String) -> Void) {
-        if ((post?.favoriteUserIds?.contains(session.id ?? "")) == true) {
+        if (isCurrentUserFavoritePost()) {
             deleteFavorite(post, onError: onError)
         } else {
             createFavorite(post, onError: onError)
@@ -209,48 +242,56 @@ class PostSingleModel {
     }
 
     private func createFavorite(_ post: PostDTO?, onError: @escaping (_ message: String) -> Void) {
+        guard let uid = auth.uid,
+              let userId = session.id,
+              let postId = post?.id else {
+            return
+        }
+        if (post?.favoriteUserIds?.firstIndex(of: userId) == nil) {
+            post?.favoriteUserIds?.append(userId)
+        }
+        publish()
         postService
-            .createFavorite(uid: session.uid, postId: post?.id)
+            .createFavorite(uid: uid, postId: postId)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .subscribe(onSuccess: { [unowned self] _ in
-                if (session.id == nil) {
-                    return
-                }
-                if (post?.favoriteUserIds?.firstIndex(of: session.id!) == nil) {
-                    post?.favoriteUserIds?.append(session.id!)
-                }
-                publish()
+            .subscribe(onSuccess: { _ in
+                log.info("Successfully created post favorite..")
             }, onError: { [unowned self]  err in
                 log.error(err)
                 onError("게시물 좋아요 도중 에러가 발생 하였습니다.")
-                publish()
             })
             .disposed(by: disposeBag)
     }
 
-    private func deleteFavorite(_ post: PostDTO?, onError: @escaping (_ message: String) -> Void) {
+    private func deleteFavorite(_ post: PostDTO?,
+                                onError: @escaping (_ message: String) -> Void) {
+        guard let uid = auth.uid,
+              let userId = session.id,
+              let postId = post?.id else {
+            return
+        }
+        if let index = post?.favoriteUserIds?.firstIndex(of: userId) {
+            post?.favoriteUserIds?.remove(at: index)
+        }
+        publish()
         postService
-            .deleteFavorite(uid: session.uid, postId: post?.id)
+            .deleteFavorite(uid: uid, postId: postId)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .subscribe(onSuccess: { [unowned self] _ in
-                if (session.id == nil) {
-                    return
-                }
-                if let index = post?.favoriteUserIds?.firstIndex(of: session.id!) {
-                    post?.favoriteUserIds?.remove(at: index)
-                }
-                publish()
-            }, onError: { [unowned self] err in
-                log.info(err)
+            .subscribe(onSuccess: { _ in
+                log.info("Successfully deleted post favorite..")
+            }, onError: { err in
+                log.error(err)
                 onError("게시물 좋아요 도중 에러가 발생 하였습니다.")
-                publish()
             })
             .disposed(by: disposeBag)
     }
 
-    func isFavoritePost() -> Bool {
-        post?.favoriteUserIds?.firstIndex(of: session.id!) != nil
+    func isCurrentUserFavoritePost() -> Bool {
+        guard let userId = session.id else {
+            return false
+        }
+        return post?.favoriteUserIds?.firstIndex(of: userId) != nil
     }
 }
