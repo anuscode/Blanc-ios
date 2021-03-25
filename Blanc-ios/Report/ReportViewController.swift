@@ -131,7 +131,9 @@ class ReportViewController: UIViewController {
     }()
 
     lazy private var loadingView: Spinner = {
-        Spinner()
+        let view = Spinner()
+        view.visible(false)
+        return view
     }()
 
     override func viewWillAppear(_ animated: Bool) {

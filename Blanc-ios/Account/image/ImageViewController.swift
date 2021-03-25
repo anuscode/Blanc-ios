@@ -380,8 +380,10 @@ class ImageViewController: UIViewController, CropViewControllerDelegate, UIImage
         return button
     }()
 
-    lazy private var spinner: Spinner = {
-        Spinner()
+    lazy private var loadingView: Spinner = {
+        let view = Spinner()
+        view.visible(false)
+        return view
     }()
 
     lazy private var leftBarButtonItem: UIBarButtonItem = {
@@ -439,7 +441,7 @@ class ImageViewController: UIViewController, CropViewControllerDelegate, UIImage
         scrollView.addSubview(guideImage8)
         bottomView.addSubview(saveButton)
         view.addSubview(bottomView)
-        view.addSubview(spinner)
+        view.addSubview(loadingView)
     }
 
     private func configureConstraints() {
@@ -645,7 +647,7 @@ class ImageViewController: UIViewController, CropViewControllerDelegate, UIImage
     }
 
     private func loading(_ value: Bool) {
-        spinner.visible(value)
+        loadingView.visible(value)
     }
 
     private func toast(_ message: String) {
@@ -692,7 +694,7 @@ class ImageViewController: UIViewController, CropViewControllerDelegate, UIImage
                                    withRect cropRect: CGRect,
                                    angle: Int) {
         imagesClickable(false)
-        spinner.visible(true)
+        loadingView.visible(true)
 
         UIImage.resize(image: image, maxKb: 800) { [unowned self] resizedImage in
             guard let resizedImage = resizedImage else {

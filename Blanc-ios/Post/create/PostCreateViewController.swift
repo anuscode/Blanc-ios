@@ -130,7 +130,9 @@ class PostCreateViewController: UIViewController {
     }()
 
     lazy private var loadingView: Spinner = {
-        Spinner()
+        let spinner = Spinner()
+        spinner.visible(false)
+        return spinner
     }()
 
     override func viewWillAppear(_ animated: Bool) {

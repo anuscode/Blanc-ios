@@ -300,8 +300,10 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
         return view
     }()
 
-    lazy private var spinner: Spinner = {
-        Spinner()
+    lazy private var loadingView: Spinner = {
+        let view = Spinner()
+        view.visible(false)
+        return view
     }()
 
     func imagePickerController(_ picker: UIImagePickerController,
@@ -322,7 +324,7 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
                                    withRect cropRect: CGRect,
                                    angle: Int) {
         configureImagesClickable(false)
-        spinner.visible(true)
+        loadingView.visible(true)
         cropViewController.dismiss(animated: true, completion: nil)
 
         UIImage.resize(image: image, maxKb: 1000) { [unowned self] resizedImage in
@@ -330,7 +332,7 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
                 updateImageViewWithImage(resizedImage!, cropViewController: cropViewController)
             }
             guard let resizedImage = resizedImage else {
-                spinner.visible(false)
+                loadingView.visible(false)
                 configureImagesClickable(true)
                 toast(message: "이미지 업로드에 실패 하였습니다.")
                 selectedImageView?.image = UIImage(named: "ic_avatar")
@@ -364,7 +366,7 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
         view.addSubview(titleLabel)
         view.addSubview(imageView)
         view.addSubview(noticeLabel)
-        view.addSubview(spinner)
+        view.addSubview(loadingView)
         view.addSubview(guideButton)
         view.addSubview(saveButton)
     }
@@ -528,7 +530,7 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
     }
 
     private func loading(_ value: Bool) {
-        spinner.visible(value)
+        loadingView.visible(value)
     }
 
     private func toast(_ message: String) {
@@ -625,7 +627,7 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
             toast(message: "필수 이미지가 등록 되지 않았습니다.")
             return
         }
-        spinner.visible(true)
+        loadingView.visible(true)
         registrationViewModel?.updateUserStatusPending()
     }
 

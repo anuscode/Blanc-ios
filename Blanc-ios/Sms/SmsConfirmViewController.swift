@@ -124,7 +124,7 @@ class SmsConfirmViewController: UIViewController {
         return button
     }()
 
-    lazy private var spinnerView: Spinner = {
+    lazy private var loadingView: Spinner = {
         let view = Spinner()
         view.visible(false)
         return view
@@ -165,7 +165,7 @@ class SmsConfirmViewController: UIViewController {
         view.addSubview(confirmButton)
         view.addSubview(resetButton)
         view.addSubview(timeLeftLabel)
-        view.addSubview(spinnerView)
+        view.addSubview(loadingView)
     }
 
     private func configureConstraints() {
@@ -205,7 +205,7 @@ class SmsConfirmViewController: UIViewController {
             make.width.equalTo(resetButton.intrinsicContentSize.width)
             make.height.equalTo(52)
         }
-        spinnerView.snp.makeConstraints { make in
+        loadingView.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
     }
@@ -281,7 +281,7 @@ class SmsConfirmViewController: UIViewController {
     }
 
     private func showLoading(_ boolean: Bool) {
-        spinnerView.visible(boolean)
+        loadingView.visible(boolean)
     }
 
     private func activateConfirmButton(_ boolean: Bool) {
