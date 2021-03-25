@@ -10,30 +10,11 @@ private typealias PostCell = PostManagementTableViewCell
 private typealias CommentCell = CommentTableViewCell
 
 
-private extension Array where Element: Diffable {
-    func findApplicablePost(comment: CommentDTO?) -> PostDTO? {
-        var postIndices: [Int] = []
-        var commentIndex: Int = 0
-        enumerated().forEach { (i: Int, v: Element) in
-            if (v is PostDTO) {
-                postIndices.append(i)
-            }
-            if (v === comment) {
-                commentIndex = i
-            }
-        }
-        let postIndex = postIndices.filter {
-            $0 < commentIndex
-        }.max()
-        return postIndex != nil ? (self[postIndex!] as! PostDTO) : nil
-    }
-}
-
 class PostManagementViewController: UIViewController {
 
     private var disposeBag: DisposeBag = DisposeBag()
 
-    private var data: [Diffable] = []
+    private var data: [AnyHashable] = []
 
     private var replyTo: CommentDTO?
 
@@ -41,7 +22,7 @@ class PostManagementViewController: UIViewController {
 
     internal var postManagementViewModel: PostManagementViewModel?
 
-    lazy private var dataSource: DataSource<Section, Diffable> = DataSource<Section, Diffable>(tableView: tableView) { [unowned self] (tableView, indexPath, data) -> UITableViewCell? in
+    lazy private var dataSource: DataSource<Section, AnyHashable> = DataSource<Section, AnyHashable>(tableView: tableView) { [unowned self] (tableView, indexPath, data) -> UITableViewCell? in
         if (data is PostDTO) {
             let cell = tableView.dequeueReusableCell(withIdentifier: PostCell.identifier, for: indexPath) as! PostCell
             cell.bind(post: (data as! PostDTO), delegate: self)
@@ -220,7 +201,7 @@ extension PostManagementViewController {
     }
 
     private func update() {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, Diffable>()
+        var snapshot = NSDiffableDataSourceSnapshot<Section, AnyHashable>()
         snapshot.appendSections([.main])
         snapshot.appendItems(data)
         dataSource.apply(snapshot, animatingDifferences: false, completion: nil)
@@ -307,12 +288,12 @@ extension PostManagementViewController: PostManagementTableViewCellDelegate {
 
 extension PostManagementViewController: CommentTableViewCellDelegate {
     func thumbUp(comment: CommentDTO?) {
-        let post = data.findApplicablePost(comment: comment)
+        let post = findParentPost(of: comment)
         postManagementViewModel?.thumbUp(post: post, comment: comment)
     }
 
     func thumbDown(comment: CommentDTO?) {
-        let post = data.findApplicablePost(comment: comment)
+        let post = findParentPost(of: comment)
         postManagementViewModel?.thumbDown(post: post, comment: comment)
     }
 
@@ -325,7 +306,7 @@ extension PostManagementViewController: CommentTableViewCellDelegate {
     }
 
     func isAuthorFavoriteComment(comment: CommentDTO?) -> Bool {
-        guard let post = data.findApplicablePost(comment: comment),
+        guard let post = findParentPost(of: comment),
               let author = post.author,
               let comment = comment else {
             return false
@@ -343,12 +324,31 @@ extension PostManagementViewController: CommentTableViewCellDelegate {
 
 extension PostManagementViewController: BottomTextFieldDelegate {
     func trigger(message: String) {
-        let post = data.findApplicablePost(comment: replyTo)
+        let post = findParentPost(of: replyTo)
         postManagementViewModel?.createComment(postId: post?.id, commentId: replyTo?.id, comment: message)
         dismissTextField()
     }
 
     func dismiss() {
         dismissTextField()
+    }
+}
+
+extension PostManagementViewController {
+    func findParentPost(of comment: CommentDTO?) -> PostDTO? {
+        var post: PostDTO?
+        for item in data {
+            if (item is PostDTO) {
+                post = (item as! PostDTO)
+                continue
+            }
+            if (item is CommentDTO) {
+                let candidate = (item as! CommentDTO)
+                if (comment?.id == candidate.id) {
+                    break
+                }
+            }
+        }
+        return post
     }
 }
