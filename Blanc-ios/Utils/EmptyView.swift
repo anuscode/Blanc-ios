@@ -51,7 +51,7 @@ class EmptyView: UIView {
     lazy private var primaryLabel: UILabel = {
         let label = UILabel()
         label.text = primaryText
-        label.font = .boldSystemFont(ofSize: 20)
+        label.font = .boldSystemFont(ofSize: 22)
         label.textAlignment = .center
         label.numberOfLines = 0
         label.textColor = .darkText

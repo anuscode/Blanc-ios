@@ -3,7 +3,7 @@ import UIKit
 
 protocol PostSingleHeaderDelegate: class {
     func goUserSingle(user: UserDTO?) -> Void
-    func showOptions(user: UserDTO?) -> Void
+    func showOptions(post: PostDTO?) -> Void
 }
 
 class PostSingleHeader: UIView {
@@ -147,6 +147,6 @@ class PostSingleHeader: UIView {
     }
 
     @objc func didTapOptionImageView() {
-        delegate?.showOptions(user: post?.author)
+        delegate?.showOptions(post: post)
     }
 }

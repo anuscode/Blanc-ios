@@ -90,7 +90,7 @@ class ConversationViewController: UIViewController {
 
     lazy private var emptyView: EmptyView = {
         let emptyView = EmptyView(animationName: "girl_with_phone", animationSpeed: 1)
-        emptyView.primaryText = "생성 된 대화방이 없습니다.."
+        emptyView.primaryText = "생성 된 대화방이 없습니다."
         emptyView.secondaryText = "서로 요청을 수락하면\n이곳에 대화방이 생성 됩니다."
         emptyView.buttonText = "메인 화면으로.."
         emptyView.didTapButtonDelegate = { [unowned self] in

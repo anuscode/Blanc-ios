@@ -173,10 +173,10 @@ extension PostListViewController: PostListHeaderDelegate {
         navigationController?.pushViewController(.userSingle, current: self)
     }
 
-    func showOptions(user: UserDTO?) {
+    func showOptions(post: PostDTO?) {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let reportAction = UIAlertAction(title: "신고", style: .default) { [unowned self] (action) in
-            guard let user = user else {
+            guard let user = post?.author else {
                 return
             }
             Channel.next(reportee: user)
