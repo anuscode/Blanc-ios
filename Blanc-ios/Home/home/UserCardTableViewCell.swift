@@ -650,34 +650,33 @@ class UserCardTableViewCell: UITableViewCell {
     }
 
     private func configureRequestButton(by user: UserDTO?) {
-        let relationship = user?.relationship
-        if (relationship?.isMatched ?? false) {
+        let match = user?.relationship?.match
+        switch match {
+        case .isMatched:
             button2.setTitle("연결 된 유저", for: .normal)
             button2.isUserInteractionEnabled = false
             button2.backgroundColor = UIColor.bumble1
             return
-        }
-        if (relationship?.isUnmatched ?? false) {
+        case .isUnmatched:
             button2.setTitle("이미 보냄", for: .normal)
             button2.isUserInteractionEnabled = false
             button2.backgroundColor = UIColor.bumble1
             return
-        }
-        if (relationship?.isWhoSentMe ?? false) {
+        case .isWhoSentMe:
             button2.setTitle("수락", for: .normal)
             button2.isUserInteractionEnabled = true
             button2.backgroundColor = UIColor.bumble3
             return
-        }
-        if (relationship?.isWhoISent ?? false) {
+        case .isWhoISent:
             button2.setTitle("이미 보냄", for: .normal)
             button2.isUserInteractionEnabled = false
             button2.backgroundColor = UIColor.bumble1
             return
+        default:
+            button2.setTitle("친구 신청", for: .normal)
+            button2.isUserInteractionEnabled = true
+            button2.backgroundColor = UIColor.bumble3
         }
-        button2.setTitle("친구 신청", for: .normal)
-        button2.isUserInteractionEnabled = true
-        button2.backgroundColor = UIColor.bumble3
     }
 }
 
