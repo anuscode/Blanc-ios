@@ -12,6 +12,8 @@ class Resource: Codable {
 
 class PostDTO: Hashable, Codable {
 
+    var uuid: UUID? = UUID()
+
     var _id: String? = ""
     var id: String? {
         get {
@@ -35,7 +37,7 @@ class PostDTO: Hashable, Codable {
     var isDeleted: Bool?
 
     func hash(into hasher: inout Hasher) {
-        hasher.combine(ObjectIdentifier(self))
+        hasher.combine(uuid?.uuidString)
     }
 
     static func ==(lhs: PostDTO, rhs: PostDTO) -> Bool {

@@ -22,6 +22,7 @@ class PostModel {
         self.session = session
         self.postService = postService
         populate()
+        subscribeSynchronize()
     }
 
     deinit {
@@ -47,12 +48,6 @@ class PostModel {
             .listPosts(uid: session.uid, lastId: self.lastId)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .do(onNext: { [unowned self] posts in
-                posts.forEach({ post in
-                    let author = post.author
-                    author?.relationship = session.relationship(with: author)
-                })
-            })
             .subscribe(onSuccess: { [unowned self] posts in
                 self.posts += posts
                 publish()
@@ -63,7 +58,7 @@ class PostModel {
     }
 
     func favorite(post: PostDTO?, onError: @escaping () -> Void) {
-        if ((post?.favoriteUserIds?.contains(session.id ?? "")) == true) {
+        if (isCurrentUserFavoritePost(post)) {
             deleteFavorite(post, onError: onError)
         } else {
             createFavorite(post, onError: onError)
@@ -71,43 +66,47 @@ class PostModel {
     }
 
     private func createFavorite(_ post: PostDTO?, onError: @escaping () -> Void) {
+        guard let uid = auth.uid,
+              let userId = session.id,
+              let postId = post?.id else {
+            return
+        }
+        if (post?.favoriteUserIds?.firstIndex(of: userId) == nil) {
+            post?.favoriteUserIds?.append(userId)
+        }
+        publish()
         postService
-            .createFavorite(uid: session.uid, postId: post?.id)
+            .createFavorite(uid: uid, postId: postId)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .subscribe(onSuccess: { [unowned self] _ in
-                if (session.id == nil) {
-                    return
-                }
-                if (post?.favoriteUserIds?.firstIndex(of: session.id!) == nil) {
-                    post?.favoriteUserIds?.append(session.id!)
-                }
-                publish()
-            }, onError: { [unowned self] err in
+            .subscribe(onSuccess: { _ in
+                log.info("Successfully created post favorite..")
+            }, onError: { err in
                 log.error(err)
                 onError()
-                publish()
             })
             .disposed(by: disposeBag)
     }
 
     private func deleteFavorite(_ post: PostDTO?, onError: (() -> Void)?) {
+        guard let uid = auth.uid,
+              let userId = session.id,
+              let postId = post?.id else {
+            return
+        }
+        if let index = post?.favoriteUserIds?.firstIndex(of: userId) {
+            post?.favoriteUserIds?.remove(at: index)
+        }
+        publish()
         postService
-            .deleteFavorite(uid: session.uid, postId: post?.id)
+            .deleteFavorite(uid: uid, postId: postId)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .subscribe(onSuccess: { [unowned self] _ in
-                if (session.id == nil) {
-                    return
-                }
-                if let index = post?.favoriteUserIds?.firstIndex(of: session.id!) {
-                    post?.favoriteUserIds?.remove(at: index)
-                }
-                publish()
-            }, onError: { [unowned self] err in
-                log.info(err)
+            .subscribe(onSuccess: { _ in
+                log.info("Successfully deleted post favorite..")
+            }, onError: { err in
+                log.error(err)
                 onError?()
-                publish()
             })
             .disposed(by: disposeBag)
     }
@@ -116,12 +115,18 @@ class PostModel {
         post?.favoriteUserIds?.firstIndex(of: session.id!) != nil
     }
 
-    func sync(post: PostDTO?) {
-        guard let post = post,
-              let index = posts.firstIndex(where: { $0.id == post.id }) else {
-            return
-        }
-        posts[index] = post
-        publish()
+    func subscribeSynchronize() {
+        Synchronize
+            .post
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onNext: { [unowned self] post in
+                guard let index = posts.firstIndex(where: { $0.id == post.id }) else {
+                    return
+                }
+                posts[index] = post
+                publish()
+            })
+            .disposed(by: disposeBag)
     }
 }
