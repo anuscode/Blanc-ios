@@ -39,7 +39,7 @@ class UserSingleViewController: UIViewController {
 
     private var dataSource: DataSource<Section, AnyHashable>!
 
-    internal weak var userSingleViewModel: UserSingleViewModel!
+    internal var userSingleViewModel: UserSingleViewModel!
 
     lazy private var navigationBarContent: Content = {
         let content = Content()
@@ -227,13 +227,11 @@ class UserSingleViewController: UIViewController {
         extendedLayoutIncludesOpaqueBars = true
         navigationItem.titleView = navigationBarContent
         navigationItem.backBarButtonItem = UIBarButtonItem.back
-        navigationController?.navigationBar.addSubview(navigationBarContent)
-        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-        navigationController?.navigationBar.setValue(true, forKey: "hidesShadow")
-        navigationController?.navigationBar.isTranslucent = true
-        navigationUserLabel.visible(false)
-        navigationUserImageView.visible(false)
-        optionImageView.visible(false)
+        if (navigationController?.navigationBar.subviews.contains(navigationBarContent) == false) {
+            navigationController?.navigationBar.addSubview(navigationBarContent)
+            navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        }
+        scrollViewDidScroll(tableView)
     }
 
     override func viewDidLoad() {
@@ -249,7 +247,7 @@ class UserSingleViewController: UIViewController {
         extendedLayoutIncludesOpaqueBars = false
         navigationBarContent.alpha = 100
         navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
-        navigationController?.navigationBar.shadowImage = nil
+        navigationController?.navigationBar.setValue(false, forKey: "hidesShadow")
         navigationController?.navigationBar.isTranslucent = true
         navigationController?.navigationBar.alpha = 100
         navigationController?.setNavigationBarHidden(false, animated: animated)
@@ -261,7 +259,7 @@ class UserSingleViewController: UIViewController {
 
     deinit {
         // should remove view model and model otherwise it shows the previous one.
-        SwinjectStoryboard.defaultContainer.resetObjectScope(.userSingleScope)
+        // SwinjectStoryboard.defaultContainer.resetObjectScope(.userSingleScope)
         log.info("deinit UserSingleViewController..")
     }
 
@@ -416,11 +414,22 @@ class UserSingleViewController: UIViewController {
         guard let user = data?.user else {
             return
         }
+
+        if (user.relationship?.match == .isMatched) {
+            toast(message: "이미 연결 된 상대 입니다.")
+            return
+        }
+
+        if (user.relationship?.match == .isUnmatched) {
+            toast(message: "이미 보낸 상대 입니다.")
+            return
+        }
+
         if (user.relationship?.match == .isWhoSentMe) {
-            // do not ask when it's a request already sent.
             userSingleViewModel?.createRequest()
             return
         }
+
         RequestConfirmViewController
             .present(target: self, user: user)
             .subscribe(onNext: { [unowned self] result in
@@ -434,7 +443,7 @@ class UserSingleViewController: UIViewController {
                 case .purchase:
                     navigationController?.pushViewController(.inAppPurchase, current: self)
                 case .decline:
-                    log.info("declined request user..")
+                    log.info("declined to request user..")
                 }
             }, onError: { err in
                 log.error(err)
@@ -523,11 +532,9 @@ extension UserSingleViewController: UITableViewDelegate {
         navigationController?.navigationBar.alpha = isThreshold ? 100 : percent
         navigationBarContent.alpha = isThreshold ? 0 : percent
         navigationController?.navigationBar.setValue(isThreshold, forKey: "hidesShadow")
-        if (navigationUserImageView.isHidden || navigationUserLabel.isHidden) {
-            navigationUserLabel.visible(true)
-            navigationUserImageView.visible(true)
-            optionImageView.visible(true)
-        }
+        navigationUserLabel.visible(!isThreshold)
+        navigationUserImageView.visible(!isThreshold)
+        optionImageView.visible(!isThreshold)
     }
 }
 
@@ -561,7 +568,7 @@ extension UserSingleViewController: PostBodyDelegate {
     }
 
     func isCurrentUserFavoritePost(_ post: PostDTO?) -> Bool {
-        userSingleViewModel.isCurrentUserFavoritePost(post) ?? false
+        userSingleViewModel.isCurrentUserFavoritePost(post)
     }
 }
 
