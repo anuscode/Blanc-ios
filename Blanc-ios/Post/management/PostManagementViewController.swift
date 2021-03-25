@@ -63,7 +63,7 @@ class PostManagementViewController: UIViewController {
 
     lazy private var bottomTextField: BottomTextField = {
         let view = BottomTextField()
-        view.configure(avatarUrl: session?.user?.avatar)
+        view.configure(avatar: session?.user?.avatar)
         view.configure(delegate: self)
         view.visible(false)
         return view

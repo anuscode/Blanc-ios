@@ -219,8 +219,8 @@ class BottomTextField: UIView {
         delegate?.dismiss()
     }
 
-    func configure(avatarUrl: String?) {
-        currentUserImage.url(avatarUrl, size: CGSize(width: 40, height: 40))
+    func configure(avatar: String?) {
+        currentUserImage.url(avatar, size: CGSize(width: 40, height: 40))
     }
 
     func configure(replyTo: CommentDTO?) {
