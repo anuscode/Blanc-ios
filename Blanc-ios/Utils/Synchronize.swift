@@ -10,14 +10,32 @@ class Synchronize {
     internal static let conversation: PublishSubject = PublishSubject<ConversationDTO>()
 
     internal static func next(user: UserDTO) {
-        Synchronize.user.onNext(user)
+        do {
+            let encoded = try JSONEncoder().encode(user)
+            let decoded = try JSONDecoder().decode(UserDTO.self, from: encoded)
+            Synchronize.user.onNext(decoded)
+        } catch {
+            log.error(error)
+        }
     }
 
     internal static func next(post: PostDTO) {
-        Synchronize.post.onNext(post)
+        do {
+            let encoded = try JSONEncoder().encode(post)
+            let decoded = try JSONDecoder().decode(PostDTO.self, from: encoded)
+            Synchronize.post.onNext(decoded)
+        } catch {
+            log.error(error)
+        }
     }
 
     internal static func next(conversation: ConversationDTO) {
-        Synchronize.conversation.onNext(conversation)
+        do {
+            let encoded = try JSONEncoder().encode(conversation)
+            let decoded = try JSONDecoder().decode(ConversationDTO.self, from: encoded)
+            Synchronize.conversation.onNext(decoded)
+        } catch {
+            log.error(error)
+        }
     }
 }
