@@ -31,11 +31,11 @@ extension ObjectScope {
     )
 }
 
-extension ObjectScope {
-    static let userSingleScope = ObjectScope(
-        storageFactory: PermanentStorage.init, description: "user single scope."
-    )
-}
+//extension ObjectScope {
+//    static let userSingleScope = ObjectScope(
+//        storageFactory: PermanentStorage.init, description: "user single scope."
+//    )
+//}
 
 extension ObjectScope {
     static let postCreateScope = ObjectScope(
@@ -200,36 +200,36 @@ extension SwinjectStoryboard {
         }.inObjectScope(.mainScope)
 
         /** UserSingle dependencies **/
-        defaultContainer.register(UserSingleModel.self) { resolver in
-            let session = resolver ~> Session.self
-            let userService = resolver ~> UserService.self
-            let postService = resolver ~> PostService.self
-            let requestService = resolver ~> RequestService.self
-            let userSingleModel = UserSingleModel(
-                session: session,
-                userService: userService,
-                postService: postService,
-                requestService: requestService
-            )
-            return userSingleModel
-        }.inObjectScope(.userSingleScope)
-        defaultContainer.register(UserSingleViewModel.self) { resolver in
-            let session = resolver ~> Session.self
-            let homeModel = resolver ~> HomeModel.self
-            let userSingleModel = resolver ~> UserSingleModel.self
-            let sendingModel = resolver ~> SendingModel.self
-            let requestsModel = resolver ~> RequestsModel.self
-            let conversationModel = resolver ~> ConversationModel.self
-            let userSingleViewModel = UserSingleViewModel(
-                session: session,
-                homeModel: homeModel,
-                userSingleModel: userSingleModel,
-                sendingModel: sendingModel,
-                requestsModel: requestsModel,
-                conversationModel: conversationModel
-            )
-            return userSingleViewModel
-        }.inObjectScope(.userSingleScope)
+//        defaultContainer.register(UserSingleModel.self) { resolver in
+//            let session = resolver ~> Session.self
+//            let userService = resolver ~> UserService.self
+//            let postService = resolver ~> PostService.self
+//            let requestService = resolver ~> RequestService.self
+//            let userSingleModel = UserSingleModel(
+//                session: session,
+//                userService: userService,
+//                postService: postService,
+//                requestService: requestService
+//            )
+//            return userSingleModel
+//        }.inObjectScope(.userSingleScope)
+//        defaultContainer.register(UserSingleViewModel.self) { resolver in
+//            let session = resolver ~> Session.self
+//            let homeModel = resolver ~> HomeModel.self
+//            let userSingleModel = resolver ~> UserSingleModel.self
+//            let sendingModel = resolver ~> SendingModel.self
+//            let requestsModel = resolver ~> RequestsModel.self
+//            let conversationModel = resolver ~> ConversationModel.self
+//            let userSingleViewModel = UserSingleViewModel(
+//                session: session,
+//                homeModel: homeModel,
+//                userSingleModel: userSingleModel,
+//                sendingModel: sendingModel,
+//                requestsModel: requestsModel,
+//                conversationModel: conversationModel
+//            )
+//            return userSingleViewModel
+//        }.inObjectScope(.userSingleScope)
 
         /** Post dependencies **/
         defaultContainer.register(PostModel.self) { resolver in
@@ -268,11 +268,8 @@ extension SwinjectStoryboard {
         defaultContainer.register(PostSingleViewModel.self) { resolver in
             let session = resolver ~> Session.self
             let postSingleModel = resolver ~> PostSingleModel.self
-            let postModel = resolver ~> PostModel.self
             let postSingleViewModel = PostSingleViewModel(
-                session: session,
-                postSingleModel: postSingleModel,
-                postModel: postModel
+                session: session, postSingleModel: postSingleModel
             )
             return postSingleViewModel
         }.inObjectScope(.postSingleScope)
@@ -283,14 +280,16 @@ extension SwinjectStoryboard {
             let userService = resolver ~> UserService.self
             let postService = resolver ~> PostService.self
             let postSingleModel = PostManagementModel(
-                session: session, userService: userService, postService: postService)
+                session: session, userService: userService, postService: postService
+            )
             return postSingleModel
         }.inObjectScope(.postManagementScope)
         defaultContainer.register(PostManagementViewModel.self) { resolver in
             let session = resolver ~> Session.self
             let postManagementModel = resolver ~> PostManagementModel.self
             let postSingleModel = PostManagementViewModel(
-                session: session, postManagementModel: postManagementModel)
+                session: session, postManagementModel: postManagementModel
+            )
             return postSingleModel
         }.inObjectScope(.postManagementScope)
 
@@ -300,7 +299,8 @@ extension SwinjectStoryboard {
             let userService: UserService = resolver ~> UserService.self
             let postService: PostService = resolver ~> PostService.self
             let favoriteUserListModel = FavoriteUserListModel(
-                session: session, userService: userService, postService: postService)
+                session: session, userService: userService, postService: postService
+            )
             return favoriteUserListModel
         }.inObjectScope(.favoriteUserListScope)
         defaultContainer.register(FavoriteUserListViewModel.self) { resolver in
@@ -643,7 +643,29 @@ extension SwinjectStoryboard {
 
         defaultContainer.storyboardInitCompleted(UserSingleViewController.self) { resolver, controller in
             log.info("Injecting dependencies into UserSingleViewController")
-            controller.userSingleViewModel = resolver ~> UserSingleViewModel.self
+            let session = resolver ~> Session.self
+            let userService = resolver ~> UserService.self
+            let postService = resolver ~> PostService.self
+            let requestService = resolver ~> RequestService.self
+            let userSingleModel = UserSingleModel(
+                session: session,
+                userService: userService,
+                postService: postService,
+                requestService: requestService
+            )
+            let homeModel = resolver ~> HomeModel.self
+            let sendingModel = resolver ~> SendingModel.self
+            let requestsModel = resolver ~> RequestsModel.self
+            let conversationModel = resolver ~> ConversationModel.self
+            let userSingleViewModel = UserSingleViewModel(
+                session: session,
+                homeModel: homeModel,
+                userSingleModel: userSingleModel,
+                sendingModel: sendingModel,
+                requestsModel: requestsModel,
+                conversationModel: conversationModel
+            )
+            controller.userSingleViewModel = userSingleViewModel
         }
 
         defaultContainer.storyboardInitCompleted(PostViewController.self) { resolver, controller in
