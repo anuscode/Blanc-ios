@@ -3,6 +3,12 @@ import UIKit
 import RxSwift
 import SwinjectStoryboard
 
+private class Content: UIView {
+    override var intrinsicContentSize: CGSize {
+        UIView.layoutFittingExpandedSize
+    }
+}
+
 class ConversationSingleViewController: UIViewController {
 
     private class Const {
@@ -20,29 +26,49 @@ class ConversationSingleViewController: UIViewController {
 
     private var dataSource: UITableViewDiffableDataSource<Section, MessageDTO>?
 
-    internal weak var conversationSingleViewModel: ConversationSingleViewModel?
+    internal weak var conversationSingleViewModel: ConversationSingleViewModel!
 
     private weak var conversation: ConversationDTO?
 
-    lazy private var navigationBarContent: UIView = {
+    lazy private var navigationBarContent: Content = {
+        let content = Content()
         let view = UIView()
-        view.addSubview(navigationUserImage)
+
+        view.addSubview(navigationUserImageView)
         view.addSubview(navigationUserLabel)
-        navigationUserImage.snp.makeConstraints { make in
+
+        navigationUserImageView.snp.makeConstraints { make in
             make.leading.equalToSuperview()
+            make.centerY.equalToSuperview()
+            make.top.equalToSuperview()
+            make.bottom.equalToSuperview()
+            make.width.equalTo(Const.navigationUserImageSize)
+            make.height.equalTo(Const.navigationUserImageSize)
+        }
+
+        navigationUserLabel.snp.makeConstraints { make in
+            make.leading.equalTo(navigationUserImageView.snp.trailing).inset(-10)
+            make.trailing.equalToSuperview()
+            make.centerY.equalToSuperview()
+        }
+
+        content.addSubview(view)
+        content.addSubview(optionImageView)
+        view.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+        }
+
+        optionImageView.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().inset(5)
             make.centerY.equalToSuperview()
             make.width.equalTo(Const.navigationUserImageSize)
             make.height.equalTo(Const.navigationUserImageSize)
         }
-        navigationUserLabel.snp.makeConstraints { make in
-            make.leading.equalTo(navigationUserImage.snp.trailing).inset(-10)
-            make.trailing.equalToSuperview()
-            make.centerY.equalToSuperview()
-        }
-        return view
+
+        return content
     }()
 
-    lazy private var navigationUserImage: UIImageView = {
+    lazy private var navigationUserImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.layer.cornerRadius = 14
         imageView.clipsToBounds = true
@@ -54,6 +80,18 @@ class ConversationSingleViewController: UIViewController {
         label.textColor = .darkText
         label.font = Const.navigationUserLabelFont
         return label
+    }()
+
+    lazy private var optionImageView: UIImageView = {
+        let imageView = UIImageView()
+        let image = UIImage(named: "ic_more_vert")
+        imageView.image = image
+        imageView.layer.cornerRadius = CGFloat(Const.navigationUserImageSize / 2)
+        imageView.layer.masksToBounds = true
+        imageView.isUserInteractionEnabled = true
+        imageView.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapOptionImageView))
+        ripple.activate(to: imageView)
+        return imageView
     }()
 
     lazy private var tableView: UITableView = {
@@ -69,22 +107,22 @@ class ConversationSingleViewController: UIViewController {
         return tableView
     }()
 
-    lazy var bottomTextField: BottomTextField = {
+    lazy private var bottomTextField: BottomTextField = {
         let view = BottomTextField()
         view.placeHolder = "대화를 입력 하세요."
-        view.configure(avatarUrl: conversationSingleViewModel?.getSession().user?.avatar)
+        view.configure(avatar: conversationSingleViewModel.avatar)
         view.configure(delegate: self)
         return view
     }()
 
-    lazy var closeTapBackground: UIView = {
+    lazy private var closeTapBackground: UIView = {
         let view = UIView()
         view.visible(false)
         view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(dismissTextField))
         return view
     }()
 
-    lazy var inactiveConversationView: UIView = {
+    lazy private var inactiveConversationView: UIView = {
         let view = UIView()
         view.backgroundColor = .white
         view.visible(false)
@@ -122,7 +160,7 @@ class ConversationSingleViewController: UIViewController {
         return view
     }()
 
-    lazy var starFallView: StarFallView = {
+    lazy private var starFallView: StarFallView = {
         let view = StarFallView()
         return view
     }()
@@ -133,20 +171,20 @@ class ConversationSingleViewController: UIViewController {
         return imageView
     }()
 
-    lazy var inactiveLabel1: UILabel = {
+    lazy private var inactiveLabel1: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 22)
         return label
     }()
 
-    lazy var inactiveLabel2: UILabel = {
+    lazy private var inactiveLabel2: UILabel = {
         let label = UILabel()
         label.text = "지금 대화를 나누어 보세요."
         label.textColor = .lightBlack
         return label
     }()
 
-    lazy var activeButton: UIButton = {
+    lazy private var activeButton: UIButton = {
         let button = UIButton()
         button.setTitle("대화방 오픈", for: .normal)
         button.titleLabel?.font = .boldSystemFont(ofSize: 20)
@@ -167,7 +205,7 @@ class ConversationSingleViewController: UIViewController {
         view.backgroundColor = .white
         navigationItem.backBarButtonItem = UIBarButtonItem.back
         navigationItem.titleView = navigationBarContent
-        navigationController?.navigationBar.barTintColor = .secondarySystemBackground
+        navigationController?.navigationBar.barTintColor = .white
         navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
         navigationController?.navigationBar.setValue(false, forKey: "hidesShadow")
         navigationController?.navigationBar.isTranslucent = true
@@ -266,13 +304,22 @@ class ConversationSingleViewController: UIViewController {
                 toast(message: message)
             })
             .disposed(by: disposeBag)
+
+        conversationSingleViewModel?
+            .back
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] message in
+                navigationController?.popViewController(animated: true)
+            })
+            .disposed(by: disposeBag)
     }
 
     private func navigation() {
         let nickname = conversation?.partner?.nickname ?? "알 수 없음"
         let age = conversation?.partner?.age ?? 0
         let avatar = conversation?.partner?.avatar
-        navigationUserImage.url(avatar)
+        navigationUserImageView.url(avatar)
         navigationUserLabel.text = "\(nickname), \(age)"
     }
 
@@ -365,6 +412,64 @@ class ConversationSingleViewController: UIViewController {
 
     private func updateConversationAvailable() {
         conversationSingleViewModel?.updateConversationAvailable(conversation: conversation)
+    }
+
+    @objc func didTapOptionImageView() {
+        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let reportAction = UIAlertAction(title: "신고", style: .default) { [unowned self] (action) in
+            guard let user = conversation?.partner else {
+                return
+            }
+            Channel.next(reportee: user)
+            navigationController?.pushViewController(
+                .report,
+                current: self,
+                hideBottomWhenStart: true,
+                hideBottomWhenEnd: true
+            )
+        }
+        let leaveAction = UIAlertAction(title: "나가기", style: .default) { [unowned self] (action) in
+            let alertController = UIAlertController(
+                title: "삭제 된 대화방 데이터는 절대로 되돌릴 수 없습니다.",
+                message: "정말로 나가시겠습니까?",
+                preferredStyle: .actionSheet
+            )
+            let confirmAction = UIAlertAction(title: "네, 확실합니다.", style: .default) { [unowned self] (action) in
+                conversationSingleViewModel.leaveConversation()
+            }
+            let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+            alertController.addAction(confirmAction)
+            alertController.addAction(cancelAction)
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                if let popoverController = alertController.popoverPresentationController {
+                    let sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 0, height: 0)
+                    popoverController.sourceView = view
+                    popoverController.sourceRect = sourceRect
+                    popoverController.permittedArrowDirections = []
+                    present(alertController, animated: true, completion: nil)
+                }
+            } else {
+                present(alertController, animated: true, completion: nil)
+            }
+        }
+
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        cancelAction.setValue(UIColor.red, forKey: "titleTextColor")
+        alertController.addAction(leaveAction)
+        alertController.addAction(reportAction)
+        alertController.addAction(cancelAction)
+        alertController.modalPresentationStyle = .popover
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            if let popoverController = alertController.popoverPresentationController {
+                let sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 0, height: 0)
+                popoverController.sourceView = view
+                popoverController.sourceRect = sourceRect
+                popoverController.permittedArrowDirections = []
+                present(alertController, animated: true, completion: nil)
+            }
+        } else {
+            present(alertController, animated: true, completion: nil)
+        }
     }
 }
 

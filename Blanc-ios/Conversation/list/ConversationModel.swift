@@ -206,14 +206,18 @@ class ConversationModel {
             .leaveConversation(uid: session.uid, conversationId: conversationId, userId: session.id)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .subscribe(onSuccess: {
-                if let index = self.conversations.firstIndex(where: { $0.id == conversationId }) {
-                    self.conversations.remove(at: index)
-                }
-                self.publish()
+            .subscribe(onSuccess: { [unowned self] _ in
+                remove(conversationId: conversationId)
             }, onError: { err in
                 log.error(err)
             })
             .disposed(by: disposeBag)
+    }
+
+    func remove(conversationId: String?) {
+        if let index = conversations.firstIndex(where: { $0.id == conversationId }) {
+            conversations.remove(at: index)
+        }
+        publish()
     }
 }

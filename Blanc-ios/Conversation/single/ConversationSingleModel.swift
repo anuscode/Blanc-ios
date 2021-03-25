@@ -7,6 +7,10 @@ class ConversationSingleModel {
 
     private let disposeBag: DisposeBag = DisposeBag()
 
+    private let auth: Auth = Auth.auth()
+
+    private let realm = try! Realm()
+
     private let observable: ReplaySubject = ReplaySubject<ConversationDTO>.create(bufferSize: 1)
 
     private var conversation: ConversationDTO?
@@ -15,13 +19,12 @@ class ConversationSingleModel {
 
     private let conversationService: ConversationService
 
-    private let auth: Auth = Auth.auth()
+    private let conversationModel: ConversationModel
 
-    private let realm = try! Realm()
-
-    init(session: Session, conversationService: ConversationService) {
+    init(session: Session, conversationService: ConversationService, conversationModel: ConversationModel) {
         self.session = session
         self.conversationService = conversationService
+        self.conversationModel = conversationModel
         populate()
         subscribeBroadcast()
         subscribeBackground()
@@ -192,10 +195,6 @@ class ConversationSingleModel {
             .disposed(by: disposeBag)
     }
 
-    func getSession() -> Session {
-        session
-    }
-
     func setReadAll() {
         guard let message = conversation?.messages?.last else {
             return
@@ -214,5 +213,24 @@ class ConversationSingleModel {
                 self.realm.add(entity)  // insert
             }
         }
+    }
+
+    func leaveConversation() -> Single<Void> {
+        guard let uid = auth.uid,
+              let conversationId = conversation?.id,
+              let userId = session.id else {
+            return Single<Void>.just(Void())
+        }
+        return conversationService
+            .leaveConversation(
+                uid: uid,
+                conversationId: conversationId,
+                userId: userId
+            )
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .do(onNext: { [unowned self] _ in
+                conversationModel.remove(conversationId: conversationId)
+            })
     }
 }

@@ -366,15 +366,21 @@ extension SwinjectStoryboard {
         defaultContainer.register(ConversationSingleModel.self) { resolver in
             let session = resolver ~> Session.self
             let conversationService = resolver ~> ConversationService.self
+            let conversationModel = resolver ~> ConversationModel.self
             let conversationSingleModel = ConversationSingleModel(
-                session: session, conversationService: conversationService
+                session: session,
+                conversationService: conversationService,
+                conversationModel: conversationModel
             )
             return conversationSingleModel
         }.inObjectScope(.conversationSingleScope)
         defaultContainer.register(ConversationSingleViewModel.self) { resolver in
+            let session = resolver ~> Session.self
             let conversationSingleModel = resolver ~> ConversationSingleModel.self
             let conversationSingleViewModel = ConversationSingleViewModel(
-                conversationSingleModel: conversationSingleModel)
+                session:session,
+                conversationSingleModel: conversationSingleModel
+            )
             return conversationSingleViewModel
         }.inObjectScope(.conversationSingleScope)
 
