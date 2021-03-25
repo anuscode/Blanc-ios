@@ -27,9 +27,9 @@ class LoginViewController: UIViewController {
 
     private let manager = CLLocationManager()
 
-    var userService: UserService?
+    internal var userService: UserService?
 
-    var session: Session?
+    internal var session: Session?
 
     fileprivate var currentNonce: String?
 
@@ -223,7 +223,8 @@ class LoginViewController: UIViewController {
 
     lazy private var versionLabel: UILabel = {
         let label = UILabel()
-        label.text = "presented by ground • v1.0.4"
+        let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+        label.text = "by ground • v\(appVersion ?? "1.0.0")"
         label.font = .systemFont(ofSize: 12, weight: .light)
         label.numberOfLines = 1;
         label.textColor = .black
