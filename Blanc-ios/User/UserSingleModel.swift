@@ -33,6 +33,7 @@ class UserSingleModel {
         self.postService = postService
         self.requestService = requestService
         populate()
+        subscribeSynchronize()
     }
 
     deinit {
@@ -93,8 +94,21 @@ class UserSingleModel {
                 // TODO: make new instance..
                 repository.user.relationship = session.relationship(with: repository.user)
                 publish()
-            }, onError: { err in
-                log.error(err)
+            })
+            .disposed(by: disposeBag)
+    }
+
+    func subscribeSynchronize() {
+        Synchronize
+            .post
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .subscribe(onNext: { [unowned self] post in
+                if let posts = repository.user.posts,
+                   let index = posts.firstIndex(where: { $0.id == post.id }) {
+                    repository.user.posts?[index] = post
+                    publish()
+                }
             })
             .disposed(by: disposeBag)
     }
@@ -212,9 +226,6 @@ class UserSingleModel {
         if (post?.favoriteUserIds?.firstIndex(of: userId) == nil) {
             post?.favoriteUserIds?.append(userId)
         }
-        if let index = repository.user.posts?.firstIndex(where: { $0.id == postId }) {
-            repository.user.posts?.diffable(index)
-        }
         publish()
         postService
             .createFavorite(uid: uid, postId: postId)
@@ -238,9 +249,6 @@ class UserSingleModel {
         }
         if let index = post?.favoriteUserIds?.firstIndex(of: userId) {
             post?.favoriteUserIds?.remove(at: index)
-        }
-        if let index = repository.user.posts?.firstIndex(where: { $0.id == postId }) {
-            repository.user.posts?.diffable(index)
         }
         publish()
         postService
