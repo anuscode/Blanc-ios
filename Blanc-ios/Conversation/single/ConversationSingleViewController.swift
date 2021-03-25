@@ -169,7 +169,7 @@ class ConversationSingleViewController: UIViewController {
         navigationItem.titleView = navigationBarContent
         navigationController?.navigationBar.barTintColor = .secondarySystemBackground
         navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
-        navigationController?.navigationBar.shadowImage = nil
+        navigationController?.navigationBar.setValue(false, forKey: "hidesShadow")
         navigationController?.navigationBar.isTranslucent = true
     }
 

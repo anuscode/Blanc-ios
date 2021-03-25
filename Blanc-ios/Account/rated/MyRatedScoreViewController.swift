@@ -102,7 +102,7 @@ class MyRatedScoreViewController: UIViewController {
         extendedLayoutIncludesOpaqueBars = false
         navigationBarContent.alpha = 100
         navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
-        navigationController?.navigationBar.shadowImage = nil
+        navigationController?.navigationBar.setValue(false, forKey: "hidesShadow")
         navigationController?.navigationBar.isTranslucent = true
         navigationController?.navigationBar.alpha = 100
         navigationController?.setNavigationBarHidden(false, animated: animated)

@@ -107,7 +107,7 @@ class ConversationViewController: UIViewController {
         navigationItem.leftBarButtonItem = leftBarButtonItem
         navigationController?.navigationBar.barTintColor = .white
         navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
-        navigationController?.navigationBar.shadowImage = nil
+        navigationController?.navigationBar.setValue(false, forKey: "hidesShadow")
         navigationController?.navigationBar.isTranslucent = true
         !emptyView.isHidden ? emptyView.play() : ({ return })()
     }

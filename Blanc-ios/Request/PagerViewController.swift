@@ -2,55 +2,6 @@ import UIKit
 import Parchment
 import FSPagerView
 
-extension UIView {
-    func constrainToEdges(_ subview: UIView) {
-
-        subview.translatesAutoresizingMaskIntoConstraints = false
-
-        let topContraint = NSLayoutConstraint(
-            item: subview,
-            attribute: .top,
-            relatedBy: .equal,
-            toItem: self,
-            attribute: .top,
-            multiplier: 1.0,
-            constant: 0)
-
-        let bottomConstraint = NSLayoutConstraint(
-            item: subview,
-            attribute: .bottom,
-            relatedBy: .equal,
-            toItem: self,
-            attribute: .bottom,
-            multiplier: 1.0,
-            constant: 0)
-
-        let leadingContraint = NSLayoutConstraint(
-            item: subview,
-            attribute: .leading,
-            relatedBy: .equal,
-            toItem: self,
-            attribute: .leading,
-            multiplier: 1.0,
-            constant: 0)
-
-        let trailingContraint = NSLayoutConstraint(
-            item: subview,
-            attribute: .trailing,
-            relatedBy: .equal,
-            toItem: self,
-            attribute: .trailing,
-            multiplier: 1.0,
-            constant: 0)
-
-        addConstraints([
-            topContraint,
-            bottomConstraint,
-            leadingContraint,
-            trailingContraint])
-    }
-}
-
 class PagerViewController: UIViewController {
 
     private let fireworkController = ClassicFireworkController()
@@ -153,6 +104,10 @@ class PagerViewController: UIViewController {
         navigationItem.rightBarButtonItem = rightBarButtonItem
         navigationItem.leftBarButtonItem = leftBarButtonItem
         navigationController?.navigationBar.barTintColor = .white
+        navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
+        navigationController?.navigationBar.setValue(false, forKey: "hidesShadow")
+        navigationController?.navigationBar.isTranslucent = true
+        print("!@#")
     }
 
     override func viewDidLoad() {
@@ -184,36 +139,30 @@ class PagerViewController: UIViewController {
     }
 
     private func configureConstraints() {
-
         guideLine.snp.makeConstraints { make in
             make.leading.equalToSuperview()
             make.top.equalTo(view.safeAreaLayoutGuide).inset(50)
         }
-
         titleLabel1.snp.makeConstraints { make in
             make.bottom.equalTo(guideLine.snp.top)
             make.leading.equalToSuperview().inset(15)
         }
-
         underLine1.snp.makeConstraints { make in
             make.top.equalTo(titleLabel1.snp.bottom).offset(5)
             make.leading.equalTo(titleLabel1.snp.leading)
             make.trailing.equalTo(titleLabel1.snp.trailing)
             make.height.equalTo(3)
         }
-
         titleLabel2.snp.makeConstraints { make in
             make.bottom.equalTo(guideLine.snp.top)
             make.leading.equalTo(titleLabel1.snp.trailing).offset(10)
         }
-
         underLine2.snp.makeConstraints { make in
             make.top.equalTo(titleLabel2.snp.bottom).offset(5)
             make.leading.equalTo(titleLabel2.snp.leading)
             make.trailing.equalTo(titleLabel2.snp.trailing)
             make.height.equalTo(3)
         }
-
         pageViewController.view.snp.makeConstraints { make in
             make.top.equalTo(titleLabel1.snp.bottom).offset(20)
             make.leading.equalToSuperview()

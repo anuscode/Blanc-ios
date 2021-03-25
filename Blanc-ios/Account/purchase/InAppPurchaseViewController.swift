@@ -87,7 +87,7 @@ class InAppPurchaseViewController: UIViewController {
         navigationItem.leftItemsSupplementBackButton = true
         navigationController?.navigationBar.barTintColor = .white
         navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
-        navigationController?.navigationBar.shadowImage = nil
+        navigationController?.navigationBar.setValue(false, forKey: "hidesShadow")
         navigationController?.navigationBar.isTranslucent = true
     }
 
