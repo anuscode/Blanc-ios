@@ -8,32 +8,17 @@ class SystemMessageTableViewCell: UITableViewCell {
 
     private weak var message: MessageDTO?
 
-    lazy private var timeView: UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.black.withAlphaComponent(0.4)
-        view.layer.cornerRadius = 15
-        view.layer.masksToBounds = true
-        view.addSubview(timeLabel)
-        timeLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-            make.bottom.equalToSuperview()
-            make.leading.equalToSuperview().inset(15)
-            make.trailing.equalToSuperview().inset(15)
-        }
-        return view
-    }()
-
     lazy private var timeLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .white
-        label.font = .systemFont(ofSize: 14)
+        label.textColor = .secondaryLabel
+        label.font = .systemFont(ofSize: 12)
         return label
     }()
 
     lazy private var messageLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
-        label.font = .systemFont(ofSize: 12, weight: .light)
+        label.font = .systemFont(ofSize: 12)
         label.textColor = .secondaryLabel
         return label
     }()
@@ -53,19 +38,19 @@ class SystemMessageTableViewCell: UITableViewCell {
     }
 
     private func configureSubviews() {
-        contentView.addSubview(timeView)
+        contentView.addSubview(timeLabel)
         contentView.addSubview(messageLabel)
     }
 
     private func configureConstraints() {
-        timeView.snp.makeConstraints { make in
-            make.top.equalToSuperview()
+        timeLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(5)
             make.centerX.equalToSuperview()
             make.height.equalTo(30)
         }
         messageLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalTo(timeView.snp.bottom).offset(10)
+            make.top.equalTo(timeLabel.snp.bottom).inset(4)
             make.bottom.equalToSuperview().inset(10)
         }
     }

@@ -23,7 +23,7 @@ class LeftMessageTableViewCell: UITableViewCell {
     lazy private var nicknameLabel: UILabel = {
         let label = UILabel()
         label.textColor = UIColor(red: 91 / 255, green: 98 / 255, blue: 107 / 255, alpha: 1.0)
-        label.font = .systemFont(ofSize: 14)
+        label.font = .systemFont(ofSize: 12)
         return label
     }()
 
@@ -31,17 +31,22 @@ class LeftMessageTableViewCell: UITableViewCell {
         let view = UIView()
         view.backgroundColor = UIColor(hexCode: "F0F0F0")
         view.layer.cornerRadius = 10
+        view.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner, .layerMaxXMinYCorner]
         view.addSubview(messageLabel)
         messageLabel.snp.makeConstraints { make in
-            make.edges.equalToSuperview().inset(12)
+            make.leading.equalToSuperview().inset(12)
+            make.trailing.equalToSuperview().inset(12)
+            make.top.equalToSuperview().inset(6)
+            make.bottom.equalToSuperview().inset(6)
         }
+
         return view
     }()
 
     lazy private var messageLabel: UILabel = {
         let label = UILabel()
         label.numberOfLines = 0
-        label.font = .systemFont(ofSize: 17)
+        label.font = .systemFont(ofSize: 16)
         label.textColor = .lightBlack
         return label
     }()
@@ -49,7 +54,7 @@ class LeftMessageTableViewCell: UITableViewCell {
     lazy private var timeLabel: UILabel = {
         let label = UILabel()
         label.textColor = .gray
-        label.font = .systemFont(ofSize: 10, weight: .thin)
+        label.font = .systemFont(ofSize: 8, weight: .thin)
         return label
     }()
 
@@ -85,7 +90,7 @@ class LeftMessageTableViewCell: UITableViewCell {
 
         messageView.snp.makeConstraints { make in
             make.top.equalTo(nicknameLabel.snp.bottom).inset(-3)
-            make.leading.equalTo(userImage.snp.trailing).inset(-5)
+            make.leading.equalTo(userImage.snp.trailing).inset(-10)
             make.bottom.equalToSuperview().inset(5)
         }
 
@@ -101,7 +106,7 @@ class LeftMessageTableViewCell: UITableViewCell {
         let nickname = user?.nickname ?? "알 수 없음"
         let message = message?.message ?? ""
         let time = self.message?.createdAt?.asHourMinute() ?? ""
-        let textSize = getTextSize(message, padding: 12)
+        let messageViewSize = getMessageViewSize(message, horizontalPadding: 12, verticalPadding: 8)
         let imageSize = CGSize(width: Const.imageDiameter, height: Const.imageDiameter)
 
         userImage.url(avatar, size: imageSize)
@@ -109,16 +114,23 @@ class LeftMessageTableViewCell: UITableViewCell {
         messageLabel.text = message
         timeLabel.text = time
 
-        messageView.width(textSize.width)
-        messageView.height(textSize.height)
+        messageView.width(messageViewSize.width)
+        messageView.height(messageViewSize.height)
     }
 
-    private func getTextSize(_ text: String, padding: CGFloat) -> CGSize {
-        let maxWidth = UIScreen.main.bounds.size.width * 3 / 4
+    private func getMessageViewSize(_ text: String, horizontalPadding: CGFloat, verticalPadding: CGFloat) -> CGSize {
+        let imageDiameter: CGFloat = Const.imageDiameter
+        let imageLeftPadding: CGFloat = 10
+        let imageRightPadding: CGFloat = 10
+        let safeWidth = imageDiameter + imageLeftPadding + imageRightPadding
+        let maxWidth = UIScreen.main.bounds.size.width * 3 / 4 - safeWidth
         let maxSize = CGSize(width: maxWidth, height: 0)
         var rect = text.boundingRect(with: maxSize, options: .usesLineFragmentOrigin,
-                attributes: [NSAttributedString.Key.font: messageLabel.font], context: nil)
-        rect.size = CGSize(width: ceil(rect.size.width) + 2 * padding, height: ceil(rect.size.height) + 2 * padding)
+            attributes: [NSAttributedString.Key.font: messageLabel.font], context: nil)
+        rect.size = CGSize(
+            width: ceil(rect.size.width) + 2 * horizontalPadding,
+            height: ceil(rect.size.height) + 2 * verticalPadding
+        )
         return rect.size
     }
 }
