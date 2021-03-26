@@ -54,6 +54,10 @@ extension UIColor {
     static let customGray8: UIColor = UIColor(hexCode: "585858")
     static let slateGray: UIColor = UIColor(hexCode: "657383")
 
+    static var lightBlue: UIColor {
+        return UIColor(red: 0, green: 184/255, blue: 1.0, alpha: 1.0)
+    }
+
     static let thirdlySystemBackground: UIColor = UIColor(hexCode: "f9faf9")
 
     static func random() -> UIColor {
