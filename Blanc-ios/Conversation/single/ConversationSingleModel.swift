@@ -135,13 +135,15 @@ class ConversationSingleModel {
 
     private func appendMessage(push: PushDTO) {
         let message = MessageDTO.from(push: push)
-        guard (message.id.isNotEmpty()) else {
+        guard let _ = message.conversationId,
+              let messageId = message.id else {
             return
         }
-        guard (message.conversationId.isNotEmpty()) else {
-            return
+        if (conversation?.messages?.firstIndex(where: {
+            $0.id == messageId
+        }) == nil) {
+            conversation?.messages?.append(message)
         }
-        conversation?.messages?.append(message)
     }
 
     func updateConversationAvailable(
