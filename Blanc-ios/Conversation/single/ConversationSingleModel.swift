@@ -139,9 +139,8 @@ class ConversationSingleModel {
               let messageId = message.id else {
             return
         }
-        if (conversation?.messages?.firstIndex(where: {
-            $0.id == messageId
-        }) == nil) {
+        let index = conversation?.messages?.firstIndex(where: { $0.id == messageId })
+        if (index != nil) {
             conversation?.messages?.append(message)
         }
     }
