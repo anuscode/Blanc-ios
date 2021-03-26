@@ -114,6 +114,7 @@ class UserSingleViewController: UIViewController {
         tableView.register(MatchingTableViewCell.self, forCellReuseIdentifier: MatchingTableViewCell.identifier)
         tableView.register(ProfileTableViewCell.self, forCellReuseIdentifier: ProfileTableViewCell.identifier)
         tableView.register(PostListResourceTableViewCell.self, forCellReuseIdentifier: PostListResourceTableViewCell.identifier)
+        tableView.register(EmptySectionTableViewCell.self, forCellReuseIdentifier: EmptySectionTableViewCell.identifier)
         tableView.separatorColor = .clear
         tableView.allowsSelection = false
         return tableView
@@ -283,7 +284,7 @@ class UserSingleViewController: UIViewController {
     }
 
     private func configureTableView() {
-        dataSource = DataSource<Section, AnyHashable>(tableView: tableView) { [unowned self] (tableView, indexPath, user) -> UITableViewCell? in
+        dataSource = DataSource<Section, AnyHashable>(tableView: tableView) { [unowned self] (tableView, indexPath, item) -> UITableViewCell? in
             if indexPath.section == 0 {
                 let cell = tableView.dequeueReusableCell(
                     withIdentifier: CarouselTableViewCell.identifier, for: indexPath) as! CarouselTableViewCell
@@ -300,10 +301,20 @@ class UserSingleViewController: UIViewController {
                 cell.bind(user: data?.body[0].user, delegate: self)
                 return cell
             } else {
-                let cell = tableView.dequeueReusableCell(
-                    withIdentifier: PostListResourceTableViewCell.identifier, for: indexPath) as! PostListResourceTableViewCell
-                cell.bind(post: data?.posts[indexPath.row], bodyDelegate: self)
-                return cell
+                let post = item as! PostDTO
+                if (post.id.isEmpty()) {
+                    let cell = tableView.dequeueReusableCell(
+                        withIdentifier: EmptySectionTableViewCell.identifier, for: indexPath) as! EmptySectionTableViewCell
+                    let mainText = "게시물이 존재하지 않습니다."
+                    let secondaryText = "해당 사용자는 게시물을 등록 한 적이 없습니다."
+                    cell.bind(mainText: mainText, secondaryText: secondaryText)
+                    return cell
+                } else {
+                    let cell = tableView.dequeueReusableCell(
+                        withIdentifier: PostListResourceTableViewCell.identifier, for: indexPath) as! PostListResourceTableViewCell
+                    cell.bind(post: post, bodyDelegate: self)
+                    return cell
+                }
             }
         }
         dataSource.defaultRowAnimation = .none
@@ -318,7 +329,7 @@ class UserSingleViewController: UIViewController {
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [unowned self] data in
                 self.data = data
-                update(data, animatingDifferences: true)
+                update(data)
             })
             .disposed(by: disposeBag)
 
@@ -400,13 +411,17 @@ class UserSingleViewController: UIViewController {
         }
     }
 
-    private func update(_ data: UserSingleData, animatingDifferences: Bool) {
+    private func update(_ data: UserSingleData, animatingDifferences: Bool = true) {
         var snapshot = NSDiffableDataSourceSnapshot<Section, AnyHashable>()
         snapshot.appendSections([.Carousel, .Belt, .Body, .Posts])
-        snapshot.appendItems(data.carousel, toSection: .Carousel)
-        snapshot.appendItems(data.belt, toSection: .Belt)
-        snapshot.appendItems(data.body, toSection: .Body)
-        snapshot.appendItems(data.posts, toSection: .Posts)
+        let carousel = data.carousel
+        let belt = data.belt
+        let body = data.body
+        let posts = data.posts.isEmpty ? [PostDTO()] : data.posts
+        snapshot.appendItems(carousel, toSection: .Carousel)
+        snapshot.appendItems(belt, toSection: .Belt)
+        snapshot.appendItems(body, toSection: .Body)
+        snapshot.appendItems(posts, toSection: .Posts)
         dataSource.apply(snapshot, animatingDifferences: animatingDifferences)
     }
 
