@@ -2,10 +2,6 @@ import UIKit
 import FirebaseAuth
 import RxSwift
 
-enum View {
-    case LOGIN, MAIN, REGISTRATION, SMS
-}
-
 class InitPagerViewController: UIPageViewController {
 
     private let disposeBag: DisposeBag = DisposeBag()
@@ -15,6 +11,8 @@ class InitPagerViewController: UIPageViewController {
     internal var session: Session?
 
     internal var userService: UserService?
+
+    internal var navigation: Navigation?
 
     lazy private var gradient: GradientView = {
         let alpha0 = UIColor.tinderPink
@@ -68,85 +66,32 @@ class InitPagerViewController: UIPageViewController {
     }
 
     private func initRoute() {
-        route()
+        navigation?
+            .next()
             .observeOn(MainScheduler.instance)
-            .flatMap { view -> Single<View> in
-                self.delay(1.5).map({ view })
-            }
-            .subscribe(onSuccess: { view in
-                switch view {
+            .delay(1.5, scheduler: MainScheduler.asyncInstance)
+            .subscribe(onSuccess: { [unowned self] next in
+                log.info(next)
+                switch next {
                 case .MAIN:
-                    self.replace(storyboard: "Main",
-                        withIdentifier: "MainTabBarController")
+                    replace(storyboard: "Main", withIdentifier: "MainTabBarController")
                 case .LOGIN:
-                    self.replace(storyboard: "Main",
-                        withIdentifier: "LoginViewController")
+                    replace(storyboard: "Main", withIdentifier: "LoginViewController")
                 case .REGISTRATION:
-                    self.replace(storyboard: "Registration",
-                        withIdentifier: "RegistrationNavigationViewController")
+                    replace(storyboard: "Registration", withIdentifier: "RegistrationNavigationViewController")
                 case .SMS:
-                    self.replace(storyboard: "Sms",
-                        withIdentifier: "SmsViewController")
+                    replace(storyboard: "Sms", withIdentifier: "SmsViewController")
+                case .LOCATION:
+                    let storyboard = UIStoryboard(name: "Authorization", bundle: nil)
+                    let controller = storyboard.instantiateViewController(
+                        withIdentifier: "LocationAuthorizationViewController"
+                    ) as! LocationAuthorizationViewController
+                    controller.modalPresentationStyle = .fullScreen
+                    present(controller, animated: true, completion: nil)
                 }
             }, onError: { err in
                 log.error(err)
             })
             .disposed(by: disposeBag)
-    }
-
-    private func route() -> Single<View> {
-        let subject: ReplaySubject<View> = ReplaySubject.create(bufferSize: 1)
-        guard let userService = userService,
-              let uid = auth.currentUser?.uid else {
-            subject.onNext(View.LOGIN)
-            return subject.take(1).asSingle()
-        }
-        userService
-            .isRegistered(uid: uid)
-            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-            .observeOn(MainScheduler.asyncInstance)
-            .subscribe(onSuccess: { isRegistered in
-                switch isRegistered {
-                case true:
-                    self.route(subject)
-                case false:
-                    subject.onNext(View.SMS)
-                }
-            }, onError: { err in
-                log.error(err)
-                self.toast(message: "유저 가입정보를 가져오는데 실패 하였습니다.")
-            })
-            .disposed(by: disposeBag)
-
-        return subject.take(1).asSingle()
-    }
-
-    private func route(_ subject: ReplaySubject<View>) {
-        session?
-            .generate()
-            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-            .observeOn(MainScheduler.asyncInstance)
-            .subscribe(onSuccess: { user in
-                let available = self.session?.user?.available
-                switch available {
-                case true:
-                    subject.onNext(View.MAIN)
-                default:
-                    subject.onNext(View.REGISTRATION)
-                }
-            }, onError: { err in
-                log.error(err)
-                self.replace(withIdentifier: "LoginViewController")
-                self.toast(message: "세션 정보를 가져오는데 실패 하였습니다.")
-            })
-            .disposed(by: disposeBag)
-    }
-
-    private func delay(_ seconds: Double) -> Single<Void> {
-        let observable: ReplaySubject = ReplaySubject<Void>.create(bufferSize: 1)
-        DispatchQueue.main.asyncAfter(deadline: .now() + seconds) {
-            observable.onNext(Void())
-        }
-        return observable.take(1).asSingle()
     }
 }

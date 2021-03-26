@@ -26,8 +26,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     private let gcmMessageIDKey = "gcm.message_id"
 
-    private let backgroundNotificationHandler = BackgroundNotificationHandler()
-
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
 
@@ -49,22 +47,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if #available(iOS 10.0, *) {
             // For iOS 10 display notification (sent via APNS)
             UNUserNotificationCenter.current().delegate = self
-            let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
-            UNUserNotificationCenter.current().requestAuthorization(
-                    options: authOptions) { (granted, error) in
-                guard (error == nil) else {
-                    log.error(error!.localizedDescription)
-                    return
-                }
-                if granted {
-                    log.info("APNS Push authorization has been granted..")
-                } else {
-                    log.info("APNS Push authorization has been rejected..")
-                }
-            }
         } else {
-            let settings: UIUserNotificationSettings =
-                    UIUserNotificationSettings(types: [.alert, .badge, .sound], categories: nil)
+            let types: UIUserNotificationType = [.alert, .badge, .sound]
+            let settings: UIUserNotificationSettings = UIUserNotificationSettings(types: types, categories: nil)
             application.registerUserNotificationSettings(settings)
         }
 
@@ -105,9 +90,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         if url.absoluteString.contains("fb") {
             return ApplicationDelegate.shared.application(
-                    application, open: url,
-                    sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String,
-                    annotation: options[UIApplication.OpenURLOptionsKey.annotation]
+                application, open: url,
+                sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String,
+                annotation: options[UIApplication.OpenURLOptionsKey.annotation]
             )
         }
 
@@ -240,8 +225,4 @@ extension UNNotificationAttachment {
         }
         return nil
     }
-}
-
-class BackgroundNotificationHandler {
-
 }

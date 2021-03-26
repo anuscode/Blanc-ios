@@ -589,21 +589,6 @@
             </objects>
             <point key="canvasLocation" x="1458" y="7592"/>
         </scene>
-        <!--Authorization Warning View Controller-->
-        <scene sceneID="HSh-h7-WGz">
-            <objects>
-                <viewController storyboardIdentifier="AuthorizationWarningViewController" id="8IO-gv-SP7" customClass="AuthorizationWarningViewController" customModule="Blanc_ios" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="YFI-Vs-by8">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="5QI-sn-R0Q"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="D04-bB-Nkw" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-2226" y="5058"/>
-        </scene>
     </scenes>
     <color key="tintColor" systemColor="labelColor"/>
     <resources>

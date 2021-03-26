@@ -262,6 +262,7 @@
 		1061E0202604421D00A0F29E /* ReportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1061E01F2604421D00A0F29E /* ReportViewController.swift */; };
 		1061E0282604422B00A0F29E /* ReportViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1061E0272604422B00A0F29E /* ReportViewModel.swift */; };
 		1061E02D2604423500A0F29E /* ReportModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1061E02C2604423500A0F29E /* ReportModel.swift */; };
+		10B4A6CA260E14D60045F839 /* Authorization.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 10B4A6C9260E14D60045F839 /* Authorization.storyboard */; };
 		10C624B625EA71D70058D923 /* wink.json in Resources */ = {isa = PBXBuildFile; fileRef = 10C624B525EA71D70058D923 /* wink.json */; };
 		10D9E726260CDEC300C0876B /* location.json in Resources */ = {isa = PBXBuildFile; fileRef = 10D9E725260CDEC300C0876B /* location.json */; };
 		10E94E8C25FA56EF0084DB84 /* RegistrationImageGuideViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10E94E8B25FA56EF0084DB84 /* RegistrationImageGuideViewController.swift */; };
@@ -269,6 +270,7 @@
 		69A10C304D3EE8E1BC424287 /* Pods_Blanc_ios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86136E85AB864A9141A83B37 /* Pods_Blanc_ios.framework */; };
 		7A481E8EFA2268096059CF76 /* Pods_Blanc_iosTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 89DD709C0040CF6E7F18A036 /* Pods_Blanc_iosTests.framework */; };
 		C47AA032B7DA2F2DEC912127 /* InAppPurchaseModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AADDF123DA705D0D31C70 /* InAppPurchaseModel.swift */; };
+		C47AA05216AC4B0E15618270 /* Navigation.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AAD91E6A0C7E71D28A587 /* Navigation.swift */; };
 		C47AA0787546439A78AD586D /* ReportProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AAC1C7869558086B8F425 /* ReportProvider.swift */; };
 		C47AA16A0E6AC78EEB5E43A7 /* CLLocationManagerEvents+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA6A4C0FC210FE7589BD8 /* CLLocationManagerEvents+Rx.swift */; };
 		C47AA1900B60991001A67110 /* UIViewController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA38B8F28E7FCD81FD02B /* UIViewController+Extension.swift */; };
@@ -293,6 +295,7 @@
 		C47AA94E16B75C679F0B7819 /* CLLocationManagerDelegateEvents+Rx.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA6DD792D18E8B9A36E7E /* CLLocationManagerDelegateEvents+Rx.swift */; };
 		C47AA9B1451CD90F013EFECF /* UINavigationController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA39FA440727C495C4A05 /* UINavigationController+Extension.swift */; };
 		C47AAA1BC448AEA0E6315C5B /* PaymentDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA7CE2AEB97BACCEA02C2 /* PaymentDTO.swift */; };
+		C47AAA1C7E3F89F875B25AF2 /* LocationAuthorizationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA6F5BFC6829FE4A41949 /* LocationAuthorizationViewController.swift */; };
 		C47AAA2D5DA57EA964BDBCBD /* ReportService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA7AC3DB9F77F86C30A27 /* ReportService.swift */; };
 		C47AAC710904FCAC4ED142AF /* HomeTableViewHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA3DAE8E1EF20A2B33F42 /* HomeTableViewHeaderView.swift */; };
 		C47AACB80C4E25328701D663 /* EmptySectionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA9EF18F431B5324A71E7 /* EmptySectionTableViewCell.swift */; };
@@ -305,7 +308,6 @@
 		C47AAE6C08203E77C969B645 /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA72570EBB462B489CDB6 /* Background.swift */; };
 		C47AAEA7329508C8EC6BCF60 /* SelectionCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA2DED05182E1C2C41D5D /* SelectionCollectionViewCell.swift */; };
 		C47AAF716BA8477C9CD0412A /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA3E64CCA2CB2598F30E6 /* Helpers.swift */; };
-		C47AAF89EFD6B0920C1BA189 /* AuthorizationWarningViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AAE850E9FDA8B3695A677 /* AuthorizationWarningViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -589,6 +591,7 @@
 		1061E01F2604421D00A0F29E /* ReportViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportViewController.swift; sourceTree = "<group>"; };
 		1061E0272604422B00A0F29E /* ReportViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportViewModel.swift; sourceTree = "<group>"; };
 		1061E02C2604423500A0F29E /* ReportModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportModel.swift; sourceTree = "<group>"; };
+		10B4A6C9260E14D60045F839 /* Authorization.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Authorization.storyboard; sourceTree = "<group>"; };
 		10C624B525EA71D70058D923 /* wink.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = wink.json; sourceTree = "<group>"; };
 		10D9E725260CDEC300C0876B /* location.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = location.json; path = ../../../../Downloads/location.json; sourceTree = "<group>"; };
 		10E94E8B25FA56EF0084DB84 /* RegistrationImageGuideViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationImageGuideViewController.swift; sourceTree = "<group>"; };
@@ -616,6 +619,7 @@
 		C47AA6A4C0FC210FE7589BD8 /* CLLocationManagerEvents+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CLLocationManagerEvents+Rx.swift"; sourceTree = "<group>"; };
 		C47AA6B42E110C411BA90F59 /* PaymentProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PaymentProvider.swift; sourceTree = "<group>"; };
 		C47AA6DD792D18E8B9A36E7E /* CLLocationManagerDelegateEvents+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CLLocationManagerDelegateEvents+Rx.swift"; sourceTree = "<group>"; };
+		C47AA6F5BFC6829FE4A41949 /* LocationAuthorizationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationAuthorizationViewController.swift; sourceTree = "<group>"; };
 		C47AA72570EBB462B489CDB6 /* Background.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Background.swift; sourceTree = "<group>"; };
 		C47AA7AC3DB9F77F86C30A27 /* ReportService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReportService.swift; sourceTree = "<group>"; };
 		C47AA7CE2AEB97BACCEA02C2 /* PaymentDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PaymentDTO.swift; sourceTree = "<group>"; };
@@ -632,8 +636,8 @@
 		C47AAD0D9BE5100D1C653C97 /* ImageViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageViewModel.swift; sourceTree = "<group>"; };
 		C47AAD2E1CAA801E19F11EF1 /* AccountManagementViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountManagementViewModel.swift; sourceTree = "<group>"; };
 		C47AAD87CBEFF0B42B8059B8 /* StarFallView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StarFallView.swift; sourceTree = "<group>"; };
+		C47AAD91E6A0C7E71D28A587 /* Navigation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Navigation.swift; sourceTree = "<group>"; };
 		C47AADDF123DA705D0D31C70 /* InAppPurchaseModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppPurchaseModel.swift; sourceTree = "<group>"; };
-		C47AAE850E9FDA8B3695A677 /* AuthorizationWarningViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthorizationWarningViewController.swift; sourceTree = "<group>"; };
 		C47AAF64311FE6466E824F0D /* Int+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Int+Extension.swift"; sourceTree = "<group>"; };
 		C47AAFC15268FF45430C60DF /* SmsConfirmViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SmsConfirmViewModel.swift; sourceTree = "<group>"; };
 		DBBEBAFA0CF30E6D3B2AB0F7 /* Pods-Blanc-ios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Blanc-ios.release.xcconfig"; path = "Target Support Files/Pods-Blanc-ios/Pods-Blanc-ios.release.xcconfig"; sourceTree = "<group>"; };
@@ -731,6 +735,7 @@
 				C47AA431B605858F85D1FD9A /* Extensions */,
 				C47AA32B793012FCA4B8ABEA /* Broadcast */,
 				C47AA13F1CBC808E487790D3 /* Rxlocation */,
+				C47AAE9A8BF5EE880087B171 /* Authorization */,
 			);
 			path = "Blanc-ios";
 			sourceTree = "<group>";
@@ -985,7 +990,6 @@
 				104EEAC925E372360069B2CF /* HomeViewController.swift */,
 				104EEACA25E372360069B2CF /* HomeModel.swift */,
 				C47AA3DAE8E1EF20A2B33F42 /* HomeTableViewHeaderView.swift */,
-				C47AAE850E9FDA8B3695A677 /* AuthorizationWarningViewController.swift */,
 			);
 			path = home;
 			sourceTree = "<group>";
@@ -1279,6 +1283,7 @@
 				C47AAD87CBEFF0B42B8059B8 /* StarFallView.swift */,
 				C47AA9EF18F431B5324A71E7 /* EmptySectionTableViewCell.swift */,
 				C47AA03E0A2AF860FFE4EE7A /* Synchronize.swift */,
+				C47AAD91E6A0C7E71D28A587 /* Navigation.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -1534,6 +1539,7 @@
 				104EEC7F25E373390069B2CF /* ProfileFragments.storyboard */,
 				104EE98425E3703C0069B2CF /* Main.storyboard */,
 				104EEC7825E3732E0069B2CF /* Registration.storyboard */,
+				10B4A6C9260E14D60045F839 /* Authorization.storyboard */,
 			);
 			path = Storyboards;
 			sourceTree = "<group>";
@@ -1620,6 +1626,14 @@
 				C47AAD2E1CAA801E19F11EF1 /* AccountManagementViewModel.swift */,
 			);
 			path = management;
+			sourceTree = "<group>";
+		};
+		C47AAE9A8BF5EE880087B171 /* Authorization */ = {
+			isa = PBXGroup;
+			children = (
+				C47AA6F5BFC6829FE4A41949 /* LocationAuthorizationViewController.swift */,
+			);
+			path = Authorization;
 			sourceTree = "<group>";
 		};
 		C9BE95656549CA341B72515D /* Pods */ = {
@@ -1769,6 +1783,7 @@
 				104EEA8425E372160069B2CF /* call.json in Resources */,
 				104EEA9025E372160069B2CF /* heart_2_2.json in Resources */,
 				104EEC8025E373390069B2CF /* ProfileFragments.storyboard in Resources */,
+				10B4A6CA260E14D60045F839 /* Authorization.storyboard in Resources */,
 				104EEA8225E372160069B2CF /* heart_3.json in Resources */,
 				104EEA8025E372160069B2CF /* customer-support-women.json in Resources */,
 				10C624B625EA71D70058D923 /* wink.json in Resources */,
@@ -2198,7 +2213,8 @@
 				C47AAC710904FCAC4ED142AF /* HomeTableViewHeaderView.swift in Sources */,
 				C47AACB80C4E25328701D663 /* EmptySectionTableViewCell.swift in Sources */,
 				C47AAD343FC4ADD7B496CDE7 /* Synchronize.swift in Sources */,
-				C47AAF89EFD6B0920C1BA189 /* AuthorizationWarningViewController.swift in Sources */,
+				C47AA05216AC4B0E15618270 /* Navigation.swift in Sources */,
+				C47AAA1C7E3F89F875B25AF2 /* LocationAuthorizationViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

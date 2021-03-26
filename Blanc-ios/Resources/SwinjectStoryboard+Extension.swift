@@ -89,19 +89,19 @@ extension SwinjectStoryboard {
     class func setup() {
         Container.loggingFunction = nil
         registerDependencies()
-        configInitView()
-        configLoginView()
+        configureInitView()
+        configureLoginView()
+        configureAuthorizationView()
         configureRegistrationView()
-        configSmsView()
-        configConfirmModal()
-        configMainViewControllers()
+        configureSmsView()
+        configureConfirmModal()
+        configureMainViewControllers()
     }
 
     class func registerDependencies() {
 
         /** Root dependencies **/
         defaultContainer.autoregister(Preferences.self, initializer: Preferences.init).inObjectScope(.container)
-        defaultContainer.autoregister(CLLocationManager.self, initializer: CLLocationManager.init).inObjectScope(.container)
 
         defaultContainer.autoregister(ReportService.self, initializer: ReportService.init).inObjectScope(.container)
         defaultContainer.autoregister(UserService.self, initializer: UserService.init).inObjectScope(.container)
@@ -122,6 +122,12 @@ extension SwinjectStoryboard {
             let session = resolver ~> Session.self
             let userService = resolver ~> UserService.self
             return FcmTokenManager(session: session, userService: userService)
+        }.inObjectScope(.container)
+
+        defaultContainer.register(Navigation.self) { resolver in
+            let session = resolver ~> Session.self
+            let userService = resolver ~> UserService.self
+            return Navigation(session: session, userService: userService)
         }.inObjectScope(.container)
 
         /** Sms dependencies **/
@@ -378,7 +384,7 @@ extension SwinjectStoryboard {
             let session = resolver ~> Session.self
             let conversationSingleModel = resolver ~> ConversationSingleModel.self
             let conversationSingleViewModel = ConversationSingleViewModel(
-                session:session,
+                session: session,
                 conversationSingleModel: conversationSingleModel
             )
             return conversationSingleViewModel
@@ -487,24 +493,35 @@ extension SwinjectStoryboard {
             let paymentService = resolver ~> PaymentService.self
             let inAppPurchaseModel = resolver ~> InAppPurchaseModel.self
             let inAppPurchaseViewModel = InAppPurchaseViewModel(
-                session: session, paymentService: paymentService, inAppPurchaseModel: inAppPurchaseModel)
+                session: session,
+                paymentService: paymentService,
+                inAppPurchaseModel: inAppPurchaseModel
+            )
             return inAppPurchaseViewModel
         }.inObjectScope(.paymentScope)
     }
 
-    class func configInitView() {
+    class func configureInitView() {
         defaultContainer.storyboardInitCompleted(InitPagerViewController.self) { resolver, controller in
             log.info("Injecting dependencies into InitPagerViewController")
+            controller.session = resolver ~> Session.self
+            controller.userService = resolver ~> UserService.self
+            controller.navigation = resolver ~> Navigation.self
+        }
+    }
+
+    class func configureLoginView() {
+        defaultContainer.storyboardInitCompleted(LoginViewController.self) { resolver, controller in
+            log.info("Injecting dependencies into LoginViewController")
             controller.userService = resolver ~> UserService.self
             controller.session = resolver ~> Session.self
         }
     }
 
-    class func configLoginView() {
-        defaultContainer.storyboardInitCompleted(LoginViewController.self) { resolver, controller in
-            log.info("Injecting dependencies into LoginViewController")
-            controller.userService = resolver ~> UserService.self
-            controller.session = resolver ~> Session.self
+    class func configureAuthorizationView() {
+        defaultContainer.storyboardInitCompleted(LocationAuthorizationViewController.self) { resolver, controller in
+            log.info("Injecting dependencies into AuthorizationWarningViewController")
+            controller.navigation = resolver ~> Navigation.self
         }
     }
 
@@ -606,7 +623,7 @@ extension SwinjectStoryboard {
         }
     }
 
-    class func configSmsView() {
+    class func configureSmsView() {
         defaultContainer.storyboardInitCompleted(SmsViewController.self) { resolver, controller in
             log.info("Injecting dependencies into SmsViewController")
             controller.smsViewModel = resolver ~> SmsViewModel.self
@@ -617,7 +634,7 @@ extension SwinjectStoryboard {
         }
     }
 
-    class func configConfirmModal() {
+    class func configureConfirmModal() {
         defaultContainer.storyboardInitCompleted(RequestConfirmViewController.self) { resolver, controller in
             log.info("Injecting dependencies into RequestConfirmViewController")
             controller.session = resolver ~> Session.self
@@ -628,7 +645,7 @@ extension SwinjectStoryboard {
         }
     }
 
-    class func configMainViewControllers() {
+    class func configureMainViewControllers() {
 
         defaultContainer.storyboardInitCompleted(MainTabBarController.self) { resolver, controller in
             log.info("Injecting dependencies into MainTabBarController")
