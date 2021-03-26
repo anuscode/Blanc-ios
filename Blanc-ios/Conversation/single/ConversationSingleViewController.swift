@@ -101,7 +101,7 @@ class ConversationSingleViewController: UIViewController {
         tableView.register(LeftMessageTableViewCell.self, forCellReuseIdentifier: LeftMessageTableViewCell.identifier)
         tableView.allowsSelection = false
         tableView.separatorColor = .clear
-        tableView.contentInset = UIEdgeInsets(top: 20, left: 0, bottom: 0, right: 0)
+        tableView.contentInset = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 0)
         tableView.delegate = self
         tableView.backgroundColor = .white
         return tableView
