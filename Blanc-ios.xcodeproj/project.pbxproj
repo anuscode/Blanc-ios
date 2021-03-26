@@ -263,6 +263,7 @@
 		1061E0282604422B00A0F29E /* ReportViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1061E0272604422B00A0F29E /* ReportViewModel.swift */; };
 		1061E02D2604423500A0F29E /* ReportModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1061E02C2604423500A0F29E /* ReportModel.swift */; };
 		10C624B625EA71D70058D923 /* wink.json in Resources */ = {isa = PBXBuildFile; fileRef = 10C624B525EA71D70058D923 /* wink.json */; };
+		10D9E726260CDEC300C0876B /* location.json in Resources */ = {isa = PBXBuildFile; fileRef = 10D9E725260CDEC300C0876B /* location.json */; };
 		10E94E8C25FA56EF0084DB84 /* RegistrationImageGuideViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10E94E8B25FA56EF0084DB84 /* RegistrationImageGuideViewController.swift */; };
 		240D91B346CC87269CAF305D /* Pods_Blanc_ios_Blanc_iosUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 61F4FB0474880E97BECB4B37 /* Pods_Blanc_ios_Blanc_iosUITests.framework */; };
 		69A10C304D3EE8E1BC424287 /* Pods_Blanc_ios.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86136E85AB864A9141A83B37 /* Pods_Blanc_ios.framework */; };
@@ -304,6 +305,7 @@
 		C47AAE6C08203E77C969B645 /* Background.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA72570EBB462B489CDB6 /* Background.swift */; };
 		C47AAEA7329508C8EC6BCF60 /* SelectionCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA2DED05182E1C2C41D5D /* SelectionCollectionViewCell.swift */; };
 		C47AAF716BA8477C9CD0412A /* Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA3E64CCA2CB2598F30E6 /* Helpers.swift */; };
+		C47AAF89EFD6B0920C1BA189 /* AuthorizationWarningViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AAE850E9FDA8B3695A677 /* AuthorizationWarningViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -588,6 +590,7 @@
 		1061E0272604422B00A0F29E /* ReportViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportViewModel.swift; sourceTree = "<group>"; };
 		1061E02C2604423500A0F29E /* ReportModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportModel.swift; sourceTree = "<group>"; };
 		10C624B525EA71D70058D923 /* wink.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = wink.json; sourceTree = "<group>"; };
+		10D9E725260CDEC300C0876B /* location.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = location.json; path = ../../../../Downloads/location.json; sourceTree = "<group>"; };
 		10E94E8B25FA56EF0084DB84 /* RegistrationImageGuideViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegistrationImageGuideViewController.swift; sourceTree = "<group>"; };
 		4406E03ED7B2F9B2374EBA3D /* Pods-Blanc-ios-Blanc-iosUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Blanc-ios-Blanc-iosUITests.release.xcconfig"; path = "Target Support Files/Pods-Blanc-ios-Blanc-iosUITests/Pods-Blanc-ios-Blanc-iosUITests.release.xcconfig"; sourceTree = "<group>"; };
 		61F4FB0474880E97BECB4B37 /* Pods_Blanc_ios_Blanc_iosUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Blanc_ios_Blanc_iosUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -630,6 +633,7 @@
 		C47AAD2E1CAA801E19F11EF1 /* AccountManagementViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AccountManagementViewModel.swift; sourceTree = "<group>"; };
 		C47AAD87CBEFF0B42B8059B8 /* StarFallView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StarFallView.swift; sourceTree = "<group>"; };
 		C47AADDF123DA705D0D31C70 /* InAppPurchaseModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppPurchaseModel.swift; sourceTree = "<group>"; };
+		C47AAE850E9FDA8B3695A677 /* AuthorizationWarningViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthorizationWarningViewController.swift; sourceTree = "<group>"; };
 		C47AAF64311FE6466E824F0D /* Int+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Int+Extension.swift"; sourceTree = "<group>"; };
 		C47AAFC15268FF45430C60DF /* SmsConfirmViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SmsConfirmViewModel.swift; sourceTree = "<group>"; };
 		DBBEBAFA0CF30E6D3B2AB0F7 /* Pods-Blanc-ios.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Blanc-ios.release.xcconfig"; path = "Target Support Files/Pods-Blanc-ios/Pods-Blanc-ios.release.xcconfig"; sourceTree = "<group>"; };
@@ -884,6 +888,7 @@
 		104EEA6025E372160069B2CF /* Lottie */ = {
 			isa = PBXGroup;
 			children = (
+				10D9E725260CDEC300C0876B /* location.json */,
 				104EAFB325EA79BB009343E8 /* love_emoji.json */,
 				10C624B525EA71D70058D923 /* wink.json */,
 				104EEA6125E372160069B2CF /* lady.json */,
@@ -980,6 +985,7 @@
 				104EEAC925E372360069B2CF /* HomeViewController.swift */,
 				104EEACA25E372360069B2CF /* HomeModel.swift */,
 				C47AA3DAE8E1EF20A2B33F42 /* HomeTableViewHeaderView.swift */,
+				C47AAE850E9FDA8B3695A677 /* AuthorizationWarningViewController.swift */,
 			);
 			path = home;
 			sourceTree = "<group>";
@@ -1768,6 +1774,7 @@
 				10C624B625EA71D70058D923 /* wink.json in Resources */,
 				104EEC8225E3733E0069B2CF /* Sms.storyboard in Resources */,
 				104EEA8925E372160069B2CF /* business_team_2.json in Resources */,
+				10D9E726260CDEC300C0876B /* location.json in Resources */,
 				104EEA8D25E372160069B2CF /* star.json in Resources */,
 				104EEA7C25E372160069B2CF /* poke.json in Resources */,
 				104EE98625E3703C0069B2CF /* Main.storyboard in Resources */,
@@ -2191,6 +2198,7 @@
 				C47AAC710904FCAC4ED142AF /* HomeTableViewHeaderView.swift in Sources */,
 				C47AACB80C4E25328701D663 /* EmptySectionTableViewCell.swift in Sources */,
 				C47AAD343FC4ADD7B496CDE7 /* Synchronize.swift in Sources */,
+				C47AAF89EFD6B0920C1BA189 /* AuthorizationWarningViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
