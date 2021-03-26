@@ -502,8 +502,8 @@ extension SwinjectStoryboard {
     }
 
     class func configureInitView() {
-        defaultContainer.storyboardInitCompleted(InitPagerViewController.self) { resolver, controller in
-            log.info("Injecting dependencies into InitPagerViewController")
+        defaultContainer.storyboardInitCompleted(LaunchPagerViewController.self) { resolver, controller in
+            log.info("Injecting dependencies into LaunchPagerViewController")
             controller.session = resolver ~> Session.self
             controller.userService = resolver ~> UserService.self
             controller.navigation = resolver ~> Navigation.self

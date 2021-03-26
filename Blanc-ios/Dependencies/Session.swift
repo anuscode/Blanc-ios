@@ -1,6 +1,7 @@
 import FirebaseAuth
 import Foundation
 import RxSwift
+import SwinjectStoryboard
 
 
 class Session {
@@ -119,13 +120,14 @@ class Session {
                     log.info("detected login in another device..")
                     Session.signOut()
                     let window = UIApplication.shared.keyWindow
-                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
-                    let vc = storyboard.instantiateViewController(withIdentifier: "InitPagerViewController")
+                    let storyboard = UIStoryboard(name: "LaunchAnimation", bundle: nil)
+                    let vc = storyboard.instantiateViewController(withIdentifier: "LaunchPagerViewController")
                     vc.modalPresentationStyle = .fullScreen
                     window?.rootViewController?.dismiss(animated: false, completion: {
                         let window = UIApplication.shared.windows.first
                         window?.rootViewController?.present(vc, animated: false) {
                             vc.toast(message: "다른 디바이스에서 로그인이 감지되어 로그아웃 되었습니다.")
+                            SwinjectStoryboard.defaultContainer.resetObjectScope(.mainScope)
                         }
                     })
                 }

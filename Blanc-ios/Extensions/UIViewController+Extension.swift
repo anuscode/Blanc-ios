@@ -19,20 +19,21 @@ extension UIViewController {
 
 extension UIViewController {
     func replace(
-            storyboard: String = "Main",
-            bundle: Bundle? = nil,
-            withIdentifier: String,
-            animated: Bool = true,
-            modalPresentationStyle: UIModalPresentationStyle = .fullScreen,
-            completion: (() -> Void)? = nil
+        storyboard: String = "Main",
+        bundle: Bundle? = nil,
+        withIdentifier: String,
+        presentAnimated: Bool = true,
+        dismissAnimated: Bool = false,
+        modalPresentationStyle: UIModalPresentationStyle = .fullScreen,
+        completion: (() -> Void)? = nil
     ) {
         log.info("presenting \(withIdentifier)..")
         let storyboard = UIStoryboard(name: storyboard, bundle: bundle)
         let vc = storyboard.instantiateViewController(withIdentifier: withIdentifier)
         vc.modalPresentationStyle = modalPresentationStyle
-        view.window?.rootViewController?.dismiss(animated: false, completion: {
+        view.window?.rootViewController?.dismiss(animated: dismissAnimated, completion: {
             let window = UIApplication.shared.windows.first
-            window?.rootViewController?.present(vc, animated: animated, completion: completion)
+            window?.rootViewController?.present(vc, animated: presentAnimated, completion: completion)
         })
     }
 }

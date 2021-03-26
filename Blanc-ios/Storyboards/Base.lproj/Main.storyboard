@@ -8,51 +8,6 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--Init Pager View Controller-->
-        <scene sceneID="Ufx-6J-qol">
-            <objects>
-                <viewController storyboardIdentifier="InitPagerViewController" id="0dz-ap-AUb" customClass="InitPagerViewController" customModule="Blanc_ios" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="qnP-3K-GbG">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="F80-W0-7Cb"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="2SM-DW-uSe" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="538" y="-629"/>
-        </scene>
-        <!--Init Second View Controller-->
-        <scene sceneID="mpP-qv-u9e">
-            <objects>
-                <viewController storyboardIdentifier="InitSecondViewController" id="Crb-hW-Mab" customClass="InitSecondViewController" customModule="Blanc_ios" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="5CD-5F-f9y">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="FSm-it-Qke"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="iQ5-Zo-tjf" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="2384" y="-629"/>
-        </scene>
-        <!--Init First View Controller-->
-        <scene sceneID="zle-IV-GQM">
-            <objects>
-                <viewController storyboardIdentifier="InitFirstViewController" id="nP6-gR-imi" customClass="InitFirstViewController" customModule="Blanc_ios" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="OBD-wY-Z0t">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="U6t-pA-Uqb"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                    </view>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="xP4-jE-bZq" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1458" y="-629"/>
-        </scene>
         <!--Navigation Controller-->
         <scene sceneID="7yc-uk-DO8">
             <objects>

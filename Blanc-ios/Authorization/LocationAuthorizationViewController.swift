@@ -157,20 +157,35 @@ class LocationAuthorizationViewController: UIViewController {
     }
 
     private func next() {
+        let window = UIApplication.shared.windows.first
+
         navigation?
             .next()
             .observeOn(MainScheduler.instance)
             .subscribe(onSuccess: { [unowned self] next in
-                log.info(next)
                 switch next {
                 case .MAIN:
-                    replace(storyboard: "Main", withIdentifier: "MainTabBarController")
+                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                    let vc = storyboard.instantiateViewController(withIdentifier: "MainTabBarController")
+                    vc.modalPresentationStyle = modalPresentationStyle
+                    present(vc, animated: true)
                 case .LOGIN:
-                    replace(storyboard: "Main", withIdentifier: "LoginViewController")
+                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                    let vc = storyboard.instantiateViewController(withIdentifier: "LoginViewController")
+                    vc.modalPresentationStyle = modalPresentationStyle
+                    present(vc, animated: true)
                 case .REGISTRATION:
-                    replace(storyboard: "Registration", withIdentifier: "RegistrationNavigationViewController")
+                    let storyboard = UIStoryboard(name: "Registration", bundle: nil)
+                    let vc = storyboard.instantiateViewController(
+                        withIdentifier: "RegistrationNavigationViewController")
+                    vc.modalPresentationStyle = modalPresentationStyle
+                    present(vc, animated: true)
                 case .SMS:
-                    replace(storyboard: "Sms", withIdentifier: "SmsViewController")
+                    let storyboard = UIStoryboard(name: "Sms", bundle: nil)
+                    let vc = storyboard.instantiateViewController(
+                        withIdentifier: "SmsViewController")
+                    vc.modalPresentationStyle = modalPresentationStyle
+                    present(vc, animated: true)
                 case .LOCATION:
                     let storyboard = UIStoryboard(name: "Authorization", bundle: nil)
                     let controller = storyboard.instantiateViewController(

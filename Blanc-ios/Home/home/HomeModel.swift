@@ -34,6 +34,10 @@ class HomeModel {
         start()
     }
 
+    deinit {
+        log.info("deinit HomeModel..")
+    }
+
     func publish() {
         observable.onNext(data)
     }

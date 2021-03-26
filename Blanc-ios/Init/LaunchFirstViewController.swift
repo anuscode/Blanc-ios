@@ -1,6 +1,6 @@
 import UIKit
 
-class InitFirstViewController: UIViewController {
+class LaunchFirstViewController: UIViewController {
 
     lazy private var blanc: UILabel = {
         let label = UILabel()
@@ -14,8 +14,8 @@ class InitFirstViewController: UIViewController {
         let alpha0 = UIColor.tinderPink
         let alpha1 = UIColor.bumble1
         let gradient = GradientView(
-                colors: [alpha0, alpha1],
-                locations: [0.0, 2],
+                colors: [alpha0, alpha0, alpha1],
+                locations: [0.0, 0.5, 2],
                 startPoint: CGPoint(x: 1, y: 0),
                 endPoint: CGPoint(x: 0, y: 1)
         )
@@ -74,7 +74,7 @@ class InitFirstViewController: UIViewController {
         print(blanc.frame.width)
         print(blanc.frame.height)
     }
-    
+
     private func configureSubviews() {
         view.addSubview(gradient)
         view.addSubview(blanc)

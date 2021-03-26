@@ -230,7 +230,7 @@ class RegistrationPendingViewController: UIViewController {
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [unowned self] push in
                 if (push.isApproved()) {
-                    parent?.replace(storyboard: "Main", withIdentifier: "InitPagerViewController")
+                    parent?.replace(storyboard: "LaunchAnimation", withIdentifier: "LaunchPagerViewController")
                 }
             })
             .disposed(by: disposeBag)
@@ -242,7 +242,7 @@ class RegistrationPendingViewController: UIViewController {
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [unowned self] push in
-                parent?.replace(storyboard: "Main", withIdentifier: "InitPagerViewController")
+                parent?.replace(storyboard: "LaunchAnimation", withIdentifier: "LaunchPagerViewController")
             })
             .disposed(by: disposeBag)
     }
@@ -282,7 +282,7 @@ class RegistrationPendingViewController: UIViewController {
             registrationViewModel?.unregister(onSuccess: { [unowned self] in
                 let isSignOut = Session.signOut()
                 if (isSignOut) {
-                    parent?.replace(storyboard: "Main", withIdentifier: "InitPagerViewController")
+                    parent?.replace(storyboard: "LaunchAnimation", withIdentifier: "LaunchPagerViewController")
                 } else {
                     toast(message: "로그아웃에 실패 하였습니다.")
                 }
@@ -293,7 +293,7 @@ class RegistrationPendingViewController: UIViewController {
         let signOutAction = UIAlertAction(title: "LOG OUT", style: .default) { [unowned self] (action) in
             let isSignOut = Session.signOut()
             if (isSignOut) {
-                parent?.replace(storyboard: "Main", withIdentifier: "InitPagerViewController")
+                parent?.replace(storyboard: "LaunchAnimation", withIdentifier: "LaunchPagerViewController")
             } else {
                 toast(message: "로그아웃에 실패 하였습니다.")
             }

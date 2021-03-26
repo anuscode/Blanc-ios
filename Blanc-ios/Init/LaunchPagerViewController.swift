@@ -2,7 +2,7 @@ import UIKit
 import FirebaseAuth
 import RxSwift
 
-class InitPagerViewController: UIPageViewController {
+class LaunchPagerViewController: UIPageViewController {
 
     private let disposeBag: DisposeBag = DisposeBag()
 
@@ -19,7 +19,7 @@ class InitPagerViewController: UIPageViewController {
         let alpha1 = UIColor.bumble1
         let gradient = GradientView(
             colors: [alpha0, alpha1],
-            locations: [0.0, 2],
+            locations: [0.0, 1],
             startPoint: CGPoint(x: 1, y: 0),
             endPoint: CGPoint(x: 0, y: 1)
         )
@@ -27,14 +27,14 @@ class InitPagerViewController: UIPageViewController {
     }()
 
     private lazy var firstViewController: UIViewController = {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "InitFirstViewController")
+        let storyboard = UIStoryboard(name: "LaunchAnimation", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "LaunchFirstViewController")
         return vc
     }()
 
     private lazy var secondViewController: UIViewController = {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let vc = storyboard.instantiateViewController(withIdentifier: "InitSecondViewController")
+        let storyboard = UIStoryboard(name: "LaunchAnimation", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "LaunchSecondViewController")
         return vc
     }()
 

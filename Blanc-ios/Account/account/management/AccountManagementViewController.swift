@@ -101,7 +101,7 @@ class AccountManagementViewController: UIViewController {
     }
 
     private func replaceViewController() {
-        replace(withIdentifier: "InitPagerViewController") {
+        replace(storyboard: "LaunchAnimation", withIdentifier: "LaunchPagerViewController") {
             SwinjectStoryboard.defaultContainer.resetObjectScope(.accountManagement)
             SwinjectStoryboard.defaultContainer.resetObjectScope(.mainScope)
         }

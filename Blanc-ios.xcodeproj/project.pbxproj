@@ -108,9 +108,9 @@
 		104EEAD625E372360069B2CF /* AlarmViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEACD25E372360069B2CF /* AlarmViewController.swift */; };
 		104EEAD725E372360069B2CF /* AlarmViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEACE25E372360069B2CF /* AlarmViewModel.swift */; };
 		104EEAD825E372360069B2CF /* AlarmTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEACF25E372360069B2CF /* AlarmTableViewCell.swift */; };
-		104EEADD25E3723C0069B2CF /* InitPagerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEADA25E3723C0069B2CF /* InitPagerViewController.swift */; };
-		104EEADE25E3723C0069B2CF /* InitSecondViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEADB25E3723C0069B2CF /* InitSecondViewController.swift */; };
-		104EEADF25E3723C0069B2CF /* InitFirstViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEADC25E3723C0069B2CF /* InitFirstViewController.swift */; };
+		104EEADD25E3723C0069B2CF /* LaunchPagerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEADA25E3723C0069B2CF /* LaunchPagerViewController.swift */; };
+		104EEADE25E3723C0069B2CF /* LaunchSecondViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEADB25E3723C0069B2CF /* LaunchSecondViewController.swift */; };
+		104EEADF25E3723C0069B2CF /* LaunchFirstViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEADC25E3723C0069B2CF /* LaunchFirstViewController.swift */; };
 		104EEAE625E372420069B2CF /* LoginNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEAE425E372420069B2CF /* LoginNavigationController.swift */; };
 		104EEAE725E372420069B2CF /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEAE525E372420069B2CF /* LoginViewController.swift */; };
 		104EEAF625E372480069B2CF /* VerificationDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEAEC25E372480069B2CF /* VerificationDTO.swift */; };
@@ -262,6 +262,7 @@
 		1061E0202604421D00A0F29E /* ReportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1061E01F2604421D00A0F29E /* ReportViewController.swift */; };
 		1061E0282604422B00A0F29E /* ReportViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1061E0272604422B00A0F29E /* ReportViewModel.swift */; };
 		1061E02D2604423500A0F29E /* ReportModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1061E02C2604423500A0F29E /* ReportModel.swift */; };
+		10B0A87C260E3E6E00CD849F /* LaunchAnimation.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 10B0A87B260E3E6E00CD849F /* LaunchAnimation.storyboard */; };
 		10B4A6CA260E14D60045F839 /* Authorization.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 10B4A6C9260E14D60045F839 /* Authorization.storyboard */; };
 		10C624B625EA71D70058D923 /* wink.json in Resources */ = {isa = PBXBuildFile; fileRef = 10C624B525EA71D70058D923 /* wink.json */; };
 		10D9E726260CDEC300C0876B /* location.json in Resources */ = {isa = PBXBuildFile; fileRef = 10D9E725260CDEC300C0876B /* location.json */; };
@@ -436,9 +437,9 @@
 		104EEACD25E372360069B2CF /* AlarmViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlarmViewController.swift; sourceTree = "<group>"; };
 		104EEACE25E372360069B2CF /* AlarmViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlarmViewModel.swift; sourceTree = "<group>"; };
 		104EEACF25E372360069B2CF /* AlarmTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlarmTableViewCell.swift; sourceTree = "<group>"; };
-		104EEADA25E3723C0069B2CF /* InitPagerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InitPagerViewController.swift; sourceTree = "<group>"; };
-		104EEADB25E3723C0069B2CF /* InitSecondViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InitSecondViewController.swift; sourceTree = "<group>"; };
-		104EEADC25E3723C0069B2CF /* InitFirstViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InitFirstViewController.swift; sourceTree = "<group>"; };
+		104EEADA25E3723C0069B2CF /* LaunchPagerViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LaunchPagerViewController.swift; sourceTree = "<group>"; };
+		104EEADB25E3723C0069B2CF /* LaunchSecondViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LaunchSecondViewController.swift; sourceTree = "<group>"; };
+		104EEADC25E3723C0069B2CF /* LaunchFirstViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LaunchFirstViewController.swift; sourceTree = "<group>"; };
 		104EEAE425E372420069B2CF /* LoginNavigationController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginNavigationController.swift; sourceTree = "<group>"; };
 		104EEAE525E372420069B2CF /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		104EEAEC25E372480069B2CF /* VerificationDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerificationDTO.swift; sourceTree = "<group>"; };
@@ -591,6 +592,7 @@
 		1061E01F2604421D00A0F29E /* ReportViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportViewController.swift; sourceTree = "<group>"; };
 		1061E0272604422B00A0F29E /* ReportViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportViewModel.swift; sourceTree = "<group>"; };
 		1061E02C2604423500A0F29E /* ReportModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportModel.swift; sourceTree = "<group>"; };
+		10B0A87B260E3E6E00CD849F /* LaunchAnimation.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchAnimation.storyboard; sourceTree = "<group>"; };
 		10B4A6C9260E14D60045F839 /* Authorization.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Authorization.storyboard; sourceTree = "<group>"; };
 		10C624B525EA71D70058D923 /* wink.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = wink.json; sourceTree = "<group>"; };
 		10D9E725260CDEC300C0876B /* location.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = location.json; path = ../../../../Downloads/location.json; sourceTree = "<group>"; };
@@ -1008,9 +1010,9 @@
 		104EEAD925E3723C0069B2CF /* Init */ = {
 			isa = PBXGroup;
 			children = (
-				104EEADA25E3723C0069B2CF /* InitPagerViewController.swift */,
-				104EEADB25E3723C0069B2CF /* InitSecondViewController.swift */,
-				104EEADC25E3723C0069B2CF /* InitFirstViewController.swift */,
+				104EEADA25E3723C0069B2CF /* LaunchPagerViewController.swift */,
+				104EEADB25E3723C0069B2CF /* LaunchSecondViewController.swift */,
+				104EEADC25E3723C0069B2CF /* LaunchFirstViewController.swift */,
 			);
 			path = Init;
 			sourceTree = "<group>";
@@ -1536,6 +1538,7 @@
 			children = (
 				104EEC8125E3733E0069B2CF /* Sms.storyboard */,
 				104EE98C25E3703D0069B2CF /* LaunchScreen.storyboard */,
+				10B0A87B260E3E6E00CD849F /* LaunchAnimation.storyboard */,
 				104EEC7F25E373390069B2CF /* ProfileFragments.storyboard */,
 				104EE98425E3703C0069B2CF /* Main.storyboard */,
 				104EEC7825E3732E0069B2CF /* Registration.storyboard */,
@@ -1794,6 +1797,7 @@
 				104EEA7C25E372160069B2CF /* poke.json in Resources */,
 				104EE98625E3703C0069B2CF /* Main.storyboard in Resources */,
 				104EEA8125E372160069B2CF /* business_team_1.json in Resources */,
+				10B0A87C260E3E6E00CD849F /* LaunchAnimation.storyboard in Resources */,
 				104EEA7925E372160069B2CF /* lady.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2063,7 +2067,7 @@
 				104EEABC25E372300069B2CF /* Preferences.swift in Sources */,
 				104EEA9925E3721C0069B2CF /* OpenConversationConfirmViewController.swift in Sources */,
 				104EEA4625E372060069B2CF /* RegistrationCharmViewController.swift in Sources */,
-				104EEADF25E3723C0069B2CF /* InitFirstViewController.swift in Sources */,
+				104EEADF25E3723C0069B2CF /* LaunchFirstViewController.swift in Sources */,
 				104EEA9725E3721C0069B2CF /* NotificationView.swift in Sources */,
 				104EEAFE25E372480069B2CF /* RequestDTO.swift in Sources */,
 				104EEAD225E372360069B2CF /* HomeLoading.swift in Sources */,
@@ -2071,7 +2075,7 @@
 				104EEBD525E372890069B2CF /* RightMessageTableViewCell.swift in Sources */,
 				104EEA0825E371FE0069B2CF /* CircleColorSparkViewFactory.swift in Sources */,
 				104EEA0725E371FE0069B2CF /* ImageSparkViewFactory.swift in Sources */,
-				104EEADD25E3723C0069B2CF /* InitPagerViewController.swift in Sources */,
+				104EEADD25E3723C0069B2CF /* LaunchPagerViewController.swift in Sources */,
 				104EEAD825E372360069B2CF /* AlarmTableViewCell.swift in Sources */,
 				104EEB0B25E3724E0069B2CF /* Constant.swift in Sources */,
 				104EEC1D25E3728F0069B2CF /* ImageViewController.swift in Sources */,
@@ -2128,7 +2132,7 @@
 				104EEA0A25E371FE0069B2CF /* ImageSparkView.swift in Sources */,
 				104EEB8425E372650069B2CF /* SmallUserProfileTableViewCell.swift in Sources */,
 				104EEAD325E372360069B2CF /* HomeViewController.swift in Sources */,
-				104EEADE25E3723C0069B2CF /* InitSecondViewController.swift in Sources */,
+				104EEADE25E3723C0069B2CF /* LaunchSecondViewController.swift in Sources */,
 				104EEC5B25E3729B0069B2CF /* Models.swift in Sources */,
 				104EEB6325E3725D0069B2CF /* PostCreateResourceCollectionViewCell.swift in Sources */,
 				104EEABA25E372300069B2CF /* RequestService.swift in Sources */,

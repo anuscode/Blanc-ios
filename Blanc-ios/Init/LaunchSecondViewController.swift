@@ -1,7 +1,7 @@
 import Foundation
 import UIKit
 
-class InitSecondViewController: UIViewController {
+class LaunchSecondViewController: UIViewController {
 
     private let fireworkController = ClassicFireworkController()
 

@@ -9,9 +9,10 @@ class RootViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let storyboard = UIStoryboard(name: "LaunchAnimation", bundle: nil)
         let initViewController = storyboard.instantiateViewController(
-                withIdentifier: "InitPagerViewController")
+            withIdentifier: "LaunchPagerViewController"
+        )
         initViewController.modalPresentationStyle = .fullScreen
         DispatchQueue.main.async {
             self.present(initViewController, animated: false)
