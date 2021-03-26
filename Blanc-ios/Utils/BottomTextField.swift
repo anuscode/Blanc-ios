@@ -89,7 +89,7 @@ class BottomTextField: UIView {
             make.top.equalTo(replyToTextsStackView.snp.bottom).offset(5)
             make.leading.equalTo(currentUserImage.snp.trailing).offset(10)
             make.trailing.equalToSuperview().inset(15)
-            make.bottom.equalToSuperview().inset(7)
+            make.bottom.equalToSuperview().inset(5)
             make.height.equalTo(45)
         }
         return view
