@@ -71,7 +71,7 @@ class InitPagerViewController: UIPageViewController {
         route()
             .observeOn(MainScheduler.instance)
             .flatMap { view -> Single<View> in
-                self.delay(2.0).map({ view })
+                self.delay(1.5).map({ view })
             }
             .subscribe(onSuccess: { view in
                 switch view {
