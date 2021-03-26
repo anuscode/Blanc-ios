@@ -45,13 +45,13 @@ class ConversationTableViewCell: UITableViewCell {
         line1.snp.makeConstraints { make in
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
-            make.bottom.equalTo(guideLine.snp.top).offset(-1)
+            make.bottom.equalTo(guideLine.snp.top).offset(-1.5)
         }
 
         line2.snp.makeConstraints { make in
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview().priority(800)
-            make.top.equalTo(guideLine.snp.bottom).offset(1)
+            make.top.equalTo(guideLine.snp.bottom).offset(1.5)
         }
 
         return view
@@ -64,15 +64,15 @@ class ConversationTableViewCell: UITableViewCell {
 
     lazy private var line1: UILabel = {
         let label = UILabel()
-        label.textColor = .darkText
-        label.font = .systemFont(ofSize: 18)
+        label.textColor = .lightBlack
+        label.font = .systemFont(ofSize: 17, weight: .semibold)
         return label
     }()
 
     lazy private var line2: UILabel = {
         let label = UILabel()
         label.textColor = .deepGray
-        label.font = .systemFont(ofSize: 16)
+        label.font = .systemFont(ofSize: 15)
         return label
     }()
 
@@ -86,7 +86,7 @@ class ConversationTableViewCell: UITableViewCell {
     lazy private var unreadMessageCountView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 10
-        view.backgroundColor = .systemPink
+        view.backgroundColor = .tinderPink
         view.addSubview(unreadMessageCountLabel)
         unreadMessageCountLabel.snp.makeConstraints { make in
             make.edges.equalToSuperview()
