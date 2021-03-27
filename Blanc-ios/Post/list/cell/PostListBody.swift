@@ -29,14 +29,17 @@ class PostListBody: UIView {
 
     lazy private var textsStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [
-            favoriteUserCountLabel, descriptionLabel, lastCommentLabel, commentCountLabel
+            favoriteUserCountLabel,
+            descriptionLabel,
+            commentCountLabel,
+            lastCommentLabel
         ])
         let spacing = CGFloat(PostConfig.textVerticalMargin)
         stackView.axis = .vertical
         stackView.distribution = .fill
         stackView.setCustomSpacing(spacing, after: favoriteUserCountLabel)
         stackView.setCustomSpacing(spacing, after: descriptionLabel)
-        stackView.setCustomSpacing(spacing, after: lastCommentLabel)
+        stackView.setCustomSpacing(spacing, after: commentCountLabel)
         stackView.isLayoutMarginsRelativeArrangement = true
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.layoutMargins = UIEdgeInsets(
@@ -47,7 +50,7 @@ class PostListBody: UIView {
 
     lazy private var favoriteUserCountLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: PostConfig.favoriteUserCountFontSize)
+        label.font = .systemFont(ofSize: PostConfig.favoriteUserCountFontSize, weight: .semibold)
         label.textColor = .black
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -64,7 +67,7 @@ class PostListBody: UIView {
     lazy private(set) var commentCountLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: PostConfig.commentCountFontSize)
-        label.textColor = .systemBlue
+        label.textColor = .systemGray
         label.translatesAutoresizingMaskIntoConstraints = false
         label.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapCommentCountLabel))
         return label
@@ -128,8 +131,8 @@ class PostListBody: UIView {
         view.translatesAutoresizingMaskIntoConstraints = false
         conversationImageView.snp.makeConstraints { make in
             make.center.equalToSuperview()
-            make.width.equalTo(PostConfig.imageDiameter)
-            make.height.equalTo(PostConfig.imageDiameter)
+            make.width.equalTo(PostConfig.imageDiameter - 2)
+            make.height.equalTo(PostConfig.imageDiameter - 2)
         }
         ripple.activate(to: view)
         view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapConversationImageView))
@@ -214,7 +217,7 @@ class PostListBody: UIView {
     }
 
     private func configureFavoriteUserCountLabel() {
-        let text = "\(post?.favoriteUserIds?.count ?? 0) 명의 사람들이 이 게시물을 좋아합니다."
+        let text = "좋아요 \(post?.favoriteUserIds?.count ?? 0)개"
         favoriteUserCountLabel.text = text
     }
 
@@ -225,9 +228,15 @@ class PostListBody: UIView {
 
     private func configureLastCommentLabel() {
         if let lastComment = post?.comments?.first {
-            lastCommentLabel.text = "\(lastComment.commenter?.nickname ?? "알 수 없음"): \(lastComment.comment ?? "알 수 없음.")"
+            let nickname = "\(lastComment.commenter?.nickname ?? "알 수 없음"): "
+            let comment = "\(lastComment.comment ?? "알 수 없음.")"
+            let attributedText = NSMutableAttributedString().semibold(nickname).normal(comment)
+            lastCommentLabel.attributedText = attributedText
         } else {
-            lastCommentLabel.text = "#: 등록 된 커멘트가 없습니다."
+            let nickname = "#: "
+            let comment = "등록 된 커멘트가 없습니다."
+            let attributedText = NSMutableAttributedString().semibold(nickname).normal(comment)
+            lastCommentLabel.attributedText = attributedText
         }
     }
 

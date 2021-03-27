@@ -10,7 +10,7 @@ class PostListHeader: UIView {
 
     class Constant {
         static let headerImageDiameter: CGFloat = 40
-        static let headerHeight: Int = 55
+        static let headerHeight: Int = 60
         static let optionImageDiameter: CGFloat = 28
     }
 
@@ -19,6 +19,12 @@ class PostListHeader: UIView {
     private weak var post: PostDTO?
 
     private weak var delegate: PostListHeaderDelegate?
+
+    lazy private var topBorder: UIView = {
+        let view = UIView()
+        view.backgroundColor = .systemGray5
+        return view
+    }()
 
     lazy private var headerImage: UIImageView = {
         let imageView: UIImageView = UIImageView()
@@ -32,7 +38,7 @@ class PostListHeader: UIView {
     lazy private var headerLabel1: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 14, weight: .semibold)
-        label.textColor = .darkText
+        label.textColor = .black2
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -65,11 +71,19 @@ class PostListHeader: UIView {
     lazy private var header: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(topBorder)
         view.addSubview(headerImage)
         view.addSubview(verticalCenterGuideLine)
         view.addSubview(headerLabel1)
         view.addSubview(headerLabel2)
         view.addSubview(optionImageView)
+
+        topBorder.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.height.equalTo(0.3)
+        }
 
         headerImage.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(15)
@@ -88,12 +102,12 @@ class PostListHeader: UIView {
         headerLabel1.snp.makeConstraints { make in
             make.leading.equalTo(headerImage.snp.trailing).inset(-12)
             make.top.equalToSuperview()
-            make.bottom.equalTo(verticalCenterGuideLine.snp.top).inset(11)
+            make.bottom.equalTo(verticalCenterGuideLine.snp.top).inset(13)
         }
 
         headerLabel2.snp.makeConstraints { make in
             make.leading.equalTo(headerImage.snp.trailing).inset(-12)
-            make.top.equalTo(verticalCenterGuideLine.snp.bottom).inset(9)
+            make.top.equalTo(verticalCenterGuideLine.snp.bottom).inset(11)
             make.bottom.equalToSuperview()
         }
 
