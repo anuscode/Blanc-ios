@@ -8,6 +8,8 @@ class PagerViewController: UIViewController {
 
     private var titles: [String] = ["받은 요청", "받은 관심", "보낸 관심"]
 
+    private let unselectedColor: UIColor = UIColor(hexCode: "#a9b2ba")
+
     internal var rightSideBarView: RightSideBarView?
 
     lazy private var leftBarButtonItem: UIBarButtonItem = {
@@ -51,7 +53,7 @@ class PagerViewController: UIViewController {
     lazy private var titleLabel2: UILabel = {
         let label = UILabel()
         label.text = "보냄"
-        label.textColor = .systemGray3
+        label.textColor = unselectedColor
         label.font = .systemFont(ofSize: 25)
         label.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapTitleLabel2))
         return label
@@ -176,7 +178,7 @@ class PagerViewController: UIViewController {
         titleLabel1.isUserInteractionEnabled = false
         underLine1.backgroundColor = .bumble2
 
-        titleLabel2.textColor = .systemGray3
+        titleLabel2.textColor = unselectedColor
         titleLabel2.font = .systemFont(ofSize: 25)
         titleLabel2.isUserInteractionEnabled = true
         underLine2.backgroundColor = .clear
@@ -191,7 +193,7 @@ class PagerViewController: UIViewController {
         titleLabel2.isUserInteractionEnabled = false
         underLine2.backgroundColor = .bumble2
 
-        titleLabel1.textColor = .systemGray3
+        titleLabel1.textColor = unselectedColor
         titleLabel1.font = .systemFont(ofSize: 25)
         titleLabel1.isUserInteractionEnabled = true
         underLine1.backgroundColor = .clear
