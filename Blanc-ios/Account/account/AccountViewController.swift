@@ -34,6 +34,9 @@ class AccountViewController: UIViewController {
             AccountData(icon: "bell", title: "푸시 설정"),
             AccountData(icon: "power", title: "로그 아웃")
         ]),
+        SectionModel<String, AccountData>(model: "히스토리", items: [
+            AccountData(icon: "clock.arrow.circlepath", title: "내 게시물 관리"),
+        ]),
         SectionModel<String, AccountData>(model: "고객 센터", items: [
             AccountData(icon: "atom", title: "고객 센터"),
             AccountData(icon: "lightbulb", title: "블랑를 개선 시킬 의견을 주세요!")
@@ -478,6 +481,13 @@ extension AccountViewController: UITableViewDelegate {
                 navigationController?.pushViewController(.accountManagement, current: self)
             }
         case 2:
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            let identifier = "PostManagementViewController"
+            let vc = storyboard.instantiateViewController(
+                withIdentifier: identifier) as! PostManagementViewController
+            vc.prepare()
+            navigationController?.pushViewController(vc, current: self)
+        case 3:
             if (indexPath.row == 0) {
                 toast(message: "곧 구현 하겠습니다.")
             } else {

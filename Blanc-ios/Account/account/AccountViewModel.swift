@@ -38,6 +38,9 @@ class AccountViewModel {
                 AccountData(icon: "bell", title: "푸시 설정"),
                 AccountData(icon: "gearshape", title: "계정 관리")
             ]),
+            SectionModel<String, AccountData>(model: "히스토리", items: [
+                AccountData(icon: "clock.arrow.circlepath", title: "내 게시물 관리"),
+            ]),
             SectionModel<String, AccountData>(model: "고객 센터", items: [
                 AccountData(icon: "atom", title: "고객 센터"),
                 AccountData(icon: "lightbulb", title: "블랑를 개선 시킬 의견을 주세요!")
