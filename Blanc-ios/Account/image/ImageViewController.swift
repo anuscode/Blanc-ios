@@ -696,7 +696,7 @@ class ImageViewController: UIViewController, CropViewControllerDelegate, UIImage
         imagesClickable(false)
         loadingView.visible(true)
 
-        UIImage.resize(image: image, maxKb: 800) { [unowned self] resizedImage in
+        UIImage.resize(image: image, maxKb: 1000) { [unowned self] resizedImage in
             guard let resizedImage = resizedImage else {
                 toast(message: "이미지 리사이즈 도중 에러가 발생 하였습니다.")
                 return

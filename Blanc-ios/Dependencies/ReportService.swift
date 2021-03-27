@@ -17,18 +17,39 @@ class ReportService {
         return decoder
     }
 
-    // GET
+    // Post
     func report(uid: String?,
                 reporterId: String?,
                 reporteeId: String?,
                 files: [UIImage],
                 description: String) -> Single<Void> {
-
         provider.rx
-            .request(.report(
+            .request(.reportUser(
                 uid: uid,
                 reporterId: reporterId,
                 reporteeId: reporteeId,
+                files: files,
+                description: description)
+            )
+            .debug()
+            .filterSuccessfulStatusAndRedirectCodes()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .map({ _ in
+                Void()
+            })
+    }
+
+    // Post
+    func report(uid: String?,
+                reporterId: String?,
+                postId: String?,
+                files: [UIImage],
+                description: String) -> Single<Void> {
+        provider.rx
+            .request(.reportPost(
+                uid: uid,
+                reporterId: reporterId,
+                postId: postId,
                 files: files,
                 description: description)
             )

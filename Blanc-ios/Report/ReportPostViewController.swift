@@ -7,7 +7,7 @@ import CropViewController
 private typealias AddViewCell = AddCollectionViewCell
 private typealias ResourceViewCell = AddResourceCollectionViewCell
 
-class PostCreateViewController: UIViewController {
+class ReportPostViewController: UIViewController {
 
     private class Const {
         static let navigationUserImageSize: Int = 28
@@ -18,7 +18,7 @@ class PostCreateViewController: UIViewController {
         }()
     }
 
-    private var disposeBag: DisposeBag = DisposeBag()
+    private let disposeBag: DisposeBag = DisposeBag()
 
     private let ripple: Ripple = Ripple()
 
@@ -26,21 +26,21 @@ class PostCreateViewController: UIViewController {
 
     private var isFirstBeginEditing = true
 
-    internal var postCreateViewModel: PostCreateViewModel?
+    internal var reportViewModel: ReportPostViewModel!
 
     lazy private var leftBarButtonItem: UIBarButtonItem = {
-        UIBarButtonItem(customView: LeftSideBarView(title: "글 작성"))
+        UIBarButtonItem(customView: LeftSideBarView(title: "신고"))
+    }()
+
+    lazy private var starFallView: StarFallView = {
+        let view = StarFallView()
+        return view
     }()
 
     lazy private var transparentView: UIView = {
         let view = UIView()
         view.visible(false)
         view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapTransparentView))
-        return view
-    }()
-
-    lazy private var starFallView: StarFallView = {
-        let view = StarFallView()
         return view
     }()
 
@@ -64,22 +64,17 @@ class PostCreateViewController: UIViewController {
 
     lazy private var placeholder: UILabel = {
         let label = UILabel()
-        label.text = "하고싶은 말을 입력 하세요."
+        label.text = "신고 내용을 입력하세요."
         label.textColor = .darkGray
         return label
     }()
 
-    lazy private var enableCommentLabel: UILabel = {
+    lazy private var warningLabel: UILabel = {
         let label = UILabel()
-        label.text = "댓글 허용"
-        label.textColor = .darkGray
+        label.text = "무분별한 신고 시 계정 정지를 당할 수 있습니다."
+        label.font = .systemFont(ofSize: 14)
+        label.textColor = .black
         return label
-    }()
-
-    lazy private var enableCommentSwitch: UISwitch = {
-        let switchControl = UISwitch()
-        switchControl.setOn(true, animated: true)
-        return switchControl
     }()
 
     lazy private var collectionViewLayout: UICollectionViewFlowLayout = {
@@ -109,12 +104,12 @@ class PostCreateViewController: UIViewController {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .white
-        view.addSubview(createButton)
+        view.addSubview(reportButton)
 
         let window = UIApplication.shared.windows[0]
         let bottomPadding = window.safeAreaInsets.bottom
 
-        createButton.snp.makeConstraints { make in
+        reportButton.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(5)
             make.bottom.equalToSuperview().inset(bottomPadding + 5)
             make.leading.equalToSuperview().inset(20)
@@ -124,21 +119,21 @@ class PostCreateViewController: UIViewController {
         return view
     }()
 
-    lazy private var createButton: UIButton = {
+    lazy private var reportButton: UIButton = {
         let button = UIButton()
         button.translatesAutoresizingMaskIntoConstraints = false
         button.backgroundColor = .bumble3
-        button.setTitle("게시글 등록", for: .normal)
+        button.setTitle("신고 접수", for: .normal)
         button.layer.cornerRadius = 5
-        button.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapCreateButton))
+        button.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapReportButton))
         ripple.activate(to: button)
         return button
     }()
 
     lazy private var loadingView: Spinner = {
-        let spinner = Spinner()
-        spinner.visible(false)
-        return spinner
+        let view = Spinner()
+        view.visible(false)
+        return view
     }()
 
     override func viewWillAppear(_ animated: Bool) {
@@ -152,29 +147,19 @@ class PostCreateViewController: UIViewController {
         super.viewDidLoad()
         configureSubviews()
         configureConstraints()
-        subscribePostCreateViewModel()
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
+        subscribeReportPostViewModel()
     }
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        // should remove view model and model otherwise it shows the previous one.
         navigationController?.setNavigationBarHidden(false, animated: animated)
-    }
-
-    deinit {
-        log.info("deinit PostCreateViewController..")
     }
 
     private func configureSubviews() {
         view.addSubview(starFallView)
         view.addSubview(textView)
         view.addSubview(placeholder)
-        view.addSubview(enableCommentLabel)
-        view.addSubview(enableCommentSwitch)
+        view.addSubview(warningLabel)
         view.addSubview(collectionView)
         view.addSubview(bottomView)
         view.addSubview(transparentView)
@@ -196,16 +181,12 @@ class PostCreateViewController: UIViewController {
             make.top.equalTo(textView.snp.top).inset(23)
             make.leading.equalTo(textView.snp.leading).inset(20)
         }
-        enableCommentLabel.snp.makeConstraints { make in
-            make.centerY.equalTo(enableCommentSwitch.snp.centerY)
-            make.trailing.equalTo(enableCommentSwitch.snp.leading).inset(-10)
-        }
-        enableCommentSwitch.snp.makeConstraints { make in
+        warningLabel.snp.makeConstraints { make in
             make.top.equalTo(textView.snp.bottom).inset(-10)
-            make.trailing.equalTo(textView.snp.trailing)
+            make.leading.equalTo(textView.snp.leading)
         }
         collectionView.snp.makeConstraints { make in
-            make.top.equalTo(enableCommentSwitch.snp.bottom).inset(-10)
+            make.top.equalTo(warningLabel.snp.bottom).inset(-20)
             make.centerX.equalToSuperview()
             make.leading.equalToSuperview().inset(10)
             make.trailing.equalToSuperview().inset(10)
@@ -219,22 +200,30 @@ class PostCreateViewController: UIViewController {
         transparentView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-        loadingView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
     }
 
-    private func subscribePostCreateViewModel() {
-        postCreateViewModel?
+    private func subscribeReportPostViewModel() {
+        reportViewModel
+            .post
+            .take(1)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] post in
+                let nickname = post.author?.nickname ?? ""
+                placeholder.text = "\(nickname) 님의 게시물을 신고합니다."
+            })
+            .disposed(by: disposeBag)
+
+        reportViewModel
             .toast
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [unowned self] message in
                 toast(message: message)
             })
             .disposed(by: disposeBag)
 
-        postCreateViewModel?
+        reportViewModel
             .loading
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
@@ -243,42 +232,34 @@ class PostCreateViewController: UIViewController {
             })
             .disposed(by: disposeBag)
 
-        postCreateViewModel?
+        reportViewModel
             .popView
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [unowned self] _ in
                 navigationController?.popViewController(animated: true)
                 SwinjectStoryboard.defaultContainer.resetObjectScope(.postCreateScope)
-                disposeBag = DisposeBag()
             })
             .disposed(by: disposeBag)
 
-        postCreateViewModel?
-            .createButton
+        reportViewModel
+            .reportButton
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
-            .bind(to: createButton.rx.isUserInteractionEnabled)
+            .bind(to: reportButton.rx.isUserInteractionEnabled)
             .disposed(by: disposeBag)
     }
 
-    @objc func didTapCreateButton() {
-
-        let isDescriptionRegistered = textView.text.isNotEmpty()
-        let isImageRegistered = images.count > 0
-
-        if (!isDescriptionRegistered && !isImageRegistered) {
+    @objc func didTapReportButton() {
+        let files = images.filter({ $0 != nil }) as! [UIImage]
+        let description: String = textView.text ?? ""
+        if (description.isEmpty) {
             let title = "등록 된 내용이 없습니다."
-            let message = "이미지, 게시글 중 최소 한개는 반드시 충족 되야합니다."
+            let message = "신고 내용을 적어 주세요."
             toast(title: title, message: message)
             return
         }
-
-        let files = images.filter({ $0 != nil }) as! [UIImage]
-        let description = textView.text
-        let enableComment = enableCommentSwitch.isOn
-
-        postCreateViewModel?.createPost(files: files, description: description, enableComment: enableComment)
+        reportViewModel.report(files: files, description: description)
     }
 
     @objc private func didTapTransparentView() {
@@ -286,7 +267,7 @@ class PostCreateViewController: UIViewController {
     }
 }
 
-extension PostCreateViewController: UITextViewDelegate {
+extension ReportPostViewController: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
         transparentView.visible(true)
     }
@@ -296,20 +277,18 @@ extension PostCreateViewController: UITextViewDelegate {
     }
 }
 
-extension PostCreateViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+extension ReportPostViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         images.count + 1
     }
 
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if (indexPath.row == images.count) {
-            let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: AddViewCell.identifier, for: indexPath) as! AddViewCell
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: AddViewCell.identifier, for: indexPath) as! AddViewCell
             cell.bind(delegate: self)
             return cell
         } else {
-            let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: ResourceViewCell.identifier, for: indexPath) as! ResourceViewCell
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ResourceViewCell.identifier, for: indexPath) as! ResourceViewCell
             cell.bind(images[indexPath.row], delegate: self)
             return cell
         }
@@ -320,10 +299,9 @@ extension PostCreateViewController: UICollectionViewDataSource, UICollectionView
     }
 }
 
-extension PostCreateViewController: PostCreateResourceCollectionViewCellDelegate {
+extension ReportPostViewController: PostCreateResourceCollectionViewCellDelegate {
     func delete(image: UIImage?) {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-
         let deleteAction = UIAlertAction(title: "이미지 삭제", style: .default) { [unowned self] (action) in
             guard let index = images.firstIndex(of: image) else {
                 toast(message: "예상치 못한 에러가 발생 하였습니다.")
@@ -342,8 +320,9 @@ extension PostCreateViewController: PostCreateResourceCollectionViewCellDelegate
 
         if UIDevice.current.userInterfaceIdiom == .pad {
             if let popoverController = alertController.popoverPresentationController {
+                let sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 0, height: 0)
                 popoverController.sourceView = view
-                popoverController.sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 0, height: 0)
+                popoverController.sourceRect = sourceRect
                 popoverController.permittedArrowDirections = []
                 present(alertController, animated: true, completion: nil)
             }
@@ -353,7 +332,7 @@ extension PostCreateViewController: PostCreateResourceCollectionViewCellDelegate
     }
 }
 
-extension PostCreateViewController: PostCreateAddCollectionViewCellDelegate {
+extension ReportPostViewController: PostCreateAddCollectionViewCellDelegate {
     func addImage() {
         if (images.count >= 3) {
             toast(message: "사진은 3장까지 허용 됩니다.")
@@ -367,8 +346,7 @@ extension PostCreateViewController: PostCreateAddCollectionViewCellDelegate {
     }
 }
 
-extension PostCreateViewController: CropViewControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-
+extension ReportPostViewController: CropViewControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController,
                                didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         guard let image = (info[UIImagePickerController.InfoKey.originalImage] as? UIImage) else {

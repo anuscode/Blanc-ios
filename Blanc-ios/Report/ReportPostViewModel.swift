@@ -2,17 +2,17 @@ import Foundation
 import RxSwift
 import FirebaseAuth
 
-class ReportViewModel {
+class ReportPostViewModel {
 
     private class Repository {
-        var reportee: UserDTO!
+        var post: PostDTO!
     }
 
     private let disposeBag: DisposeBag = DisposeBag()
 
     private let auth: Auth = Auth.auth()
 
-    internal let reportee: ReplaySubject = ReplaySubject<UserDTO>.create(bufferSize: 1)
+    internal let post: ReplaySubject = ReplaySubject<PostDTO>.create(bufferSize: 1)
 
     internal let toast: PublishSubject = PublishSubject<String>()
 
@@ -35,17 +35,17 @@ class ReportViewModel {
     }
 
     private func publish() {
-        reportee.onNext(repository.reportee)
+        post.onNext(repository.post)
     }
 
     func subscribeChannel() {
         Channel
-            .reportee
+            .reportedPost
             .take(1)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
-            .subscribe(onNext: { [unowned self] reportee in
-                repository.reportee = reportee
+            .subscribe(onNext: { [unowned self] post in
+                repository.post = post
                 publish()
             })
             .disposed(by: disposeBag)
@@ -54,7 +54,7 @@ class ReportViewModel {
     func report(files: [UIImage], description: String) {
         guard let uid = auth.uid,
               let reporterId = session.id,
-              let reporteeId = repository.reportee.id else {
+              let postId = repository.post.id else {
             toast.onNext("잘못 된 설정 값입니다. 화면 종료 후 다시 시도해 주세요.")
             return
         }
@@ -64,7 +64,7 @@ class ReportViewModel {
             .report(
                 uid: uid,
                 reporterId: reporterId,
-                reporteeId: reporteeId,
+                postId: postId,
                 files: files,
                 description: description
             )

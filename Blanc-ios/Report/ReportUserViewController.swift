@@ -26,7 +26,7 @@ class ReportUserViewController: UIViewController {
 
     private var isFirstBeginEditing = true
 
-    internal var reportViewModel: ReportViewModel!
+    internal var reportViewModel: ReportUserViewModel!
 
     lazy private var leftBarButtonItem: UIBarButtonItem = {
         UIBarButtonItem(customView: LeftSideBarView(title: "신고"))
@@ -42,12 +42,6 @@ class ReportUserViewController: UIViewController {
         view.visible(false)
         view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapTransparentView))
         return view
-    }()
-
-    lazy private var titleLabel: UILabel = {
-        let label = UILabel()
-        label.textColor = .black
-        return label
     }()
 
     lazy private var textView: UITextView = {
@@ -71,14 +65,14 @@ class ReportUserViewController: UIViewController {
     lazy private var placeholder: UILabel = {
         let label = UILabel()
         label.text = "신고 내용을 입력하세요."
-        label.textColor = .systemGray
+        label.textColor = .darkGray
         return label
     }()
 
     lazy private var warningLabel: UILabel = {
         let label = UILabel()
         label.text = "무분별한 신고 시 계정 정지를 당할 수 있습니다."
-        label.font = .systemFont(ofSize: 12)
+        label.font = .systemFont(ofSize: 14)
         label.textColor = .black
         return label
     }()
@@ -167,7 +161,6 @@ class ReportUserViewController: UIViewController {
 
     private func configureSubviews() {
         view.addSubview(starFallView)
-        view.addSubview(titleLabel)
         view.addSubview(textView)
         view.addSubview(placeholder)
         view.addSubview(warningLabel)
@@ -221,7 +214,7 @@ class ReportUserViewController: UIViewController {
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [unowned self] reportee in
                 let nickname = reportee.nickname ?? ""
-                titleLabel.text = "\(nickname) 님을 신고합니다."
+                placeholder.text = "\(nickname) 님을 신고합니다."
             })
             .disposed(by: disposeBag)
 
@@ -374,7 +367,7 @@ extension ReportUserViewController: CropViewControllerDelegate, UIImagePickerCon
                                    withRect cropRect: CGRect,
                                    angle: Int) {
         loadingView.visible(true)
-        UIImage.resize(image: image, maxKb: 1200) { [unowned self] resizedImage in
+        UIImage.resize(image: image, maxKb: 1000) { [unowned self] resizedImage in
             DispatchQueue.main.async {
                 images.append(resizedImage)
                 collectionView.reloadData()
