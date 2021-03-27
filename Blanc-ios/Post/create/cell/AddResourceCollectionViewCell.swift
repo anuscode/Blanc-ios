@@ -5,7 +5,7 @@ protocol PostCreateResourceCollectionViewCellDelegate {
     func delete(image: UIImage?)
 }
 
-class PostCreateResourceCollectionViewCell: UICollectionViewCell {
+class AddResourceCollectionViewCell: UICollectionViewCell {
 
     static let identifier = "PostCreateResourceCollectionViewCell"
 

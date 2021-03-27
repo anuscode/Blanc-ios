@@ -4,8 +4,8 @@ import RxSwift
 import SwinjectStoryboard
 import CropViewController
 
-private typealias AddViewCell = PostCreateAddCollectionViewCell
-private typealias ResourceViewCell = PostCreateResourceCollectionViewCell
+private typealias AddViewCell = AddCollectionViewCell
+private typealias ResourceViewCell = AddResourceCollectionViewCell
 
 class ReportViewController: UIViewController {
 
@@ -32,6 +32,11 @@ class ReportViewController: UIViewController {
         UIBarButtonItem(customView: LeftSideBarView(title: "신고"))
     }()
 
+    lazy private var starFallView: StarFallView = {
+        let view = StarFallView()
+        return view
+    }()
+
     lazy private var transparentView: UIView = {
         let view = UIView()
         view.visible(false)
@@ -48,7 +53,7 @@ class ReportViewController: UIViewController {
     lazy private var textView: UITextView = {
         let textView = UITextView()
         textView.font = .systemFont(ofSize: 16)
-        textView.backgroundColor = .secondarySystemBackground
+        textView.backgroundColor = UIColor.secondarySystemBackground.withAlphaComponent(0.9)
         textView.keyboardType = .default
         textView.sizeToFit()
         textView.layer.cornerRadius = 10
@@ -57,8 +62,8 @@ class ReportViewController: UIViewController {
         textView.rx
             .text
             .observeOn(MainScheduler.asyncInstance)
-            .map({ text in text.isEmpty() })
-            .subscribe(onNext: placeholder.visible)
+            .map({ text in !text.isEmpty() })
+            .bind(to: placeholder.rx.isHidden)
             .disposed(by: disposeBag)
         return textView
     }()
@@ -83,16 +88,17 @@ class ReportViewController: UIViewController {
         layout.scrollDirection = .vertical
         layout.minimumLineSpacing = 1
         layout.minimumInteritemSpacing = 1
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 1, bottom: 0, right: 1)
-        let size = ((view.width - 4) * 0.8 / 3) - 2
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 4, right: 0)
+        let size = ((view.width - 20) / 3) - 4
         layout.itemSize = CGSize(width: size, height: size)
-        layout.minimumInteritemSpacing = 3
+        layout.minimumInteritemSpacing = 4
+        layout.minimumLineSpacing = 6
         return layout
     }()
 
     lazy private var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
-        collectionView.backgroundColor = .white
+        collectionView.backgroundColor = UIColor.white.withAlphaComponent(0.9)
         collectionView.register(AddViewCell.self, forCellWithReuseIdentifier: AddViewCell.identifier)
         collectionView.register(ResourceViewCell.self, forCellWithReuseIdentifier: ResourceViewCell.identifier)
         collectionView.delegate = self
@@ -160,6 +166,7 @@ class ReportViewController: UIViewController {
     }
 
     private func configureSubviews() {
+        view.addSubview(starFallView)
         view.addSubview(titleLabel)
         view.addSubview(textView)
         view.addSubview(placeholder)
@@ -171,15 +178,15 @@ class ReportViewController: UIViewController {
     }
 
     private func configureConstraints() {
-        titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide).inset(20)
-            make.leading.equalTo(textView.snp.leading)
+        starFallView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
         }
         textView.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(20)
+            make.top.equalTo(view.safeAreaLayoutGuide).inset(10)
             make.centerX.equalToSuperview()
-            make.height.equalTo(200)
-            make.width.equalToSuperview().multipliedBy(0.8)
+            make.height.equalTo(300)
+            make.leading.equalToSuperview().inset(10)
+            make.trailing.equalToSuperview().inset(10)
         }
         placeholder.snp.makeConstraints { make in
             make.top.equalTo(textView.snp.top).inset(23)
@@ -192,7 +199,8 @@ class ReportViewController: UIViewController {
         collectionView.snp.makeConstraints { make in
             make.top.equalTo(warningLabel.snp.bottom).inset(-20)
             make.centerX.equalToSuperview()
-            make.width.equalToSuperview().multipliedBy(0.8)
+            make.leading.equalToSuperview().inset(10)
+            make.trailing.equalToSuperview().inset(10)
             make.bottom.equalTo(bottomView.snp.top).inset(-30)
         }
         bottomView.snp.makeConstraints { make in

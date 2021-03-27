@@ -4,8 +4,8 @@ import RxSwift
 import SwinjectStoryboard
 import CropViewController
 
-private typealias AddViewCell = PostCreateAddCollectionViewCell
-private typealias ResourceViewCell = PostCreateResourceCollectionViewCell
+private typealias AddViewCell = AddCollectionViewCell
+private typealias ResourceViewCell = AddResourceCollectionViewCell
 
 class PostCreateViewController: UIViewController {
 
@@ -29,7 +29,7 @@ class PostCreateViewController: UIViewController {
     internal var postCreateViewModel: PostCreateViewModel?
 
     lazy private var leftBarButtonItem: UIBarButtonItem = {
-        UIBarButtonItem(customView: LeftSideBarView(title: "게시물 작성"))
+        UIBarButtonItem(customView: LeftSideBarView(title: "글 작성"))
     }()
 
     lazy private var transparentView: UIView = {
@@ -39,10 +39,15 @@ class PostCreateViewController: UIViewController {
         return view
     }()
 
+    lazy private var starFallView: StarFallView = {
+        let view = StarFallView()
+        return view
+    }()
+
     lazy private var textView: UITextView = {
         let textView = UITextView()
         textView.font = .systemFont(ofSize: 16)
-        textView.backgroundColor = .secondarySystemBackground
+        textView.backgroundColor = UIColor.secondarySystemBackground.withAlphaComponent(0.9)
         textView.keyboardType = .default
         textView.sizeToFit()
         textView.layer.cornerRadius = 10
@@ -82,16 +87,17 @@ class PostCreateViewController: UIViewController {
         layout.scrollDirection = .vertical
         layout.minimumLineSpacing = 1
         layout.minimumInteritemSpacing = 1
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 1, bottom: 0, right: 1)
-        let size = ((view.width - 4) * 0.8 / 3) - 2
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 4, right: 0)
+        let size = ((view.width - 20) / 3) - 4
         layout.itemSize = CGSize(width: size, height: size)
-        layout.minimumInteritemSpacing = 3
+        layout.minimumInteritemSpacing = 4
+        layout.minimumLineSpacing = 6
         return layout
     }()
 
     lazy private var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout)
-        collectionView.backgroundColor = .white
+        collectionView.backgroundColor = UIColor.white.withAlphaComponent(0.9)
         collectionView.register(AddViewCell.self, forCellWithReuseIdentifier: AddViewCell.identifier)
         collectionView.register(ResourceViewCell.self, forCellWithReuseIdentifier: ResourceViewCell.identifier)
         collectionView.delegate = self
@@ -164,6 +170,7 @@ class PostCreateViewController: UIViewController {
     }
 
     private func configureSubviews() {
+        view.addSubview(starFallView)
         view.addSubview(textView)
         view.addSubview(placeholder)
         view.addSubview(enableCommentLabel)
@@ -175,11 +182,15 @@ class PostCreateViewController: UIViewController {
     }
 
     private func configureConstraints() {
+        starFallView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
         textView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide).inset(30)
+            make.top.equalTo(view.safeAreaLayoutGuide).inset(10)
             make.centerX.equalToSuperview()
-            make.height.equalTo(200)
-            make.width.equalToSuperview().multipliedBy(0.8)
+            make.height.equalTo(300)
+            make.leading.equalToSuperview().inset(10)
+            make.trailing.equalToSuperview().inset(10)
         }
         placeholder.snp.makeConstraints { make in
             make.top.equalTo(textView.snp.top).inset(23)
@@ -196,7 +207,8 @@ class PostCreateViewController: UIViewController {
         collectionView.snp.makeConstraints { make in
             make.top.equalTo(enableCommentSwitch.snp.bottom).inset(-10)
             make.centerX.equalToSuperview()
-            make.width.equalToSuperview().multipliedBy(0.8)
+            make.leading.equalToSuperview().inset(10)
+            make.trailing.equalToSuperview().inset(10)
             make.bottom.equalTo(bottomView.snp.top).inset(-30)
         }
         bottomView.snp.makeConstraints { make in

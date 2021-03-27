@@ -155,8 +155,8 @@
 		104EEB5F25E3725D0069B2CF /* PostCreateModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEB3C25E3725D0069B2CF /* PostCreateModel.swift */; };
 		104EEB6025E3725D0069B2CF /* PostCreateViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEB3D25E3725D0069B2CF /* PostCreateViewController.swift */; };
 		104EEB6125E3725D0069B2CF /* PostCreateViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEB3E25E3725D0069B2CF /* PostCreateViewModel.swift */; };
-		104EEB6225E3725D0069B2CF /* PostCreateAddCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEB4025E3725D0069B2CF /* PostCreateAddCollectionViewCell.swift */; };
-		104EEB6325E3725D0069B2CF /* PostCreateResourceCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEB4125E3725D0069B2CF /* PostCreateResourceCollectionViewCell.swift */; };
+		104EEB6225E3725D0069B2CF /* AddCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEB4025E3725D0069B2CF /* AddCollectionViewCell.swift */; };
+		104EEB6325E3725D0069B2CF /* AddResourceCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEB4125E3725D0069B2CF /* AddResourceCollectionViewCell.swift */; };
 		104EEB6425E3725D0069B2CF /* PostViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEB4325E3725D0069B2CF /* PostViewModel.swift */; };
 		104EEB6525E3725D0069B2CF /* InstagramGridLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEB4425E3725D0069B2CF /* InstagramGridLayout.swift */; };
 		104EEB6625E3725D0069B2CF /* PostModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEB4525E3725D0069B2CF /* PostModel.swift */; };
@@ -483,8 +483,8 @@
 		104EEB3C25E3725D0069B2CF /* PostCreateModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostCreateModel.swift; sourceTree = "<group>"; };
 		104EEB3D25E3725D0069B2CF /* PostCreateViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostCreateViewController.swift; sourceTree = "<group>"; };
 		104EEB3E25E3725D0069B2CF /* PostCreateViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostCreateViewModel.swift; sourceTree = "<group>"; };
-		104EEB4025E3725D0069B2CF /* PostCreateAddCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostCreateAddCollectionViewCell.swift; sourceTree = "<group>"; };
-		104EEB4125E3725D0069B2CF /* PostCreateResourceCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostCreateResourceCollectionViewCell.swift; sourceTree = "<group>"; };
+		104EEB4025E3725D0069B2CF /* AddCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddCollectionViewCell.swift; sourceTree = "<group>"; };
+		104EEB4125E3725D0069B2CF /* AddResourceCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddResourceCollectionViewCell.swift; sourceTree = "<group>"; };
 		104EEB4325E3725D0069B2CF /* PostViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostViewModel.swift; sourceTree = "<group>"; };
 		104EEB4425E3725D0069B2CF /* InstagramGridLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InstagramGridLayout.swift; sourceTree = "<group>"; };
 		104EEB4525E3725D0069B2CF /* PostModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PostModel.swift; sourceTree = "<group>"; };
@@ -1168,8 +1168,8 @@
 		104EEB3F25E3725D0069B2CF /* cell */ = {
 			isa = PBXGroup;
 			children = (
-				104EEB4025E3725D0069B2CF /* PostCreateAddCollectionViewCell.swift */,
-				104EEB4125E3725D0069B2CF /* PostCreateResourceCollectionViewCell.swift */,
+				104EEB4025E3725D0069B2CF /* AddCollectionViewCell.swift */,
+				104EEB4125E3725D0069B2CF /* AddResourceCollectionViewCell.swift */,
 			);
 			path = cell;
 			sourceTree = "<group>";
@@ -2123,7 +2123,7 @@
 				104EEAD325E372360069B2CF /* HomeViewController.swift in Sources */,
 				104EEADE25E3723C0069B2CF /* LaunchSecondViewController.swift in Sources */,
 				104EEC5B25E3729B0069B2CF /* Models.swift in Sources */,
-				104EEB6325E3725D0069B2CF /* PostCreateResourceCollectionViewCell.swift in Sources */,
+				104EEB6325E3725D0069B2CF /* AddResourceCollectionViewCell.swift in Sources */,
 				104EEABA25E372300069B2CF /* RequestService.swift in Sources */,
 				104EEB4E25E3725D0069B2CF /* PostManagementHeader.swift in Sources */,
 				104EEC2325E3728F0069B2CF /* MyRatedCarouselTableViewCell.swift in Sources */,
@@ -2135,7 +2135,7 @@
 				104EEB1125E3724E0069B2CF /* ConversationProvider.swift in Sources */,
 				104EEB5B25E3725D0069B2CF /* PostBodyDelegate.swift in Sources */,
 				104EEB6625E3725D0069B2CF /* PostModel.swift in Sources */,
-				104EEB6225E3725D0069B2CF /* PostCreateAddCollectionViewCell.swift in Sources */,
+				104EEB6225E3725D0069B2CF /* AddCollectionViewCell.swift in Sources */,
 				104EEAFD25E372480069B2CF /* UserDTO.swift in Sources */,
 				104EEC3B25E3728F0069B2CF /* EducationViewController.swift in Sources */,
 				1061E0282604422B00A0F29E /* ReportViewModel.swift in Sources */,
