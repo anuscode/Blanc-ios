@@ -67,10 +67,6 @@ extension ObjectScope {
         storageFactory: PermanentStorage.init, description: "my rated score scope."
     )
 
-    static let avoidScope = ObjectScope(
-        storageFactory: PermanentStorage.init, description: "avoid scope."
-    )
-
     static let profileScope = ObjectScope(
         storageFactory: PermanentStorage.init, description: "profile scope."
     )
@@ -431,19 +427,6 @@ extension SwinjectStoryboard {
             return myRatedScoreViewModel
         }.inObjectScope(.myRatedScoreScope)
 
-        /** Avoid dependencies **/
-        defaultContainer.register(AvoidModel.self) { resolver in
-            let session = resolver ~> Session.self
-            let userService = resolver ~> UserService.self
-            let avoidModel = AvoidModel(session: session, userService: userService)
-            return avoidModel
-        }.inObjectScope(.avoidScope)
-        defaultContainer.register(AvoidViewModel.self) { resolver in
-            let avoidModel = resolver ~> AvoidModel.self
-            let avoidViewModel = AvoidViewModel(avoidModel: avoidModel)
-            return avoidViewModel
-        }.inObjectScope(.avoidScope)
-
         /** Pending dependencies **/
         defaultContainer.register(ImageViewModel.self) { resolver in
             let session = resolver ~> Session.self
@@ -789,7 +772,11 @@ extension SwinjectStoryboard {
 
         defaultContainer.storyboardInitCompleted(AvoidViewController.self) { resolver, controller in
             log.info("Injecting dependencies into AvoidViewController")
-            controller.avoidViewModel = resolver ~> AvoidViewModel.self
+            let session = resolver ~> Session.self
+            let userService = resolver ~> UserService.self
+            let avoidModel = AvoidModel(session: session, userService: userService)
+            let avoidViewModel = AvoidViewModel(avoidModel: avoidModel)
+            controller.avoidViewModel = avoidViewModel
         }
 
         defaultContainer.storyboardInitCompleted(ProfileViewController.self) { resolver, controller in

@@ -73,10 +73,15 @@ class AvoidModel {
                 result.append(Contact(name: name, phoneNumber: phoneNumber))
             }
             self.contacts = result
+            publish()
         } catch {
-            onError()
+            guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
+                return
+            }
+            if UIApplication.shared.canOpenURL(settingsUrl) {
+                UIApplication.shared.open(settingsUrl)
+            }
         }
-        publish()
     }
 
     private func extract(for regex: NSRegularExpression, in text: String) -> String {
@@ -102,21 +107,29 @@ class AvoidModel {
         return converted
     }
 
-    func updateUserContacts(onSuccess: @escaping () -> Void, onError: @escaping () -> Void) {
-        userService.updateUserContacts(
-                        currentUser: auth.currentUser!,
-                        uid: session.uid,
-                        userId: session.id,
-                        phones: contacts.map {
-                            $0.phoneNumber
-                        })
-                .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-                .observeOn(SerialDispatchQueueScheduler(qos: .default))
-                .subscribe(onSuccess: {
-                    onSuccess()
-                }, onError: { err in
-                    onError()
+    func updateUserContacts() -> Single<Void> {
+
+        guard let currentUser = auth.currentUser,
+              let uid = session.uid,
+              let userId = session.id else {
+            return Single
+                .just(Void())
+                .do(onSuccess: {
+                    throw NSError(domain: "not found required values..", code: 42, userInfo: nil)
                 })
-                .disposed(by: disposeBag)
+        }
+
+        let phones = contacts.map {
+            $0.phoneNumber
+        }
+
+        return userService
+            .updateUserContacts(
+                currentUser: currentUser,
+                uid: uid,
+                userId: userId,
+                phones: phones
+            )
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
     }
 }
