@@ -67,6 +67,20 @@ class AlarmModel {
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .subscribe(onNext: { [unowned self] push in
+
+                if (push.isOpened()) {
+                    return
+                }
+                if (push.isApproved()) {
+                    return
+                }
+                if (push.isLeft()) {
+                    return
+                }
+                if (push.isLogout()) {
+                    return
+                }
+
                 pushes.insert(push, at: 0)
                 publish()
             }, onError: { err in

@@ -17,7 +17,7 @@ class MainTabBarController: UITabBarController {
         .THUMB_UP,
         .CONVERSATION_OPEN,
         .CONVERSATION_LEAVE,
-        .LOG_OUT,
+        //.LOG_OUT,
         .LOOK_UP,
         .STAR_RATING
     ]
