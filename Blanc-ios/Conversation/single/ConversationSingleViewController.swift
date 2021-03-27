@@ -180,7 +180,7 @@ class ConversationSingleViewController: UIViewController {
     lazy private var inactiveLabel2: UILabel = {
         let label = UILabel()
         label.text = "지금 대화를 나누어 보세요."
-        label.textColor = .lightBlack
+        label.textColor = .black3
         return label
     }()
 

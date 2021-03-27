@@ -47,7 +47,7 @@ class LeftMessageTableViewCell: UITableViewCell {
         let label = UILabel()
         label.numberOfLines = 0
         label.font = .systemFont(ofSize: 16)
-        label.textColor = .lightBlack
+        label.textColor = .black3
         return label
     }()
 

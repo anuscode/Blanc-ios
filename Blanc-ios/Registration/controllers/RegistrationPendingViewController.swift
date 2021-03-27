@@ -52,7 +52,7 @@ class RegistrationPendingViewController: UIViewController {
         label.text = "승인 시 메인 화면으로 자동 전환 됩니다."
         label.font = .systemFont(ofSize: 16, weight: .light)
         label.numberOfLines = 2;
-        label.textColor = .lightBlack
+        label.textColor = .black3
         return label
     }()
 

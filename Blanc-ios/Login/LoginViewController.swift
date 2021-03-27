@@ -60,7 +60,7 @@ class LoginViewController: UIViewController {
         label.text = "돈, 명예, 권력, 사랑\n그중에 으뜸은 사랑이더라."
         label.font = .systemFont(ofSize: 13, weight: .light)
         label.numberOfLines = 3;
-        label.textColor = .lightBlack
+        label.textColor = .black3
         return label
     }()
 
@@ -201,7 +201,7 @@ class LoginViewController: UIViewController {
         label.font = .systemFont(ofSize: 10, weight: .light)
         label.textAlignment = .center
         label.numberOfLines = 2;
-        label.textColor = .lightBlack
+        label.textColor = .black3
         return label
     }()
 
@@ -217,7 +217,7 @@ class LoginViewController: UIViewController {
 
     lazy private var findAccountUnderline: UIView = {
         let view = UIView()
-        view.backgroundColor = .lightBlack
+        view.backgroundColor = .black3
         return view
     }()
 

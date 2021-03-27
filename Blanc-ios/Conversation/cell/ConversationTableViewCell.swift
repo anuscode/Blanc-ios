@@ -64,7 +64,7 @@ class ConversationTableViewCell: UITableViewCell {
 
     lazy private var line1: UILabel = {
         let label = UILabel()
-        label.textColor = .lightBlack
+        label.textColor = .black3
         label.font = .systemFont(ofSize: 17, weight: .semibold)
         return label
     }()

@@ -159,7 +159,7 @@ class AccountViewController: UIViewController {
         label.text = "이미지 변경"
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 12, weight: .light)
-        label.textColor = .lightBlack
+        label.textColor = .black3
         view.addSubview(label)
 
         imageView.snp.makeConstraints { make in
@@ -191,7 +191,7 @@ class AccountViewController: UIViewController {
         label.text = "프로필 변경"
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 12, weight: .light)
-        label.textColor = .lightBlack
+        label.textColor = .black3
         view.addSubview(label)
 
         imageView.snp.makeConstraints { make in
@@ -222,7 +222,7 @@ class AccountViewController: UIViewController {
         label.text = "내 별점"
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 12, weight: .light)
-        label.textColor = .lightBlack
+        label.textColor = .black3
         view.addSubview(label)
 
         imageView.snp.makeConstraints { make in
@@ -253,7 +253,7 @@ class AccountViewController: UIViewController {
         label.text = "지인 차단"
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 12, weight: .light)
-        label.textColor = .lightBlack
+        label.textColor = .black3
         view.addSubview(label)
 
         imageView.snp.makeConstraints { make in

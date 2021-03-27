@@ -34,7 +34,11 @@ extension UIColor {
     static let darkNavy: UIColor = UIColor(hexCode: "323651")
 
     // black
-    static let lightBlack: UIColor = UIColor(hexCode: "#3F3F3F")
+    static let black0: UIColor = UIColor(hexCode: "#0F0F0F")
+    static let black1: UIColor = UIColor(hexCode: "#1F1F1F")
+    static let black2: UIColor = UIColor(hexCode: "#2F2F2F")
+    static let black3: UIColor = UIColor(hexCode: "#3F3F3F")
+    static let black4: UIColor = UIColor(hexCode: "#4F4f4F")
     static let customBlack1: UIColor = UIColor(hexCode: "000000")
     static let customBlack2: UIColor = UIColor(hexCode: "030303")
     static let customBlack3: UIColor = UIColor(hexCode: "191919")
@@ -55,7 +59,7 @@ extension UIColor {
     static let slateGray: UIColor = UIColor(hexCode: "657383")
 
     static var lightBlue: UIColor {
-        return UIColor(red: 0, green: 184/255, blue: 1.0, alpha: 1.0)
+        return UIColor(red: 0, green: 184 / 255, blue: 1.0, alpha: 1.0)
     }
 
     static let thirdlySystemBackground: UIColor = UIColor(hexCode: "f9faf9")

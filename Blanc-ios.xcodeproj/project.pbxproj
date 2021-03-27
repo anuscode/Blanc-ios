@@ -204,7 +204,6 @@
 		104EEBD925E372890069B2CF /* ConversationViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEBCE25E372890069B2CF /* ConversationViewModel.swift */; };
 		104EEBDA25E372890069B2CF /* ConversationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEBCF25E372890069B2CF /* ConversationViewController.swift */; };
 		104EEC1825E3728F0069B2CF /* AvoidModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEBE025E3728F0069B2CF /* AvoidModel.swift */; };
-		104EEC1925E3728F0069B2CF /* AvoidTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEBE225E3728F0069B2CF /* AvoidTableViewCell.swift */; };
 		104EEC1A25E3728F0069B2CF /* AvoidViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEBE325E3728F0069B2CF /* AvoidViewModel.swift */; };
 		104EEC1B25E3728F0069B2CF /* AvoidViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEBE425E3728F0069B2CF /* AvoidViewController.swift */; };
 		104EEC1D25E3728F0069B2CF /* ImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEBE825E3728F0069B2CF /* ImageViewController.swift */; };
@@ -533,7 +532,6 @@
 		104EEBCE25E372890069B2CF /* ConversationViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationViewModel.swift; sourceTree = "<group>"; };
 		104EEBCF25E372890069B2CF /* ConversationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationViewController.swift; sourceTree = "<group>"; };
 		104EEBE025E3728F0069B2CF /* AvoidModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AvoidModel.swift; sourceTree = "<group>"; };
-		104EEBE225E3728F0069B2CF /* AvoidTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AvoidTableViewCell.swift; sourceTree = "<group>"; };
 		104EEBE325E3728F0069B2CF /* AvoidViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AvoidViewModel.swift; sourceTree = "<group>"; };
 		104EEBE425E3728F0069B2CF /* AvoidViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AvoidViewController.swift; sourceTree = "<group>"; };
 		104EEBE825E3728F0069B2CF /* ImageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageViewController.swift; sourceTree = "<group>"; };
@@ -1358,19 +1356,10 @@
 			isa = PBXGroup;
 			children = (
 				104EEBE025E3728F0069B2CF /* AvoidModel.swift */,
-				104EEBE125E3728F0069B2CF /* cell */,
 				104EEBE325E3728F0069B2CF /* AvoidViewModel.swift */,
 				104EEBE425E3728F0069B2CF /* AvoidViewController.swift */,
 			);
 			path = avoid;
-			sourceTree = "<group>";
-		};
-		104EEBE125E3728F0069B2CF /* cell */ = {
-			isa = PBXGroup;
-			children = (
-				104EEBE225E3728F0069B2CF /* AvoidTableViewCell.swift */,
-			);
-			path = cell;
 			sourceTree = "<group>";
 		};
 		104EEBE725E3728F0069B2CF /* image */ = {
@@ -2148,7 +2137,6 @@
 				104EEB6625E3725D0069B2CF /* PostModel.swift in Sources */,
 				104EEB6225E3725D0069B2CF /* PostCreateAddCollectionViewCell.swift in Sources */,
 				104EEAFD25E372480069B2CF /* UserDTO.swift in Sources */,
-				104EEC1925E3728F0069B2CF /* AvoidTableViewCell.swift in Sources */,
 				104EEC3B25E3728F0069B2CF /* EducationViewController.swift in Sources */,
 				1061E0282604422B00A0F29E /* ReportViewModel.swift in Sources */,
 				104EEC3725E3728F0069B2CF /* SexViewController.swift in Sources */,
