@@ -22,16 +22,16 @@ class PostManagementHeader: UIView {
 
     lazy private var headerLabel1: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 16)
-        label.textColor = .darkText
+        label.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
+        label.textColor = .black2
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
     lazy private var headerLabel2: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14)
-        label.textColor = .darkGray
+        label.font = UIFont.systemFont(ofSize: 12)
+        label.textColor = .systemGray
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -41,12 +41,13 @@ class PostManagementHeader: UIView {
         return view
     }()
 
-    lazy private var deleteLabel: UILabel = {
-        let label = UILabel()
-        label.text = "삭제"
-        label.textColor = .systemBlue
-        label.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(deletePost))
-        return label
+    lazy private var deleteImageView: UIImageView = {
+        let imageView = UIImageView()
+        let image = UIImage(systemName: "trash")
+        imageView.image = image
+        imageView.tintColor = .black4
+        imageView.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(deletePost))
+        return imageView
     }()
 
     lazy private var header: UIView = {
@@ -56,7 +57,7 @@ class PostManagementHeader: UIView {
         view.addSubview(verticalCenterGuideLine)
         view.addSubview(headerLabel1)
         view.addSubview(headerLabel2)
-        view.addSubview(deleteLabel)
+        view.addSubview(deleteImageView)
 
         headerImage.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(15)
@@ -75,18 +76,20 @@ class PostManagementHeader: UIView {
         headerLabel1.snp.makeConstraints { make in
             make.leading.equalTo(headerImage.snp.trailing).inset(-11)
             make.top.equalToSuperview()
-            make.bottom.equalTo(verticalCenterGuideLine.snp.top).inset(9)
+            make.bottom.equalTo(verticalCenterGuideLine.snp.top).inset(13)
         }
 
         headerLabel2.snp.makeConstraints { make in
             make.leading.equalTo(headerImage.snp.trailing).inset(-11)
-            make.top.equalTo(verticalCenterGuideLine.snp.bottom).inset(7)
+            make.top.equalTo(verticalCenterGuideLine.snp.bottom).inset(11)
             make.bottom.equalToSuperview()
         }
 
-        deleteLabel.snp.makeConstraints { make in
+        deleteImageView.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(20)
             make.centerY.equalToSuperview()
+            make.width.equalTo(20)
+            make.height.equalTo(20)
         }
 
         return view
