@@ -367,7 +367,7 @@ extension ReportUserViewController: CropViewControllerDelegate, UIImagePickerCon
                                    withRect cropRect: CGRect,
                                    angle: Int) {
         loadingView.visible(true)
-        UIImage.resize(image: image, maxKb: 1000) { [unowned self] resizedImage in
+        UIImage.resize(image: image) { [unowned self] resizedImage in
             DispatchQueue.main.async {
                 images.append(resizedImage)
                 collectionView.reloadData()

@@ -228,7 +228,7 @@ extension UIImage {
         return Data()
     }
 
-    static func resize(image: UIImage, maxKb: Int, completion: @escaping (UIImage?) -> ()) {
+    static func resize(image: UIImage, maxKb: Int = 1000, completion: @escaping (UIImage?) -> ()) {
         DispatchQueue.global(qos: .userInitiated).async {
             guard let currentImageSize = image.jpegData(compressionQuality: 1.0)?.count else {
                 return completion(nil)

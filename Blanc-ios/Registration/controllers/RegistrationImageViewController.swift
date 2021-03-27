@@ -327,7 +327,7 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
         loadingView.visible(true)
         cropViewController.dismiss(animated: true, completion: nil)
 
-        UIImage.resize(image: image, maxKb: 1000) { [unowned self] resizedImage in
+        UIImage.resize(image: image) { [unowned self] resizedImage in
             DispatchQueue.main.async {
                 updateImageViewWithImage(resizedImage!, cropViewController: cropViewController)
             }
