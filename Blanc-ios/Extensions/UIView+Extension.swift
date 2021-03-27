@@ -92,8 +92,8 @@ extension UIView {
 
         removeConstraint(attribute: attribute)
         let constraint = NSLayoutConstraint(
-                item: self, attribute: attribute, relatedBy: .equal,
-                toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: value)
+            item: self, attribute: attribute, relatedBy: .equal,
+            toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: value)
         constraint.priority = UILayoutPriority(rawValue: priority ?? 999)
         addConstraint(constraint)
     }
@@ -147,12 +147,12 @@ extension UIView {
 
     func rotate(withDuration: Int, infinite: Bool = false) {
         UIView.animate(
-                withDuration: TimeInterval(withDuration),
-                delay: 0,
-                options: UIView.AnimationOptions.curveLinear,
-                animations: { () -> Void in
-                    self.transform = self.transform.rotated(by: .pi / 2)
-                }) { (finished) -> Void in
+            withDuration: TimeInterval(withDuration),
+            delay: 0,
+            options: UIView.AnimationOptions.curveLinear,
+            animations: { () -> Void in
+                self.transform = self.transform.rotated(by: .pi / 2)
+            }) { (finished) -> Void in
             if finished && infinite {
                 self.rotate(withDuration: withDuration, infinite: infinite)
             }
@@ -169,46 +169,16 @@ extension UIView {
         layer.mask = mask
     }
 
-    func applyShadow(color: UIColor, opacity: Float, radius: CGFloat, edge: AIEdge, shadowSpace: CGFloat) {
+    func applyShadow(offset: CGSize, color: UIColor, radius: CGFloat, opacity: Float) {
+        layer.masksToBounds = false
+        layer.shadowOffset = offset
+        layer.shadowColor = color.cgColor
+        layer.shadowRadius = radius
+        layer.shadowOpacity = opacity
 
-        var sizeOffset: CGSize = CGSize.zero
-        switch edge {
-        case .Top:
-            sizeOffset = CGSize(width: 0, height: -shadowSpace)
-        case .Left:
-            sizeOffset = CGSize(width: -shadowSpace, height: 0)
-        case .Bottom:
-            sizeOffset = CGSize(width: 0, height: shadowSpace)
-        case .Right:
-            sizeOffset = CGSize(width: shadowSpace, height: 0)
-
-
-        case .Top_Left:
-            sizeOffset = CGSize(width: -shadowSpace, height: -shadowSpace)
-        case .Top_Right:
-            sizeOffset = CGSize(width: shadowSpace, height: -shadowSpace)
-        case .Bottom_Left:
-            sizeOffset = CGSize(width: -shadowSpace, height: shadowSpace)
-        case .Bottom_Right:
-            sizeOffset = CGSize(width: shadowSpace, height: shadowSpace)
-
-
-        case .All:
-            sizeOffset = CGSize(width: 0, height: 0)
-        case .None:
-            sizeOffset = CGSize.zero
-        }
-
-        self.layer.cornerRadius = self.frame.size.height / 2
-        self.layer.masksToBounds = true;
-
-        self.layer.shadowColor = color.cgColor
-        self.layer.shadowOpacity = opacity
-        self.layer.shadowOffset = sizeOffset
-        self.layer.shadowRadius = radius
-        self.layer.masksToBounds = false
-
-        self.layer.shadowPath = UIBezierPath(roundedRect: self.bounds, cornerRadius: self.layer.cornerRadius).cgPath
+        let backgroundCGColor = backgroundColor?.cgColor
+        backgroundColor = nil
+        layer.backgroundColor = backgroundCGColor
     }
 }
 

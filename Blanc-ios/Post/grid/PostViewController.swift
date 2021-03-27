@@ -47,24 +47,52 @@ class PostViewController: UIViewController {
     }()
 
     lazy private var fab: UIView = {
+
+        let container = UIView()
+        container.width(50)
+        container.height(50)
+        container.applyShadow(offset: CGSize.init(width: 0, height: 3), color: UIColor.black, radius: 2.0, opacity: 0.35)
+
         let view = UIView()
-        view.backgroundColor = .white
+        view.backgroundColor = .tinderPink
         view.layer.masksToBounds = true
-        view.layer.cornerRadius = 20
+        view.layer.cornerRadius = 25
         view.isUserInteractionEnabled = true
-        view.width(40)
-        view.height(40)
+        view.width(50)
+        view.height(50)
         view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapFloatingActionButton))
         ripple.activate(to: view)
 
-        let imageView = UIImageView(image: UIImage(named: "ic_menu"))
-        view.addSubview(imageView)
-        imageView.snp.makeConstraints { make in
-            make.center.equalToSuperview()
-            make.height.equalTo(25)
-            make.width.equalTo(25)
+        let pencil = UIImageView()
+        pencil.clipsToBounds = true
+        pencil.contentMode = .scaleAspectFill
+        let image = UIImage(systemName: "pencil")
+        pencil.image = image
+        pencil.tintColor = .white
+
+        let plus = UIImageView()
+        plus.contentMode = .scaleAspectFill
+        plus.image = UIImage(systemName: "plus")
+        plus.tintColor = .white
+
+        container.addSubview(view)
+        view.addSubview(pencil)
+        view.addSubview(plus)
+        view.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
         }
-        return view
+        pencil.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.height.equalTo(35)
+            make.width.equalTo(35)
+        }
+        plus.snp.makeConstraints { make in
+            make.centerX.equalToSuperview().multipliedBy(0.65)
+            make.centerY.equalToSuperview().multipliedBy(0.65)
+            make.height.equalTo(15)
+            make.width.equalTo(15)
+        }
+        return container
     }()
 
     lazy private var fab1: UIView = {
@@ -79,7 +107,6 @@ class PostViewController: UIViewController {
         circleView.width(40)
         circleView.height(40)
         circleView.isUserInteractionEnabled = true
-        circleView.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapFloatingActionButton1))
         ripple.activate(to: circleView)
 
         let imageView = UIImageView(image: UIImage(named: "ic_history_navy"))
@@ -139,7 +166,6 @@ class PostViewController: UIViewController {
         circleView.width(40)
         circleView.height(40)
         circleView.isUserInteractionEnabled = true
-        circleView.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapFloatingActionButton2))
         ripple.activate(to: circleView)
 
         circleView.addSubview(fab2LottieView)
@@ -263,36 +289,6 @@ class PostViewController: UIViewController {
     }
 
     @objc func didTapFloatingActionButton() {
-        if (isOpened) {
-            UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseIn], animations: { [unowned self] in
-                fab1.transform = CGAffineTransform(translationX: 0, y: 0)
-                fab2.transform = CGAffineTransform(translationX: 0, y: 0)
-            }, completion: { [unowned self] _ in
-                fab1.visible(false)
-                fab2.visible(false)
-                fab2LottieView.stop()
-            })
-        } else {
-            fab1.visible(true)
-            fab2.visible(true)
-            fab2LottieView.play()
-            UIView.animate(withDuration: 0.3, delay: 0, options: [.curveEaseIn], animations: { [unowned self] in
-                fab1.transform = CGAffineTransform(translationX: 0, y: -100)
-                fab2.transform = CGAffineTransform(translationX: 0, y: -50)
-            })
-        }
-        isOpened = !isOpened
-    }
-
-    @objc func didTapFloatingActionButton1() {
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let vc = storyboard.instantiateViewController(
-            withIdentifier: "PostManagementViewController") as! PostManagementViewController
-        vc.prepare()
-        navigationController?.pushViewController(vc, current: self)
-    }
-
-    @objc func didTapFloatingActionButton2() {
         navigationController?.pushViewController(.postCreate, current: self)
     }
 }
