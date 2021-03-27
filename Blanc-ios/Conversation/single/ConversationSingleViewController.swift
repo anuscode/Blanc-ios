@@ -103,7 +103,7 @@ class ConversationSingleViewController: UIViewController {
         tableView.separatorColor = .clear
         tableView.contentInset = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 0)
         tableView.delegate = self
-        tableView.backgroundColor = .white
+        tableView.backgroundColor = .clear
         return tableView
     }()
 
@@ -127,13 +127,13 @@ class ConversationSingleViewController: UIViewController {
         view.backgroundColor = .white
         view.visible(false)
 
-        view.addSubview(starFallView)
+        view.addSubview(inactiveStarFallView)
         view.addSubview(inactiveUserImage)
         view.addSubview(inactiveLabel1)
         view.addSubview(inactiveLabel2)
         view.addSubview(activeButton)
 
-        starFallView.snp.makeConstraints { make in
+        inactiveStarFallView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
 
@@ -160,7 +160,23 @@ class ConversationSingleViewController: UIViewController {
         return view
     }()
 
-    lazy private var starFallView: StarFallView = {
+    lazy private var activeStarFallView: UIView = {
+        let view = UIView()
+        let transparentView = UIView()
+        transparentView.backgroundColor = UIColor.white.withAlphaComponent(0.9)
+        let starFallView = StarFallView()
+        view.addSubview(starFallView)
+        view.addSubview(transparentView)
+        transparentView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        starFallView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        return view
+    }()
+
+    lazy private var inactiveStarFallView: StarFallView = {
         let view = StarFallView()
         return view
     }()
@@ -237,6 +253,7 @@ class ConversationSingleViewController: UIViewController {
     }
 
     private func configureSubviews() {
+        view.addSubview(activeStarFallView)
         view.addSubview(tableView)
         view.addSubview(closeTapBackground)
         view.addSubview(bottomTextField)
@@ -244,6 +261,11 @@ class ConversationSingleViewController: UIViewController {
     }
 
     private func configureConstraints() {
+
+        activeStarFallView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+
         tableView.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.leading.equalToSuperview()
