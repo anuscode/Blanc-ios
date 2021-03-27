@@ -17,11 +17,31 @@ fileprivate class ConversationDataSource: UITableViewDiffableDataSource<Section,
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-            if let item: ConversationDTO = itemIdentifier(for: indexPath) {
-                var snapshot = self.snapshot()
-                snapshot.deleteItems([item])
-                apply(snapshot)
-                conversationViewModel?.leaveConversation(conversationId: item.id)
+
+            let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+            let deleteAction = UIAlertAction(title: "나가기", style: .default) { [unowned self] (action) in
+                if let item: ConversationDTO = itemIdentifier(for: indexPath) {
+                    conversationViewModel?.leaveConversation(conversationId: item.id)
+                }
+            }
+
+            let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+            cancelAction.setValue(UIColor.red, forKey: "titleTextColor")
+
+            alertController.addAction(cancelAction)
+            alertController.addAction(deleteAction)
+            alertController.modalPresentationStyle = .popover
+
+            if UIDevice.current.userInterfaceIdiom == .pad {
+                if let popoverController = alertController.popoverPresentationController {
+                    let sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 0, height: 0)
+                    popoverController.sourceView = view
+                    popoverController.sourceRect = sourceRect
+                    popoverController.permittedArrowDirections = []
+                    present(alertController, animated: true, completion: nil)
+                }
+            } else {
+                present(alertController, animated: true, completion: nil)
             }
         }
     }
