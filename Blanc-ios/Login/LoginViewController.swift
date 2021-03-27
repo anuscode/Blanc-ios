@@ -42,7 +42,7 @@ class LoginViewController: UIViewController {
     lazy private var titleLabel: UILabel = {
         let label = UILabel()
         label.text = "blanc"
-        label.font = .boldSystemFont(ofSize: 35)
+        label.font = .boldSystemFont(ofSize: 38)
         label.textColor = .black
         return label
     }()
@@ -51,15 +51,15 @@ class LoginViewController: UIViewController {
         let dot = UILabel()
         dot.text = "."
         dot.textColor = .bumble4
-        dot.font = .boldSystemFont(ofSize: 40)
+        dot.font = .boldSystemFont(ofSize: 43)
         return dot
     }()
 
     lazy private var secondaryTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "돈, 명예, 권력, 사랑\n그중에 으뜸은 사랑이더라."
-        label.font = .systemFont(ofSize: 12, weight: .light)
-        label.numberOfLines = 2;
+        label.font = .systemFont(ofSize: 13, weight: .light)
+        label.numberOfLines = 3;
         label.textColor = .lightBlack
         return label
     }()
