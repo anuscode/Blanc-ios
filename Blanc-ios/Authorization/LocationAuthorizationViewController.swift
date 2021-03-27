@@ -147,7 +147,12 @@ class LocationAuthorizationViewController: UIViewController {
     @objc private func didTapButton() {
         let authorization = manager.authorizationStatus
         if (authorization == .denied || authorization == .restricted) {
-            toast(message: "위치 설정은 필수 값 입니다.\n설정 -> 블랑 -> 위치정보 동의 과정을 통해\n권한을 획득 할 수 있습니다.", seconds: 3)
+            guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
+                return
+            }
+            if UIApplication.shared.canOpenURL(settingsUrl) {
+                UIApplication.shared.open(settingsUrl)
+            }
         }
         if (authorization == .authorizedAlways || authorization == .authorizedWhenInUse) {
             next()
