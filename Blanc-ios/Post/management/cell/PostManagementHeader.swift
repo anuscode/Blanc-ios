@@ -5,7 +5,7 @@ class PostManagementHeader: UIView {
 
     class Constant {
         static let headerImageDiameter: Int = 40
-        static let headerHeight: Int = 55
+        static let headerHeight: Int = 60
     }
 
     private weak var post: PostDTO?
@@ -74,13 +74,13 @@ class PostManagementHeader: UIView {
         }
 
         headerLabel1.snp.makeConstraints { make in
-            make.leading.equalTo(headerImage.snp.trailing).inset(-11)
+            make.leading.equalTo(headerImage.snp.trailing).inset(-12)
             make.top.equalToSuperview()
             make.bottom.equalTo(verticalCenterGuideLine.snp.top).inset(13)
         }
 
         headerLabel2.snp.makeConstraints { make in
-            make.leading.equalTo(headerImage.snp.trailing).inset(-11)
+            make.leading.equalTo(headerImage.snp.trailing).inset(-12)
             make.top.equalTo(verticalCenterGuideLine.snp.bottom).inset(11)
             make.bottom.equalToSuperview()
         }

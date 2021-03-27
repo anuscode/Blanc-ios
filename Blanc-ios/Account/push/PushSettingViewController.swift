@@ -23,6 +23,7 @@ class PushSettingViewController: UIViewController {
         tableView.register(PushSettingTableViewCell.self, forCellReuseIdentifier: PushSettingTableViewCell.identifier)
         tableView.layer.cornerRadius = 10
         tableView.layer.masksToBounds = true
+        tableView.isScrollEnabled = false
         tableView.contentInset = UIEdgeInsets(top: 10, left: 0, bottom: 10, right: 0)
         return tableView
     }()
@@ -73,7 +74,7 @@ class PushSettingViewController: UIViewController {
             make.top.equalTo(view.safeAreaLayoutGuide).inset(10)
             make.leading.equalTo(view.safeAreaLayoutGuide).inset(10)
             make.trailing.equalTo(view.safeAreaLayoutGuide).inset(10)
-            make.height.equalTo(height + 10)
+            make.height.equalTo(height + 20)
         }
 
         alarmGuide.snp.makeConstraints { make in

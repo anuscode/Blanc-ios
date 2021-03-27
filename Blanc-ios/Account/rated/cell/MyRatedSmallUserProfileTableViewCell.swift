@@ -26,25 +26,22 @@ class MyRatedSmallUserProfileTableViewCell: UITableViewCell {
 
     lazy private var line1: UILabel = {
         let label = UILabel()
-        label.text = "핑크겅듀, 37"
         label.textColor = .darkText
-        label.font = .systemFont(ofSize: 18)
+        label.font = .systemFont(ofSize: 16, weight: .semibold)
         return label
     }()
 
     lazy private var line2: UILabel = {
         let label = UILabel()
-        label.text = "서울특별시, 1km"
         label.textColor = .darkGray
-        label.font = .systemFont(ofSize: 16, weight: .light)
+        label.font = .systemFont(ofSize: 14)
         return label
     }()
 
     lazy private var line3: UILabel = {
         let label = UILabel()
-        label.text = "공무원, 대학교"
         label.textColor = .darkGray
-        label.font = .systemFont(ofSize: 16, weight: .light)
+        label.font = .systemFont(ofSize: 14)
         return label
     }()
 
