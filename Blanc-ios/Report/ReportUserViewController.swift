@@ -7,7 +7,7 @@ import CropViewController
 private typealias AddViewCell = AddCollectionViewCell
 private typealias ResourceViewCell = AddResourceCollectionViewCell
 
-class ReportViewController: UIViewController {
+class ReportUserViewController: UIViewController {
 
     private class Const {
         static let navigationUserImageSize: Int = 28
@@ -278,7 +278,7 @@ class ReportViewController: UIViewController {
     }
 }
 
-extension ReportViewController: UITextViewDelegate {
+extension ReportUserViewController: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
         transparentView.visible(true)
     }
@@ -288,7 +288,7 @@ extension ReportViewController: UITextViewDelegate {
     }
 }
 
-extension ReportViewController: UICollectionViewDataSource, UICollectionViewDelegate {
+extension ReportUserViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         images.count + 1
     }
@@ -310,7 +310,7 @@ extension ReportViewController: UICollectionViewDataSource, UICollectionViewDele
     }
 }
 
-extension ReportViewController: PostCreateResourceCollectionViewCellDelegate {
+extension ReportUserViewController: PostCreateResourceCollectionViewCellDelegate {
     func delete(image: UIImage?) {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         let deleteAction = UIAlertAction(title: "이미지 삭제", style: .default) { [unowned self] (action) in
@@ -343,7 +343,7 @@ extension ReportViewController: PostCreateResourceCollectionViewCellDelegate {
     }
 }
 
-extension ReportViewController: PostCreateAddCollectionViewCellDelegate {
+extension ReportUserViewController: PostCreateAddCollectionViewCellDelegate {
     func addImage() {
         if (images.count >= 3) {
             toast(message: "사진은 3장까지 허용 됩니다.")
@@ -357,7 +357,7 @@ extension ReportViewController: PostCreateAddCollectionViewCellDelegate {
     }
 }
 
-extension ReportViewController: CropViewControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+extension ReportUserViewController: CropViewControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController,
                                didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         guard let image = (info[UIImagePickerController.InfoKey.originalImage] as? UIImage) else {

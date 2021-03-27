@@ -293,9 +293,9 @@ extension PostSingleViewController: PostSingleHeaderDelegate {
             guard let user = post?.author else {
                 return
             }
-            Channel.next(reportee: user)
+            Channel.next(report: user)
             navigationController?.pushViewController(
-                .report,
+                .reportUser,
                 current: self,
                 hideBottomWhenStart: true,
                 hideBottomWhenEnd: true

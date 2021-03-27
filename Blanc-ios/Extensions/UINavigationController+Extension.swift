@@ -18,7 +18,7 @@ enum Identifier: String {
          avoidView = "AvoidViewController",
          accountManagement = "AccountManagementViewController",
 
-         report = "ReportViewController"
+         reportUser = "ReportUserViewController"
 }
 
 extension UINavigationController {

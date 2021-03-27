@@ -483,9 +483,9 @@ class UserSingleViewController: UIViewController {
             guard let user = data?.user else {
                 return
             }
-            Channel.next(reportee: user)
+            Channel.next(report: user)
             navigationController?.pushViewController(
-                .report,
+                .reportUser,
                 current: self,
                 hideBottomWhenStart: true,
                 hideBottomWhenEnd: true

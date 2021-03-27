@@ -258,7 +258,7 @@
 		104EEC8225E3733E0069B2CF /* Sms.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 104EEC8125E3733E0069B2CF /* Sms.storyboard */; };
 		104EEC8725E3736D0069B2CF /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 104EEC8625E3736C0069B2CF /* GoogleService-Info.plist */; };
 		104EEC9225E3764B0069B2CF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 104EEC9125E3764B0069B2CF /* Assets.xcassets */; };
-		1061E0202604421D00A0F29E /* ReportViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1061E01F2604421D00A0F29E /* ReportViewController.swift */; };
+		1061E0202604421D00A0F29E /* ReportUserViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1061E01F2604421D00A0F29E /* ReportUserViewController.swift */; };
 		1061E0282604422B00A0F29E /* ReportViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1061E0272604422B00A0F29E /* ReportViewModel.swift */; };
 		1061E02D2604423500A0F29E /* ReportModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1061E02C2604423500A0F29E /* ReportModel.swift */; };
 		10B0A87C260E3E6E00CD849F /* LaunchAnimation.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 10B0A87B260E3E6E00CD849F /* LaunchAnimation.storyboard */; };
@@ -587,7 +587,7 @@
 		104EEC8625E3736C0069B2CF /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		104EEC9125E3764B0069B2CF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = "../../../Blanc-ios/Blanc-ios/Assets.xcassets"; sourceTree = "<group>"; };
 		10584E6C25E3D036002B5F83 /* Blanc-ios.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Blanc-ios.entitlements"; sourceTree = "<group>"; };
-		1061E01F2604421D00A0F29E /* ReportViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportViewController.swift; sourceTree = "<group>"; };
+		1061E01F2604421D00A0F29E /* ReportUserViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportUserViewController.swift; sourceTree = "<group>"; };
 		1061E0272604422B00A0F29E /* ReportViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportViewModel.swift; sourceTree = "<group>"; };
 		1061E02C2604423500A0F29E /* ReportModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportModel.swift; sourceTree = "<group>"; };
 		10B0A87B260E3E6E00CD849F /* LaunchAnimation.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchAnimation.storyboard; sourceTree = "<group>"; };
@@ -1539,7 +1539,7 @@
 		1061E01E2604420E00A0F29E /* Report */ = {
 			isa = PBXGroup;
 			children = (
-				1061E01F2604421D00A0F29E /* ReportViewController.swift */,
+				1061E01F2604421D00A0F29E /* ReportUserViewController.swift */,
 				1061E0272604422B00A0F29E /* ReportViewModel.swift */,
 				1061E02C2604423500A0F29E /* ReportModel.swift */,
 			);
@@ -1982,7 +1982,7 @@
 				104EEAF925E372480069B2CF /* PushDTO.swift in Sources */,
 				104EEA3E25E372060069B2CF /* RegistrationSexViewController.swift in Sources */,
 				104EEA9D25E372240069B2CF /* Channel.swift in Sources */,
-				1061E0202604421D00A0F29E /* ReportViewController.swift in Sources */,
+				1061E0202604421D00A0F29E /* ReportUserViewController.swift in Sources */,
 				104EEB8525E372650069B2CF /* PagerViewController.swift in Sources */,
 				104EEBB925E372830069B2CF /* Ripple.swift in Sources */,
 				104EEB5A25E3725D0069B2CF /* PostListViewController.swift in Sources */,
