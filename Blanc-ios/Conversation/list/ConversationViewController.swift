@@ -3,13 +3,19 @@ import RxSwift
 import SwinjectStoryboard
 
 
-fileprivate enum Section {
+private enum Section {
     case Main
 }
 
-fileprivate class ConversationDataSource: UITableViewDiffableDataSource<Section, ConversationDTO> {
+private protocol ConversationDataSourceDelegate: class {
+    func deleteAction(conversation: ConversationDTO)
+}
 
-    var conversationViewModel: ConversationViewModel?
+private class ConversationDataSource: UITableViewDiffableDataSource<Section, ConversationDTO> {
+
+    internal weak var conversationViewModel: ConversationViewModel?
+
+    internal weak var delegate: ConversationDataSourceDelegate?
 
     override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
         true
@@ -17,31 +23,8 @@ fileprivate class ConversationDataSource: UITableViewDiffableDataSource<Section,
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
-
-            let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-            let deleteAction = UIAlertAction(title: "나가기", style: .default) { [unowned self] (action) in
-                if let item: ConversationDTO = itemIdentifier(for: indexPath) {
-                    conversationViewModel?.leaveConversation(conversationId: item.id)
-                }
-            }
-
-            let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
-            cancelAction.setValue(UIColor.red, forKey: "titleTextColor")
-
-            alertController.addAction(cancelAction)
-            alertController.addAction(deleteAction)
-            alertController.modalPresentationStyle = .popover
-
-            if UIDevice.current.userInterfaceIdiom == .pad {
-                if let popoverController = alertController.popoverPresentationController {
-                    let sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 0, height: 0)
-                    popoverController.sourceView = view
-                    popoverController.sourceRect = sourceRect
-                    popoverController.permittedArrowDirections = []
-                    present(alertController, animated: true, completion: nil)
-                }
-            } else {
-                present(alertController, animated: true, completion: nil)
+            if let conversation: ConversationDTO = itemIdentifier(for: indexPath) {
+                delegate?.deleteAction(conversation: conversation)
             }
         }
     }
@@ -57,7 +40,6 @@ fileprivate class ConversationDataSource: UITableViewDiffableDataSource<Section,
         return configuration
     }
 }
-
 
 class ConversationViewController: UIViewController {
 
@@ -112,7 +94,7 @@ class ConversationViewController: UIViewController {
         let emptyView = EmptyView(animationName: "girl_with_phone", animationSpeed: 1)
         emptyView.primaryText = "생성 된 대화방이 없습니다."
         emptyView.secondaryText = "서로 요청을 수락하면\n이곳에 대화방이 생성 됩니다."
-        emptyView.buttonText = "메인 화면으로.."
+        emptyView.buttonText = "메인 화면으로"
         emptyView.didTapButtonDelegate = { [unowned self] in
             self.tabBarController?.selectedIndex = 0
         }
@@ -222,6 +204,7 @@ extension ConversationViewController {
         }
         // set view model to leave conversation
         dataSource.conversationViewModel = conversationViewModel
+        dataSource.delegate = self
         tableView.dataSource = dataSource
     }
 
@@ -282,5 +265,33 @@ extension ConversationViewController: ConversationTableViewCellDelegate {
         hidesBottomBarWhenPushed = true
         navigationController?.pushViewController(vc, animated: true)
         hidesBottomBarWhenPushed = false
+    }
+}
+
+extension ConversationViewController: ConversationDataSourceDelegate {
+    func deleteAction(conversation: ConversationDTO) {
+        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        let deleteAction = UIAlertAction(title: "나가기", style: .default) { [unowned self] (action) in
+            conversationViewModel?.leaveConversation(conversationId: conversation.id)
+        }
+
+        let cancelAction = UIAlertAction(title: "취소", style: .cancel, handler: nil)
+        cancelAction.setValue(UIColor.red, forKey: "titleTextColor")
+
+        alertController.addAction(cancelAction)
+        alertController.addAction(deleteAction)
+        alertController.modalPresentationStyle = .popover
+
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            if let popoverController = alertController.popoverPresentationController {
+                let sourceRect = CGRect(x: view.bounds.midX, y: view.bounds.midY, width: 0, height: 0)
+                popoverController.sourceView = view
+                popoverController.sourceRect = sourceRect
+                popoverController.permittedArrowDirections = []
+                present(alertController, animated: true, completion: nil)
+            }
+        } else {
+            present(alertController, animated: true, completion: nil)
+        }
     }
 }

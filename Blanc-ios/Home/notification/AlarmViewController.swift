@@ -34,7 +34,7 @@ class AlarmViewController: UIViewController {
         let emptyView = EmptyView(animationName: "girl_with_phone", animationSpeed: 1)
         emptyView.primaryText = "생성 된 알림이 없습니다."
         emptyView.secondaryText = "이벤트 발생 시 이곳에서 확인 할 수 있습니다."
-        emptyView.buttonText = "메인 화면으로.."
+        emptyView.buttonText = "메인 화면으로"
         emptyView.didTapButtonDelegate = {
             self.navigationController?.popViewController(animated: true)
         }

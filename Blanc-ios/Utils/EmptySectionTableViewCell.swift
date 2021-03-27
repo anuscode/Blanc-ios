@@ -16,15 +16,15 @@ class EmptySectionTableViewCell: UITableViewCell {
 
     lazy private var mainLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .darkText
+        label.textColor = .black4
         label.textAlignment = .center
-        label.font = .systemFont(ofSize: 20)
+        label.font = .boldSystemFont(ofSize: 18)
         return label
     }()
 
     lazy private var secondaryLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .systemGray
+        label.textColor = .darkGray
         label.textAlignment = .center
         label.font = .systemFont(ofSize: 15)
         label.numberOfLines = 3

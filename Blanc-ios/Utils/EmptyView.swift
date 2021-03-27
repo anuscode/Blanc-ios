@@ -51,10 +51,10 @@ class EmptyView: UIView {
     lazy private var primaryLabel: UILabel = {
         let label = UILabel()
         label.text = primaryText
-        label.font = .boldSystemFont(ofSize: 22)
+        label.font = .boldSystemFont(ofSize: 18)
         label.textAlignment = .center
         label.numberOfLines = 0
-        label.textColor = .darkText
+        label.textColor = .black4
         return label
     }()
 
@@ -88,7 +88,7 @@ class EmptyView: UIView {
 
     lazy private var buttonLabel: UILabel = {
         let label = UILabel()
-        label.text = "메인 화면으로.."
+        label.text = "메인 화면으로"
         label.textColor = .white
         label.font = .boldSystemFont(ofSize: 16)
         return label
