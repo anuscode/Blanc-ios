@@ -107,7 +107,6 @@ class PagerViewController: UIViewController {
         navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
         navigationController?.navigationBar.setValue(false, forKey: "hidesShadow")
         navigationController?.navigationBar.isTranslucent = true
-        print("!@#")
     }
 
     override func viewDidLoad() {

@@ -70,11 +70,6 @@ class LaunchFirstViewController: UIViewController {
         configureConstraints()
     }
 
-    override func viewDidLayoutSubviews() {
-        print(blanc.frame.width)
-        print(blanc.frame.height)
-    }
-
     private func configureSubviews() {
         view.addSubview(gradient)
         view.addSubview(blanc)
