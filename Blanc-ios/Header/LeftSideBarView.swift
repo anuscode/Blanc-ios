@@ -8,7 +8,7 @@ class LeftSideBarView: UIView {
         let label = UILabel()
         label.text = "blanc"
         label.font = .boldSystemFont(ofSize: 25)
-        label.textColor = .black
+        label.textColor = .black2
         return label
     }()
 
