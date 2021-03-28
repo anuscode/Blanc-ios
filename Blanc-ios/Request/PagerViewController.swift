@@ -156,7 +156,7 @@ class PagerViewController: UIViewController {
         }
         titleLabel2.snp.makeConstraints { make in
             make.bottom.equalTo(guideLine.snp.top)
-            make.leading.equalTo(titleLabel1.snp.trailing).offset(10)
+            make.leading.equalTo(titleLabel1.snp.trailing).offset(7)
         }
         underLine2.snp.makeConstraints { make in
             make.top.equalTo(titleLabel2.snp.bottom).offset(5)
