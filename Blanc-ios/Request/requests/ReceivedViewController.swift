@@ -170,6 +170,14 @@ extension ReceivedViewController: UITableViewDelegate {
             make.top.equalToSuperview().inset(10)
             make.bottom.equalToSuperview().inset(10)
         }
+
+        view.rx
+            .tapGesture()
+            .subscribe(onNext: { _ in
+                print(view.frame.height)
+            })
+            .disposed(by: disposeBag)
+
         return view
     }
 

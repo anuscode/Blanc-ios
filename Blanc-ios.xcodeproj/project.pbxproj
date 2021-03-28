@@ -280,10 +280,12 @@
 		C47AA2FAD71D31DAE9DF6FCA /* Broadcast.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AAA5893F5BE3DB46D70F2 /* Broadcast.swift */; };
 		C47AA32A10ACDA94C39E6D6E /* Int+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AAF64311FE6466E824F0D /* Int+Extension.swift */; };
 		C47AA341D3CD39CEF889B591 /* ImageViewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA4B7CDE30DB7D53AA6EB /* ImageViewViewModel.swift */; };
+		C47AA368FD95FCB7B2E8535B /* UserCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA83113A73AA41E27E0A2 /* UserCollectionViewCell.swift */; };
 		C47AA3A121CD775C7D2916C5 /* RxEventTypealias.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA8734861C42BECECBBDE /* RxEventTypealias.swift */; };
 		C47AA5367AADBB4F4B6D9994 /* PaymentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA1D5E6462D0679248909 /* PaymentService.swift */; };
 		C47AA5825295E07A3C083760 /* SmsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA0A90D156F5B9B1D5EC3 /* SmsViewModel.swift */; };
 		C47AA5B49233DD1E59C6D074 /* InAppPurchaseTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AAC81B4B9E7A00D3EA155 /* InAppPurchaseTableViewCell.swift */; };
+		C47AA5B7F74F1D44F40768E7 /* SendingHeaderReusableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA7690C39E2B2F3D0A263 /* SendingHeaderReusableView.swift */; };
 		C47AA62D296236750509B6F3 /* RxKeyPaths.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AAAB9FC960FC051759E75 /* RxKeyPaths.swift */; };
 		C47AA6736124D16BB662F3AC /* SettingDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AAAA7C98EAFA1F0DE87DB /* SettingDTO.swift */; };
 		C47AA762523F50CBEE156306 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA8F623619E368CA03001 /* Extensions.swift */; };
@@ -623,8 +625,10 @@
 		C47AA6DD792D18E8B9A36E7E /* CLLocationManagerDelegateEvents+Rx.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "CLLocationManagerDelegateEvents+Rx.swift"; sourceTree = "<group>"; };
 		C47AA6F5BFC6829FE4A41949 /* LocationAuthorizationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LocationAuthorizationViewController.swift; sourceTree = "<group>"; };
 		C47AA72570EBB462B489CDB6 /* Background.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Background.swift; sourceTree = "<group>"; };
+		C47AA7690C39E2B2F3D0A263 /* SendingHeaderReusableView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SendingHeaderReusableView.swift; sourceTree = "<group>"; };
 		C47AA7AC3DB9F77F86C30A27 /* ReportService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReportService.swift; sourceTree = "<group>"; };
 		C47AA7CE2AEB97BACCEA02C2 /* PaymentDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PaymentDTO.swift; sourceTree = "<group>"; };
+		C47AA83113A73AA41E27E0A2 /* UserCollectionViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UserCollectionViewCell.swift; sourceTree = "<group>"; };
 		C47AA8734861C42BECECBBDE /* RxEventTypealias.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxEventTypealias.swift; sourceTree = "<group>"; };
 		C47AA8F623619E368CA03001 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		C47AA9EF18F431B5324A71E7 /* EmptySectionTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmptySectionTableViewCell.swift; sourceTree = "<group>"; };
@@ -1213,6 +1217,8 @@
 				104EEB6E25E372650069B2CF /* SendingViewModel.swift */,
 				104EEB6F25E372650069B2CF /* SendingModel.swift */,
 				104EEB7025E372650069B2CF /* SendingViewController.swift */,
+				C47AA83113A73AA41E27E0A2 /* UserCollectionViewCell.swift */,
+				C47AA7690C39E2B2F3D0A263 /* SendingHeaderReusableView.swift */,
 			);
 			path = rating;
 			sourceTree = "<group>";
@@ -2211,6 +2217,8 @@
 				C47AA05216AC4B0E15618270 /* Navigation.swift in Sources */,
 				C47AAA1C7E3F89F875B25AF2 /* LocationAuthorizationViewController.swift in Sources */,
 				C47AA1ED87CB58DCDA5CB2FC /* ReportPostViewModel.swift in Sources */,
+				C47AA368FD95FCB7B2E8535B /* UserCollectionViewCell.swift in Sources */,
+				C47AA5B7F74F1D44F40768E7 /* SendingHeaderReusableView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -8,20 +8,35 @@ class SendingViewController: UIViewController {
 
     private var disposeBag: DisposeBag = DisposeBag()
 
-    private var dataSource: UITableViewDiffableDataSource<Section, UserDTO>!
+    private var dataSource: UICollectionViewDiffableDataSource<Section, UserDTO>!
 
     internal weak var sendingViewModel: SendingViewModel?
 
-    var pushUserSingleViewController: (() -> Void)?
+    internal var pushUserSingleViewController: (() -> Void)?
 
-    lazy private var tableView: UITableView = {
-        let tableView = UITableView()
-        tableView.register(SmallUserProfileTableViewCell.self,
-            forCellReuseIdentifier: SmallUserProfileTableViewCell.identifier)
-        tableView.allowsSelection = false
-        tableView.separatorColor = .clear
-        tableView.delegate = self
-        return tableView
+    private var users: [UserDTO] = []
+
+    lazy private var flowLayout: UICollectionViewFlowLayout = {
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .vertical
+        layout.minimumInteritemSpacing = 15
+        layout.minimumLineSpacing = 15
+        layout.sectionInset = UIEdgeInsets(top: 15, left: 15, bottom: 15, right: 15)
+        return layout
+    }()
+
+    lazy private var collectionView: UICollectionView = {
+        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
+        collectionView.register(UserCollectionViewCell.self,
+            forCellWithReuseIdentifier: UserCollectionViewCell.identifier
+        )
+        collectionView.register(SendingHeaderReusableView.self,
+            forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
+            withReuseIdentifier: SendingHeaderReusableView.identifier
+        )
+        collectionView.delegate = self
+        collectionView.backgroundColor = .white
+        return collectionView
     }()
 
     lazy private var emptyView: EmptyView = {
@@ -45,7 +60,7 @@ class SendingViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        configureTableViewDataSource()
+        configureCollectionView()
         configureSubviews()
         configureConstraints()
         subscribeRatingViewModel()
@@ -56,18 +71,14 @@ class SendingViewController: UIViewController {
     }
 
     private func configureSubviews() {
-        view.addSubview(tableView)
+        view.addSubview(collectionView)
         view.addSubview(emptyView)
     }
 
     private func configureConstraints() {
-        tableView.snp.makeConstraints { make in
-            make.top.equalToSuperview()
-            make.leading.equalToSuperview()
-            make.trailing.equalToSuperview()
-            make.bottom.equalToSuperview()
+        collectionView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
         }
-
         emptyView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
             make.center.equalToSuperview()
@@ -80,7 +91,8 @@ class SendingViewController: UIViewController {
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [unowned self] users in
-                update(users)
+                self.users = users
+                update(users: users)
             })
             .disposed(by: disposeBag)
 
@@ -99,73 +111,58 @@ class SendingViewController: UIViewController {
 extension SendingViewController {
 
     fileprivate enum Section {
-        case Main
+        case main
     }
 
-    private func configureTableViewDataSource() {
-        dataSource = UITableViewDiffableDataSource<Section, UserDTO>(tableView: tableView) { (tableView, indexPath, user) -> UITableViewCell? in
-            guard let cell = tableView.dequeueReusableCell(
-                withIdentifier: SmallUserProfileTableViewCell.identifier, for: indexPath) as? SmallUserProfileTableViewCell else {
-                return UITableViewCell()
-            }
-            cell.bind(user: user, delegate: self)
+    private func configureCollectionView() {
+        dataSource = UICollectionViewDiffableDataSource<Section, UserDTO>(collectionView: collectionView) { [unowned self] (collectionView, indexPath, user) -> UICollectionViewCell? in
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: UserCollectionViewCell.identifier, for: indexPath) as! UserCollectionViewCell
+            cell.bind(user)
             return cell
         }
-        tableView.dataSource = dataSource
+        dataSource.supplementaryViewProvider = { (collectionView: UICollectionView, kind: String, indexPath: IndexPath) -> UICollectionReusableView? in
+            if let header = collectionView.dequeueReusableSupplementaryView(
+                ofKind: kind, withReuseIdentifier: SendingHeaderReusableView.identifier, for: indexPath
+            ) as? SendingHeaderReusableView {
+                header.bind("내가 관심을 보냄")
+                return header
+            } else {
+                fatalError("Cannot create new supplementary")
+            }
+        }
+        collectionView.dataSource = dataSource
     }
 
-    private func update(_ users: [UserDTO], animatingDifferences: Bool = false) {
+    private func update(users: [UserDTO]) {
         var snapshot = NSDiffableDataSourceSnapshot<Section, UserDTO>()
-        snapshot.appendSections([.Main])
+        snapshot.appendSections([.main])
         snapshot.appendItems(users)
-        dataSource.apply(snapshot, animatingDifferences: animatingDifferences, completion: nil)
+        dataSource.apply(snapshot, animatingDifferences: true)
     }
 }
 
-
-extension SendingViewController: UITableViewDelegate {
-
-    private func generateHeaderView(text: String) -> UIView {
-        let view = UIView()
-        view.backgroundColor = .white
-
-        let label = UILabel()
-        label.text = text
-        label.font = .boldSystemFont(ofSize: 18)
-        label.textColor = UIColor(hexCode: "0C090A")
-
-        view.addSubview(label)
-        label.snp.makeConstraints { make in
-            make.leading.equalToSuperview().inset(15)
-            make.top.equalToSuperview().inset(10)
-            make.bottom.equalToSuperview().inset(10)
-        }
-        return view
-    }
-
-    public func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        let header = generateHeaderView(text: "내가 관심을 보냄")
-        return header
-    }
-
-    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        80
-    }
-
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        tableView.deselectRow(at: indexPath, animated: true)
-        guard let user = dataSource.itemIdentifier(for: indexPath) else {
-            return
-        }
-    }
-}
-
-extension SendingViewController: SmallUserProfileTableViewCellDelegate {
-    func presentUserSingleView(user: UserDTO?) {
-        guard let user = user else {
-            return
-        }
+extension SendingViewController: UICollectionViewDelegate {
+    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let index = indexPath.row
+        let user = users[index]
         Channel.next(user: user)
         pushUserSingleViewController?()
+    }
+}
+
+extension SendingViewController: UICollectionViewDelegateFlowLayout {
+    public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+        CGSize(width: collectionView.frame.size.width, height: 41.66666793823242)
+    }
+
+    func collectionView(_ collectionView: UICollectionView,
+                        layout collectionViewLayout: UICollectionViewLayout,
+                        sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let width = UIScreen.main.bounds.width
+        let numberOfItemsPerRow: CGFloat = 3
+        let spacing: CGFloat = flowLayout.minimumInteritemSpacing
+        let availableWidth = width - spacing * (numberOfItemsPerRow + 1)
+        let itemDimension = floor(availableWidth / numberOfItemsPerRow)
+        return CGSize(width: itemDimension, height: itemDimension + 43)
     }
 }
