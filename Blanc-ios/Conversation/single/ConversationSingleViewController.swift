@@ -367,14 +367,18 @@ class ConversationSingleViewController: UIViewController {
                 make.trailing.equalToSuperview()
                 make.bottom.equalToSuperview().inset(keyboardSize.height)
             }
+            bottomTextView.layoutIfNeeded()
             tableView.snp.remakeConstraints { make in
                 make.top.equalToSuperview()
                 make.leading.equalToSuperview()
                 make.trailing.equalToSuperview()
                 make.bottom.equalTo(bottomTextView.snp.top)
             }
-            if (conversation?.messages?.count ?? 0 > 0) {
-                let indexPath = IndexPath(row: conversation!.messages!.count - 1, section: 0)
+            tableView.layoutIfNeeded()
+            if let conversation = conversation,
+               let messages = conversation.messages {
+                let row = messages.count - 1
+                let indexPath = IndexPath(row: row, section: 0)
                 tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
             }
         }
