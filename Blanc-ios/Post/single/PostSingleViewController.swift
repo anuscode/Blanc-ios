@@ -56,8 +56,9 @@ class PostSingleViewController: UIViewController {
         return tableView
     }()
 
-    lazy private var bottomTextField: BottomTextView = {
+    lazy private var bottomTextView: BottomTextView = {
         let view = BottomTextView()
+        view.placeHolder = "댓글을 입력 하세요."
         view.configure(avatar: session?.user?.avatar)
         view.configure(delegate: self)
         return view
@@ -66,7 +67,7 @@ class PostSingleViewController: UIViewController {
     lazy private var closeTapBackground: UIView = {
         let view = UIView()
         view.visible(false)
-        view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(dismissTextField))
+        view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(dismissTextView))
         return view
     }()
 
@@ -82,6 +83,8 @@ class PostSingleViewController: UIViewController {
         super.viewDidLoad()
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow),
             name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardDidShow),
+            name: UIResponder.keyboardDidShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide),
             name: UIResponder.keyboardWillHideNotification, object: nil)
         configureSubviews()
@@ -103,7 +106,7 @@ class PostSingleViewController: UIViewController {
     private func configureSubviews() {
         view.addSubview(tableView)
         view.addSubview(closeTapBackground)
-        view.addSubview(bottomTextField)
+        view.addSubview(bottomTextView)
     }
 
     private func configureConstraints() {
@@ -112,10 +115,10 @@ class PostSingleViewController: UIViewController {
             make.top.equalTo(view.safeAreaLayoutGuide)
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
-            make.bottom.equalTo(bottomTextField.snp.top)
+            make.bottom.equalTo(bottomTextView.snp.top)
         }
 
-        bottomTextField.snp.makeConstraints { make in
+        bottomTextView.snp.makeConstraints { make in
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
             make.bottom.equalTo(view.safeAreaLayoutGuide)
@@ -144,8 +147,8 @@ class PostSingleViewController: UIViewController {
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [unowned self] post in
                 if (post.enableComment == false) {
-                    bottomTextField.placeHolder = "댓글이 금지 된 게시물 입니다."
-                    bottomTextField.isEditable = false
+                    bottomTextView.placeHolder = "댓글이 금지 된 게시물 입니다."
+                    bottomTextView.isEditable = false
                 }
             })
             .disposed(by: disposeBag)
@@ -160,27 +163,55 @@ class PostSingleViewController: UIViewController {
             .disposed(by: disposeBag)
     }
 
+    @objc private func dismissTextView() {
+        closeTapBackground.visible(false)
+        bottomTextView.dismiss()
+        view.endEditing(true)
+        replyTo = nil
+    }
+}
+
+extension PostSingleViewController {
     @objc private func keyboardWillShow(notification: NSNotification) {
-        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            if view.frame.origin.y == 0 {
-                let window = UIApplication.shared.keyWindow
-                view.frame.origin.y -= (keyboardSize.height - (window?.safeAreaInsets.bottom ?? 0))
-            }
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
+           closeTapBackground.isHidden == true {
+            let window = UIApplication.shared.keyWindow
+            bottomTextView.frame.origin.y -= (keyboardSize.height - (window?.safeAreaInsets.bottom ?? 0))
             closeTapBackground.visible(true)
+            log.info("keyboardWillShow")
+        }
+    }
+
+    @objc private func keyboardDidShow(notification: NSNotification) {
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+            bottomTextView.snp.remakeConstraints { make in
+                make.leading.equalToSuperview()
+                make.trailing.equalToSuperview()
+                make.bottom.equalToSuperview().inset(keyboardSize.height)
+            }
+            tableView.snp.remakeConstraints { make in
+                make.top.equalToSuperview()
+                make.leading.equalToSuperview()
+                make.trailing.equalToSuperview()
+                make.bottom.equalTo(bottomTextView.snp.top)
+            }
+            log.info("keyboardDidShow")
         }
     }
 
     @objc private func keyboardWillHide() {
-        if view.frame.origin.y != 0 {
-            view.frame.origin.y = 0
+        tableView.snp.remakeConstraints { make in
+            make.top.equalToSuperview()
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.bottom.equalTo(bottomTextView.snp.top)
         }
-    }
-
-    @objc private func dismissTextField() {
-        closeTapBackground.visible(false)
-        bottomTextField.dismiss()
-        view.endEditing(true)
-        replyTo = nil
+        bottomTextView.snp.remakeConstraints { make in
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.bottom.equalTo(view.safeAreaLayoutGuide)
+        }
+        log.info("keyboardWillHide")
     }
 }
 
@@ -263,18 +294,18 @@ extension PostSingleViewController: CommentTableViewCellDelegate {
 
     func reply(comment: CommentDTO?) {
         replyTo = comment
-        bottomTextField.configure(replyTo: comment)
+        bottomTextView.configure(replyTo: comment)
     }
 }
 
 extension PostSingleViewController: BottomTextFieldDelegate {
     func trigger(message: String) {
         postSingleViewModel?.createComment(postId: post?.id, commentId: replyTo?.id, comment: message)
-        dismissTextField()
+        dismissTextView()
     }
 
     func dismiss() {
-        dismissTextField()
+        dismissTextView()
     }
 }
 
