@@ -95,130 +95,6 @@ class PostViewController: UIViewController {
         return container
     }()
 
-    lazy private var fab1: UIView = {
-
-        let view = UIView()
-        view.visible(false)
-
-        let circleView = UIView()
-        circleView.backgroundColor = .white
-        circleView.layer.masksToBounds = true
-        circleView.layer.cornerRadius = 20
-        circleView.width(40)
-        circleView.height(40)
-        circleView.isUserInteractionEnabled = true
-        ripple.activate(to: circleView)
-
-        let imageView = UIImageView(image: UIImage(named: "ic_history_navy"))
-        imageView.rotate(withDuration: 2, infinite: true)
-        circleView.addSubview(imageView)
-        imageView.snp.makeConstraints { make in
-            make.center.equalToSuperview()
-            make.height.equalTo(25)
-            make.width.equalTo(25)
-        }
-
-        let textView = UIView()
-        textView.layer.cornerRadius = 4
-        textView.layer.masksToBounds = true
-        textView.backgroundColor = .white
-
-        let label = UILabel()
-        label.text = "지난 게시물 관리"
-        label.font = .systemFont(ofSize: 11, weight: .semibold)
-
-        textView.addSubview(label)
-        label.snp.makeConstraints { make in
-            make.leading.equalToSuperview().inset(7)
-            make.trailing.equalToSuperview().inset(7)
-            make.top.equalToSuperview().inset(5)
-            make.bottom.equalToSuperview().inset(5)
-        }
-
-        view.addSubview(circleView)
-        view.addSubview(textView)
-
-        circleView.snp.makeConstraints { make in
-            make.trailing.equalToSuperview()
-            make.top.equalToSuperview()
-            make.bottom.equalToSuperview()
-            make.centerY.equalToSuperview()
-        }
-
-        textView.snp.makeConstraints { make in
-            make.leading.equalToSuperview()
-            make.trailing.equalTo(circleView.snp.leading).inset(-10)
-            make.centerY.equalToSuperview()
-        }
-
-        return view
-    }()
-
-    lazy private var fab2: UIView = {
-
-        let view = UIView()
-        view.visible(false)
-
-        let circleView = UIView()
-        circleView.backgroundColor = .white
-        circleView.layer.masksToBounds = true
-        circleView.layer.cornerRadius = 20
-        circleView.width(40)
-        circleView.height(40)
-        circleView.isUserInteractionEnabled = true
-        ripple.activate(to: circleView)
-
-        circleView.addSubview(fab2LottieView)
-        fab2LottieView.snp.makeConstraints { make in
-            make.center.equalToSuperview()
-            make.height.equalTo(25)
-            make.width.equalTo(25)
-        }
-
-        let textView = UIView()
-        textView.layer.cornerRadius = 4
-        textView.layer.masksToBounds = true
-        textView.backgroundColor = .white
-
-        let label = UILabel()
-        label.text = "게시물 작성"
-        label.font = .systemFont(ofSize: 11, weight: .semibold)
-
-        textView.addSubview(label)
-        label.snp.makeConstraints { make in
-            make.leading.equalToSuperview().inset(7)
-            make.trailing.equalToSuperview().inset(7)
-            make.top.equalToSuperview().inset(5)
-            make.bottom.equalToSuperview().inset(5)
-        }
-
-        view.addSubview(circleView)
-        view.addSubview(textView)
-
-        circleView.snp.makeConstraints { make in
-            make.trailing.equalToSuperview()
-            make.top.equalToSuperview()
-            make.bottom.equalToSuperview()
-            make.centerY.equalToSuperview()
-        }
-
-        textView.snp.makeConstraints { make in
-            make.leading.equalToSuperview()
-            make.trailing.equalTo(circleView.snp.leading).inset(-10)
-            make.centerY.equalToSuperview()
-        }
-
-        return view
-    }()
-
-    lazy private var fab2LottieView: AnimationView = {
-        let animationView = AnimationView()
-        animationView.animation = Animation.named("cloud_upload_black")
-        animationView.contentMode = .scaleAspectFit
-        animationView.loopMode = .loop
-        return animationView
-    }()
-
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         view.backgroundColor = .secondarySystemBackground
@@ -248,8 +124,6 @@ class PostViewController: UIViewController {
 
     private func configureSubviews() {
         view.addSubview(collectionView)
-        view.addSubview(fab2)
-        view.addSubview(fab1)
         view.addSubview(fab)
     }
 
@@ -257,18 +131,7 @@ class PostViewController: UIViewController {
         collectionView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-
         fab.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().inset(20)
-            make.bottom.equalTo(view.safeAreaLayoutGuide).inset(20)
-        }
-
-        fab1.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().inset(20)
-            make.bottom.equalTo(view.safeAreaLayoutGuide).inset(20)
-        }
-
-        fab2.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(20)
             make.bottom.equalTo(view.safeAreaLayoutGuide).inset(20)
         }
@@ -314,7 +177,7 @@ extension PostViewController {
         var snapshot = NSDiffableDataSourceSnapshot<Section, PostDTO>()
         snapshot.appendSections([.main])
         snapshot.appendItems(posts)
-        dataSource.apply(snapshot, animatingDifferences: true, completion: nil)
+        dataSource.apply(snapshot, animatingDifferences: true)
     }
 }
 
@@ -334,7 +197,6 @@ extension PostViewController: UICollectionViewDelegateFlowLayout {
                                willDisplay cell: UICollectionViewCell,
                                forItemAt indexPath: IndexPath) {
         if (indexPath.row == posts.count - 10) {
-            log.info("loading more posts..")
             postViewModel?.populate()
         }
     }
