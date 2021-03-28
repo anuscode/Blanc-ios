@@ -106,7 +106,7 @@ class CarouselTableViewCell: UITableViewCell {
     func bind(user: UserDTO?) {
         self.user = user
 
-        let line1 = "\(self.user?.nickname ?? "알 수 없음"), \(user?.age ?? -1)"
+        let line1 = "\(self.user?.nickname ?? "알 수 없음"), \(user?.age ?? 0)"
         let line2 = "\(self.user?.area ?? "알 수 없음") · \(user?.relationship?.distance ?? "알 수 없음")"
         let numberOfPages = user?.userImages?.count ?? 0
 
@@ -114,7 +114,6 @@ class CarouselTableViewCell: UITableViewCell {
         pageControl.currentPage = 0
         label1.text = line1
         label2.text = line2
-        carousel.selectItem(at: 0, animated: false)
     }
 }
 

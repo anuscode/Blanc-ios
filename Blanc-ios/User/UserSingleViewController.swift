@@ -324,18 +324,6 @@ class UserSingleViewController: UIViewController {
     private func subscribeUserSingleViewModel() {
         userSingleViewModel?
             .data
-            .take(2)
-            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-            .observeOn(MainScheduler.asyncInstance)
-            .subscribe(onNext: { [unowned self] data in
-                self.data = data
-                update(data)
-            })
-            .disposed(by: disposeBag)
-
-        userSingleViewModel?
-            .data
-            .skip(2)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [unowned self] data in
