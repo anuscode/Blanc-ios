@@ -67,7 +67,6 @@ class AlarmModel {
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .subscribe(onNext: { [unowned self] push in
-
                 if (push.isOpened()) {
                     return
                 }
@@ -80,7 +79,9 @@ class AlarmModel {
                 if (push.isLogout()) {
                     return
                 }
-
+                if (push.isMessage()) {
+                    return
+                }
                 pushes.insert(push, at: 0)
                 publish()
             }, onError: { err in
