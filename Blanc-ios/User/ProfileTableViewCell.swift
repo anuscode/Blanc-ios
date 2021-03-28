@@ -25,12 +25,10 @@ class ProfileTableViewCell: UITableViewCell {
 
     lazy private var introductionLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: fontSize)
+        label.font = .systemFont(ofSize: fontSize)
         label.textAlignment = .left
         label.textColor = valueColor
-        label.text = "fuck"
         label.numberOfLines = 0
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
@@ -40,8 +38,7 @@ class ProfileTableViewCell: UITableViewCell {
         label.textAlignment = .left
         label.textColor = titleColor
         label.text = "키"
-        label.numberOfLines = 0
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 1
         return label
     }()
 
@@ -50,9 +47,7 @@ class ProfileTableViewCell: UITableViewCell {
         label.font = UIFont.systemFont(ofSize: fontSize)
         label.textAlignment = .left
         label.textColor = valueColor
-        label.numberOfLines = 0
-        label.text = "키 value"
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 1
         return label
     }()
 
@@ -62,8 +57,7 @@ class ProfileTableViewCell: UITableViewCell {
         label.textAlignment = .left
         label.textColor = titleColor
         label.text = "체형"
-        label.numberOfLines = 0
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 1
         return label
     }()
 
@@ -72,9 +66,7 @@ class ProfileTableViewCell: UITableViewCell {
         label.font = UIFont.systemFont(ofSize: fontSize)
         label.textAlignment = .left
         label.textColor = valueColor
-        label.numberOfLines = 0
-        label.text = "체형 value"
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 1
         return label
     }()
 
@@ -85,7 +77,6 @@ class ProfileTableViewCell: UITableViewCell {
         label.textColor = titleColor
         label.text = "학력"
         label.numberOfLines = 0
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
@@ -94,9 +85,7 @@ class ProfileTableViewCell: UITableViewCell {
         label.font = UIFont.systemFont(ofSize: fontSize)
         label.textAlignment = .left
         label.textColor = valueColor
-        label.numberOfLines = 0
-        label.text = "학력 value"
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 1
         return label
     }()
 
@@ -107,7 +96,6 @@ class ProfileTableViewCell: UITableViewCell {
         label.textColor = titleColor
         label.text = "교육"
         label.numberOfLines = 0
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
@@ -116,9 +104,7 @@ class ProfileTableViewCell: UITableViewCell {
         label.font = UIFont.systemFont(ofSize: fontSize)
         label.textAlignment = .left
         label.textColor = valueColor
-        label.numberOfLines = 0
-        label.text = "교육 값"
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 1
         return label
     }()
 
@@ -128,8 +114,7 @@ class ProfileTableViewCell: UITableViewCell {
         label.textAlignment = .left
         label.textColor = titleColor
         label.text = "종교"
-        label.numberOfLines = 0
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 1
         return label
     }()
 
@@ -138,9 +123,7 @@ class ProfileTableViewCell: UITableViewCell {
         label.font = UIFont.systemFont(ofSize: fontSize)
         label.textAlignment = .left
         label.textColor = valueColor
-        label.numberOfLines = 0
-        label.text = "종교 값"
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 1
         return label
     }()
 
@@ -150,8 +133,7 @@ class ProfileTableViewCell: UITableViewCell {
         label.textAlignment = .left
         label.textColor = titleColor
         label.text = "주량"
-        label.numberOfLines = 0
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 1
         return label
     }()
 
@@ -160,9 +142,7 @@ class ProfileTableViewCell: UITableViewCell {
         label.font = UIFont.systemFont(ofSize: fontSize)
         label.textAlignment = .left
         label.textColor = valueColor
-        label.numberOfLines = 0
-        label.text = "주량 값"
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 1
         return label
     }()
 
@@ -172,8 +152,7 @@ class ProfileTableViewCell: UITableViewCell {
         label.textAlignment = .left
         label.textColor = titleColor
         label.text = "흡연"
-        label.numberOfLines = 0
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 1
         return label
     }()
 
@@ -182,9 +161,7 @@ class ProfileTableViewCell: UITableViewCell {
         label.font = UIFont.systemFont(ofSize: fontSize)
         label.textAlignment = .left
         label.textColor = valueColor
-        label.numberOfLines = 0
-        label.text = "흡연 값"
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 1
         return label
     }()
 
@@ -194,8 +171,7 @@ class ProfileTableViewCell: UITableViewCell {
         label.textAlignment = .left
         label.textColor = titleColor
         label.text = "혈액형"
-        label.numberOfLines = 0
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 1
         return label
     }()
 
@@ -204,9 +180,7 @@ class ProfileTableViewCell: UITableViewCell {
         label.font = UIFont.systemFont(ofSize: fontSize)
         label.textAlignment = .left
         label.textColor = valueColor
-        label.numberOfLines = 0
-        label.text = "혈액형 값"
-        label.translatesAutoresizingMaskIntoConstraints = false
+        label.numberOfLines = 1
         return label
     }()
 
@@ -299,21 +273,18 @@ class ProfileTableViewCell: UITableViewCell {
             make.trailing.equalToSuperview()
             make.centerX.equalToSuperview()
         }
-
         star1.snp.makeConstraints { make in
             make.trailing.equalTo(star2.snp.leading).inset(margin)
             make.top.equalTo(starLabel.snp.bottom)
             make.width.equalTo(size)
             make.height.equalTo(size)
         }
-
         star2.snp.makeConstraints { make in
             make.trailing.equalTo(star3.snp.leading).inset(margin)
             make.top.equalTo(starLabel.snp.bottom)
             make.width.equalTo(size)
             make.height.equalTo(size)
         }
-
         star3.snp.makeConstraints { make in
             make.top.equalTo(starLabel.snp.bottom)
             make.centerX.equalToSuperview()
@@ -321,27 +292,24 @@ class ProfileTableViewCell: UITableViewCell {
             make.width.equalTo(size)
             make.height.equalTo(size)
         }
-
         star4.snp.makeConstraints { make in
             make.leading.equalTo(star3.snp.trailing).inset(margin)
             make.top.equalTo(starLabel.snp.bottom)
             make.width.equalTo(size)
             make.height.equalTo(size)
         }
-
         star5.snp.makeConstraints { make in
             make.leading.equalTo(star4.snp.trailing).inset(margin)
             make.top.equalTo(starLabel.snp.bottom)
             make.width.equalTo(size)
             make.height.equalTo(size)
         }
-
         return view
     }()
 
     lazy private var border2: UIView = {
         let view = UIView()
-        view.backgroundColor = .systemGray6
+        view.backgroundColor = .systemGray5
         return view
     }()
 
@@ -367,7 +335,6 @@ class ProfileTableViewCell: UITableViewCell {
         label.textAlignment = .left
         label.textColor = titleColor
         label.text = "매력어필"
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
@@ -393,7 +360,6 @@ class ProfileTableViewCell: UITableViewCell {
         label.textAlignment = .left
         label.textColor = titleColor
         label.text = "이상형"
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
@@ -419,7 +385,6 @@ class ProfileTableViewCell: UITableViewCell {
         label.textAlignment = .left
         label.textColor = titleColor
         label.text = "관심사"
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
 
@@ -486,157 +451,118 @@ class ProfileTableViewCell: UITableViewCell {
         introductionLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(20)
             make.leading.equalToSuperview().inset(20)
-            make.bottom.equalTo(heightTitleLabel.snp.top).inset(itemMargin)
         }
-
         heightTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(introductionLabel.snp.bottom)
+            make.top.equalTo(introductionLabel.snp.bottom).inset(itemMargin)
             make.leading.equalToSuperview().inset(20)
-            make.bottom.equalTo(bodyTypeTitleLabel.snp.top).inset(itemMargin)
         }
-
+        bodyTypeTitleLabel.snp.makeConstraints { make in
+            make.top.equalTo(heightTitleLabel.snp.bottom).inset(itemMargin)
+            make.leading.equalToSuperview().inset(20)
+        }
+        educationTitleLabel.snp.makeConstraints { make in
+            make.top.equalTo(bodyTypeTitleLabel.snp.bottom).inset(itemMargin)
+            make.leading.equalToSuperview().inset(20)
+        }
+        occupationTitleLabel.snp.makeConstraints { make in
+            make.top.equalTo(educationTitleLabel.snp.bottom).inset(itemMargin)
+            make.leading.equalToSuperview().inset(20)
+        }
+        religionTitleLabel.snp.makeConstraints { make in
+            make.top.equalTo(occupationTitleLabel.snp.bottom).inset(itemMargin)
+            make.leading.equalToSuperview().inset(20)
+        }
+        drinkTitleLabel.snp.makeConstraints { make in
+            make.top.equalTo(religionTitleLabel.snp.bottom).inset(itemMargin)
+            make.leading.equalToSuperview().inset(20)
+        }
+        smokingTitleLabel.snp.makeConstraints { make in
+            make.top.equalTo(drinkTitleLabel.snp.bottom).inset(itemMargin)
+            make.leading.equalToSuperview().inset(20)
+        }
+        bloodTypeTitleLabel.snp.makeConstraints { make in
+            make.top.equalTo(smokingTitleLabel.snp.bottom).inset(itemMargin)
+            make.leading.equalToSuperview().inset(20)
+        }
         heightValueLabel.snp.makeConstraints { make in
             make.top.equalTo(heightTitleLabel.snp.top)
             make.bottom.equalTo(heightTitleLabel.snp.bottom)
             make.leading.equalToSuperview().inset(120)
         }
-
-        bodyTypeTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(heightTitleLabel.snp.bottom)
-            make.leading.equalToSuperview().inset(20)
-            make.bottom.equalTo(educationTitleLabel.snp.top).inset(itemMargin)
-        }
-
         bodyTypeValueLabel.snp.makeConstraints { make in
             make.top.equalTo(bodyTypeTitleLabel.snp.top)
             make.bottom.equalTo(bodyTypeTitleLabel.snp.bottom)
             make.leading.equalToSuperview().inset(120)
         }
-
-        educationTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(bodyTypeTitleLabel.snp.bottom)
-            make.leading.equalToSuperview().inset(20)
-            make.bottom.equalTo(occupationTitleLabel.snp.top).inset(itemMargin)
-        }
-
         educationValueLabel.snp.makeConstraints { make in
             make.top.equalTo(educationTitleLabel.snp.top)
             make.bottom.equalTo(educationTitleLabel.snp.bottom)
             make.leading.equalToSuperview().inset(120)
         }
-
-        occupationTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(educationTitleLabel.snp.bottom)
-            make.leading.equalToSuperview().inset(20)
-            make.bottom.equalTo(religionTitleLabel.snp.top).inset(itemMargin)
-        }
-
         occupationValueLabel.snp.makeConstraints { make in
             make.top.equalTo(occupationTitleLabel.snp.top)
             make.bottom.equalTo(occupationTitleLabel.snp.bottom)
             make.leading.equalToSuperview().inset(120)
         }
-
-        religionTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(occupationTitleLabel.snp.bottom)
-            make.leading.equalToSuperview().inset(20)
-            make.bottom.equalTo(drinkTitleLabel.snp.top).inset(itemMargin)
-        }
-
         religionValueLabel.snp.makeConstraints { make in
             make.top.equalTo(religionTitleLabel.snp.top)
             make.bottom.equalTo(religionTitleLabel.snp.bottom)
             make.leading.equalToSuperview().inset(120)
         }
-
-        drinkTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(religionTitleLabel.snp.bottom)
-            make.leading.equalToSuperview().inset(20)
-            make.bottom.equalTo(smokingTitleLabel.snp.top).inset(itemMargin)
-        }
-
         drinkValueLabel.snp.makeConstraints { make in
             make.top.equalTo(drinkTitleLabel.snp.top)
             make.bottom.equalTo(drinkTitleLabel.snp.bottom)
             make.leading.equalToSuperview().inset(120)
         }
-
-        smokingTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(drinkTitleLabel.snp.bottom)
-            make.leading.equalToSuperview().inset(20)
-            make.bottom.equalTo(bloodTypeTitleLabel.snp.top).inset(itemMargin)
-        }
-
         smokingValueLabel.snp.makeConstraints { make in
             make.top.equalTo(smokingTitleLabel.snp.top)
             make.bottom.equalTo(smokingTitleLabel.snp.bottom)
             make.leading.equalToSuperview().inset(120)
         }
-
-        bloodTypeTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(smokingTitleLabel.snp.bottom)
-            make.leading.equalToSuperview().inset(20)
-            make.bottom.equalTo(border1.snp.top).inset(itemMargin)
-        }
-
         bloodTypeValueLabel.snp.makeConstraints { make in
             make.top.equalTo(bloodTypeTitleLabel.snp.top)
             make.bottom.equalTo(bloodTypeTitleLabel.snp.bottom)
             make.leading.equalToSuperview().inset(120)
         }
-
         border1.snp.makeConstraints { make in
+            make.top.equalTo(bloodTypeTitleLabel.snp.bottom).inset(itemMargin)
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
-            make.height.equalTo(1)
-            make.top.equalTo(bloodTypeTitleLabel.snp.bottom)
-            make.bottom.equalTo(starsView.snp.top).inset(itemMargin)
+            make.height.equalTo(0.5)
         }
-
         starsView.snp.makeConstraints { make in
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
-            make.top.equalTo(border1.snp.bottom)
-            make.bottom.equalTo(border2.snp.top).inset(itemMargin)
+            make.top.equalTo(border1.snp.bottom).inset(itemMargin)
         }
-
         border2.snp.makeConstraints { make in
+            make.top.equalTo(starsView.snp.bottom).inset(itemMargin)
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
-            make.height.equalTo(1)
-            make.top.equalTo(starsView.snp.bottom)
-            make.bottom.equalTo(charmTitleLabel.snp.top).inset(itemMargin)
+            make.height.equalTo(0.5)
         }
-
         charmTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(border2.snp.bottom)
+            make.top.equalTo(border2.snp.bottom).inset(itemMargin)
             make.leading.equalToSuperview().inset(20)
         }
-
         charmValueView.snp.makeConstraints { make in
             make.top.equalTo(charmTitleLabel.snp.top)
-            make.bottom.equalTo(idealTypeTitleLabel.snp.top).inset(itemMargin)
             make.leading.equalToSuperview().inset(120)
             make.trailing.equalToSuperview().inset(20)
         }
-
         idealTypeTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(charmValueView.snp.bottom)
+            make.top.equalTo(charmValueView.snp.bottom).inset(itemMargin)
             make.leading.equalToSuperview().inset(20)
         }
-
         idealTypeValueView.snp.makeConstraints { make in
             make.top.equalTo(idealTypeTitleLabel.snp.top)
-            make.bottom.equalTo(interestsTitleLabel.snp.top).inset(itemMargin)
             make.leading.equalToSuperview().inset(120)
             make.trailing.equalToSuperview().inset(20)
         }
-
         interestsTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(idealTypeValueView.snp.bottom)
+            make.top.equalTo(idealTypeValueView.snp.bottom).inset(itemMargin)
             make.leading.equalToSuperview().inset(20)
         }
-
         interestsValueView.snp.makeConstraints { make in
             make.top.equalTo(interestsTitleLabel.snp.top)
             make.bottom.equalToSuperview().inset(20)
@@ -656,6 +582,7 @@ class ProfileTableViewCell: UITableViewCell {
         drinkValueLabel.text = user?.drink
         smokingValueLabel.text = user?.smoking
         bloodTypeValueLabel.text = user?.blood
+        starLabel.text = "\(user?.nickname ?? "Unknown") 님의 매력을 평가해 주세요."
     }
 
     private func configureTagValues() {

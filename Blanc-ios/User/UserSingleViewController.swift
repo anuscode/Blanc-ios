@@ -259,8 +259,6 @@ class UserSingleViewController: UIViewController {
     }
 
     deinit {
-        // should remove view model and model otherwise it shows the previous one.
-        // SwinjectStoryboard.defaultContainer.resetObjectScope(.userSingleScope)
         log.info("deinit UserSingleViewController..")
     }
 
@@ -322,6 +320,17 @@ class UserSingleViewController: UIViewController {
     }
 
     private func subscribeUserSingleViewModel() {
+        userSingleViewModel?
+            .data
+            .take(1)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .subscribe(onNext: { [unowned self] data in
+                self.data = data
+                update(data, animatingDifferences: false)
+            })
+            .disposed(by: disposeBag)
+
         userSingleViewModel?
             .data
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
@@ -405,7 +414,7 @@ class UserSingleViewController: UIViewController {
         let carousel = data.carousel
         let belt = data.belt
         let body = data.body
-        let posts = data.posts.isEmpty ? [PostDTO()] : data.posts
+        let posts = data.posts
         snapshot.appendItems(carousel, toSection: .Carousel)
         snapshot.appendItems(belt, toSection: .Belt)
         snapshot.appendItems(body, toSection: .Body)
@@ -505,6 +514,18 @@ extension UserSingleViewController: UITableViewDelegate {
         CGFloat.leastNormalMagnitude
     }
 
+    public func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        if indexPath.section == 0 {
+            return view.width
+        } else if indexPath.section == 1 {
+            return 28
+        } else if indexPath.section == 2 {
+            return view.width
+        } else {
+            return UITableView.automaticDimension
+        }
+    }
+
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         if indexPath.section == 0 {
             return view.width
@@ -515,10 +536,6 @@ extension UserSingleViewController: UITableViewDelegate {
         } else {
             return UITableView.automaticDimension
         }
-    }
-
-    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        CGFloat.leastNormalMagnitude
     }
 
     // cells parts..
