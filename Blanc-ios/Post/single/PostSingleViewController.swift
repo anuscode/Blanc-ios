@@ -56,8 +56,8 @@ class PostSingleViewController: UIViewController {
         return tableView
     }()
 
-    lazy private var bottomTextField: BottomTextField = {
-        let view = BottomTextField()
+    lazy private var bottomTextField: BottomTextView = {
+        let view = BottomTextView()
         view.configure(avatar: session?.user?.avatar)
         view.configure(delegate: self)
         return view

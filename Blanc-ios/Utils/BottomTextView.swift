@@ -8,7 +8,7 @@ protocol BottomTextFieldDelegate: class {
     func dismiss()
 }
 
-class BottomTextField: UIView {
+class BottomTextView: UIView {
 
     private let disposeBag: DisposeBag = DisposeBag()
 

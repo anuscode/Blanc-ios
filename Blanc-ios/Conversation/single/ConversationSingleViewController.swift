@@ -107,8 +107,8 @@ class ConversationSingleViewController: UIViewController {
         return tableView
     }()
 
-    lazy private var bottomTextField: BottomTextField = {
-        let view = BottomTextField()
+    lazy private var bottomTextView: BottomTextView = {
+        let view = BottomTextView()
         view.placeHolder = "대화를 입력 하세요."
         view.configure(avatar: conversationSingleViewModel.avatar)
         view.configure(delegate: self)
@@ -258,7 +258,7 @@ class ConversationSingleViewController: UIViewController {
         view.addSubview(activeStarFallView)
         view.addSubview(tableView)
         view.addSubview(closeTapBackground)
-        view.addSubview(bottomTextField)
+        view.addSubview(bottomTextView)
         view.addSubview(inactiveConversationView)
     }
 
@@ -270,9 +270,9 @@ class ConversationSingleViewController: UIViewController {
             make.top.equalToSuperview()
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
-            make.bottom.equalTo(bottomTextField.snp.top)
+            make.bottom.equalTo(bottomTextView.snp.top)
         }
-        bottomTextField.snp.makeConstraints { make in
+        bottomTextView.snp.makeConstraints { make in
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
             make.bottom.equalTo(view.safeAreaLayoutGuide)
@@ -355,14 +355,14 @@ class ConversationSingleViewController: UIViewController {
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
            closeTapBackground.isHidden == true {
             let window = UIApplication.shared.keyWindow
-            bottomTextField.frame.origin.y -= (keyboardSize.height - (window?.safeAreaInsets.bottom ?? 0))
+            bottomTextView.frame.origin.y -= (keyboardSize.height - (window?.safeAreaInsets.bottom ?? 0))
             closeTapBackground.visible(true)
         }
     }
 
     @objc private func keyboardDidShow(notification: NSNotification) {
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            bottomTextField.snp.remakeConstraints { make in
+            bottomTextView.snp.remakeConstraints { make in
                 make.leading.equalToSuperview()
                 make.trailing.equalToSuperview()
                 make.bottom.equalToSuperview().inset(keyboardSize.height)
@@ -371,7 +371,7 @@ class ConversationSingleViewController: UIViewController {
                 make.top.equalToSuperview()
                 make.leading.equalToSuperview()
                 make.trailing.equalToSuperview()
-                make.bottom.equalTo(bottomTextField.snp.top)
+                make.bottom.equalTo(bottomTextView.snp.top)
             }
             if (conversation?.messages?.count ?? 0 > 0) {
                 let indexPath = IndexPath(row: conversation!.messages!.count - 1, section: 0)
@@ -385,9 +385,9 @@ class ConversationSingleViewController: UIViewController {
             make.top.equalToSuperview()
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
-            make.bottom.equalTo(bottomTextField.snp.top)
+            make.bottom.equalTo(bottomTextView.snp.top)
         }
-        bottomTextField.snp.remakeConstraints { make in
+        bottomTextView.snp.remakeConstraints { make in
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
             make.bottom.equalTo(view.safeAreaLayoutGuide)
@@ -396,7 +396,7 @@ class ConversationSingleViewController: UIViewController {
 
     @objc private func dismissTextField() {
         closeTapBackground.visible(false)
-        bottomTextField.dismiss()
+        bottomTextView.dismiss()
         view.endEditing(true)
     }
 

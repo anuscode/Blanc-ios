@@ -190,7 +190,7 @@
 		104EEBB825E372830069B2CF /* Gradient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEBAD25E372830069B2CF /* Gradient.swift */; };
 		104EEBB925E372830069B2CF /* Ripple.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEBAE25E372830069B2CF /* Ripple.swift */; };
 		104EEBBA25E372830069B2CF /* GradientCircleImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEBAF25E372830069B2CF /* GradientCircleImageView.swift */; };
-		104EEBBB25E372830069B2CF /* BottomTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEBB025E372830069B2CF /* BottomTextField.swift */; };
+		104EEBBB25E372830069B2CF /* BottomTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEBB025E372830069B2CF /* BottomTextView.swift */; };
 		104EEBBC25E372830069B2CF /* LinkedList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEBB125E372830069B2CF /* LinkedList.swift */; };
 		104EEBD025E372890069B2CF /* MessageListener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEBC225E372890069B2CF /* MessageListener.swift */; };
 		104EEBD125E372890069B2CF /* ConversationSingleModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 104EEBC425E372890069B2CF /* ConversationSingleModel.swift */; };
@@ -519,7 +519,7 @@
 		104EEBAD25E372830069B2CF /* Gradient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Gradient.swift; sourceTree = "<group>"; };
 		104EEBAE25E372830069B2CF /* Ripple.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Ripple.swift; sourceTree = "<group>"; };
 		104EEBAF25E372830069B2CF /* GradientCircleImageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientCircleImageView.swift; sourceTree = "<group>"; };
-		104EEBB025E372830069B2CF /* BottomTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BottomTextField.swift; sourceTree = "<group>"; };
+		104EEBB025E372830069B2CF /* BottomTextView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BottomTextView.swift; sourceTree = "<group>"; };
 		104EEBB125E372830069B2CF /* LinkedList.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkedList.swift; sourceTree = "<group>"; };
 		104EEBC225E372890069B2CF /* MessageListener.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageListener.swift; sourceTree = "<group>"; };
 		104EEBC425E372890069B2CF /* ConversationSingleModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationSingleModel.swift; sourceTree = "<group>"; };
@@ -1279,7 +1279,7 @@
 				104EEBAD25E372830069B2CF /* Gradient.swift */,
 				104EEBAE25E372830069B2CF /* Ripple.swift */,
 				104EEBAF25E372830069B2CF /* GradientCircleImageView.swift */,
-				104EEBB025E372830069B2CF /* BottomTextField.swift */,
+				104EEBB025E372830069B2CF /* BottomTextView.swift */,
 				104EEBB125E372830069B2CF /* LinkedList.swift */,
 				C47AA1210DF0D858645ADADD /* IAPHelper.swift */,
 				C47AAD87CBEFF0B42B8059B8 /* StarFallView.swift */,
@@ -2072,7 +2072,7 @@
 				104EEC1D25E3728F0069B2CF /* ImageViewController.swift in Sources */,
 				104EEC5325E372950069B2CF /* UserSingleViewModel.swift in Sources */,
 				104EEC5025E372950069B2CF /* CarouselTableViewCell.swift in Sources */,
-				104EEBBB25E372830069B2CF /* BottomTextField.swift in Sources */,
+				104EEBBB25E372830069B2CF /* BottomTextView.swift in Sources */,
 				104EEBB225E372830069B2CF /* NextButton.swift in Sources */,
 				104EEC3D25E3728F0069B2CF /* ProfileViewModel.swift in Sources */,
 				104EEAFF25E372480069B2CF /* RaterDTO.swift in Sources */,
