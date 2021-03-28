@@ -116,7 +116,7 @@ class BottomTextView: UIView {
 
     private lazy var nicknameToReply: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 15)
+        label.font = .systemFont(ofSize: 14)
         label.visible(false)
         return label
     }()
@@ -159,6 +159,7 @@ class BottomTextView: UIView {
         let label = UILabel()
         label.font = .systemFont(ofSize: 16)
         label.textColor = .secondaryLabel
+        label.text = placeHolder
         return label
     }()
 
@@ -257,10 +258,17 @@ class BottomTextView: UIView {
     }
 
     func configure(replyTo: CommentDTO?) {
-        nicknameToReply.text = "\(replyTo?.commenter?.nickname ?? "[ERROR]") 님에게 답글.."
+        let nickname = "\(replyTo?.commenter?.nickname ?? "[ERROR]")"
+        let reply = " 님에게 답글.."
+        let attributedText = NSMutableAttributedString()
+            .bold(nickname)
+            .normal(reply)
+        nicknameToReply.attributedText = attributedText
         commentToReply.text = replyTo?.comment ?? "..."
         controlReplyToVisibility(true)
-        textView.becomeFirstResponder()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [unowned self] in
+            textView.becomeFirstResponder()
+        }
     }
 
     func configure(delegate: BottomTextFieldDelegate) {
