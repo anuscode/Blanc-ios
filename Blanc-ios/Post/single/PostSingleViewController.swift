@@ -145,7 +145,7 @@ class PostSingleViewController: UIViewController {
             .subscribe(onNext: { [unowned self] post in
                 if (post.enableComment == false) {
                     bottomTextField.placeHolder = "댓글이 금지 된 게시물 입니다."
-                    bottomTextField.isEnabled = false
+                    bottomTextField.isEditable = false
                 }
             })
             .disposed(by: disposeBag)
@@ -279,6 +279,7 @@ extension PostSingleViewController: BottomTextFieldDelegate {
 }
 
 extension PostSingleViewController: PostSingleHeaderDelegate {
+
     func goUserSingle(user: UserDTO?) {
         guard let user = user else {
             return

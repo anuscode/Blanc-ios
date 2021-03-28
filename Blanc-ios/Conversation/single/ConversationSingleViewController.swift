@@ -189,14 +189,16 @@ class ConversationSingleViewController: UIViewController {
 
     lazy private var inactiveLabel1: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 22)
+        label.font = .boldSystemFont(ofSize: 18)
+        label.textColor = .black4
         return label
     }()
 
     lazy private var inactiveLabel2: UILabel = {
         let label = UILabel()
         label.text = "지금 대화를 나누어 보세요."
-        label.textColor = .black3
+        label.font = .systemFont(ofSize: 15)
+        label.textColor = .darkGray
         return label
     }()
 
@@ -261,28 +263,23 @@ class ConversationSingleViewController: UIViewController {
     }
 
     private func configureConstraints() {
-
         activeStarFallView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-
         tableView.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
             make.bottom.equalTo(bottomTextField.snp.top)
         }
-
         bottomTextField.snp.makeConstraints { make in
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
             make.bottom.equalTo(view.safeAreaLayoutGuide)
         }
-
         closeTapBackground.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-
         inactiveConversationView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
@@ -355,7 +352,8 @@ class ConversationSingleViewController: UIViewController {
     }
 
     @objc private func keyboardWillShow(notification: NSNotification) {
-        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
+        if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
+           closeTapBackground.isHidden == true {
             let window = UIApplication.shared.keyWindow
             bottomTextField.frame.origin.y -= (keyboardSize.height - (window?.safeAreaInsets.bottom ?? 0))
             closeTapBackground.visible(true)
@@ -364,22 +362,17 @@ class ConversationSingleViewController: UIViewController {
 
     @objc private func keyboardDidShow(notification: NSNotification) {
         if let keyboardSize = (notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue {
-            bottomTextField.snp.removeConstraints()
-            bottomTextField.snp.makeConstraints { make in
+            bottomTextField.snp.remakeConstraints { make in
                 make.leading.equalToSuperview()
                 make.trailing.equalToSuperview()
                 make.bottom.equalToSuperview().inset(keyboardSize.height)
             }
-            bottomTextField.layoutIfNeeded()
-
-            tableView.snp.removeConstraints()
-            tableView.snp.makeConstraints { make in
+            tableView.snp.remakeConstraints { make in
                 make.top.equalToSuperview()
                 make.leading.equalToSuperview()
                 make.trailing.equalToSuperview()
                 make.bottom.equalTo(bottomTextField.snp.top)
             }
-            tableView.layoutIfNeeded()
             if (conversation?.messages?.count ?? 0 > 0) {
                 let indexPath = IndexPath(row: conversation!.messages!.count - 1, section: 0)
                 tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
@@ -388,15 +381,13 @@ class ConversationSingleViewController: UIViewController {
     }
 
     @objc private func keyboardWillHide() {
-        tableView.snp.removeConstraints()
-        tableView.snp.makeConstraints { make in
+        tableView.snp.remakeConstraints { make in
             make.top.equalToSuperview()
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
             make.bottom.equalTo(bottomTextField.snp.top)
         }
-        bottomTextField.snp.removeConstraints()
-        bottomTextField.snp.makeConstraints { make in
+        bottomTextField.snp.remakeConstraints { make in
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
             make.bottom.equalTo(view.safeAreaLayoutGuide)

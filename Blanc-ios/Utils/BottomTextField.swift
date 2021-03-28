@@ -1,5 +1,6 @@
 import Foundation
 import UIKit
+import RxSwift
 
 
 protocol BottomTextFieldDelegate: class {
@@ -9,18 +10,20 @@ protocol BottomTextFieldDelegate: class {
 
 class BottomTextField: UIView {
 
+    private let disposeBag: DisposeBag = DisposeBag()
+
     var placeHolder: String = "댓글을 입력 하세요." {
         didSet {
             DispatchQueue.main.async { [unowned self] in
-                textField.placeholder = placeHolder
+                placeholder.text = placeHolder
             }
         }
     }
 
-    var isEnabled: Bool = true {
+    var isEditable: Bool = true {
         didSet {
             DispatchQueue.main.async { [unowned self] in
-                textField.isEnabled = isEnabled
+                textView.isEditable = isEditable
             }
         }
     }
@@ -53,9 +56,10 @@ class BottomTextField: UIView {
         view.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(border)
         view.addSubview(currentUserImage)
-        view.addSubview(textField)
+        view.addSubview(textView)
         view.addSubview(replyToTextsStackView)
         view.addSubview(closeImageStackView)
+        view.addSubview(sendView)
 
         border.snp.makeConstraints { make in
             make.top.equalToSuperview()
@@ -63,41 +67,44 @@ class BottomTextField: UIView {
             make.trailing.equalToSuperview()
             make.height.equalTo(1)
         }
-
         replyToTextsStackView.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.leading.equalToSuperview().inset(15)
             make.trailing.equalTo(closeImageStackView.snp.leading)
-            make.bottom.equalTo(textField.snp.top).offset(7).priority(.medium)
+            make.bottom.equalTo(textView.snp.top).offset(7).priority(.medium)
         }
-
         closeImageStackView.snp.makeConstraints { make in
             make.centerY.equalTo(replyToTextsStackView.snp.centerY)
             make.trailing.equalToSuperview().inset(15)
             make.width.equalTo(20)
             make.height.equalTo(20)
         }
-
         currentUserImage.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(15)
-            make.centerY.equalTo(textField.snp.centerY)
+            make.centerY.equalTo(textView.snp.centerY)
             make.width.equalTo(40)
             make.height.equalTo(40)
         }
-
-        textField.snp.makeConstraints { make in
+        textView.snp.makeConstraints { make in
             make.top.equalTo(replyToTextsStackView.snp.bottom).offset(5)
             make.leading.equalTo(currentUserImage.snp.trailing).offset(10)
             make.trailing.equalToSuperview().inset(15)
             make.bottom.equalToSuperview().inset(5)
-            make.height.equalTo(45)
+            make.height.equalTo(40)
+        }
+        sendView.snp.makeConstraints { make in
+            make.centerY.equalTo(textView.snp.centerY)
+            make.trailing.equalTo(textView.snp.trailing)
+            make.width.equalTo(55)
+            make.height.equalTo(40)
         }
         return view
     }()
 
     private lazy var replyToTextsStackView: UIStackView = {
         let stackView = UIStackView(arrangedSubviews: [
-            nicknameToReply, commentToReply
+            nicknameToReply,
+            commentToReply
         ])
         stackView.setCustomSpacing(4, after: nicknameToReply)
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -148,35 +155,65 @@ class BottomTextField: UIView {
         return imageView
     }()
 
-    private lazy var textField: UITextField = {
-        let textField = UITextField()
-        textField.addPadding(direction: .left, width: 15)
-        textField.rightView = sendView
-        textField.rightViewMode = .always
-        textField.placeholder = placeHolder
-        textField.keyboardType = .default
-        textField.backgroundColor = .secondarySystemBackground
-        textField.sizeToFit()
-        textField.layer.cornerRadius = 10
-        textField.isEnabled = isEnabled
-        textField.addTarget(self, action: #selector(didChangeTextField), for: .editingChanged)
-        return textField
+    private lazy var placeholder: UILabel = {
+        let label = UILabel()
+        label.font = .systemFont(ofSize: 16)
+        label.textColor = .secondaryLabel
+        return label
+    }()
+
+    private lazy var textView: UITextView = {
+        let textView = UITextView()
+        textView.font = .systemFont(ofSize: 16)
+        textView.backgroundColor = UIColor.secondarySystemBackground.withAlphaComponent(0.9)
+        textView.keyboardType = .default
+        textView.sizeToFit()
+        textView.layer.cornerRadius = 10
+        textView.textContainerInset = UIEdgeInsets(top: 10, left: 10, bottom: 10, right: 50)
+        textView.addSubview(placeholder)
+        placeholder.snp.makeConstraints { make in
+            make.leading.equalToSuperview().inset(15)
+            make.centerY.equalToSuperview()
+        }
+        textView.rx
+            .text
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.asyncInstance)
+            .do(onNext: { [unowned self] _ in
+                let height = self.textView.contentSize.height
+                textView.snp.remakeConstraints { make in
+                    make.top.equalTo(self.replyToTextsStackView.snp.bottom).offset(5)
+                    make.leading.equalTo(self.currentUserImage.snp.trailing).offset(10)
+                    make.trailing.equalToSuperview().inset(15)
+                    make.bottom.equalToSuperview().inset(5)
+                    make.height.equalTo(height)
+                }
+            })
+            .do(onNext: { [unowned self] text in
+                self.placeholder.visible(text.isEmpty())
+            })
+            .subscribe({ [unowned self] _ in
+                self.didChangeTextField()
+            })
+            .disposed(by: disposeBag)
+        return textView
     }()
 
     private lazy var sendView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 15
         view.layer.masksToBounds = true
+        view.isUserInteractionEnabled = true
         view.addSubview(sendLabel)
         sendLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(5)
             make.trailing.equalToSuperview()
             make.leading.equalToSuperview().inset(10)
             make.bottom.equalToSuperview().inset(5)
+            make.width.equalTo(55)
+            make.height.equalTo(45)
         }
-        view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(send))
-        view.width(55)
-        view.height(45)
+        view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapSendButton))
         ripple.activate(to: view)
         return view
     }()
@@ -185,34 +222,29 @@ class BottomTextField: UIView {
         let label = UILabel()
         label.text = "전송"
         label.font = .systemFont(ofSize: 16)
-        label.textColor = .placeholderText
+        label.textColor = .systemGray3
         return label
     }()
 
-    private func controlReplyToVisibility(_ flag: Bool) {
+    private func controlReplyToVisibility(_ isVisible: Bool) {
         replyToTextsStackView.subviews.forEach { view in
-            view.visible(flag)
+            view.visible(isVisible)
         }
         closeImageStackView.subviews.forEach { view in
-            view.visible(flag)
+            view.visible(isVisible)
         }
-        replyToTextsStackView.layoutMargins = UIEdgeInsets(top: (flag ? 7 : 0), left: 0, bottom: 0, right: 0)
+        replyToTextsStackView.layoutMargins = UIEdgeInsets(top: (isVisible ? 7 : 0), left: 0, bottom: 0, right: 0)
     }
 
-    @objc private func send() {
-        let comment = textField.text ?? ""
-        delegate?.trigger(message: comment)
+    @objc private func didTapSendButton() {
+        let message = textView.text ?? ""
+        delegate?.trigger(message: message)
     }
 
     @objc private func didChangeTextField() {
-        let value = textField.text
-        if (value == "" || value == nil) {
-            sendLabel.textColor = .placeholderText
-            sendView.isUserInteractionEnabled = false
-        } else {
-            sendLabel.textColor = .systemBlue
-            sendView.isUserInteractionEnabled = true
-        }
+        let isTextEmpty = textView.text.isEmpty()
+        sendLabel.textColor = isTextEmpty ? .systemGray3 : .systemBlue
+        sendView.isUserInteractionEnabled = !isTextEmpty
     }
 
     @objc private func didTapCloseImage() {
@@ -220,14 +252,15 @@ class BottomTextField: UIView {
     }
 
     func configure(avatar: String?) {
-        currentUserImage.url(avatar, size: CGSize(width: 40, height: 40))
+        let size = CGSize(width: 40, height: 40)
+        currentUserImage.url(avatar, size: size)
     }
 
     func configure(replyTo: CommentDTO?) {
         nicknameToReply.text = "\(replyTo?.commenter?.nickname ?? "[ERROR]") 님에게 답글.."
         commentToReply.text = replyTo?.comment ?? "..."
         controlReplyToVisibility(true)
-        textField.becomeFirstResponder()
+        textView.becomeFirstResponder()
     }
 
     func configure(delegate: BottomTextFieldDelegate) {
@@ -237,7 +270,7 @@ class BottomTextField: UIView {
     func dismiss() {
         nicknameToReply.text = ""
         commentToReply.text = ""
-        textField.text = ""
+        textView.text = ""
         didChangeTextField()
         controlReplyToVisibility(false)
     }
