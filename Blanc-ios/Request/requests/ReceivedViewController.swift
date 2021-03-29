@@ -21,8 +21,14 @@ class ReceivedViewController: UIViewController {
 
     internal var pushUserSingleViewController: (() -> Void)?
 
+    lazy private var starFallView: StarFallView = {
+        let view = StarFallView()
+        return view
+    }()
+
     lazy private var tableView: UITableView = {
         let tableView = UITableView()
+        tableView.backgroundColor = UIColor.white.withAlphaComponent(0.9)
         tableView.register(SmallUserProfileWithButtonTableViewCell.self,
             forCellReuseIdentifier: "SmallUserProfileWithButtonTableViewCell")
         tableView.register(SmallUserProfileTableViewCell.self,
@@ -55,10 +61,14 @@ class ReceivedViewController: UIViewController {
     }
 
     private func configureSubviews() {
+        view.addSubview(starFallView)
         view.addSubview(tableView)
     }
 
     private func configureConstraints() {
+        starFallView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
         tableView.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.leading.equalToSuperview()
@@ -91,7 +101,6 @@ class ReceivedViewController: UIViewController {
         receivedViewModel?
             .reload
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
-            .delay(.milliseconds(300), scheduler: MainScheduler.asyncInstance)
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [unowned self] message in
                 tableView.reloadData()
@@ -157,7 +166,7 @@ extension ReceivedViewController: UITableViewDelegate {
 
     private func generateHeaderView(text: String) -> UIView {
         let view = UIView()
-        view.backgroundColor = .white
+        view.backgroundColor = .clear
 
         let label = UILabel()
         label.text = text
@@ -183,10 +192,11 @@ extension ReceivedViewController: UITableViewDelegate {
 
     private func generateFooterView(mainText: String, secondaryText: String) -> UIView {
         let view = UIView()
-        view.backgroundColor = .white
+        view.backgroundColor = .clear
 
         let animationView = AnimationView()
         animations.append(animationView)
+        animationView.backgroundColor = .clear
         animationView.animation = Animation.named("bad_emoji")
         animationView.contentMode = .scaleAspectFit
         animationView.loopMode = .loop

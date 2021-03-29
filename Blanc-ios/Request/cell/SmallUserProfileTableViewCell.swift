@@ -11,7 +11,7 @@ class SmallUserProfileTableViewCell: UITableViewCell {
 
     private var comment: CommentDTO?
 
-    let ripple: Ripple = Ripple()
+    private let ripple: Ripple = Ripple()
 
     private var user: UserDTO?
 
@@ -66,6 +66,7 @@ class SmallUserProfileTableViewCell: UITableViewCell {
     }
 
     private func configureSelf() {
+        contentView.backgroundColor = .clear
         contentView.isUserInteractionEnabled = true
         ripple.activate(to: contentView)
         contentView.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapTableViewCell))

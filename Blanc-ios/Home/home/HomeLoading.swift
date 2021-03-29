@@ -85,7 +85,7 @@ class HomeLoading: UIView {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 10)
         label.textColor = .silverBlue
-        label.text = "평가하기"
+        label.text = " "
 
         let imageView = UIImageView()
         view.addSubview(label)
@@ -144,7 +144,7 @@ class HomeLoading: UIView {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 10)
         label.textColor = .silverBlue
-        label.text = "찔러보기"
+        label.text = " "
 
         let imageView = UIImageView()
 
@@ -189,7 +189,7 @@ class HomeLoading: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .silverBlue
+        backgroundColor = UIColor.silverBlue.withAlphaComponent(0.7)
         layer.cornerRadius = 15
         configureSubviews()
         configureConstraints()
@@ -207,7 +207,7 @@ class HomeLoading: UIView {
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
             make.width.equalTo(length)
-            make.height.equalTo(length * 0.7)
+            make.height.equalTo(length * 0.85)
             make.centerX.equalToSuperview()
         }
 
