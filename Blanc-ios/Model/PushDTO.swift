@@ -9,9 +9,9 @@ enum Event: String, Codable {
          POKE = "POKE",
          REQUEST = "REQUEST",
          COMMENT = "COMMENT",
-         FAVORITE = "FAVORITE",
+         POST_FAVORITE = "POST_FAVORITE",
          MATCHED = "MATCHED",
-         THUMB_UP = "THUMB_UP",
+         COMMENT_THUMB_UP = "COMMENT_THUMB_UP",
          CONVERSATION_OPEN = "CONVERSATION_OPEN",
          CONVERSATION_LEAVE = "CONVERSATION_LEAVE",
          LOOK_UP = "LOOK_UP",
@@ -207,7 +207,7 @@ extension PushDTO {
     }
 
     func isFavorite() -> Bool {
-        event == .FAVORITE && postId.isNotEmpty()
+        event == .POST_FAVORITE && postId.isNotEmpty()
     }
 
     func isComment() -> Bool {
@@ -215,7 +215,7 @@ extension PushDTO {
     }
 
     func isThumbUp() -> Bool {
-        event == .THUMB_UP && postId.isNotEmpty()
+        event == .COMMENT_THUMB_UP && postId.isNotEmpty()
     }
 
     /**

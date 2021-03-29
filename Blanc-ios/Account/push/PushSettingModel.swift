@@ -75,7 +75,7 @@ class PushSettingModel {
         } else if (attribute == PushSettingAttribute.match) {
             pushSetting.match = !(pushSetting.match ?? false)
         } else if (attribute == PushSettingAttribute.favoriteComment) {
-            pushSetting.favoriteComment = !(pushSetting.favoriteComment ?? false)
+            pushSetting.commentThumbUp = !(pushSetting.commentThumbUp ?? false)
         } else if (attribute == PushSettingAttribute.conversation) {
             pushSetting.conversation = !(pushSetting.conversation ?? false)
         } else if (attribute == PushSettingAttribute.lookup) {

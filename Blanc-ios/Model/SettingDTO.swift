@@ -10,7 +10,8 @@ class PushSetting: NSObject, Codable {
                 comment,
                 highRate,
                 match,
-                favoriteComment,
+                postFavorite,
+                commentThumbUp,
                 conversation,
                 lookup
             ]
@@ -22,7 +23,8 @@ class PushSetting: NSObject, Codable {
             comment = newValue
             highRate = newValue
             match = newValue
-            favoriteComment = newValue
+            postFavorite = newValue
+            commentThumbUp = newValue
             conversation = newValue
             lookup = newValue
         }
@@ -33,7 +35,8 @@ class PushSetting: NSObject, Codable {
     var comment: Bool?
     var highRate: Bool?
     var match: Bool?
-    var favoriteComment: Bool?
+    var postFavorite: Bool?
+    var commentThumbUp: Bool?
     var conversation: Bool?
     var lookup: Bool?
 }

@@ -125,7 +125,7 @@ extension PushSettingViewController: UITableViewDelegate, UITableViewDataSource 
         } else if (indexPath.row == 5) {
             cell.bind(attribute: .match, isEnable: pushSetting?.match == true, isBoldTitle: false, delegate: self)
         } else if (indexPath.row == 6) {
-            cell.bind(attribute: .favoriteComment, isEnable: pushSetting?.favoriteComment == true, isBoldTitle: false, delegate: self)
+            cell.bind(attribute: .favoriteComment, isEnable: pushSetting?.commentThumbUp == true, isBoldTitle: false, delegate: self)
         } else if (indexPath.row == 7) {
             cell.bind(attribute: .conversation, isEnable: pushSetting?.conversation == true, isBoldTitle: false, delegate: self)
         } else if (indexPath.row == 8) {
