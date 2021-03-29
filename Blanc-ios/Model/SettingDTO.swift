@@ -13,7 +13,8 @@ class PushSetting: NSObject, Codable {
                 postFavorite,
                 commentThumbUp,
                 conversationOpen,
-                lookup
+                lookup,
+                conversation
             ]
             return flags.count == 1 && flags.contains(true)
         }
@@ -27,6 +28,7 @@ class PushSetting: NSObject, Codable {
             commentThumbUp = newValue
             conversationOpen = newValue
             lookup = newValue
+            conversation = newValue
         }
     }
 
@@ -39,6 +41,7 @@ class PushSetting: NSObject, Codable {
     var commentThumbUp: Bool?
     var conversationOpen: Bool?
     var lookup: Bool?
+    var conversation: Bool?
 }
 
 

@@ -69,7 +69,7 @@ class PushSettingViewController: UIViewController {
     }
 
     private func configureConstraints() {
-        let height = 46.5 + (44.5 * 9)
+        let height = 46.5 + (44.5 * 10)
         tableView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).inset(10)
             make.leading.equalTo(view.safeAreaLayoutGuide).inset(10)
@@ -102,7 +102,7 @@ class PushSettingViewController: UIViewController {
 extension PushSettingViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        10
+        11
     }
 
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -132,6 +132,8 @@ extension PushSettingViewController: UITableViewDelegate, UITableViewDataSource 
             cell.bind(attribute: .conversationOpen, isEnable: pushSetting?.conversationOpen == true, isBoldTitle: false, delegate: self)
         } else if (indexPath.row == 9) {
             cell.bind(attribute: .lookup, isEnable: pushSetting?.lookup == true, isBoldTitle: false, delegate: self)
+        } else if (indexPath.row == 10) {
+            cell.bind(attribute: .conversation, isEnable: pushSetting?.conversation == true, isBoldTitle: false, delegate: self)
         } else {
             fatalError("WATCH OUT YOUR ASS HOLE..")
         }

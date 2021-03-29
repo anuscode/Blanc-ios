@@ -11,7 +11,8 @@ enum PushSettingAttribute: String {
          commentThumbUp = "내 코멘트 좋아요",
          conversationOpen = "대화방 오픈",
          lookup = "내 프로필 열람 한 유저",
-         postFavorite = "내 게시물 좋아요"
+         postFavorite = "내 게시물 좋아요",
+         conversation = "대화방 메세지"
 }
 
 class PushSettingModel {
@@ -37,8 +38,12 @@ class PushSettingModel {
     }
 
     private func populate() {
+        guard let uid = session.uid,
+              let userId = session.id else {
+            return
+        }
         userService
-            .getPushSetting(uid: session.uid, userId: session.id)
+            .getPushSetting(uid: uid, userId: userId)
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .subscribe(onSuccess: { pushSetting in
@@ -63,26 +68,28 @@ class PushSettingModel {
             return
         }
 
-        if (attribute == PushSettingAttribute.all) {
+        if (attribute == .all) {
             pushSetting.all = !pushSetting.all
-        } else if (attribute == PushSettingAttribute.poke) {
+        } else if (attribute == .poke) {
             pushSetting.poke = !(pushSetting.poke ?? false)
-        } else if (attribute == PushSettingAttribute.request) {
+        } else if (attribute == .request) {
             pushSetting.request = !(pushSetting.request ?? false)
-        } else if (attribute == PushSettingAttribute.comment) {
+        } else if (attribute == .comment) {
             pushSetting.comment = !(pushSetting.comment ?? false)
-        } else if (attribute == PushSettingAttribute.highRate) {
+        } else if (attribute == .highRate) {
             pushSetting.highRate = !(pushSetting.highRate ?? false)
-        } else if (attribute == PushSettingAttribute.matched) {
+        } else if (attribute == .matched) {
             pushSetting.matched = !(pushSetting.matched ?? false)
-        } else if (attribute == PushSettingAttribute.postFavorite) {
+        } else if (attribute == .postFavorite) {
             pushSetting.postFavorite = !(pushSetting.postFavorite ?? false)
-        } else if (attribute == PushSettingAttribute.commentThumbUp) {
+        } else if (attribute == .commentThumbUp) {
             pushSetting.commentThumbUp = !(pushSetting.commentThumbUp ?? false)
-        } else if (attribute == PushSettingAttribute.conversationOpen) {
+        } else if (attribute == .conversationOpen) {
             pushSetting.conversationOpen = !(pushSetting.conversationOpen ?? false)
-        } else if (attribute == PushSettingAttribute.lookup) {
+        } else if (attribute == .lookup) {
             pushSetting.lookup = !(pushSetting.lookup ?? false)
+        } else if (attribute == .conversation) {
+            pushSetting.conversation = !(pushSetting.conversation ?? false)
         } else {
             fatalError("WATCH OUT YOUR ASS HOLE..")
         }
@@ -92,11 +99,16 @@ class PushSettingModel {
     }
 
     private func updateUserPushSetting() {
+        guard let uid = session.uid,
+              let userId = session.id,
+              let pushSetting = pushSetting else {
+            return
+        }
         userService
             .updateUserPushSetting(
-                uid: session.uid,
-                userId: session.id,
-                pushSetting: pushSetting!
+                uid: uid,
+                userId: userId,
+                pushSetting: pushSetting
             )
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
