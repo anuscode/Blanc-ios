@@ -7,10 +7,11 @@ enum PushSettingAttribute: String {
          request = "친구 요청",
          comment = "내 게시물 코멘트",
          highRate = "내게 높은 점수",
-         match = "매칭",
-         favoriteComment = "내 코멘트 좋아요",
-         conversation = "대화방 오픈",
-         lookup = "내 프로필 열람 한 유저"
+         matched = "매칭",
+         commentThumbUp = "내 코멘트 좋아요",
+         conversationOpen = "대화방 오픈",
+         lookup = "내 프로필 열람 한 유저",
+         postFavorite = "내 게시물 좋아요"
 }
 
 class PushSettingModel {
@@ -72,12 +73,14 @@ class PushSettingModel {
             pushSetting.comment = !(pushSetting.comment ?? false)
         } else if (attribute == PushSettingAttribute.highRate) {
             pushSetting.highRate = !(pushSetting.highRate ?? false)
-        } else if (attribute == PushSettingAttribute.match) {
-            pushSetting.match = !(pushSetting.match ?? false)
-        } else if (attribute == PushSettingAttribute.favoriteComment) {
+        } else if (attribute == PushSettingAttribute.matched) {
+            pushSetting.matched = !(pushSetting.matched ?? false)
+        } else if (attribute == PushSettingAttribute.postFavorite) {
+            pushSetting.postFavorite = !(pushSetting.postFavorite ?? false)
+        } else if (attribute == PushSettingAttribute.commentThumbUp) {
             pushSetting.commentThumbUp = !(pushSetting.commentThumbUp ?? false)
-        } else if (attribute == PushSettingAttribute.conversation) {
-            pushSetting.conversation = !(pushSetting.conversation ?? false)
+        } else if (attribute == PushSettingAttribute.conversationOpen) {
+            pushSetting.conversationOpen = !(pushSetting.conversationOpen ?? false)
         } else if (attribute == PushSettingAttribute.lookup) {
             pushSetting.lookup = !(pushSetting.lookup ?? false)
         } else {
@@ -90,7 +93,11 @@ class PushSettingModel {
 
     private func updateUserPushSetting() {
         userService
-            .updateUserPushSetting(uid: session.uid, userId: session.id, pushSetting: pushSetting!)
+            .updateUserPushSetting(
+                uid: session.uid,
+                userId: session.id,
+                pushSetting: pushSetting!
+            )
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .subscribe(onSuccess: { _ in

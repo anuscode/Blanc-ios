@@ -69,7 +69,7 @@ class PushSettingViewController: UIViewController {
     }
 
     private func configureConstraints() {
-        let height = 46.5 + (44.5 * 8)
+        let height = 46.5 + (44.5 * 9)
         tableView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).inset(10)
             make.leading.equalTo(view.safeAreaLayoutGuide).inset(10)
@@ -102,7 +102,7 @@ class PushSettingViewController: UIViewController {
 extension PushSettingViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        9
+        10
     }
 
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -119,16 +119,18 @@ extension PushSettingViewController: UITableViewDelegate, UITableViewDataSource 
         } else if (indexPath.row == 2) {
             cell.bind(attribute: .request, isEnable: pushSetting?.request == true, isBoldTitle: false, delegate: self)
         } else if (indexPath.row == 3) {
-            cell.bind(attribute: .comment, isEnable: pushSetting?.comment == true, isBoldTitle: false, delegate: self)
+            cell.bind(attribute: .postFavorite, isEnable: pushSetting?.postFavorite == true, isBoldTitle: false, delegate: self)
         } else if (indexPath.row == 4) {
-            cell.bind(attribute: .highRate, isEnable: pushSetting?.highRate == true, isBoldTitle: false, delegate: self)
+            cell.bind(attribute: .comment, isEnable: pushSetting?.comment == true, isBoldTitle: false, delegate: self)
         } else if (indexPath.row == 5) {
-            cell.bind(attribute: .match, isEnable: pushSetting?.match == true, isBoldTitle: false, delegate: self)
+            cell.bind(attribute: .highRate, isEnable: pushSetting?.highRate == true, isBoldTitle: false, delegate: self)
         } else if (indexPath.row == 6) {
-            cell.bind(attribute: .favoriteComment, isEnable: pushSetting?.commentThumbUp == true, isBoldTitle: false, delegate: self)
+            cell.bind(attribute: .matched, isEnable: pushSetting?.matched == true, isBoldTitle: false, delegate: self)
         } else if (indexPath.row == 7) {
-            cell.bind(attribute: .conversation, isEnable: pushSetting?.conversation == true, isBoldTitle: false, delegate: self)
+            cell.bind(attribute: .commentThumbUp, isEnable: pushSetting?.commentThumbUp == true, isBoldTitle: false, delegate: self)
         } else if (indexPath.row == 8) {
+            cell.bind(attribute: .conversationOpen, isEnable: pushSetting?.conversationOpen == true, isBoldTitle: false, delegate: self)
+        } else if (indexPath.row == 9) {
             cell.bind(attribute: .lookup, isEnable: pushSetting?.lookup == true, isBoldTitle: false, delegate: self)
         } else {
             fatalError("WATCH OUT YOUR ASS HOLE..")

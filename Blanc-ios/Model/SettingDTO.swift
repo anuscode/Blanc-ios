@@ -9,10 +9,10 @@ class PushSetting: NSObject, Codable {
                 request,
                 comment,
                 highRate,
-                match,
+                matched,
                 postFavorite,
                 commentThumbUp,
-                conversation,
+                conversationOpen,
                 lookup
             ]
             return flags.count == 1 && flags.contains(true)
@@ -22,10 +22,10 @@ class PushSetting: NSObject, Codable {
             request = newValue
             comment = newValue
             highRate = newValue
-            match = newValue
+            matched = newValue
             postFavorite = newValue
             commentThumbUp = newValue
-            conversation = newValue
+            conversationOpen = newValue
             lookup = newValue
         }
     }
@@ -34,10 +34,10 @@ class PushSetting: NSObject, Codable {
     var request: Bool?
     var comment: Bool?
     var highRate: Bool?
-    var match: Bool?
+    var matched: Bool?
     var postFavorite: Bool?
     var commentThumbUp: Bool?
-    var conversation: Bool?
+    var conversationOpen: Bool?
     var lookup: Bool?
 }
 
