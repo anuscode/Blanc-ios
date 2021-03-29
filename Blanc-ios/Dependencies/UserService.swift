@@ -327,10 +327,12 @@ class UserService {
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .flatMap { [unowned self] result in
                 provider.rx
-                    .request(.withdraw(
-                        idToken: result.token,
-                        uid: uid,
-                        userId: userId)
+                    .request(
+                        .withdraw(
+                            idToken: result.token,
+                            uid: uid,
+                            userId: userId
+                        )
                     )
                     .debug()
                     .filterSuccessfulStatusAndRedirectCodes()
@@ -358,10 +360,34 @@ class UserService {
             .observeOn(SerialDispatchQueueScheduler(qos: .default))
             .flatMap { [unowned self] result in
                 provider.rx
-                    .request(.unregister(
-                        idToken: result.token,
-                        uid: uid,
-                        userId: userId)
+                    .request(
+                        .unregister(
+                            idToken: result.token,
+                            uid: uid,
+                            userId: userId
+                        )
+                    )
+                    .debug()
+                    .filterSuccessfulStatusAndRedirectCodes()
+                    .map({ _ in Void() })
+            }
+            .asSingle()
+    }
+
+    func deleteDeviceToken(currentUser: User, uid: String?, userId: String?) -> Single<Void> {
+        currentUser.rx
+            .getIDTokenResult()
+            .debug()
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(SerialDispatchQueueScheduler(qos: .default))
+            .flatMap { [unowned self] result in
+                provider.rx
+                    .request(
+                        .deleteDeviceToken(
+                            idToken: result.token,
+                            uid: uid,
+                            userId: userId
+                        )
                     )
                     .debug()
                     .filterSuccessfulStatusAndRedirectCodes()

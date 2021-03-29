@@ -40,6 +40,7 @@ enum UserProvider {
     // DELETE
     case deleteUserImage(uid: String?, userId: String?, index: Int)
     case unregister(idToken: String?, uid: String?, userId: String?)
+    case deleteDeviceToken(idToken: String?, uid: String?, userId: String?)
 }
 
 extension UserProvider: TargetType {
@@ -105,6 +106,8 @@ extension UserProvider: TargetType {
             return "users/\(userId ?? "")/user_images/\(index)"
         case .unregister(idToken: _, uid: _, userId: let userId):
             return "users/\(userId ?? "")/unregister"
+        case .deleteDeviceToken(idToken: _, uid: _, userId: let userId):
+            return "users/\(userId ?? "")/device_token"
         }
     }
 
@@ -139,7 +142,8 @@ extension UserProvider: TargetType {
              .withdraw(idToken: _, uid: _, userId: _):
             return .put
         case .unregister(idToken: _, uid: _, userId: _),
-             .deleteUserImage(uid: _, userId: _, index: _):
+             .deleteUserImage(uid: _, userId: _, index: _),
+             .deleteDeviceToken(idToken: _, uid: _, userId: _):
             return .delete
         }
     }
@@ -236,6 +240,8 @@ extension UserProvider: TargetType {
             return .requestPlain
         case .unregister(idToken: _, uid: _, userId: _):
             return .requestPlain
+        case .deleteDeviceToken(idToken: _, uid: _, userId: _):
+            return .requestPlain
         }
     }
 
@@ -330,6 +336,10 @@ extension UserProvider: TargetType {
             headers["uid"] = uid
             return headers
         case .unregister(idToken: let idToken, uid: let uid, userId: _):
+            headers["id-token"] = idToken
+            headers["uid"] = uid
+            return headers
+        case .deleteDeviceToken(idToken: let idToken, uid: let uid, userId: _):
             headers["id-token"] = idToken
             headers["uid"] = uid
             return headers

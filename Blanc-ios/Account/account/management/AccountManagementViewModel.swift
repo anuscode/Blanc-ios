@@ -34,12 +34,26 @@ class AccountManagementViewModel {
     }
 
     internal func logout() {
-        do {
-            try auth.signOut()
-            replaceViewController.onNext(Void())
-        } catch {
-            toast.onNext("로그아웃에 실패 하였습니다. 다시 시도해 주세요.")
+        guard let currentUser = auth.currentUser,
+              let uid = session.uid,
+              let userId = session.id else {
+            return
         }
+        userService
+            .deleteDeviceToken(currentUser: currentUser, uid: uid, userId: userId)
+            .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
+            .observeOn(MainScheduler.instance)
+            .do(onDispose: { [unowned self] in
+                Session.signOut()
+                replaceViewController.onNext(Void())
+            })
+            .subscribe(onSuccess: { _ in
+                log.info("Successfully done with logout..")
+            }, onError: { [unowned self] err in
+                log.error(err)
+                toast.onNext("로그아웃 중 에러가 발생 하였습니다.")
+            })
+            .disposed(by: disposeBag)
     }
 
     func withdraw() {
