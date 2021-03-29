@@ -32,7 +32,7 @@ class UserCollectionViewCell: UICollectionViewCell {
 
     lazy private var bar: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 9)
+        label.font = .systemFont(ofSize: 10)
         label.textColor = .systemGray
         label.text = "|"
         return label
@@ -93,7 +93,7 @@ class UserCollectionViewCell: UICollectionViewCell {
             make.leading.equalToSuperview().inset(5)
         }
         bar.snp.makeConstraints { make in
-            make.top.equalTo(line2_1.snp.top)
+            make.centerY.equalTo(line2_1.snp.centerY)
             make.leading.equalTo(line2_1.snp.trailing)
         }
         line2_2.snp.makeConstraints { make in
