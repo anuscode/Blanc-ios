@@ -47,6 +47,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         if #available(iOS 10.0, *) {
             // For iOS 10 display notification (sent via APNS)
             UNUserNotificationCenter.current().delegate = self
+            let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+            UNUserNotificationCenter.current().requestAuthorization(options: authOptions) { (granted, error) in
+                guard (error == nil) else {
+                    log.error(error!.localizedDescription)
+                    return
+                }
+                if granted {
+                    log.info("APNS Push authorization has been granted..")
+                } else {
+                    log.info("APNS Push authorization has been rejected..")
+                }
+            }
         } else {
             let types: UIUserNotificationType = [.alert, .badge, .sound]
             let settings: UIUserNotificationSettings = UIUserNotificationSettings(types: types, categories: nil)
@@ -168,11 +180,11 @@ extension AppDelegate {
 }
 
 extension AppDelegate: UNUserNotificationCenterDelegate {
-    // This method is to handle a notification that arrived while the app was running in the foreground
     @available(iOS 10.0, *)
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 willPresent notification: UNNotification,
                                 withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        log.error("Failed to decode userInfo with PushDTO.")
         let userInfo = notification.request.content.userInfo
         guard let push = try? PushDTO.decode(userInfo) else {
             log.error("Failed to decode userInfo with PushDTO.")
@@ -185,10 +197,8 @@ extension AppDelegate: UNUserNotificationCenterDelegate {
     func userNotificationCenter(_ center: UNUserNotificationCenter,
                                 didReceive response: UNNotificationResponse,
                                 withCompletionHandler completionHandler: @escaping () -> Void) {
-        // Get the meeting ID from the original notification.
         let userInfo = response.notification.request.content.userInfo
-        log.info("user clicked notification when it's under background..")
-        // Always call the completion handler when done.
+        log.error("!@#!@#!@#")
         completionHandler()
     }
 }

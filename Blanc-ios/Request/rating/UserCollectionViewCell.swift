@@ -5,8 +5,6 @@ class UserCollectionViewCell: UICollectionViewCell {
 
     static let identifier = "UserCollectionViewCell"
 
-    private let ripple: Ripple = Ripple()
-
     private var user: UserDTO?
 
     lazy private var imageView: UIImageView = {
@@ -15,7 +13,6 @@ class UserCollectionViewCell: UICollectionViewCell {
         imageView.layer.masksToBounds = true
         imageView.contentMode = .scaleAspectFill
         imageView.isUserInteractionEnabled = true
-        ripple.activate(to: imageView)
         return imageView
     }()
 
@@ -35,7 +32,7 @@ class UserCollectionViewCell: UICollectionViewCell {
 
     lazy private var bar: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 10)
+        label.font = .systemFont(ofSize: 9)
         label.textColor = .systemGray
         label.text = "|"
         return label
@@ -47,7 +44,6 @@ class UserCollectionViewCell: UICollectionViewCell {
         label.textColor = .systemGray
         return label
     }()
-
 
     override func prepareForReuse() {
         super.prepareForReuse()
@@ -69,7 +65,6 @@ class UserCollectionViewCell: UICollectionViewCell {
         contentView.isUserInteractionEnabled = true
         contentView.backgroundColor = .clear
         contentView.clipsToBounds = true
-        ripple.activate(to: contentView)
     }
 
     private func configureSubviews() {

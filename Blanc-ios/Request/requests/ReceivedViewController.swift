@@ -204,7 +204,7 @@ extension ReceivedViewController: UITableViewDelegate {
         mainLabel.text = mainText
         mainLabel.textColor = .darkText
         mainLabel.textAlignment = .center
-        mainLabel.font = .systemFont(ofSize: 20)
+        mainLabel.font = .boldSystemFont(ofSize: 18)
 
         view.addSubview(mainLabel)
         mainLabel.snp.makeConstraints { make in
