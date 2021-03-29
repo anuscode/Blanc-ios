@@ -12,6 +12,8 @@ class SmallUserProfileWithButtonTableViewCell: SmallUserProfileTableViewCell {
 
     private var request: RequestDTO?
 
+    private var ripple: Ripple = Ripple()
+
     lazy private var acceptButton: UIButton = {
         let button = UIButton()
         button.setTitle("수락", for: .normal)

@@ -21,14 +21,9 @@ class ReceivedViewController: UIViewController {
 
     internal var pushUserSingleViewController: (() -> Void)?
 
-    lazy private var starFallView: StarFallView = {
-        let view = StarFallView()
-        return view
-    }()
-
     lazy private var tableView: UITableView = {
         let tableView = UITableView()
-        tableView.backgroundColor = UIColor.white.withAlphaComponent(0.9)
+        tableView.backgroundColor = .clear
         tableView.register(SmallUserProfileWithButtonTableViewCell.self,
             forCellReuseIdentifier: "SmallUserProfileWithButtonTableViewCell")
         tableView.register(SmallUserProfileTableViewCell.self,
@@ -41,6 +36,7 @@ class ReceivedViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        view.backgroundColor = .clear
         animations.forEach({ view in view.play() })
     }
 
@@ -61,14 +57,10 @@ class ReceivedViewController: UIViewController {
     }
 
     private func configureSubviews() {
-        view.addSubview(starFallView)
         view.addSubview(tableView)
     }
 
     private func configureConstraints() {
-        starFallView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
         tableView.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.leading.equalToSuperview()
@@ -179,14 +171,6 @@ extension ReceivedViewController: UITableViewDelegate {
             make.top.equalToSuperview().inset(10)
             make.bottom.equalToSuperview().inset(10)
         }
-
-        view.rx
-            .tapGesture()
-            .subscribe(onNext: { _ in
-                print(view.frame.height)
-            })
-            .disposed(by: disposeBag)
-
         return view
     }
 

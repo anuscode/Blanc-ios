@@ -27,6 +27,7 @@ class SendingViewController: UIViewController {
 
     lazy private var collectionView: UICollectionView = {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: flowLayout)
+
         collectionView.register(UserCollectionViewCell.self,
             forCellWithReuseIdentifier: UserCollectionViewCell.identifier
         )
@@ -35,7 +36,7 @@ class SendingViewController: UIViewController {
             withReuseIdentifier: SendingHeaderReusableView.identifier
         )
         collectionView.delegate = self
-        collectionView.backgroundColor = .white
+        collectionView.backgroundColor = .clear
         return collectionView
     }()
 
@@ -53,6 +54,7 @@ class SendingViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        view.backgroundColor = .clear
         if (!emptyView.isHidden) {
             emptyView.play()
         }

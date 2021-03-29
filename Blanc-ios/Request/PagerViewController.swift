@@ -100,6 +100,17 @@ class PagerViewController: UIViewController {
         return vc
     }()
 
+    lazy private var starFallView: StarFallView = {
+        let view = StarFallView()
+        let transparent = UIView()
+        transparent.backgroundColor = UIColor.white.withAlphaComponent(0.9)
+        view.addSubview(transparent)
+        transparent.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        return view
+    }()
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationItem.backBarButtonItem = UIBarButtonItem.back
@@ -131,6 +142,7 @@ class PagerViewController: UIViewController {
     }
 
     private func configureSubviews() {
+        view.addSubview(starFallView)
         view.addSubview(guideLine)
         view.addSubview(titleLabel1)
         view.addSubview(underLine1)
@@ -140,6 +152,9 @@ class PagerViewController: UIViewController {
     }
 
     private func configureConstraints() {
+        starFallView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
         guideLine.snp.makeConstraints { make in
             make.leading.equalToSuperview()
             make.top.equalTo(view.safeAreaLayoutGuide).inset(50)

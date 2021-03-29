@@ -105,8 +105,8 @@ class UserCollectionViewCell: UICollectionViewCell {
     public func bind(_ user: UserDTO) {
         self.user = user
         imageView.url(user.avatar)
-        line1.text = user.nickname ?? ""
+        line1.text = user.nickname ?? "알 수 없음"
         line2_1.text = "\(user.age ?? 0) "
-        line2_2.text = " \(user.area ?? "")"
+        line2_2.text = " \(user.area ?? "알 수 없음")"
     }
 }
