@@ -7,6 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		102214422611F0790051125A /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 102214412611F0790051125A /* NotificationService.swift */; };
+		102214462611F0790051125A /* Service.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 1022143F2611F0790051125A /* Service.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		102214552611F0C80051125A /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 102214542611F0C80051125A /* UserNotifications.framework */; };
+		102214572611F0C80051125A /* UserNotificationsUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 102214562611F0C80051125A /* UserNotificationsUI.framework */; };
+		1022145A2611F0C80051125A /* NotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 102214592611F0C80051125A /* NotificationViewController.swift */; };
+		1022145D2611F0C80051125A /* MainInterface.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1022145B2611F0C80051125A /* MainInterface.storyboard */; };
+		102214612611F0C80051125A /* Content.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 102214532611F0C80051125A /* Content.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		10464A6925E93FE100CA6DDE /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 10464A6825E93FE100CA6DDE /* StoreKit.framework */; };
 		104EAFB425EA79BB009343E8 /* love_emoji.json in Resources */ = {isa = PBXBuildFile; fileRef = 104EAFB325EA79BB009343E8 /* love_emoji.json */; };
 		104EE98625E3703C0069B2CF /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 104EE98425E3703C0069B2CF /* Main.storyboard */; };
@@ -314,6 +321,20 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		102214442611F0790051125A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 104EE97325E3703C0069B2CF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 1022143E2611F0790051125A;
+			remoteInfo = Service;
+		};
+		1022145F2611F0C80051125A /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 104EE97325E3703C0069B2CF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 102214522611F0C80051125A;
+			remoteInfo = Content;
+		};
 		104EE99525E3703E0069B2CF /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 104EE97325E3703C0069B2CF /* Project object */;
@@ -330,8 +351,32 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		102214472611F0790051125A /* Embed App Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				102214612611F0C80051125A /* Content.appex in Embed App Extensions */,
+				102214462611F0790051125A /* Service.appex in Embed App Extensions */,
+			);
+			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		0DA8548DD3420AF6AAAD0EDA /* Pods-Blanc-iosTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Blanc-iosTests.debug.xcconfig"; path = "Target Support Files/Pods-Blanc-iosTests/Pods-Blanc-iosTests.debug.xcconfig"; sourceTree = "<group>"; };
+		1022143F2611F0790051125A /* Service.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Service.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		102214412611F0790051125A /* NotificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationService.swift; sourceTree = "<group>"; };
+		102214432611F0790051125A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		102214532611F0C80051125A /* Content.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = Content.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		102214542611F0C80051125A /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
+		102214562611F0C80051125A /* UserNotificationsUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotificationsUI.framework; path = System/Library/Frameworks/UserNotificationsUI.framework; sourceTree = SDKROOT; };
+		102214592611F0C80051125A /* NotificationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationViewController.swift; sourceTree = "<group>"; };
+		1022145C2611F0C80051125A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/MainInterface.storyboard; sourceTree = "<group>"; };
+		1022145E2611F0C80051125A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		10464A6825E93FE100CA6DDE /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		104EAFB325EA79BB009343E8 /* love_emoji.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = love_emoji.json; sourceTree = "<group>"; };
 		104EE97B25E3703C0069B2CF /* Blanc-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Blanc-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -651,6 +696,22 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		1022143C2611F0790051125A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		102214502611F0C80051125A /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				102214572611F0C80051125A /* UserNotificationsUI.framework in Frameworks */,
+				102214552611F0C80051125A /* UserNotifications.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		104EE97825E3703C0069B2CF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -679,12 +740,33 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		102214402611F0790051125A /* Service */ = {
+			isa = PBXGroup;
+			children = (
+				102214412611F0790051125A /* NotificationService.swift */,
+				102214432611F0790051125A /* Info.plist */,
+			);
+			path = Service;
+			sourceTree = "<group>";
+		};
+		102214582611F0C80051125A /* Content */ = {
+			isa = PBXGroup;
+			children = (
+				102214592611F0C80051125A /* NotificationViewController.swift */,
+				1022145B2611F0C80051125A /* MainInterface.storyboard */,
+				1022145E2611F0C80051125A /* Info.plist */,
+			);
+			path = Content;
+			sourceTree = "<group>";
+		};
 		104EE97225E3703C0069B2CF = {
 			isa = PBXGroup;
 			children = (
 				104EE97D25E3703C0069B2CF /* Blanc-ios */,
 				104EE99725E3703E0069B2CF /* Blanc-iosTests */,
 				104EE9A225E3703E0069B2CF /* Blanc-iosUITests */,
+				102214402611F0790051125A /* Service */,
+				102214582611F0C80051125A /* Content */,
 				104EE97C25E3703C0069B2CF /* Products */,
 				C9BE95656549CA341B72515D /* Pods */,
 				34C2D0AF467C3DF473550429 /* Frameworks */,
@@ -697,6 +779,8 @@
 				104EE97B25E3703C0069B2CF /* Blanc-ios.app */,
 				104EE99425E3703E0069B2CF /* Blanc-iosTests.xctest */,
 				104EE99F25E3703E0069B2CF /* Blanc-iosUITests.xctest */,
+				1022143F2611F0790051125A /* Service.appex */,
+				102214532611F0C80051125A /* Content.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1562,6 +1646,8 @@
 				86136E85AB864A9141A83B37 /* Pods_Blanc_ios.framework */,
 				61F4FB0474880E97BECB4B37 /* Pods_Blanc_ios_Blanc_iosUITests.framework */,
 				89DD709C0040CF6E7F18A036 /* Pods_Blanc_iosTests.framework */,
+				102214542611F0C80051125A /* UserNotifications.framework */,
+				102214562611F0C80051125A /* UserNotificationsUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1653,6 +1739,40 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		1022143E2611F0790051125A /* Service */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1022144A2611F07A0051125A /* Build configuration list for PBXNativeTarget "Service" */;
+			buildPhases = (
+				1022143B2611F0790051125A /* Sources */,
+				1022143C2611F0790051125A /* Frameworks */,
+				1022143D2611F0790051125A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Service;
+			productName = Service;
+			productReference = 1022143F2611F0790051125A /* Service.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+		102214522611F0C80051125A /* Content */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 102214622611F0C80051125A /* Build configuration list for PBXNativeTarget "Content" */;
+			buildPhases = (
+				1022144F2611F0C80051125A /* Sources */,
+				102214502611F0C80051125A /* Frameworks */,
+				102214512611F0C80051125A /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Content;
+			productName = Content;
+			productReference = 102214532611F0C80051125A /* Content.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		104EE97A25E3703C0069B2CF /* Blanc-ios */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 104EE9A825E3703E0069B2CF /* Build configuration list for PBXNativeTarget "Blanc-ios" */;
@@ -1663,10 +1783,13 @@
 				104EE97925E3703C0069B2CF /* Resources */,
 				43953F9E0CE94AD653736AE3 /* [CP] Embed Pods Frameworks */,
 				08305AEFC15B78EA0B7C29F2 /* [CP] Copy Pods Resources */,
+				102214472611F0790051125A /* Embed App Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				102214452611F0790051125A /* PBXTargetDependency */,
+				102214602611F0C80051125A /* PBXTargetDependency */,
 			);
 			name = "Blanc-ios";
 			productName = "Blanc-ios";
@@ -1719,9 +1842,15 @@
 		104EE97325E3703C0069B2CF /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1220;
+				LastSwiftUpdateCheck = 1240;
 				LastUpgradeCheck = 1220;
 				TargetAttributes = {
+					1022143E2611F0790051125A = {
+						CreatedOnToolsVersion = 12.4;
+					};
+					102214522611F0C80051125A = {
+						CreatedOnToolsVersion = 12.4;
+					};
 					104EE97A25E3703C0069B2CF = {
 						CreatedOnToolsVersion = 12.2;
 					};
@@ -1751,11 +1880,28 @@
 				104EE97A25E3703C0069B2CF /* Blanc-ios */,
 				104EE99325E3703E0069B2CF /* Blanc-iosTests */,
 				104EE99E25E3703E0069B2CF /* Blanc-iosUITests */,
+				1022143E2611F0790051125A /* Service */,
+				102214522611F0C80051125A /* Content */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		1022143D2611F0790051125A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		102214512611F0C80051125A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1022145D2611F0C80051125A /* MainInterface.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		104EE97925E3703C0069B2CF /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1954,6 +2100,22 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		1022143B2611F0790051125A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				102214422611F0790051125A /* NotificationService.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		1022144F2611F0C80051125A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1022145A2611F0C80051125A /* NotificationViewController.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		104EE97725E3703C0069B2CF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -2241,6 +2403,16 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		102214452611F0790051125A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 1022143E2611F0790051125A /* Service */;
+			targetProxy = 102214442611F0790051125A /* PBXContainerItemProxy */;
+		};
+		102214602611F0C80051125A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 102214522611F0C80051125A /* Content */;
+			targetProxy = 1022145F2611F0C80051125A /* PBXContainerItemProxy */;
+		};
 		104EE99625E3703E0069B2CF /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 104EE97A25E3703C0069B2CF /* Blanc-ios */;
@@ -2254,6 +2426,14 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
+		1022145B2611F0C80051125A /* MainInterface.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				1022145C2611F0C80051125A /* Base */,
+			);
+			name = MainInterface.storyboard;
+			sourceTree = "<group>";
+		};
 		104EE98425E3703C0069B2CF /* Main.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -2273,6 +2453,86 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		102214482611F0790051125A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = RVM346NMQC;
+				INFOPLIST_FILE = Service/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ground.Blanc-ios.Service";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		102214492611F0790051125A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = RVM346NMQC;
+				INFOPLIST_FILE = Service/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ground.Blanc-ios.Service";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		102214632611F0C80051125A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = RVM346NMQC;
+				INFOPLIST_FILE = Content/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ground.Blanc-ios.Content";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		102214642611F0C80051125A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = RVM346NMQC;
+				INFOPLIST_FILE = Content/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = "com.ground.Blanc-ios.Content";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 		104EE9A625E3703E0069B2CF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -2393,6 +2653,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 91054CA93BF36C88B71621F7 /* Pods-Blanc-ios.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Blanc-ios/Blanc-ios.entitlements";
@@ -2416,6 +2677,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = DBBEBAFA0CF30E6D3B2AB0F7 /* Pods-Blanc-ios.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Blanc-ios/Blanc-ios.entitlements";
@@ -2526,6 +2788,24 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		1022144A2611F07A0051125A /* Build configuration list for PBXNativeTarget "Service" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				102214482611F0790051125A /* Debug */,
+				102214492611F0790051125A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		102214622611F0C80051125A /* Build configuration list for PBXNativeTarget "Content" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				102214632611F0C80051125A /* Debug */,
+				102214642611F0C80051125A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		104EE97625E3703C0069B2CF /* Build configuration list for PBXProject "Blanc-ios" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
