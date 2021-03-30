@@ -21,7 +21,7 @@ class RegistrationHeightViewController: UIViewController {
     private var dataSource = Array(stride(from: 100, to: 220, by: 1))
 
     lazy private var starFallView: StarFallView = {
-        let view = StarFallView()
+        let view = StarFallView(layerTransparency: 0.5)
         return view
     }()
 

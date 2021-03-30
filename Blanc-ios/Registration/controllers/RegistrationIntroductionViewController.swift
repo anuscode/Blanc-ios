@@ -17,7 +17,7 @@ class RegistrationIntroductionViewController: UIViewController {
     internal weak var registrationViewModel: RegistrationViewModel?
 
     lazy private var starFallView: StarFallView = {
-        let view = StarFallView()
+        let view = StarFallView(layerTransparency: 0.5)
         return view
     }()
 

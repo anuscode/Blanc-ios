@@ -30,7 +30,7 @@ class RegistrationBirthdayViewController: UIViewController {
     private var birthDay = Cal(year: 1985, month: 6, day: 24)
 
     lazy private var starFallView: StarFallView = {
-        let view = StarFallView()
+        let view = StarFallView(layerTransparency: 0.5)
         return view
     }()
 

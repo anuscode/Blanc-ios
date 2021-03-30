@@ -21,7 +21,7 @@ class RegistrationBodyTypeViewController: UIViewController {
     }()
 
     lazy private var starFallView: StarFallView = {
-        let view = StarFallView()
+        let view = StarFallView(layerTransparency: 0.5)
         return view
     }()
 
@@ -160,41 +160,34 @@ class RegistrationBodyTypeViewController: UIViewController {
     }
 
     private func configureConstraints() {
-
         starFallView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-
         progressView.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(RConfig.horizontalMargin)
             make.trailing.equalToSuperview().inset(RConfig.horizontalMargin)
             make.top.equalTo(view.safeAreaLayoutGuide).inset(RConfig.progressTopMargin)
             make.height.equalTo(3)
         }
-
         titleLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(RConfig.horizontalMargin)
             make.top.equalTo(progressView.snp.bottom).offset(RConfig.titleTopMargin)
         }
-
         collectionView.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(RConfig.horizontalMargin)
             make.trailing.equalToSuperview().inset(RConfig.horizontalMargin)
             make.top.equalTo(titleLabel.snp.bottom).offset(20)
-            make.height.equalTo(60 * 7 + 20)
+            make.height.equalTo(60 * 8 + 20)
         }
-
         noticeLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(RConfig.horizontalMargin)
             make.trailing.equalToSuperview().inset(RConfig.horizontalMargin)
             make.top.equalTo(collectionView.snp.bottom).offset(RConfig.noticeTopMargin)
         }
-
         nextButton.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(RConfig.nextTrailingMargin)
             make.bottom.equalTo(view.safeAreaLayoutGuide).inset(RConfig.nextBottomMargin)
         }
-
         backButton.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(RConfig.backLeadingMargin)
             make.bottom.equalTo(view.safeAreaLayoutGuide).inset(RConfig.backBottomMargin)
