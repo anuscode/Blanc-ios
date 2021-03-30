@@ -17,9 +17,11 @@ class HomeLoading: UIView {
 
     lazy private var carousel: UIView = {
         let view = UIView()
+
         view.addSubview(label1)
         view.addSubview(label2)
         view.addSubview(label3)
+
         label1.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(15)
             make.trailing.equalToSuperview().multipliedBy(0.9)
@@ -43,26 +45,20 @@ class HomeLoading: UIView {
 
     lazy private var bottomView: UIView = {
         let view = UIView()
-        view.addSubview(button1)
         view.addSubview(button2)
-        view.addSubview(button3)
+        view.addSubview(button1)
 
         button1.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(15)
             make.top.equalToSuperview().inset(10)
             make.bottom.equalToSuperview().inset(10)
             make.width.equalTo(55)
+            make.height.equalTo(50)
         }
         button2.snp.makeConstraints { make in
-            make.leading.equalTo(button1.snp.trailing).inset(-8)
+            make.leading.equalToSuperview().inset(15)
             make.top.equalToSuperview().inset(10)
             make.bottom.equalToSuperview().inset(10)
-        }
-        button3.snp.makeConstraints { make in
-            make.leading.equalTo(button2.snp.trailing).inset(-8)
-            make.top.equalToSuperview().inset(10)
-            make.bottom.equalToSuperview().inset(10)
-            make.width.equalTo(55)
             make.trailing.equalToSuperview().inset(15)
         }
         return view
@@ -70,29 +66,25 @@ class HomeLoading: UIView {
 
     lazy private var button1: UIView = {
         let view = UIView()
-        view.layer.cornerRadius = Constants.radius
         view.backgroundColor = .white
         view.isUserInteractionEnabled = true
-
-        let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 10)
-        label.textColor = .silverBlue
-        label.text = " "
+        view.backgroundColor = UIColor.silverBlue.withAlphaComponent(0.7)
+        view.layer.cornerRadius = Constants.radius
+        view.layer.masksToBounds = true
+        view.layer.borderColor = UIColor.white.cgColor
+        view.layer.borderWidth = 1
 
         let imageView = UIImageView()
-        view.addSubview(label)
+        imageView.image = UIImage(systemName: "paperplane.fill")
+        imageView.contentMode = .scaleAspectFit
+        imageView.tintColor = .white
         view.addSubview(imageView)
 
         imageView.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(5)
             make.width.equalTo(25)
             make.height.equalTo(25)
-            make.centerX.equalToSuperview()
-            make.bottom.equalTo(label.snp.top)
-        }
-        label.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.bottom.equalToSuperview().inset(3)
+            make.center.equalToSuperview()
         }
         return view
     }()
@@ -104,9 +96,10 @@ class HomeLoading: UIView {
         view.isUserInteractionEnabled = true
 
         let label = UILabel()
-        label.font = .boldSystemFont(ofSize: 10)
+        label.font = .boldSystemFont(ofSize: 18)
+        label.textAlignment = .center
         label.textColor = .silverBlue
-        label.text = " "
+        label.text = "밀어서 친구 신청"
 
         let imageView = UIImageView()
 
@@ -121,8 +114,7 @@ class HomeLoading: UIView {
             make.bottom.equalTo(label.snp.top)
         }
         label.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.bottom.equalToSuperview().inset(3)
+            make.center.equalToSuperview()
         }
         return view
     }()
