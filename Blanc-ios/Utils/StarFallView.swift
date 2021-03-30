@@ -4,9 +4,15 @@ import Lottie
 
 class StarFallView: UIView {
 
-    internal var transparency: CGFloat = 1.0
+    private var layerTransparency: CGFloat = 0.0
 
-    private var ripple: Ripple = Ripple()
+    private var particleTransparency: CGFloat = 1.0
+
+    lazy private var transparentLayer: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.white.withAlphaComponent(layerTransparency)
+        return view
+    }()
 
     lazy private var host: UIView = {
         let width = UIScreen.main.bounds.width
@@ -39,7 +45,7 @@ class StarFallView: UIView {
         let image1 = UIImage(named: "Star")?.cgImage
         let cell = CAEmitterCell()
         cell.contents = image1
-        cell.name = "Snow"
+        cell.name = "Star"
         cell.birthRate = 30.0
         cell.lifetime = 20.0
         cell.velocity = 59.0
@@ -51,7 +57,7 @@ class StarFallView: UIView {
         cell.spinRange = 57.2 * (.pi / 180.0)
         cell.scale = 0.06
         cell.scaleRange = 0.3
-        let color = UIColor(red: 255.0 / 255.0, green: 255.0 / 255.0, blue: 255.0 / 255.0, alpha: transparency).cgColor
+        let color = UIColor(red: 255.0 / 255.0, green: 255.0 / 255.0, blue: 255.0 / 255.0, alpha: particleTransparency).cgColor
         cell.color = color
         return cell
     }()
@@ -60,7 +66,7 @@ class StarFallView: UIView {
         let image1 = UIImage(named: "Star")?.cgImage
         let cell = CAEmitterCell()
         cell.contents = image1
-        cell.name = "Snow"
+        cell.name = "Star"
         cell.birthRate = 20.0
         cell.lifetime = 20.0
         cell.velocity = 59.0
@@ -72,7 +78,7 @@ class StarFallView: UIView {
         cell.spinRange = 57.2 * (.pi / 180.0)
         cell.scale = 0.06
         cell.scaleRange = 0.3
-        cell.color = UIColor(red: 255.0 / 255.0, green: 196.0 / 255.0, blue: 3.7 / 255.0, alpha: transparency * 0.9).cgColor
+        cell.color = UIColor(red: 255.0 / 255.0, green: 196.0 / 255.0, blue: 3.7 / 255.0, alpha: particleTransparency * 0.9).cgColor
         return cell
     }()
 
@@ -80,7 +86,7 @@ class StarFallView: UIView {
         let image1 = UIImage(named: "Star")?.cgImage
         let cell = CAEmitterCell()
         cell.contents = image1
-        cell.name = "Snow"
+        cell.name = "Star"
         cell.birthRate = 5.0
         cell.lifetime = 20.0
         cell.velocity = 59.0
@@ -92,7 +98,7 @@ class StarFallView: UIView {
         cell.spinRange = 57.2 * (.pi / 180.0)
         cell.scale = 0.06
         cell.scaleRange = 0.3
-        cell.color = UIColor(red: 255.0 / 255.0, green: 197.5 / 255.0, blue: 59.9 / 255.0, alpha: transparency * 0.9).cgColor
+        cell.color = UIColor(red: 255.0 / 255.0, green: 197.5 / 255.0, blue: 59.9 / 255.0, alpha: particleTransparency * 0.9).cgColor
         return cell
     }()
 
@@ -100,7 +106,7 @@ class StarFallView: UIView {
         let image1 = UIImage(named: "Star")?.cgImage
         let cell = CAEmitterCell()
         cell.contents = image1
-        cell.name = "Snow"
+        cell.name = "Star"
         cell.birthRate = 5.0
         cell.lifetime = 20.0
         cell.velocity = 59.0
@@ -112,7 +118,7 @@ class StarFallView: UIView {
         cell.spinRange = 57.2 * (.pi / 180.0)
         cell.scale = 0.06
         cell.scaleRange = 0.3
-        cell.color = UIColor(red: 192.5 / 255.0, green: 255.0 / 255.0, blue: 119.1 / 255.0, alpha: transparency * 0.9).cgColor
+        cell.color = UIColor(red: 192.5 / 255.0, green: 255.0 / 255.0, blue: 119.1 / 255.0, alpha: particleTransparency * 0.9).cgColor
         return cell
     }()
 
@@ -120,7 +126,7 @@ class StarFallView: UIView {
         let image1 = UIImage(named: "Star")?.cgImage
         let cell = CAEmitterCell()
         cell.contents = image1
-        cell.name = "Snow"
+        cell.name = "Star"
         cell.birthRate = 5.0
         cell.lifetime = 20.0
         cell.velocity = 59.0
@@ -132,7 +138,7 @@ class StarFallView: UIView {
         cell.spinRange = 57.2 * (.pi / 180.0)
         cell.scale = 0.06
         cell.scaleRange = 0.3
-        cell.color = UIColor(red: 255.0 / 255.0, green: 10.8 / 255.0, blue: 163.4 / 255.0, alpha: transparency * 0.9).cgColor
+        cell.color = UIColor(red: 255.0 / 255.0, green: 10.8 / 255.0, blue: 163.4 / 255.0, alpha: particleTransparency * 0.9).cgColor
         return cell
     }()
 
@@ -140,7 +146,7 @@ class StarFallView: UIView {
         let image1 = UIImage(named: "Star")?.cgImage
         let cell = CAEmitterCell()
         cell.contents = image1
-        cell.name = "Snow"
+        cell.name = "Star"
         cell.birthRate = 5.0
         cell.lifetime = 20.0
         cell.velocity = 59.0
@@ -152,13 +158,14 @@ class StarFallView: UIView {
         cell.spinRange = 57.2 * (.pi / 180.0)
         cell.scale = 0.06
         cell.scaleRange = 0.3
-        cell.color = UIColor(red: 149.2 / 255.0, green: 162.4 / 255.0, blue: 255.0 / 255.0, alpha: transparency * 0.9).cgColor
+        cell.color = UIColor(red: 149.2 / 255.0, green: 162.4 / 255.0, blue: 255.0 / 255.0, alpha: particleTransparency * 0.9).cgColor
         return cell
     }()
 
-    required init(transparency: Float = 1.0) {
+    required init(layerTransparency: CGFloat = 0.0, particleTransparency: CGFloat = 1.0) {
         super.init(frame: .zero)
-        self.transparency = CGFloat(transparency)
+        self.layerTransparency = layerTransparency
+        self.particleTransparency = particleTransparency
         configureSubviews()
         configureConstraints()
     }
@@ -169,10 +176,14 @@ class StarFallView: UIView {
 
     private func configureSubviews() {
         addSubview(host)
+        addSubview(transparentLayer)
     }
 
     private func configureConstraints() {
         host.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        transparentLayer.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
     }

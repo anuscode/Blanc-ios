@@ -101,13 +101,7 @@ class PagerViewController: UIViewController {
     }()
 
     lazy private var starFallView: StarFallView = {
-        let view = StarFallView()
-        let transparent = UIView()
-        transparent.backgroundColor = UIColor.white.withAlphaComponent(0.9)
-        view.addSubview(transparent)
-        transparent.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
+        let view = StarFallView(layerTransparency: 0.9)
         return view
     }()
 
