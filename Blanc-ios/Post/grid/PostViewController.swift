@@ -51,7 +51,12 @@ class PostViewController: UIViewController {
         let container = UIView()
         container.width(50)
         container.height(50)
-        container.applyShadow(offset: CGSize.init(width: 0, height: 3), color: UIColor.black, radius: 2.0, opacity: 0.35)
+        container.applyShadow(
+            offset: CGSize.init(width: 0, height: 3),
+            color: UIColor.black,
+            radius: 2.0,
+            opacity: 0.35
+        )
 
         let view = UIView()
         view.backgroundColor = .tinderPink
