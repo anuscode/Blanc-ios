@@ -636,36 +636,36 @@ class UserCardTableViewCell: UITableViewCell {
         pageControl.currentPage = 0
         carousel.reloadData()
 
-        configureRequestButton(by: user)
+        configureSlideViewText(by: user)
     }
 
-    private func configureRequestButton(by user: UserDTO?) {
+    private func configureSlideViewText(by user: UserDTO?) {
         let match = user?.relationship?.match
         switch match {
         case .isMatched:
             slideView.labelText = "연결 된 유저"
-            shimmerHolderView.isUserInteractionEnabled = false
-            shimmerHolderView.backgroundColor = UIColor.bumble1
+            slideView.isUserInteractionEnabled = false
+            shimmerHolderView.backgroundColor = .bumble3
             return
         case .isUnmatched:
             slideView.labelText = "이미 보냄"
-            shimmerHolderView.isUserInteractionEnabled = false
-            shimmerHolderView.backgroundColor = UIColor.bumble1
+            slideView.isUserInteractionEnabled = false
+            shimmerHolderView.backgroundColor = .bumble3
             return
         case .isWhoSentMe:
             slideView.labelText = "밀어서 수락"
-            shimmerHolderView.isUserInteractionEnabled = true
-            shimmerHolderView.backgroundColor = UIColor.bumble3
+            slideView.isUserInteractionEnabled = true
+            shimmerHolderView.backgroundColor = .bumble3
             return
         case .isWhoISent:
             slideView.labelText = "이미 보냄"
-            shimmerHolderView.isUserInteractionEnabled = false
-            shimmerHolderView.backgroundColor = UIColor.bumble1
+            slideView.isUserInteractionEnabled = false
+            shimmerHolderView.backgroundColor = .bumble3
             return
         default:
             slideView.labelText = "밀어서 친구 신청"
-            shimmerHolderView.isUserInteractionEnabled = true
-            shimmerHolderView.backgroundColor = UIColor.bumble3
+            slideView.isUserInteractionEnabled = true
+            shimmerHolderView.backgroundColor = .bumble3
         }
     }
 }

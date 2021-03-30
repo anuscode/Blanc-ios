@@ -41,6 +41,8 @@ class UserSingleViewController: UIViewController {
 
     internal var userSingleViewModel: UserSingleViewModel!
 
+    private let fireworkController = ClassicFireworkController()
+
     lazy private var navigationBarContent: Content = {
         let content = Content()
         let view = UIView()
@@ -122,38 +124,52 @@ class UserSingleViewController: UIViewController {
 
     lazy private var bottomView: UIView = {
         let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .white
-        view.addSubview(requestButton)
+        view.addSubview(shimmerHolderView)
+        view.addSubview(slideView)
         view.addSubview(pokeButton)
-
-        requestButton.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(5)
-            make.bottom.equalToSuperview().inset(5)
-            make.leading.equalToSuperview().inset(20)
-            make.trailing.equalTo(pokeButton.snp.leading).inset(-5)
-        }
-
         pokeButton.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(5)
             make.bottom.equalToSuperview().inset(5)
-            make.leading.equalTo(requestButton.snp.trailing)
             make.trailing.equalToSuperview().inset(20)
             make.width.equalTo(55)
+        }
+        shimmerHolderView.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(5)
+            make.leading.equalToSuperview().inset(20)
+            make.trailing.equalTo(pokeButton.snp.leading).inset(-5)
+            make.bottom.equalToSuperview().inset(5)
+        }
+        slideView.snp.makeConstraints { make in
+            make.edges.equalTo(shimmerHolderView.snp.edges)
         }
 
         return view
     }()
 
-    lazy private var requestButton: UIButton = {
-        let button = UIButton()
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = .bumble3
-        button.setTitle("친구요청", for: .normal)
-        button.layer.cornerRadius = 5
-        button.addTarget(self, action: #selector(request), for: .touchUpInside)
-        ripple.activate(to: button)
-        return button
+    lazy private var slideView: Slide = {
+        let slide = Slide()
+        slide.slidingColor = .bumble4
+        slide.sliderBackgroundColor = .bumble0
+        slide.sliderViewTopDistance = 0
+        slide.sliderCornerRadius = 5
+        slide.labelText = "밀어서 친구신청"
+        slide.textFont = .systemFont(ofSize: 18, weight: .semibold)
+
+        slide.textColor = .bumble5
+        slide.thumbnailImageView.image = UIImage(systemName: "paperplane.fill")
+        slide.thumbnailImageView.tintColor = .white
+        slide.thumbnailColor = .bumble4
+        slide.isShimmering = true
+        slide.delegate = self
+        return slide
+    }()
+
+    lazy private var shimmerHolderView: UIView = {
+        let view = UIView()
+        view.layer.masksToBounds = true
+        view.layer.cornerRadius = Constants.radius
+        return view
     }()
 
     lazy private var pokeButton: UIView = {
@@ -364,7 +380,7 @@ class UserSingleViewController: UIViewController {
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.asyncInstance)
             .subscribe(onNext: { [unowned self] data in
-                enableRequestButton(data)
+                configureSlideViewText(by: data.user)
             })
             .disposed(by: disposeBag)
     }
@@ -378,33 +394,33 @@ class UserSingleViewController: UIViewController {
         navigationUserLabel.text = text
     }
 
-    private func enableRequestButton(_ data: UserSingleData) {
-        let match = data.user?.relationship?.match
+    private func configureSlideViewText(by user: UserDTO?) {
+        let match = user?.relationship?.match
         switch match {
         case .isMatched:
-            requestButton.setTitle("연결 된 유저", for: .normal)
-            requestButton.isUserInteractionEnabled = false
-            requestButton.backgroundColor = UIColor.bumble3.withAlphaComponent(0.7)
+            slideView.labelText = "연결 된 유저"
+            slideView.isUserInteractionEnabled = false
+            shimmerHolderView.backgroundColor = .bumble3
             return
         case .isUnmatched:
-            requestButton.setTitle("이미 보냄", for: .normal)
-            requestButton.isUserInteractionEnabled = false
-            requestButton.backgroundColor = UIColor.bumble3.withAlphaComponent(0.7)
+            slideView.labelText = "이미 보냄"
+            slideView.isUserInteractionEnabled = false
+            shimmerHolderView.backgroundColor = .bumble3
             return
         case .isWhoSentMe:
-            requestButton.setTitle("수락", for: .normal)
-            requestButton.isUserInteractionEnabled = true
-            requestButton.backgroundColor = .bumble3
+            slideView.labelText = "밀어서 수락"
+            slideView.isUserInteractionEnabled = true
+            shimmerHolderView.backgroundColor = .bumble3
             return
         case .isWhoISent:
-            requestButton.setTitle("이미 보냄", for: .normal)
-            requestButton.isUserInteractionEnabled = false
-            requestButton.backgroundColor = UIColor.bumble3.withAlphaComponent(0.7)
+            slideView.labelText = "이미 보냄"
+            slideView.isUserInteractionEnabled = false
+            shimmerHolderView.backgroundColor = .bumble3
             return
         default:
-            requestButton.setTitle("친구 신청", for: .normal)
-            requestButton.isUserInteractionEnabled = true
-            requestButton.backgroundColor = .bumble3
+            slideView.labelText = "밀어서 친구 신청"
+            slideView.isUserInteractionEnabled = true
+            shimmerHolderView.backgroundColor = .bumble3
         }
     }
 
@@ -420,47 +436,6 @@ class UserSingleViewController: UIViewController {
         snapshot.appendItems(body, toSection: .Body)
         snapshot.appendItems(posts, toSection: .Posts)
         dataSource.apply(snapshot, animatingDifferences: animatingDifferences)
-    }
-
-    @objc private func request() {
-        guard let user = data?.user else {
-            return
-        }
-
-        if (user.relationship?.match == .isMatched) {
-            toast(message: "이미 연결 된 상대 입니다.")
-            return
-        }
-
-        if (user.relationship?.match == .isUnmatched) {
-            toast(message: "이미 보낸 상대 입니다.")
-            return
-        }
-
-        if (user.relationship?.match == .isWhoSentMe) {
-            userSingleViewModel?.createRequest()
-            return
-        }
-
-        RequestConfirmViewController
-            .present(target: self, user: user)
-            .subscribe(onNext: { [unowned self] result in
-                switch (result) {
-                case .accept:
-                    heartLottie.begin(with: view) { make in
-                        make.edges.equalToSuperview().multipliedBy(0.8)
-                        make.center.equalToSuperview()
-                    }
-                    userSingleViewModel?.createRequest()
-                case .purchase:
-                    navigationController?.pushViewController(.inAppPurchase, current: self)
-                case .decline:
-                    log.info("declined to request user..")
-                }
-            }, onError: { err in
-                log.error(err)
-            })
-            .disposed(by: disposeBag)
     }
 
     @objc private func poke() {
@@ -592,5 +567,46 @@ extension UserSingleViewController: PostBodyDelegate {
     }
 }
 
+
+extension UserSingleViewController: SlideDelegate {
+    func didFinishSlideToOpenDelegate(_ sender: Slide) {
+        guard let user = data?.user else {
+            return
+        }
+        if (user.relationship?.match == .isMatched) {
+            toast(message: "이미 연결 된 상대 입니다.")
+            return
+        }
+        if (user.relationship?.match == .isUnmatched) {
+            toast(message: "이미 보낸 상대 입니다.")
+            return
+        }
+        if (user.relationship?.match == .isWhoSentMe) {
+            userSingleViewModel?.createRequest()
+            return
+        }
+        RequestConfirmViewController
+            .present(target: self, user: user)
+            .subscribe(onNext: { [unowned self] result in
+                switch (result) {
+                case .accept:
+                    heartLottie.begin(with: view) { make in
+                        make.edges.equalToSuperview().multipliedBy(0.8)
+                        make.center.equalToSuperview()
+                    }
+                    userSingleViewModel?.createRequest()
+                case .purchase:
+                    navigationController?.pushViewController(.inAppPurchase, current: self)
+                    slideView.resetStateWithAnimation(true)
+                case .decline:
+                    log.info("declined to request user..")
+                    slideView.resetStateWithAnimation(true)
+                }
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
+    }
+}
 
 
