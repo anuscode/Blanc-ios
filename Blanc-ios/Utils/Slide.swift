@@ -33,8 +33,8 @@ import Shimmer
 
     lazy private var holderShimmer: FBShimmeringView = {
         let shimmer = FBShimmeringView()
-        shimmer.shimmeringHighlightLength = 0.80
-        shimmer.shimmeringPauseDuration = 0.2
+        shimmer.shimmeringHighlightLength = 0.60
+        shimmer.shimmeringPauseDuration = 0.35
         return shimmer
     }()
 

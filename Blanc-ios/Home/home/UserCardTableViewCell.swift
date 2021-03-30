@@ -130,7 +130,7 @@ class UserCardTableViewCell: UITableViewCell {
 
     lazy private var slideView: Slide = {
         let slide = Slide()
-        slide.slidingColor = .bumble3
+        slide.slidingColor = .bumble4
         slide.sliderBackgroundColor = .bumble0
         slide.sliderViewTopDistance = 0
         slide.sliderCornerRadius = 5
@@ -138,8 +138,9 @@ class UserCardTableViewCell: UITableViewCell {
         slide.textFont = .systemFont(ofSize: 18, weight: .semibold)
 
         slide.textColor = .bumble5
-        slide.thumbnailImageView.image = UIImage(named: "ic_star_white_r")
-        slide.thumbnailColor = .bumble3
+        slide.thumbnailImageView.image = UIImage(systemName: "paperplane.fill")
+        slide.thumbnailImageView.tintColor = .white
+        slide.thumbnailColor = .bumble4
         slide.isShimmering = true
         slide.delegate = self
         return slide
@@ -177,17 +178,11 @@ class UserCardTableViewCell: UITableViewCell {
         return view
     }()
 
-    lazy private var button2: UIButton = {
-        let button = UIButton()
-        button.setTitle("친구신청", for: .normal)
-        button.titleLabel?.font = .boldSystemFont(ofSize: 18)
-        button.layer.masksToBounds = true
-        button.layer.cornerRadius = Constants.radius
-        button.backgroundColor = .bumble3
-        button.setTitleColor(.white, for: .normal)
-        button.addTarget(self, action: #selector(didTapRequestButton), for: .touchUpInside)
-        ripple.activate(to: button)
-        return button
+    lazy private var shimmerHolderView: UIView = {
+        let view = UIView()
+        view.layer.masksToBounds = true
+        view.layer.cornerRadius = Constants.radius
+        return view
     }()
 
     lazy private var button3: UIView = {
@@ -373,9 +368,7 @@ class UserCardTableViewCell: UITableViewCell {
         contentView.addSubview(starsView)
 
         // buttons in bottomView..
-        bottomView.addSubview(button1)
-        bottomView.addSubview(button2)
-        bottomView.addSubview(button3)
+        bottomView.addSubview(shimmerHolderView)
         bottomView.addSubview(slideView)
 
         // stars in starsView..
@@ -436,30 +429,16 @@ class UserCardTableViewCell: UITableViewCell {
             make.trailing.equalToSuperview()
             make.centerX.equalToSuperview()
         }
-        button1.snp.makeConstraints { make in
+
+        shimmerHolderView.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(15)
             make.top.equalToSuperview().inset(8)
             make.bottom.equalToSuperview().inset(8)
-            make.width.equalTo(55)
-        }
-        button2.snp.makeConstraints { make in
-            make.leading.equalTo(button1.snp.trailing).inset(-8)
-            make.top.equalToSuperview().inset(8)
-            make.bottom.equalToSuperview().inset(8)
-        }
-        button3.snp.makeConstraints { make in
-            make.leading.equalTo(button2.snp.trailing).inset(-8)
-            make.top.equalToSuperview().inset(8)
-            make.bottom.equalToSuperview().inset(8)
-            make.width.equalTo(55)
             make.trailing.equalToSuperview().inset(15)
         }
 
         slideView.snp.makeConstraints { make in
-            make.leading.equalTo(button1.snp.leading)
-            make.top.equalTo(button1.snp.top)
-            make.bottom.equalTo(button2.snp.bottom)
-            make.trailing.equalTo(button3.snp.trailing)
+            make.edges.equalTo(shimmerHolderView.snp.edges)
         }
 
         let size = Const.starSize
@@ -620,29 +599,29 @@ class UserCardTableViewCell: UITableViewCell {
         let match = user?.relationship?.match
         switch match {
         case .isMatched:
-            button2.setTitle("연결 된 유저", for: .normal)
-            button2.isUserInteractionEnabled = false
-            button2.backgroundColor = UIColor.bumble1
+            slideView.labelText = "연결 된 유저"
+            shimmerHolderView.isUserInteractionEnabled = false
+            shimmerHolderView.backgroundColor = UIColor.bumble1
             return
         case .isUnmatched:
-            button2.setTitle("이미 보냄", for: .normal)
-            button2.isUserInteractionEnabled = false
-            button2.backgroundColor = UIColor.bumble1
+            slideView.labelText = "이미 보냄"
+            shimmerHolderView.isUserInteractionEnabled = false
+            shimmerHolderView.backgroundColor = UIColor.bumble1
             return
         case .isWhoSentMe:
-            button2.setTitle("수락", for: .normal)
-            button2.isUserInteractionEnabled = true
-            button2.backgroundColor = UIColor.bumble3
+            slideView.labelText = "밀어서 수락"
+            shimmerHolderView.isUserInteractionEnabled = true
+            shimmerHolderView.backgroundColor = UIColor.bumble3
             return
         case .isWhoISent:
-            button2.setTitle("이미 보냄", for: .normal)
-            button2.isUserInteractionEnabled = false
-            button2.backgroundColor = UIColor.bumble1
+            slideView.labelText = "이미 보냄"
+            shimmerHolderView.isUserInteractionEnabled = false
+            shimmerHolderView.backgroundColor = UIColor.bumble1
             return
         default:
-            button2.setTitle("친구 신청", for: .normal)
-            button2.isUserInteractionEnabled = true
-            button2.backgroundColor = UIColor.bumble3
+            slideView.labelText = "밀어서 친구 신청"
+            shimmerHolderView.isUserInteractionEnabled = true
+            shimmerHolderView.backgroundColor = UIColor.bumble3
         }
     }
 }
@@ -737,20 +716,17 @@ extension UserCardTableViewCell: SlideDelegate {
         guard let user = user else {
             return
         }
-        fireworkController.addFireworks(count: 2, around: button2)
+        fireworkController.addFireworks(count: 2, around: shimmerHolderView)
 
         if (user.relationship?.isMatched == true) {
             return
         }
-
         if (user.relationship?.isUnmatched == true) {
             return
         }
-
         if (user.relationship?.isWhoISent == true) {
             return
         }
-
         if (user.relationship?.isWhoSentMe == true) {
             let done = heartLottie.begin(with: contentView) { make in
                 make.edges.equalTo(carousel.snp.edges)
