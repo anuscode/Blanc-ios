@@ -105,17 +105,14 @@ class LocationAuthorizationViewController: UIViewController {
             make.width.equalTo(150)
             make.height.equalTo(150)
         }
-
         titleLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.top.equalTo(locationImageView.snp.bottom).offset(40)
         }
-
         descriptionLabel.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.top.equalTo(titleLabel.snp.bottom).offset(20)
         }
-
         button.snp.makeConstraints { make in
             make.width.equalTo(250)
             make.height.equalTo(50)
@@ -130,13 +127,8 @@ class LocationAuthorizationViewController: UIViewController {
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
             .observeOn(MainScheduler.instance)
             .subscribe(onNext: { [unowned self] _, status in
-                switch status {
-                case .denied, .restricted, .notDetermined:
-                    toast(message: "해당 앱은 위치정보를 필수로 요구 합니다.")
-                case .authorizedAlways, .authorizedWhenInUse:
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [unowned self] in
-                        next()
-                    }
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [unowned self] in
+                    next()
                 }
             }, onError: { err in
                 log.error(err)

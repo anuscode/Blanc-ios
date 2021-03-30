@@ -33,7 +33,7 @@ class Navigation {
     }
 
     public func next() -> Single<Next> {
-        if (!isLocationAuthorized()) {
+        if (!isLocationDetermined()) {
             let subject: ReplaySubject<Next> = ReplaySubject.create(bufferSize: 1)
             subject.onNext(.LOCATION)
             return subject.take(1).asSingle()
@@ -83,8 +83,7 @@ class Navigation {
             .catchErrorJustReturn(.LOGIN)
     }
 
-    private func isLocationAuthorized() -> Bool {
-        log.info(manager.authorizationStatus)
-        return manager.authorizationStatus.rawValue > 2
+    private func isLocationDetermined() -> Bool {
+        manager.authorizationStatus.rawValue != 0
     }
 }
