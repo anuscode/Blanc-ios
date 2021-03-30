@@ -175,7 +175,7 @@ class UserSingleViewController: UIViewController {
     lazy private var pokeButton: UIView = {
         let view = UIView()
         view.layer.cornerRadius = Constants.radius
-        view.backgroundColor = .bumble3
+        view.backgroundColor = .bumble5
         view.isUserInteractionEnabled = true
         ripple.activate(to: view)
 

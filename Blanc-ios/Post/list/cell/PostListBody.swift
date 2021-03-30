@@ -2,6 +2,14 @@ import Foundation
 import UIKit
 import FSPagerView
 
+private extension UIView {
+    func image(_ url: String?) {
+        if let imageView: UIImageView = subviews.first(where: { $0 is UIImageView }) as? UIImageView {
+            imageView.url(url ?? "")
+        }
+    }
+}
+
 class PostListBody: UIView {
 
     private let ripple = Ripple()
@@ -10,21 +18,264 @@ class PostListBody: UIView {
 
     private weak var delegate: PostBodyDelegate?
 
-    lazy private var carouselStackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [carousel])
-        stackView.translatesAutoresizingMaskIntoConstraints = false
+    private let horizontalMargin: CGFloat = 15
+
+    lazy private var imageContainerStackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [
+            image1Container,
+            image2Container,
+            image3Container
+        ])
+        stackView.axis = .vertical
         return stackView
     }()
 
-    lazy private var carousel: FSPagerView = {
-        let pagerView = FSPagerView(frame: frame)
-        pagerView.register(FSPagerViewCell.self, forCellWithReuseIdentifier: "PostBodyPagerViewCell")
-        pagerView.translatesAutoresizingMaskIntoConstraints = false
-        pagerView.delegate = self
-        pagerView.dataSource = self
-        pagerView.width(UIScreen.main.bounds.size.width, priority: 800)
-        pagerView.height(UIScreen.main.bounds.size.width, priority: 800)
-        return pagerView
+    lazy private var image1Container: UIView = {
+        let view = UIView()
+        let width = (UIScreen.main.bounds.size.width - (horizontalMargin * 2))
+        view.width(width, priority: 800)
+        view.height(width, priority: 800)
+
+        view.addSubview(image1_1)
+
+        image1_1.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        return view
+    }()
+
+    lazy private var image2Container: UIView = {
+        let view = UIView()
+        let width = (UIScreen.main.bounds.size.width - 2 * horizontalMargin)
+        let height = (UIScreen.main.bounds.size.width - (horizontalMargin * 2.5)) / 2
+        view.width(width, priority: 800)
+        view.height(height, priority: 800)
+
+        view.addSubview(image2_1)
+        view.addSubview(image2_2)
+
+        image2_1.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.leading.equalToSuperview()
+        }
+        image2_2.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.trailing.equalToSuperview()
+        }
+        return view
+    }()
+
+    lazy private var image3Container: UIView = {
+        let view = UIView()
+        let width = (UIScreen.main.bounds.size.width - (horizontalMargin * 2))
+        let height = (width - horizontalMargin) / 3
+        view.width(width, priority: 800)
+        view.height(height, priority: 800)
+
+        view.addSubview(image3_1)
+        view.addSubview(image3_2)
+        view.addSubview(image3_3)
+
+        image3_1.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.leading.equalToSuperview()
+        }
+        image3_2.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.leading.equalTo(image3_1.snp.trailing).inset(-horizontalMargin / 2)
+        }
+        image3_3.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.leading.equalTo(image3_2.snp.trailing).inset(-horizontalMargin / 2)
+        }
+        return view
+    }()
+
+//    lazy private var imageContainer: UIView = {
+//        let view = UIView()
+//        view.width(UIScreen.main.bounds.size.width, priority: 800)
+//        view.height(UIScreen.main.bounds.size.width, priority: 800)
+//
+//        view.addSubview(image1_1)
+//        view.addSubview(image2_1)
+//        view.addSubview(image2_2)
+//        view.addSubview(image3_1)
+//        view.addSubview(image3_2)
+//        view.addSubview(image3_3)
+//
+//        image1_1.snp.makeConstraints { make in
+//            make.edges.equalToSuperview()
+//        }
+//
+//        image2_1.snp.makeConstraints { make in
+//            make.top.equalToSuperview()
+//            make.leading.equalToSuperview()
+//        }
+//        image2_2.snp.makeConstraints { make in
+//            make.bottom.equalToSuperview()
+//            make.trailing.equalToSuperview()
+//        }
+//
+//        image3_1.snp.makeConstraints { make in
+//            make.top.equalToSuperview()
+//            make.centerX.equalToSuperview()
+//        }
+//        image3_2.snp.makeConstraints { make in
+//            make.bottom.equalToSuperview().inset(30)
+//            make.leading.equalToSuperview()
+//        }
+//        image3_3.snp.makeConstraints { make in
+//            make.bottom.equalToSuperview()
+//            make.trailing.equalToSuperview()
+//        }
+//
+//        return view
+//    }()
+
+    lazy private var image1_1: UIView = {
+        let view = UIView()
+        let width = UIScreen.main.bounds.size.width - (horizontalMargin * 2)
+        view.width(width, priority: 800)
+        view.height(width, priority: 800)
+        view.applyShadow(
+            offset: CGSize.init(width: 0, height: 3),
+            color: UIColor.black,
+            radius: 2.0,
+            opacity: 0.35
+        )
+        let imageView = UIImageView()
+        imageView.layer.cornerRadius = 15
+        imageView.layer.masksToBounds = true
+        imageView.width(width, priority: 800)
+        imageView.height(width, priority: 800)
+        view.addSubview(imageView)
+        imageView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        return view
+    }()
+
+    lazy private var image2_1: UIView = {
+        let view = UIView()
+        let diameter = (UIScreen.main.bounds.size.width - (horizontalMargin * 2.5)) / 2
+        view.width(diameter, priority: 800)
+        view.height(diameter, priority: 800)
+        view.applyShadow(
+            offset: CGSize.init(width: 0, height: 3),
+            color: UIColor.black,
+            radius: 2.0,
+            opacity: 0.35
+        )
+        let imageView = UIImageView()
+        imageView.layer.cornerRadius = 15
+        imageView.layer.masksToBounds = true
+        imageView.width(diameter, priority: 800)
+        imageView.height(diameter, priority: 800)
+        imageView.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapImage2_1))
+        view.addSubview(imageView)
+        imageView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        return view
+    }()
+
+    lazy private var image2_2: UIView = {
+        let view = UIView()
+        let diameter = (UIScreen.main.bounds.size.width - (horizontalMargin * 2.5)) / 2
+        view.width(diameter, priority: 800)
+        view.height(diameter, priority: 800)
+        view.applyShadow(
+            offset: CGSize.init(width: 0, height: 3),
+            color: UIColor.black,
+            radius: 2.0,
+            opacity: 0.35
+        )
+        let imageView = UIImageView()
+        imageView.layer.cornerRadius = 15
+        imageView.layer.masksToBounds = true
+        imageView.width(diameter, priority: 800)
+        imageView.height(diameter, priority: 800)
+        imageView.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapImage2_2))
+        view.addSubview(imageView)
+        imageView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        return view
+    }()
+
+    lazy private var image3_1: UIView = {
+        let view = UIView()
+        let width = (UIScreen.main.bounds.size.width - (horizontalMargin * 2))
+        let diameter = (width - horizontalMargin) / 3
+        view.width(diameter, priority: 800)
+        view.height(diameter, priority: 800)
+        view.applyShadow(
+            offset: CGSize.init(width: 0, height: 3),
+            color: UIColor.black,
+            radius: 2.0,
+            opacity: 0.35
+        )
+        let imageView = UIImageView()
+        imageView.layer.cornerRadius = 15
+        imageView.layer.masksToBounds = true
+        imageView.width(diameter, priority: 800)
+        imageView.height(diameter, priority: 800)
+        imageView.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapImage3_1))
+        view.addSubview(imageView)
+        imageView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        return view
+    }()
+
+    lazy private var image3_2: UIView = {
+        let view = UIView()
+        let width = (UIScreen.main.bounds.size.width - (horizontalMargin * 2))
+        let diameter = (width - horizontalMargin) / 3
+        view.width(diameter, priority: 800)
+        view.height(diameter, priority: 800)
+        view.applyShadow(
+            offset: CGSize.init(width: 0, height: 3),
+            color: UIColor.black,
+            radius: 2.0,
+            opacity: 0.35
+        )
+        let imageView = UIImageView()
+        imageView.layer.cornerRadius = 15
+        imageView.layer.masksToBounds = true
+        imageView.width(diameter, priority: 800)
+        imageView.height(diameter, priority: 800)
+        imageView.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapImage3_2))
+        view.addSubview(imageView)
+        imageView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        return view
+    }()
+
+    lazy private var image3_3: UIView = {
+        let view = UIView()
+        let width = (UIScreen.main.bounds.size.width - (horizontalMargin * 2))
+        let diameter = (width - horizontalMargin) / 3
+        view.width(diameter, priority: 800)
+        view.height(diameter, priority: 800)
+        view.applyShadow(
+            offset: CGSize.init(width: 0, height: 3),
+            color: UIColor.black,
+            radius: 2.0,
+            opacity: 0.35
+        )
+        let imageView = UIImageView()
+        imageView.layer.cornerRadius = 15
+        imageView.layer.masksToBounds = true
+        imageView.width(diameter, priority: 800)
+        imageView.height(diameter, priority: 800)
+        imageView.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapImage3_3))
+        view.addSubview(imageView)
+        imageView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        return view
     }()
 
     lazy private var textsStackView: UIStackView = {
@@ -80,13 +331,6 @@ class PostListBody: UIView {
         label.numberOfLines = 0
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
-    }()
-
-    lazy private var pageControl: FSPageControl = {
-        let pageControl = FSPageControl()
-        pageControl.contentHorizontalAlignment = .right
-        pageControl.translatesAutoresizingMaskIntoConstraints = false
-        return pageControl
     }()
 
     lazy private var heartView: UIView = {
@@ -162,40 +406,30 @@ class PostListBody: UIView {
     }
 
     private func configureSubviews() {
-        addSubview(carouselStackView)
-        addSubview(pageControl)
+        addSubview(imageContainerStackView)
         addSubview(heartView)
         addSubview(conversationView)
         addSubview(textsStackView)
     }
 
     private func configureConstraints() {
-
-        carouselStackView.snp.makeConstraints { make in
+        imageContainerStackView.snp.makeConstraints { make in
             make.top.equalToSuperview()
-            make.leading.equalToSuperview()
-            make.trailing.equalToSuperview()
+            make.leading.equalToSuperview().inset(horizontalMargin)
+            make.trailing.equalToSuperview().inset(horizontalMargin)
         }
-
-        pageControl.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(20)
-            make.trailing.equalToSuperview().inset(20)
-        }
-
         heartView.snp.makeConstraints { make in
-            make.top.equalTo(carouselStackView.snp.bottom).inset(-8)
+            make.top.equalTo(imageContainerStackView.snp.bottom).inset(-8)
             make.leading.equalToSuperview().inset(12)
             make.width.equalTo(PostConfig.containerDiameter)
             make.height.equalTo(PostConfig.containerDiameter)
         }
-
         conversationView.snp.makeConstraints { make in
-            make.top.equalTo(carouselStackView.snp.bottom).inset(-8)
+            make.top.equalTo(imageContainerStackView.snp.bottom).inset(-8)
             make.leading.equalTo(heartView.snp.trailing).inset(-8)
             make.width.equalTo(PostConfig.containerDiameter)
             make.height.equalTo(PostConfig.containerDiameter)
         }
-
         textsStackView.snp.makeConstraints { make in
             make.top.equalTo(heartImageView.snp.bottom).inset(-10)
             make.leading.equalToSuperview()
@@ -251,17 +485,58 @@ class PostListBody: UIView {
     }
 
     private func configureCarousel() {
-        let resourceCount = post?.resources?.count ?? 0
-
-        if (resourceCount != 0) {
-            carousel.visible(true)
-            carousel.reloadData()
-            pageControl.visible(true)
-            pageControl.numberOfPages = resourceCount
-        } else {
-            pageControl.visible(false)
-            carousel.visible(false)
+        guard let post = post,
+              let resources = post.resources else {
+            image1Container.visible(false)
+            image2Container.visible(false)
+            image3Container.visible(false)
+            return
         }
+        let resourceCount = resources.count
+
+        if (resourceCount == 0) {
+            image1Container.visible(false)
+            image2Container.visible(false)
+            image3Container.visible(false)
+        } else if (resourceCount == 1) {
+            image1Container.visible(true)
+            image2Container.visible(false)
+            image3Container.visible(false)
+            image1_1.image(resources[0].url)
+        } else if (resourceCount == 2) {
+            image1Container.visible(false)
+            image2Container.visible(true)
+            image3Container.visible(false)
+            image2_1.image(resources[0].url)
+            image2_2.image(resources[1].url)
+        } else if (resourceCount == 3) {
+            image1Container.visible(false)
+            image2Container.visible(false)
+            image3Container.visible(true)
+            image3_1.image(resources[0].url)
+            image3_2.image(resources[1].url)
+            image3_3.image(resources[2].url)
+        }
+    }
+
+    @objc private func didTapImage2_1() {
+        image2Container.bringSubviewToFront(image2_1)
+    }
+
+    @objc private func didTapImage2_2() {
+        image2Container.bringSubviewToFront(image2_2)
+    }
+
+    @objc private func didTapImage3_1() {
+        image3Container.bringSubviewToFront(image3_1)
+    }
+
+    @objc private func didTapImage3_2() {
+        image3Container.bringSubviewToFront(image3_2)
+    }
+
+    @objc private func didTapImage3_3() {
+        image3Container.bringSubviewToFront(image3_3)
     }
 
     @objc private func didTapHeartImageView() {
@@ -275,35 +550,5 @@ class PostListBody: UIView {
 
     @objc private func didTapCommentCountLabel() {
         delegate?.presentSinglePostView(post: post)
-    }
-}
-
-extension PostListBody: FSPagerViewDataSource, FSPagerViewDelegate {
-
-    func numberOfItems(in pagerView: FSPagerView) -> Int {
-        post?.resources?.count ?? 0
-    }
-
-    func pagerView(_ pagerView: FSPagerView, cellForItemAt index: Int) -> FSPagerViewCell {
-        let cell = pagerView.dequeueReusableCell(withReuseIdentifier: "PostBodyPagerViewCell", at: index)
-        guard (post?.resources != nil || post?.resources?.count ?? 0 > 0) else {
-            return cell
-        }
-        let width = UIScreen.main.bounds.size.width
-        cell.imageView?.url(post?.resources![index].url, size: CGSize(width: width, height: width))
-        cell.imageView?.contentMode = .scaleAspectFill
-        return cell
-    }
-
-    func pagerViewWillEndDragging(_ pagerView: FSPagerView, targetIndex: Int) {
-        pageControl.currentPage = targetIndex
-    }
-
-    func pagerViewDidEndScrollAnimation(_ pagerView: FSPagerView) {
-        pageControl.currentPage = pagerView.currentIndex
-    }
-
-    func pagerView(_ pagerView: FSPagerView, shouldHighlightItemAt index: Int) -> Bool {
-        return false
     }
 }
