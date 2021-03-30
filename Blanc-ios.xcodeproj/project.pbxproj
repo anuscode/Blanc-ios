@@ -289,6 +289,7 @@
 		C47AA341D3CD39CEF889B591 /* ImageViewViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA4B7CDE30DB7D53AA6EB /* ImageViewViewModel.swift */; };
 		C47AA368FD95FCB7B2E8535B /* UserCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA83113A73AA41E27E0A2 /* UserCollectionViewCell.swift */; };
 		C47AA3A121CD775C7D2916C5 /* RxEventTypealias.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA8734861C42BECECBBDE /* RxEventTypealias.swift */; };
+		C47AA4884A3AA9A78CC68DCA /* Slide.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AABD25AD3756C8A5D85EC /* Slide.swift */; };
 		C47AA5367AADBB4F4B6D9994 /* PaymentService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA1D5E6462D0679248909 /* PaymentService.swift */; };
 		C47AA5825295E07A3C083760 /* SmsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AA0A90D156F5B9B1D5EC3 /* SmsViewModel.swift */; };
 		C47AA5B49233DD1E59C6D074 /* InAppPurchaseTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C47AAC81B4B9E7A00D3EA155 /* InAppPurchaseTableViewCell.swift */; };
@@ -681,6 +682,7 @@
 		C47AAAA7C98EAFA1F0DE87DB /* SettingDTO.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SettingDTO.swift; sourceTree = "<group>"; };
 		C47AAAB9FC960FC051759E75 /* RxKeyPaths.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RxKeyPaths.swift; sourceTree = "<group>"; };
 		C47AAB4E79358AC85B769BE6 /* UIView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
+		C47AABD25AD3756C8A5D85EC /* Slide.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Slide.swift; sourceTree = "<group>"; };
 		C47AAC1C7869558086B8F425 /* ReportProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ReportProvider.swift; sourceTree = "<group>"; };
 		C47AAC81B4B9E7A00D3EA155 /* InAppPurchaseTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppPurchaseTableViewCell.swift; sourceTree = "<group>"; };
 		C47AACA33B78F7DBDE4957FF /* InAppPurchaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InAppPurchaseViewController.swift; sourceTree = "<group>"; };
@@ -1376,6 +1378,7 @@
 				C47AA9EF18F431B5324A71E7 /* EmptySectionTableViewCell.swift */,
 				C47AA03E0A2AF860FFE4EE7A /* Synchronize.swift */,
 				C47AAD91E6A0C7E71D28A587 /* Navigation.swift */,
+				C47AABD25AD3756C8A5D85EC /* Slide.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -2381,6 +2384,7 @@
 				C47AA1ED87CB58DCDA5CB2FC /* ReportPostViewModel.swift in Sources */,
 				C47AA368FD95FCB7B2E8535B /* UserCollectionViewCell.swift in Sources */,
 				C47AA5B7F74F1D44F40768E7 /* SendingHeaderReusableView.swift in Sources */,
+				C47AA4884A3AA9A78CC68DCA /* Slide.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

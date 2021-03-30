@@ -17,32 +17,27 @@ class HomeLoading: UIView {
 
     lazy private var carousel: UIView = {
         let view = UIView()
-
         view.addSubview(label1)
         view.addSubview(label2)
         view.addSubview(label3)
-
         label1.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(15)
             make.trailing.equalToSuperview().multipliedBy(0.9)
             make.height.equalTo(20)
             make.bottom.equalTo(label2.snp.top).inset(-8)
         }
-
         label2.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(15)
             make.trailing.equalToSuperview().multipliedBy(0.5)
             make.height.equalTo(20)
             make.bottom.equalTo(label3.snp.top).inset(-8)
         }
-
         label3.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(15)
             make.trailing.equalToSuperview().multipliedBy(0.6)
             make.height.equalTo(20)
             make.bottom.equalToSuperview().inset(10)
         }
-
         return view
     }()
 
@@ -58,13 +53,11 @@ class HomeLoading: UIView {
             make.bottom.equalToSuperview().inset(10)
             make.width.equalTo(55)
         }
-
         button2.snp.makeConstraints { make in
             make.leading.equalTo(button1.snp.trailing).inset(-8)
             make.top.equalToSuperview().inset(10)
             make.bottom.equalToSuperview().inset(10)
         }
-
         button3.snp.makeConstraints { make in
             make.leading.equalTo(button2.snp.trailing).inset(-8)
             make.top.equalToSuperview().inset(10)
@@ -72,7 +65,6 @@ class HomeLoading: UIView {
             make.width.equalTo(55)
             make.trailing.equalToSuperview().inset(15)
         }
-
         return view
     }()
 
@@ -112,7 +104,7 @@ class HomeLoading: UIView {
         view.isUserInteractionEnabled = true
 
         let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 10)
+        label.font = .boldSystemFont(ofSize: 10)
         label.textColor = .silverBlue
         label.text = " "
 
@@ -142,7 +134,7 @@ class HomeLoading: UIView {
         view.isUserInteractionEnabled = true
 
         let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 10)
+        label.font = .boldSystemFont(ofSize: 10)
         label.textColor = .silverBlue
         label.text = " "
 
@@ -201,7 +193,6 @@ class HomeLoading: UIView {
     }
 
     private func configureConstraints() {
-
         carousel.snp.makeConstraints { make in
             make.top.equalToSuperview()
             make.leading.equalToSuperview()
@@ -210,7 +201,6 @@ class HomeLoading: UIView {
             make.height.equalTo(length * 0.85)
             make.centerX.equalToSuperview()
         }
-
         bottomView.snp.makeConstraints { make in
             make.top.equalTo(carousel.snp.bottom)
             make.leading.equalToSuperview()

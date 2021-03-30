@@ -128,6 +128,23 @@ class UserCardTableViewCell: UITableViewCell {
         return view
     }()
 
+    lazy private var slideView: Slide = {
+        let slide = Slide()
+        slide.slidingColor = .bumble3
+        slide.sliderBackgroundColor = .bumble0
+        slide.sliderViewTopDistance = 0
+        slide.sliderCornerRadius = 5
+        slide.labelText = "밀어서 친구신청"
+        slide.textFont = .systemFont(ofSize: 18, weight: .semibold)
+
+        slide.textColor = .bumble5
+        slide.thumbnailImageView.image = UIImage(named: "ic_star_white_r")
+        slide.thumbnailColor = .bumble3
+        slide.isShimmering = true
+        slide.delegate = self
+        return slide
+    }()
+
     lazy private var button1: UIView = {
         let view = UIView()
         view.layer.cornerRadius = Constants.radius
@@ -359,6 +376,7 @@ class UserCardTableViewCell: UITableViewCell {
         bottomView.addSubview(button1)
         bottomView.addSubview(button2)
         bottomView.addSubview(button3)
+        bottomView.addSubview(slideView)
 
         // stars in starsView..
         starsView.addSubview(starLabel)
@@ -378,47 +396,39 @@ class UserCardTableViewCell: UITableViewCell {
             make.width.equalTo(Const.length).priority(800)
             make.height.equalTo(Const.length).priority(800)
         }
-
         searchView.snp.makeConstraints { make in
             make.center.equalTo(carousel.snp.center)
             make.width.equalTo(Const.diameter)
             make.height.equalTo(Const.diameter)
         }
-
         bottomView.snp.makeConstraints { make in
             make.top.equalTo(carousel.snp.bottom)
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
             make.bottom.equalToSuperview()
         }
-
         label1.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(15)
             make.bottom.equalTo(label2.snp.top).inset(-8)
         }
-
         label2.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(15)
             make.bottom.equalTo(label3.snp.top).inset(-5)
         }
-
         label3.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(15)
             make.bottom.equalTo(bottomView.snp.top).inset(-9)
         }
-
         gradientView.snp.makeConstraints { make in
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
             make.bottom.equalTo(bottomView.snp.bottom)
             make.height.equalTo(200)
         }
-
         pageControl.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(20)
             make.trailing.equalToSuperview().inset(20)
         }
-
         starsView.snp.makeConstraints { make in
             make.top.equalTo(label1.snp.top)
             make.bottom.equalTo(bottomView.snp.top)
@@ -426,26 +436,30 @@ class UserCardTableViewCell: UITableViewCell {
             make.trailing.equalToSuperview()
             make.centerX.equalToSuperview()
         }
-
         button1.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(15)
             make.top.equalToSuperview().inset(8)
             make.bottom.equalToSuperview().inset(8)
             make.width.equalTo(55)
         }
-
         button2.snp.makeConstraints { make in
             make.leading.equalTo(button1.snp.trailing).inset(-8)
             make.top.equalToSuperview().inset(8)
             make.bottom.equalToSuperview().inset(8)
         }
-
         button3.snp.makeConstraints { make in
             make.leading.equalTo(button2.snp.trailing).inset(-8)
             make.top.equalToSuperview().inset(8)
             make.bottom.equalToSuperview().inset(8)
             make.width.equalTo(55)
             make.trailing.equalToSuperview().inset(15)
+        }
+
+        slideView.snp.makeConstraints { make in
+            make.leading.equalTo(button1.snp.leading)
+            make.top.equalTo(button1.snp.top)
+            make.bottom.equalTo(button2.snp.bottom)
+            make.trailing.equalTo(button3.snp.trailing)
         }
 
         let size = Const.starSize
@@ -457,28 +471,24 @@ class UserCardTableViewCell: UITableViewCell {
             make.trailing.equalToSuperview()
             make.centerX.equalToSuperview()
         }
-
         star1.snp.makeConstraints { make in
             make.trailing.equalTo(star2.snp.leading).inset(margin)
             make.top.equalTo(starLabel.snp.bottom).inset(-5)
             make.width.equalTo(size)
             make.height.equalTo(size)
         }
-
         star2.snp.makeConstraints { make in
             make.trailing.equalTo(star3.snp.leading).inset(margin)
             make.top.equalTo(starLabel.snp.bottom).inset(-5)
             make.width.equalTo(size)
             make.height.equalTo(size)
         }
-
         star3.snp.makeConstraints { make in
             make.top.equalTo(starLabel.snp.bottom).inset(-5)
             make.centerX.equalToSuperview()
             make.width.equalTo(size)
             make.height.equalTo(size)
         }
-
         star4.snp.makeConstraints { make in
             make.leading.equalTo(star3.snp.trailing).inset(margin)
             make.top.equalTo(starLabel.snp.bottom).inset(-5)
@@ -486,7 +496,6 @@ class UserCardTableViewCell: UITableViewCell {
             make.width.equalTo(size)
             make.height.equalTo(size)
         }
-
         star5.snp.makeConstraints { make in
             make.leading.equalTo(star4.snp.trailing).inset(margin)
             make.top.equalTo(starLabel.snp.bottom).inset(-5)
@@ -523,49 +532,7 @@ class UserCardTableViewCell: UITableViewCell {
     }
 
     @objc func didTapRequestButton() {
-        guard let user = user else {
-            return
-        }
-        fireworkController.addFireworks(count: 2, around: button2)
 
-        if (user.relationship?.isMatched == true) {
-            return
-        }
-
-        if (user.relationship?.isUnmatched == true) {
-            return
-        }
-
-        if (user.relationship?.isWhoISent == true) {
-            return
-        }
-
-        if (user.relationship?.isWhoSentMe == true) {
-            let done = heartLottie.begin(with: contentView) { make in
-                make.edges.equalTo(carousel.snp.edges)
-            }
-            delegate?.request(user, animationDone: done)
-            return
-        }
-
-        delegate?
-            .confirm(user)
-            .subscribe(onNext: { [unowned self] result in
-                switch (result) {
-                case .accept:
-                    let done = heartLottie.begin(with: contentView) { make in
-                        make.edges.equalTo(carousel.snp.edges)
-                    }
-                    delegate?.request(user, animationDone: done)
-                case .purchase:
-                    delegate?.purchase()
-                case .decline:
-                    log.info("declined request user..")
-                }
-            }, onError: { err in
-                log.error(err)
-            })
-            .disposed(by: disposeBag)
     }
 
     @objc func didTapPokeButton(sender: UITapGestureRecognizer) {
@@ -762,5 +729,55 @@ extension UserCardTableViewCell {
                 self.switchCardBodyMode(to: .label)
             }
         }
+    }
+}
+
+extension UserCardTableViewCell: SlideDelegate {
+    func didFinishSlideToOpenDelegate(_ sender: Slide) {
+        guard let user = user else {
+            return
+        }
+        fireworkController.addFireworks(count: 2, around: button2)
+
+        if (user.relationship?.isMatched == true) {
+            return
+        }
+
+        if (user.relationship?.isUnmatched == true) {
+            return
+        }
+
+        if (user.relationship?.isWhoISent == true) {
+            return
+        }
+
+        if (user.relationship?.isWhoSentMe == true) {
+            let done = heartLottie.begin(with: contentView) { make in
+                make.edges.equalTo(carousel.snp.edges)
+            }
+            delegate?.request(user, animationDone: done)
+            return
+        }
+
+        delegate?
+            .confirm(user)
+            .subscribe(onNext: { [unowned self] result in
+                switch (result) {
+                case .accept:
+                    let done = heartLottie.begin(with: contentView) { make in
+                        make.edges.equalTo(carousel.snp.edges)
+                    }
+                    delegate?.request(user, animationDone: done)
+                case .purchase:
+                    delegate?.purchase()
+                    slideView.resetStateWithAnimation(true)
+                case .decline:
+                    log.info("declined request user..")
+                    slideView.resetStateWithAnimation(true)
+                }
+            }, onError: { err in
+                log.error(err)
+            })
+            .disposed(by: disposeBag)
     }
 }
