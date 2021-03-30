@@ -160,19 +160,8 @@ class ConversationSingleViewController: UIViewController {
         return view
     }()
 
-    lazy private var activeStarFallView: UIView = {
-        let view = UIView()
-        let transparentView = UIView()
-        transparentView.backgroundColor = UIColor.white.withAlphaComponent(0.9)
-        let starFallView = StarFallView()
-        view.addSubview(starFallView)
-        view.addSubview(transparentView)
-        transparentView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-        starFallView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
+    lazy private var activeStarFallView: StarFallView = {
+        let view = StarFallView(layerTransparency: 0.9)
         return view
     }()
 

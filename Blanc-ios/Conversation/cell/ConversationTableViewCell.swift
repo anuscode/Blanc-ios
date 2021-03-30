@@ -126,10 +126,21 @@ class ConversationTableViewCell: UITableViewCell {
     }
 
     private func configureSelf() {
+        contentView.backgroundColor = .clear
         contentView.isUserInteractionEnabled = true
+        contentView.addTapGesture(
+            numberOfTapsRequired: 1,
+            target: self,
+            action: #selector(didTapTableViewCell)
+        )
+        Timer.scheduledTimer(
+            timeInterval: 60.0,
+            target: self,
+            selector: #selector(draw(_:)),
+            userInfo: nil,
+            repeats: true
+        )
         ripple.activate(to: contentView)
-        contentView.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapTableViewCell))
-        Timer.scheduledTimer(timeInterval: 60.0, target: self, selector: #selector(draw(_:)), userInfo: nil, repeats: true)
     }
 
     private func configureSubviews() {

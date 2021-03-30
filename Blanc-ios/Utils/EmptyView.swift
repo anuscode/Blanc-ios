@@ -77,12 +77,10 @@ class EmptyView: UIView {
         view.layer.cornerRadius = 5
         view.layer.masksToBounds = true
         view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapButton))
-
         view.addSubview(buttonLabel)
         buttonLabel.snp.makeConstraints { make in
             make.center.equalToSuperview()
         }
-
         ripple.activate(to: view)
         return view
     }()

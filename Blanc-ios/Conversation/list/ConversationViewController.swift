@@ -67,6 +67,11 @@ class ConversationViewController: UIViewController {
         return UIBarButtonItem(customView: rightSideBarView)
     }()
 
+    lazy private var starFallView: StarFallView = {
+        let view = StarFallView(layerTransparency: 0.9)
+        return view
+    }()
+
     lazy private var titleLabel: UILabel = {
         let label = UILabel()
         label.text = "연결"
@@ -85,6 +90,7 @@ class ConversationViewController: UIViewController {
         tableView.register(ConversationTableViewCell.self,
             forCellReuseIdentifier: ConversationTableViewCell.identifier)
         tableView.allowsSelection = false
+        tableView.backgroundColor = .clear
         tableView.separatorColor = .clear
         tableView.delegate = self
         return tableView
@@ -132,6 +138,7 @@ class ConversationViewController: UIViewController {
     }
 
     private func configureSubviews() {
+        view.addSubview(starFallView)
         view.addSubview(titleLabel)
         view.addSubview(underLine)
         view.addSubview(tableView)
@@ -139,33 +146,31 @@ class ConversationViewController: UIViewController {
     }
 
     private func configureConstraints() {
-
+        starFallView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
         titleLabel.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide).inset(20)
             make.leading.equalToSuperview().inset(15)
         }
-
         underLine.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(5)
             make.leading.equalTo(titleLabel.snp.leading)
             make.trailing.equalTo(titleLabel.snp.trailing)
             make.height.equalTo(3)
         }
-
         tableView.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).inset(-20)
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
             make.bottom.equalTo(view.safeAreaLayoutGuide)
         }
-
         emptyView.snp.makeConstraints { make in
             make.edges.equalTo(tableView.snp.edges)
         }
     }
 
     private func subscribeConversationViewModel() {
-
         conversationViewModel?
             .observe()
             .subscribeOn(SerialDispatchQueueScheduler(qos: .default))
