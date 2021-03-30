@@ -41,6 +41,7 @@ class EmptyView: UIView {
 
     lazy private var animationView: AnimationView = {
         let animationView = AnimationView()
+        animationView.backgroundColor = .clear
         animationView.animation = Animation.named(animationName)
         animationView.loopMode = .loop
         animationView.animationSpeed = animationSpeed
