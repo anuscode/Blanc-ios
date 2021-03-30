@@ -103,36 +103,30 @@ class RegistrationNicknameViewController: UIViewController {
     }
 
     private func configureConstraints() {
-
         starFallView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-
         progressView.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(RConfig.horizontalMargin)
             make.trailing.equalToSuperview().inset(RConfig.horizontalMargin)
             make.top.equalTo(view.safeAreaLayoutGuide).inset(RConfig.progressTopMargin)
             make.height.equalTo(3)
         }
-
         titleLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(RConfig.horizontalMargin)
             make.top.equalTo(progressView.snp.bottom).offset(RConfig.titleTopMargin)
         }
-
         nicknameTextField.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(RConfig.horizontalMargin)
             make.trailing.equalToSuperview().inset(RConfig.horizontalMargin)
             make.top.equalTo(titleLabel.snp.bottom).offset(20)
             make.height.equalTo(60)
         }
-
         noticeLabel.snp.makeConstraints { make in
             make.leading.equalToSuperview().inset(RConfig.horizontalMargin)
             make.trailing.equalToSuperview().inset(RConfig.horizontalMargin)
             make.top.equalTo(nicknameTextField.snp.bottom).offset(RConfig.noticeTopMargin)
         }
-
         nextButton.snp.makeConstraints { make in
             make.trailing.equalToSuperview().inset(RConfig.nextTrailingMargin)
             make.bottom.equalTo(view.safeAreaLayoutGuide).inset(RConfig.nextBottomMargin).priority(500)
@@ -167,8 +161,13 @@ class RegistrationNicknameViewController: UIViewController {
     }
 
     private func next() {
-        let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.stackAfterClear(identifier: "RegistrationSexViewController")
+        let storyboard = UIStoryboard(name: "Registration", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "RegistrationSexViewController")
+        // navigationController?.popToRootViewController(animated: false)
+        navigationController?.pushViewController(vc, animated: true)
+        if let index = navigationController?.viewControllers.firstIndex(of: self) {
+            navigationController?.viewControllers.remove(at: index)
+        }
     }
 
     @objc func keyboardWillShow(notification: NSNotification) {

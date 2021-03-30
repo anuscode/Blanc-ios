@@ -227,8 +227,12 @@ class RegistrationIntroductionViewController: UIViewController {
     }
 
     private func next() {
-        let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.stackAfterClear(identifier: "RegistrationCharmViewController")
+        let storyboard = UIStoryboard(name: "Registration", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "RegistrationCharmViewController")
+        navigationController?.pushViewController(vc, animated: true)
+        if let index = navigationController?.viewControllers.firstIndex(of: self) {
+            navigationController?.viewControllers.remove(at: index)
+        }
     }
 
     private func back() {

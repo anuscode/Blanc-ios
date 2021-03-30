@@ -36,7 +36,7 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
     lazy private var titleLabel: UILabel = {
         let label = UILabel()
         label.text = "이미지 등록"
-        label.font = UIFont.boldSystemFont(ofSize: RConfig.titleSize)
+        label.font = .boldSystemFont(ofSize: RConfig.titleSize)
         label.numberOfLines = 1;
         label.textColor = .black
         return label
@@ -65,7 +65,6 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
             make.width.equalTo(unitWidth * 2 + 5)
             make.height.equalTo(unitWidth * 2 + 5)
         }
-
         imageView2.snp.makeConstraints { make in
             make.trailing.equalToSuperview()
             make.leading.equalTo(imageView1.snp.trailing).inset(-5)
@@ -73,7 +72,6 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
             make.width.equalTo(unitWidth)
             make.height.equalTo(unitWidth)
         }
-
         imageView3.snp.makeConstraints { make in
             make.trailing.equalToSuperview()
             make.leading.equalTo(imageView1.snp.trailing).inset(-5)
@@ -81,38 +79,32 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
             make.width.equalTo(unitWidth)
             make.height.equalTo(unitWidth)
         }
-
         imageView4.snp.makeConstraints { make in
             make.leading.equalToSuperview()
             make.top.equalTo(imageView1.snp.bottom).inset(-5)
             make.width.equalTo(unitWidth)
             make.height.equalTo(unitWidth)
         }
-
         imageView5.snp.makeConstraints { make in
             make.leading.equalTo(imageView4.snp.trailing).inset(-5)
             make.top.equalTo(imageView1.snp.bottom).inset(-5)
             make.width.equalTo(unitWidth)
             make.height.equalTo(unitWidth)
         }
-
         imageView6.snp.makeConstraints { make in
             make.leading.equalTo(imageView5.snp.trailing).inset(-5)
             make.top.equalTo(imageView3.snp.bottom).inset(-5)
             make.width.equalTo(unitWidth)
             make.height.equalTo(unitWidth)
         }
-
         necessaryLabel1.snp.makeConstraints { make in
             make.trailing.equalTo(imageView1.snp.trailing).inset(10)
             make.top.equalTo(imageView1.snp.top).inset(10)
         }
-
         necessaryLabel2.snp.makeConstraints { make in
             make.trailing.equalTo(imageView2.snp.trailing).inset(10)
             make.top.equalTo(imageView2.snp.top).inset(10)
         }
-
         return view
     }()
 
@@ -639,7 +631,7 @@ class RegistrationImageViewController: UIViewController, CropViewControllerDeleg
 
     private func next() {
         let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.stackAfterClear(identifier: "PendingViewController", animated: true)
+        navigation.stackAfterClear(identifier: "RegistrationPendingViewController", animated: true)
     }
 }
 

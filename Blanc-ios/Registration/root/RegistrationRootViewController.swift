@@ -65,6 +65,6 @@ class RegistrationRootViewController: UIViewController {
 
     private func stackPendingView() {
         let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.stackAfterClear(identifier: "PendingViewController", animated: false)
+        navigation.stackAfterClear(identifier: "RegistrationPendingViewController", animated: false)
     }
 }

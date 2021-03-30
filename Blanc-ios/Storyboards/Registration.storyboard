@@ -283,7 +283,7 @@
         <!--Registration Pending View Controller-->
         <scene sceneID="IMn-Gw-0nh">
             <objects>
-                <viewController storyboardIdentifier="PendingViewController" id="mYO-i3-3eN" customClass="RegistrationPendingViewController" customModule="Blanc_ios" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController storyboardIdentifier="RegistrationPendingViewController" id="mYO-i3-3eN" customClass="RegistrationPendingViewController" customModule="Blanc_ios" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="PtC-Nm-1tR">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

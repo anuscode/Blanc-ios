@@ -219,8 +219,12 @@ class RegistrationIdealTypeViewController: UIViewController {
     }
 
     private func next() {
-        let navigation = navigationController as! RegistrationNavigationViewController
-        navigation.stackAfterClear(identifier: "RegistrationInterestsViewController")
+        let storyboard = UIStoryboard(name: "Registration", bundle: nil)
+        let vc = storyboard.instantiateViewController(withIdentifier: "RegistrationInterestsViewController")
+        navigationController?.pushViewController(vc, animated: true)
+        if let index = navigationController?.viewControllers.firstIndex(of: self) {
+            navigationController?.viewControllers.remove(at: index)
+        }
     }
 
     private func back() {
