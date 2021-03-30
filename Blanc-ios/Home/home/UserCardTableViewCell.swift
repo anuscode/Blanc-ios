@@ -136,7 +136,7 @@ class UserCardTableViewCell: UITableViewCell {
         view.layer.borderColor = UIColor.black.withAlphaComponent(0.15).cgColor
         view.layer.borderWidth = 2
         view.isUserInteractionEnabled = true
-        view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapStarRatingButton))
+        view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapStarView))
 
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "star.fill")
@@ -170,7 +170,7 @@ class UserCardTableViewCell: UITableViewCell {
         view.layer.borderColor = UIColor.black.withAlphaComponent(0.15).cgColor
         view.layer.borderWidth = 2
         view.isUserInteractionEnabled = true
-        view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapStarRatingButton))
+        view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapSearchView))
 
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "magnifyingglass")
@@ -254,38 +254,6 @@ class UserCardTableViewCell: UITableViewCell {
         slide.isShimmering = true
         slide.delegate = self
         return slide
-    }()
-
-    lazy private var button1: UIView = {
-        let view = UIView()
-        view.layer.cornerRadius = Constants.radius
-        view.backgroundColor = .bumble0
-        view.isUserInteractionEnabled = true
-        view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapStarRatingButton))
-        ripple.activate(to: view)
-
-        let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 10)
-        label.textColor = .bumble5
-        label.text = "평가하기"
-
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "ic_star_bumble_r")
-        view.addSubview(label)
-        view.addSubview(imageView)
-
-        imageView.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(5)
-            make.width.equalTo(25)
-            make.height.equalTo(25)
-            make.centerX.equalToSuperview()
-            make.bottom.equalTo(label.snp.top)
-        }
-        label.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.bottom.equalToSuperview().inset(3)
-        }
-        return view
     }()
 
     lazy private var shimmerHolderView: UIView = {
@@ -381,7 +349,6 @@ class UserCardTableViewCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         configureSelf()
-        configureSearchViewTapListener()
         configureSubviews()
         configureConstraints()
         configureInitialTransform()
@@ -405,11 +372,6 @@ class UserCardTableViewCell: UITableViewCell {
     private func configureSelf() {
         contentView.layer.cornerRadius = 15
         contentView.clipsToBounds = true
-    }
-
-    private func configureSearchViewTapListener() {
-        let gesture = UITapGestureRecognizer(target: self, action: #selector(didTapSearchView))
-        searchView.addGestureRecognizer(gesture)
     }
 
     private func configureStarsAndTapListener(_ starRating: StarRating?) {
@@ -571,7 +533,7 @@ class UserCardTableViewCell: UITableViewCell {
         label3.visible(true)
     }
 
-    @objc func didTapStarRatingButton(sender: UITapGestureRecognizer) {
+    @objc func didTapStarView(sender: UITapGestureRecognizer) {
         if (label1.isHidden) {
             switchCardBodyMode(to: .label)
         } else {
@@ -579,12 +541,12 @@ class UserCardTableViewCell: UITableViewCell {
             configureStarsAndTapListener(starRating)
             switchCardBodyMode(to: .star)
         }
-        fireworkController.addFireworks(count: 2, around: starView)
-        controlMenuViewVisibility()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [unowned self] in
+            controlMenuViewVisibility()
+        }
     }
 
     @objc func didTapPokeButton(sender: UITapGestureRecognizer) {
-        fireworkController.addFireworks(count: 2, around: pokeView)
         controlMenuViewVisibility()
         delegate?.poke(user, onBegin: {
             pokeLottie.begin(with: contentView) { make in
@@ -593,6 +555,13 @@ class UserCardTableViewCell: UITableViewCell {
                 make.height.equalTo(carousel.snp.height).multipliedBy(0.5)
             }
         })
+    }
+
+    @objc func didTapSearchView(sender: UITapGestureRecognizer) {
+        controlMenuViewVisibility()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [unowned self] in
+            delegate?.goUserSingle(user)
+        }
     }
 
     @objc func didTapStarImage(sender: StarTapGesture) {
@@ -607,11 +576,6 @@ class UserCardTableViewCell: UITableViewCell {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             self.switchCardBodyMode(to: .label)
         }
-    }
-
-    @objc func didTapSearchView(sender: UITapGestureRecognizer) {
-        controlMenuViewVisibility()
-        delegate?.goUserSingle(user)
     }
 
     @objc private func didTapMenuView() {
