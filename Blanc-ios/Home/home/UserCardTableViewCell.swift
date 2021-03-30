@@ -13,7 +13,7 @@ class StarTapGesture: UITapGestureRecognizer {
 }
 
 protocol UserCardCellDelegate: class {
-    func didTapSearchView(_ user: UserDTO?)
+    func goUserSingle(_ user: UserDTO?)
     func confirm(_ user: UserDTO?) -> Observable<ConfirmResult>
     func request(_ user: UserDTO?, animationDone: Observable<Void>)
     func poke(_ user: UserDTO?, onBegin: () -> Void)
@@ -102,27 +102,137 @@ class UserCardTableViewCell: UITableViewCell {
         return gradient
     }()
 
+    lazy private var menuView: UIView = {
+        let view = UIView()
+        view.visible(false)
+        view.layer.cornerRadius = Const.diameter / 2
+        view.layer.masksToBounds = true
+        view.addSubview(starView)
+        view.addSubview(pokeView)
+        view.addSubview(searchView)
+        view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapMenuView))
+        starView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.width.equalTo(Const.diameter)
+            make.height.equalTo(Const.diameter)
+        }
+        searchView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.width.equalTo(Const.diameter)
+            make.height.equalTo(Const.diameter)
+        }
+        pokeView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
+            make.width.equalTo(Const.diameter)
+            make.height.equalTo(Const.diameter)
+        }
+        return view
+    }()
+
+    lazy private var starView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        view.layer.cornerRadius = Const.diameter / 2
+        view.layer.borderColor = UIColor.black.withAlphaComponent(0.15).cgColor
+        view.layer.borderWidth = 2
+        view.isUserInteractionEnabled = true
+        view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapStarRatingButton))
+
+        let imageView = UIImageView()
+        imageView.image = UIImage(systemName: "star.fill")
+        imageView.contentMode = .scaleAspectFit
+        imageView.tintColor = .white
+
+        let label = UILabel()
+        label.font = .boldSystemFont(ofSize: 8)
+        label.textColor = .white
+        label.text = "평가하기"
+
+        view.addSubview(imageView)
+        view.addSubview(label)
+        imageView.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.centerY.equalToSuperview().multipliedBy(0.95)
+            make.width.equalTo(28)
+            make.height.equalTo(28)
+        }
+        label.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(imageView.snp.bottom).inset(-2)
+        }
+        return view
+    }()
+
     lazy private var searchView: UIView = {
         let view = UIView()
         view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
         view.layer.cornerRadius = Const.diameter / 2
         view.layer.borderColor = UIColor.black.withAlphaComponent(0.15).cgColor
         view.layer.borderWidth = 2
-        view.visible(false)
+        view.isUserInteractionEnabled = true
+        view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapStarRatingButton))
 
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "ic_search")
+        imageView.image = UIImage(systemName: "magnifyingglass")
+        imageView.tintColor = .white
+        imageView.contentMode = .scaleAspectFit
+
+        let label = UILabel()
+        label.font = .boldSystemFont(ofSize: 8)
+        label.textColor = .white
+        label.text = "살펴보기"
+
         view.addSubview(imageView)
+        view.addSubview(label)
         imageView.snp.makeConstraints { make in
-            make.center.equalToSuperview()
+            make.centerX.equalToSuperview()
+            make.centerY.equalToSuperview().multipliedBy(0.95)
+            make.width.equalTo(28)
+            make.height.equalTo(28)
+        }
+        label.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(imageView.snp.bottom).inset(-2)
+        }
+        return view
+    }()
+
+    lazy private var pokeView: UIView = {
+        let view = UIView()
+        view.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        view.layer.cornerRadius = Const.diameter / 2
+        view.layer.borderColor = UIColor.black.withAlphaComponent(0.15).cgColor
+        view.layer.borderWidth = 2
+        view.isUserInteractionEnabled = true
+        view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapPokeButton))
+
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "ic_backhand")
+
+        let label = UILabel()
+        label.font = .boldSystemFont(ofSize: 8)
+        label.textColor = .white
+        label.text = "찔러보기"
+
+        view.addSubview(imageView)
+        view.addSubview(label)
+
+        imageView.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.centerY.equalToSuperview().multipliedBy(0.95)
             make.width.equalTo(25)
             make.height.equalTo(25)
+        }
+        label.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(imageView.snp.bottom).inset(-3.5)
         }
         return view
     }()
 
     lazy private var bottomView: UIView = {
         let view = UIView()
+        view.isUserInteractionEnabled = true
         view.translatesAutoresizingMaskIntoConstraints = false
         view.backgroundColor = .userCardGradientBlack
         return view
@@ -182,39 +292,6 @@ class UserCardTableViewCell: UITableViewCell {
         let view = UIView()
         view.layer.masksToBounds = true
         view.layer.cornerRadius = Constants.radius
-        return view
-    }()
-
-    lazy private var button3: UIView = {
-        let view = UIView()
-        view.layer.cornerRadius = Constants.radius
-        view.backgroundColor = .bumble3
-        view.isUserInteractionEnabled = true
-        view.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapPokeButton))
-        ripple.activate(to: view)
-
-        let label = UILabel()
-        label.font = UIFont.boldSystemFont(ofSize: 10)
-        label.textColor = .white
-        label.text = "찔러보기"
-
-        let image = UIImage(named: "ic_backhand")
-        let imageView = UIImageView()
-        imageView.image = image
-        view.addSubview(label)
-        view.addSubview(imageView)
-
-        imageView.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(8)
-            make.width.equalTo(20)
-            make.height.equalTo(20)
-            make.centerX.equalToSuperview()
-            make.bottom.equalTo(label.snp.top)
-        }
-        label.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.bottom.equalToSuperview().inset(3)
-        }
         return view
     }()
 
@@ -320,9 +397,8 @@ class UserCardTableViewCell: UITableViewCell {
         if (label1.isHidden) {
             switchCardBodyMode(to: .label)
         }
-        button1.isUserInteractionEnabled = true
-        if (!searchView.isHidden) {
-            searchView.visible(false)
+        if (!menuView.isHidden) {
+            controlMenuViewVisibility()
         }
     }
 
@@ -359,9 +435,9 @@ class UserCardTableViewCell: UITableViewCell {
     private func configureSubviews() {
         contentView.addSubview(carousel)
         contentView.addSubview(gradientView)
-        contentView.addSubview(searchView)
         contentView.addSubview(bottomView)
         contentView.addSubview(pageControl)
+        contentView.addSubview(menuView)
         contentView.addSubview(label1)
         contentView.addSubview(label2)
         contentView.addSubview(label3)
@@ -389,10 +465,10 @@ class UserCardTableViewCell: UITableViewCell {
             make.width.equalTo(Const.length).priority(800)
             make.height.equalTo(Const.length).priority(800)
         }
-        searchView.snp.makeConstraints { make in
-            make.center.equalTo(carousel.snp.center)
-            make.width.equalTo(Const.diameter)
+        menuView.snp.makeConstraints { make in
+            make.center.equalToSuperview()
             make.height.equalTo(Const.diameter)
+            make.width.equalTo(Const.diameter + 200)
         }
         bottomView.snp.makeConstraints { make in
             make.top.equalTo(carousel.snp.bottom)
@@ -496,7 +572,6 @@ class UserCardTableViewCell: UITableViewCell {
     }
 
     @objc func didTapStarRatingButton(sender: UITapGestureRecognizer) {
-        fireworkController.addFireworks(count: 2, around: button1)
         if (label1.isHidden) {
             switchCardBodyMode(to: .label)
         } else {
@@ -504,18 +579,13 @@ class UserCardTableViewCell: UITableViewCell {
             configureStarsAndTapListener(starRating)
             switchCardBodyMode(to: .star)
         }
-        button1.isUserInteractionEnabled = false
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) { [unowned self] in
-            button1.isUserInteractionEnabled = true
-        }
-    }
-
-    @objc func didTapRequestButton() {
-
+        fireworkController.addFireworks(count: 2, around: starView)
+        controlMenuViewVisibility()
     }
 
     @objc func didTapPokeButton(sender: UITapGestureRecognizer) {
-        fireworkController.addFireworks(count: 2, around: button3)
+        fireworkController.addFireworks(count: 2, around: pokeView)
+        controlMenuViewVisibility()
         delegate?.poke(user, onBegin: {
             pokeLottie.begin(with: contentView) { make in
                 make.center.equalTo(carousel.snp.center)
@@ -540,22 +610,32 @@ class UserCardTableViewCell: UITableViewCell {
     }
 
     @objc func didTapSearchView(sender: UITapGestureRecognizer) {
-        searchView.visible(false)
-        delegate?.didTapSearchView(user)
+        controlMenuViewVisibility()
+        delegate?.goUserSingle(user)
+    }
+
+    @objc private func didTapMenuView() {
+        controlMenuViewVisibility()
     }
 
     @objc private func didTapCarousel() {
-        if (searchView.isHidden) {
-            searchView.visible(true)
-            var transform = CGAffineTransform.identity
-            transform = transform.rotated(by: -1 * .pi / 2)
-            transform = transform.scaledBy(x: 0.1, y: 0.1)
-            searchView.transform = transform
-            UIView.animate(withDuration: 0.25, delay: 0.0, options: .curveEaseIn) {
-                self.searchView.transform = CGAffineTransform.identity
+        controlMenuViewVisibility()
+    }
+
+    private func controlMenuViewVisibility() {
+        if (menuView.isHidden) {
+            menuView.visible(true)
+            UIView.animate(withDuration: 0.25, delay: 0.0, options: .curveEaseIn) { [unowned self] in
+                pokeView.transform = CGAffineTransform(translationX: 100, y: 0)
+                starView.transform = CGAffineTransform(translationX: -100, y: 0)
             }
         } else {
-            searchView.visible(false)
+            UIView.animate(withDuration: 0.15, delay: 0.0, options: .curveEaseIn, animations: { [unowned self] in
+                pokeView.transform = CGAffineTransform.identity
+                starView.transform = CGAffineTransform.identity
+            }) { [unowned self] _ in
+                menuView.visible(false)
+            }
         }
     }
 
@@ -701,11 +781,10 @@ extension UserCardTableViewCell {
         case .star:
             hideLabels()
             showStars()
-            guard let _ = user?.relationship?.starRating else {
-                return
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                self.switchCardBodyMode(to: .label)
+            if let _ = user?.relationship?.starRating {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    self.switchCardBodyMode(to: .label)
+                }
             }
         }
     }

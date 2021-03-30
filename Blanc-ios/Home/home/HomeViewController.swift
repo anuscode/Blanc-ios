@@ -279,7 +279,7 @@ extension HomeViewController: UITableViewDelegate {
 
 extension HomeViewController: UserCardCellDelegate {
 
-    func didTapSearchView(_ user: UserDTO?) {
+    func goUserSingle(_ user: UserDTO?) {
         guard let user = user else {
             return
         }
