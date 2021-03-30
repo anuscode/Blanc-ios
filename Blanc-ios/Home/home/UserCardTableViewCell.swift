@@ -364,7 +364,7 @@ class UserCardTableViewCell: UITableViewCell {
         if (label1.isHidden) {
             switchCardBodyMode(to: .label)
         }
-        if (!menuView.isHidden) {
+        if (menuView.isHidden) {
             controlMenuViewVisibility()
         }
     }
@@ -637,6 +637,9 @@ class UserCardTableViewCell: UITableViewCell {
         carousel.reloadData()
 
         configureSlideViewText(by: user)
+        if (menuView.isHidden) {
+            controlMenuViewVisibility()
+        }
     }
 
     private func configureSlideViewText(by user: UserDTO?) {
