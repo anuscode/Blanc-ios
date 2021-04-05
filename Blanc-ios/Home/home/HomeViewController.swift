@@ -5,6 +5,7 @@ import SwinjectStoryboard
 import FSPagerView
 import Shimmer
 import Lottie
+import CoreLocation
 
 
 class HomeViewController: UIViewController {
@@ -20,6 +21,8 @@ class HomeViewController: UIViewController {
     private var data: HomeUserData = HomeUserData()
 
     private var dataSource: UITableViewDiffableDataSource<Section, UserDTO>!
+
+    private var manager: CLLocationManager = CLLocationManager()
 
     private var isLoading: Bool = true {
         didSet {
@@ -58,6 +61,131 @@ class HomeViewController: UIViewController {
         shimmer.shimmeringPauseDuration = 0.2
         return shimmer
     }()
+
+    lazy private var locationRecommendationView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .secondarySystemBackground
+        view.addSubview(locationRecommendationMainLabel)
+        view.addSubview(locationRecommendationSecondaryLabel)
+        view.addSubview(locationRecommendationButton)
+        view.addSubview(closeLocationRecommendation)
+        view.visible(false)
+        locationRecommendationMainLabel.snp.makeConstraints { make in
+            make.top.equalToSuperview().inset(10)
+            make.centerX.equalToSuperview()
+        }
+        locationRecommendationSecondaryLabel.snp.makeConstraints { make in
+            make.top.equalTo(locationRecommendationMainLabel.snp.bottom).inset(-7)
+            make.centerX.equalToSuperview()
+        }
+        locationRecommendationButton.snp.makeConstraints { make in
+            make.top.equalTo(locationRecommendationSecondaryLabel.snp.bottom).inset(-10)
+            make.width.equalTo(200)
+            make.height.equalTo(30)
+            make.centerX.equalToSuperview()
+            make.bottom.equalToSuperview().inset(10)
+        }
+        closeLocationRecommendation.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().inset(20)
+            make.centerY.equalToSuperview()
+        }
+        return view
+    }()
+
+    lazy private var closeLocationRecommendation: UIImageView = {
+        let imageView = UIImageView()
+        let image = UIImage(systemName: "xmark")
+        imageView.image = image
+        imageView.tintColor = .black
+        imageView.contentMode = .scaleAspectFit
+        imageView.width(20)
+        imageView.height(20)
+        imageView.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapCloseButton))
+        return imageView
+    }()
+
+    lazy private var locationRecommendationMainLabel: UILabel = {
+        let label = UILabel()
+        label.text = "위치를 알 수 없어요. 😔"
+        label.font = .boldSystemFont(ofSize: 14)
+        return label
+    }()
+
+    lazy private var locationRecommendationSecondaryLabel: UILabel = {
+        let label = UILabel()
+        label.text = "위치를 알려 주시면 더 좋은 추천이 가능합니다."
+        label.font = .systemFont(ofSize: 12)
+        label.textColor = .black4
+        return label
+    }()
+
+    lazy private var locationRecommendationButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("위치 권한", for: .normal)
+        button.titleLabel?.font = .boldSystemFont(ofSize: 12)
+        button.layer.masksToBounds = true
+        button.layer.cornerRadius = 5
+        button.backgroundColor = .bumble3
+        button.setTitleColor(.white, for: .normal)
+        // button.addTarget(self, action: #selector(accept), for: .touchUpInside)
+        ripple.activate(to: button)
+        button.height(45, priority: 800)
+        button.width(200, priority: 800)
+        button.addTapGesture(numberOfTapsRequired: 1, target: self, action: #selector(didTapAuthorizationButton))
+        return button
+    }()
+
+    @objc private func didTapCloseButton() {
+        hideLocationRecommendationView()
+    }
+
+    @objc private func didTapAuthorizationButton() {
+        let authorization = manager.authorizationStatus
+        if (authorization == .denied || authorization == .restricted) {
+            guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else {
+                return
+            }
+            if UIApplication.shared.canOpenURL(settingsUrl) {
+                UIApplication.shared.open(settingsUrl)
+            }
+        }
+        if (authorization == .authorizedAlways || authorization == .authorizedWhenInUse) {
+            return
+        }
+        manager.requestAlwaysAuthorization()
+        hideLocationRecommendationView()
+    }
+
+    private func showLocationRecommendationView() {
+        locationRecommendationView.visible(true)
+        locationRecommendationView.snp.remakeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+        }
+        tableView.snp.remakeConstraints { make in
+            make.top.equalTo(locationRecommendationView.snp.bottom)
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.bottom.equalToSuperview()
+        }
+    }
+
+    private func hideLocationRecommendationView() {
+        locationRecommendationView.visible(false)
+        locationRecommendationView.snp.remakeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.height.equalTo(0)
+        }
+        tableView.snp.remakeConstraints { make in
+            make.top.equalTo(locationRecommendationView.snp.bottom)
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.bottom.equalToSuperview()
+        }
+    }
 
     lazy private var tableView: UITableView = {
         let tableView = UITableView()
@@ -121,6 +249,9 @@ class HomeViewController: UIViewController {
         configureConstraints()
         subscribeHomeViewModel()
         isLoading = true
+        if (manager.authorizationStatus.rawValue <= 2) {
+            showLocationRecommendationView()
+        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -153,6 +284,7 @@ class HomeViewController: UIViewController {
     }
 
     private func configureSubviews() {
+        view.addSubview(locationRecommendationView)
         view.addSubview(tableView)
         view.addSubview(homeLoading1)
         view.addSubview(homeLoading2)
@@ -161,14 +293,20 @@ class HomeViewController: UIViewController {
     }
 
     private func configureConstraints() {
+        locationRecommendationView.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.leading.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.height.equalTo(0)
+        }
         tableView.snp.makeConstraints { make in
-            make.top.equalToSuperview()
+            make.top.equalTo(locationRecommendationView.snp.bottom)
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
             make.bottom.equalToSuperview()
         }
         homeLoading1.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaLayoutGuide).inset(10)
+            make.top.equalTo(tableView.snp.top).inset(10)
             make.centerX.equalToSuperview()
         }
         homeLoading2.snp.makeConstraints { make in
